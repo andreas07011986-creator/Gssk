@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GSSK Prüfungstrainer & Konzept-Tool</title>
+  <title>GSSK Prüfungstrainer Pro</title>
   <style>
     * {
       box-sizing: border-box;
@@ -18,7 +18,7 @@
     }
     .app-card {
       background: #ffffff;
-      max-width: 700px;
+      max-width: 750px;
       width: 100%;
       padding: 20px;
       border-radius: 12px;
@@ -27,21 +27,23 @@
     /* Tab-Navigation */
     .tab-nav {
       display: flex;
-      gap: 10px;
+      gap: 5px;
       margin-bottom: 20px;
       border-bottom: 2px solid #dee2e6;
       padding-bottom: 10px;
+      overflow-x: auto;
     }
     .tab-btn {
       flex: 1;
-      padding: 12px;
+      padding: 10px 8px;
       border: none;
       background: #e9ecef;
       color: #495057;
       font-weight: bold;
-      font-size: 0.95rem;
+      font-size: 0.85rem;
       border-radius: 8px;
       cursor: pointer;
+      white-space: nowrap;
       transition: background 0.2s;
     }
     .tab-btn.active {
@@ -68,7 +70,7 @@
       background: #e7f5ff;
       color: #1971c2;
     }
-    .filter-box select, .concept-select {
+    .filter-box select, .select-box {
       width: 100%;
       padding: 10px;
       border-radius: 6px;
@@ -118,8 +120,8 @@
     }
     .btn-action:disabled { background: #ccc; }
 
-    /* Concept Styling */
-    .concept-step {
+    /* Concept & Law Styling */
+    .section-card {
       background: #f8f9fa;
       border: 1px solid #e9ecef;
       border-left: 5px solid #0d6efd;
@@ -127,21 +129,16 @@
       margin-bottom: 12px;
       border-radius: 4px;
     }
-    .concept-title {
+    .section-title {
       font-weight: bold;
       color: #0d6efd;
       margin-bottom: 5px;
     }
-    .solution-btn {
-      width: 100%;
-      padding: 10px;
-      background: #198754;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      font-weight: bold;
-      margin-top: 10px;
-      cursor: pointer;
+    .law-card {
+      border-left-color: #dc3545;
+    }
+    .law-title {
+      color: #dc3545;
     }
     .hidden { display: none; }
   </style>
@@ -151,8 +148,9 @@
 <div class="app-card">
   <!-- TAB-NAVIGATION -->
   <div class="tab-nav">
-    <button id="tabQuizBtn" class="tab-btn active" onclick="switchTab('quiz')">❓ Quiz-Trainer</button>
-    <button id="tabConceptBtn" class="tab-btn" onclick="switchTab('concept')">📋 Sicherheitskonzept</button>
+    <button id="tabQuizBtn" class="tab-btn active" onclick="switchTab('quiz')">❓ Quiz</button>
+    <button id="tabConceptBtn" class="tab-btn" onclick="switchTab('concept')">📋 Konzept</button>
+    <button id="tabLawBtn" class="tab-btn" onclick="switchTab('law')">⚖️ Rechtliche Beurteilung</button>
   </div>
 
   <!-- TAB 1: QUIZ TRAINER -->
@@ -190,18 +188,28 @@
     </div>
   </div>
 
-  <!-- TAB 2: SICHERHEITSKONZEPT MODUL -->
+  <!-- TAB 2: SICHERHEITSKONZEPT -->
   <div id="conceptTab" class="hidden">
-    <h3 style="margin-top:0;">GSSK Sicherheitskonzept Ausarbeiten</h3>
-    <p style="font-size: 0.9rem; color: #555;">Wähle ein IHK-Szenario und gehe die 5 offiziellen Schritte für das Sicherheitskonzept durch:</p>
-
-    <select id="conceptSelect" class="concept-select" onchange="loadConcept()">
-      <option value="0">Fall 1: Logistikzentrum (Perimeterschutz & Werkschutz)</option>
+    <h3 style="margin-top:0;">GSSK Sicherheitskonzept</h3>
+    <select id="conceptSelect" class="select-box" onchange="loadConcept()">
+      <option value="0">Fall 1: Logistikzentrum (Perimeterschutz)</option>
       <option value="1">Fall 2: Rechenzentrum (Zutrittskontrolle & Brandschutz)</option>
-      <option value="2">Fall 3: Einkaufszentrum (Mengensteuerung & Ladendiebstahl)</option>
+    </select>
+    <div id="conceptContent"></div>
+  </div>
+
+  <!-- TAB 3: RECHTLICHE BEURTEILUNG -->
+  <div id="lawTab" class="hidden">
+    <h3 style="margin-top:0;">Rechtliche Fallbeurteilung (IHK-Schema)</h3>
+    <p style="font-size: 0.88rem; color: #555;">Wähle ein Fallbeispiel aus der Praxis, um die rechtliche Prüfung (Straftat, Rechtfertigung, Befugnisse) Schritt für Schritt nachzuvollziehen:</p>
+
+    <select id="lawSelect" class="select-box" onchange="loadLawCase()">
+      <option value="0">Fall A: Betreten ohne Befugnis & Ladendiebstahl</option>
+      <option value="1">Fall B: Angriffsversuch am Werktor (Notwehr)</option>
+      <option value="2">Fall C: Beschädigung von Sicherungsanlagen</option>
     </select>
 
-    <div id="conceptContent"></div>
+    <div id="lawContent"></div>
   </div>
 </div>
 
@@ -238,64 +246,63 @@
       category: "Technik",
       subcategory: "Brandschutz",
       question: "Welche Brandklasse umfasst Brände von flüssigen oder flüssig werdenden Stoffen (z. B. Benzin, Lacke, Wachs)?",
-      options: [
-        "Brandklasse A",
-        "Brandklasse B",
-        "Brandklasse C",
-        "Brandklasse F"
-      ],
+      options: ["Brandklasse A", "Brandklasse B", "Brandklasse C", "Brandklasse F"],
       answer: 1,
       explanation: "Brandklasse A = feste Stoffe, Brandklasse B = flüssige/flüssig werdende Stoffe, Brandklasse C = Gase, Brandklasse F = Speiseöle/Fette."
-    },
-    {
-      category: "Verhalten",
-      subcategory: "Deeskalation & Kommunikation",
-      question: "Wie reagiert eine Sicherheitskraft in einer Konfliktsituation am besten auf eine verbal aggressive Person?",
-      options: [
-        "Ebenfalls laut werden, um Stärke zu demonstrieren.",
-        "Ruhig und sachlich bleiben, aktives Zuhören anwenden und Distanz wahren.",
-        "Die Person sofort körperlich fixieren.",
-        "Sich umdrehen und die Person ignorieren."
-      ],
-      answer: 1,
-      explanation: "Deeskalation erfordert eine ruhige, bestimmte Stimmlage, Sicherheitsabstand und sachliche Argumente, um die Lage zu beruhigen."
     }
   ];
 
-  // --- SICHERHEITSKONZEPTE DATENBANK (5-SCHRITTE-MODELL) ---
+  // --- SICHERHEITSKONZEPTE ---
   const concepts = [
     {
-      title: "Fall 1: Logistikzentrum mit Freigelände",
-      scenario: "Ein Logistikunternehmen meldet vermehrt Diebstähle von Palettenware auf dem Außengelände in den Nachtstunden. Erstelle das Sicherheitskonzept.",
+      title: "Fall 1: Logistikzentrum",
+      scenario: "Vermehrt Diebstähle von Ware auf dem Außengelände in den Nachtstunden.",
       steps: [
-        { name: "1. Objekt- & Ist-Analyse", text: "Weitläufiges Außengelände, teilweise lückenhafter Maschendrahtzaun, schlechte Ausleuchtung, unbesetzter Hintereingang." },
-        { name: "2. Rechtliche Grundlagen", text: "BGB (§ 859 Selbsthilfe des Besitzers), StGB (§ 123 Hausfriedensbruch, § 242 Diebstahl), DSGVO bei Videoüberwachung auf dem Gelände." },
-        { name: "3. Personelle Maßnahmen", text: "Bestellung eines Werk- und Objektschutzdienstes: Pförtner am Haupttor (24/7) sowie unregelmäßige Bestreifung des Außengeländes nachts." },
-        { name: "4. Sicherheitstechnik", text: "Erneuerung des Zauns (2m Übersteigschutz), Installation einer ZKS (Zutrittskontrollanlage) für LKW-Fahrer, VdS-konforme Perimeter-Videoüberwachung mit Infrarot/Wärmebild." },
-        { name: "5. Notfall- & Alarmplan", text: "Bei Alarmauslösung (Kamera/EMA): Aufschaltung auf eine VdS-zertifizierte Notruf- und Serviceleitstelle (NSL). Interventionskraft anfahren lassen, ggf. Polizei (110) hinzuziehen." }
+        { name: "1. Objekt- & Ist-Analyse", text: "Weitläufiges Außengelände, lückenhafter Maschendrahtzaun, schlechte Ausleuchtung." },
+        { name: "2. Rechtliche Grundlagen", text: "BGB (§ 859 Selbsthilfe des Besitzers), StGB (§ 123 Hausfriedensbruch, § 242 Diebstahl), DSGVO." },
+        { name: "3. Personelle Maßnahmen", text: "Pförtner am Haupttor (24/7) sowie unregelmäßige Bestreifung des Außengeländes nachts." },
+        { name: "4. Sicherheitstechnik", text: "Erneuerung des Zauns (2m Übersteigschutz), ZKS für LKW-Fahrer, VdS-konforme Perimeter-Videoüberwachung." },
+        { name: "5. Notfall- & Alarmplan", text: "Aufschaltung auf VdS-NSL. Interventionskraft anfahren lassen, ggf. Polizei (110) hinzuziehen." }
       ]
     },
     {
-      title: "Fall 2: Hochsicherheits-Rechenzentrum",
+      title: "Fall 2: Rechenzentrum",
       scenario: "Schutz eines Rechenzentrums vor unbefugtem Zutritt, Spionage und Feuer.",
       steps: [
         { name: "1. Objekt- & Ist-Analyse", text: "Serverräume im Untergeschoss, hohe Kriterien an Ausfallsicherheit und Vertraulichkeit." },
         { name: "2. Rechtliche Grundlagen", text: "DSGVO (Datenschutz), ArbSchG, Hausrecht des Betreibers." },
-        { name: "3. Personelle Maßnahmen", text: "Kontrolle des Besucherverkehrs, Begleitung von Fremdfirmen/Technikern (Escort-Service), Protokollierung." },
-        { name: "4. Sicherheitstechnik", text: "Zwei-Faktoren-Zutrittskontrolle (RFID-Karte + Biometrie/PIN), Rauchansaugsysteme (RAS) zur Brandfrüherkennung, N2-Gaslöschanlage." },
-        { name: "5. Notfall- & Alarmplan", text: "Direktauslösung BMA an die Feuerwehr, Räumungsplan für Personal, automatische Schottung der Serverräume." }
+        { name: "3. Personelle Maßnahmen", text: "Kontrolle des Besucherverkehrs, Begleitung von Fremdfirmen/Technikern (Escort-Service)." },
+        { name: "4. Sicherheitstechnik", text: "Zwei-Faktoren-Zutrittskontrolle, Rauchansaugsysteme (RAS), N2-Gaslöschanlage." },
+        { name: "5. Notfall- & Alarmplan", text: "Direktauslösung BMA an die Feuerwehr, Räumungsplan für Personal." }
       ]
+    }
+  ];
+
+  // --- RECHTLICHE BEURTEILUNGEN (IHK-SCHEMA) ---
+  const lawCases = [
+    {
+      title: "Fall A: Betreten ohne Befugnis & Versuchter Diebstahl",
+      sachverhalt: "Eine Person klettert nachts über den Zaun eines Betriebsgeländes, bricht ein Lagerfenster auf und versucht ein teures Werkzeug einzustecken. Eine Sicherheitskraft entdeckt ihn auf frischer Tat und versperrt den Ausgang.",
+      strafrecht: "1. Hausfriedensbruch (§ 123 StGB) durch Widerrechtliches Eindringen.<br>2. Sachbeschädigung (§ 303 StGB) durch Zerbrechen des Fensters.<br>3. Versuchter Diebstahl in einem besonders schweren Fall (§ 242 i.V.m. § 243 StGB) durch Einbrechen.",
+      zivilrecht: "1. Verletzung des Besitzrechts / Hausrechts (§ 858 BGB - Verbotene Eigenmacht).<br>2. Schadenersatzanspruch nach § 823 BGB für das beschädigte Fenster.",
+      befugnisse: "1. Jedermann-Festnahme (§ 127 Abs. 1 StPO): Zulässig, da der Täter auf frischer Tat angetroffen wurde und Fluchtgefahr besteht.<br>2. Selbsthilfe des Besitzers (§ 859 BGB) / Hausrecht: Festhaltung bis zum Eintreffen der Polizei.",
+      verhaeltnis: "Das Festhalten ist verhältnismäßig. Das Anwenden übermäßiger körperlicher Gewalt ohne Gegenwehr wäre unverhältnismäßig."
     },
     {
-      title: "Fall 3: Einkaufszentrum (Shopping Mall)",
-      scenario: "Gefahrenabwehr bei Großveranstaltungen, Deeskalation und Schutz vor Ladendiebstahl.",
-      steps: [
-        { name: "1. Objekt- & Ist-Analyse", text: "Hohes Publikumsaufkommen, viele Fluchtwege, unübersichtliche Bereiche, Ecken mit Vandalismusrisiko." },
-        { name: "2. Rechtliche Grundlagen", text: "StPO § 127 (Vorläufige Festnahme), BGB § 227 (Notwehr), GewO & BewachV." },
-        { name: "3. Personelle Maßnahmen", text: "Präsenzdienst im Innenbereich (Foot Patrol), Einsatz von Doormen / Ladendetektiven." },
-        { name: "4. Sicherheitstechnik", text: "Flucht- und Rettungswegsicherung, CCTV-Kameras an Zu- und Ausgängen, Sprinkleranlage." },
-        { name: "5. Notfall- & Alarmplan", text: "Lautsprecherdurchsagen für Räumung, Freihalten der Anfahrtswege für Rettungskräfte, Erste-Hilfe-Erstversorgung." }
-      ]
+      title: "Fall B: Angriff auf Sicherheitskraft am Werktor",
+      sachverhalt: "Ein abgewiesener Besucher wird wütend, holt eine Holzlatte aus dem Gebüsch und holt aus, um die Sicherheitskraft am Kopf zu treffen. Die Sicherheitskraft wehrt den Schlag mit dem Tonfa (Einsatzstock) ab und schlägt gegen den Arm des Angreifers.",
+      strafrecht: "Der Angreifer begeht eine versuchte gefährliche Körperverletzung (§ 223 i.V.m. § 224 StGB) mittels eines gefährlichen Werkzeugs.",
+      zivilrecht: "Verletzung des körperlichen Wohlbefindens der Sicherheitskraft.",
+      befugnisse: "Notwehr (§ 227 BGB / § 32 StGB): Es liegt ein gegenwärtiger, rechtswidriger Angriff eines Menschen auf ein geschütztes Rechtsgut (Leben/Gesundheit) vor.",
+      verhaeltnis: "Die Abwehrhandlung (Schlag gegen den Arm zur Unterbindung des Angriffs) war das mildeste, effektivste Mittel zur Beendigung des Angriffs und somit verhältnismäßig."
+    },
+    {
+      title: "Fall C: Beschädigung der Videoüberwachung",
+      sachverhalt: "Ein Mitarbeiter besprüht eine Überwachungskamera auf dem Werksgelände mit Lackfarbe, um nicht bei Pausenüberschreitungen gesehen zu werden.",
+      strafrecht: "Sachbeschädigung (§ 303 StGB) sowie Zerstörung wichtiger Arbeitsmittel (§ 303b StGB / Computerkriminalität/Datenverarbeitung, falls Anlagen gestört werden).",
+      zivilrecht: "Besitzstörung sowie Schadenersatzpflicht (§ 823 BGB) bezüglich Reinigung oder Austausch der Kamera.",
+      befugnisse: "Feststellung der Personalien (falls Identität unklar -> § 127 StPO), Aussprechen eines Hausverbots im Auftrag des Eigentümers (§ 903 / § 858 BGB).",
+      verhaeltnis: "Identitätsfeststellung und Meldung an die Werkleitung ist erforderlich und angemessen."
     }
   ];
 
@@ -305,17 +312,25 @@
   let answered = false;
 
   function switchTab(tab) {
+    document.getElementById("quizTab").classList.add("hidden");
+    document.getElementById("conceptTab").classList.add("hidden");
+    document.getElementById("lawTab").classList.add("hidden");
+
+    document.getElementById("tabQuizBtn").classList.remove("active");
+    document.getElementById("tabConceptBtn").classList.remove("active");
+    document.getElementById("tabLawBtn").classList.remove("active");
+
     if (tab === 'quiz') {
       document.getElementById("quizTab").classList.remove("hidden");
-      document.getElementById("conceptTab").classList.add("hidden");
       document.getElementById("tabQuizBtn").classList.add("active");
-      document.getElementById("tabConceptBtn").classList.remove("active");
-    } else {
-      document.getElementById("quizTab").classList.add("hidden");
+    } else if (tab === 'concept') {
       document.getElementById("conceptTab").classList.remove("hidden");
-      document.getElementById("tabQuizBtn").classList.remove("active");
       document.getElementById("tabConceptBtn").classList.add("active");
       loadConcept();
+    } else if (tab === 'law') {
+      document.getElementById("lawTab").classList.remove("hidden");
+      document.getElementById("tabLawBtn").classList.add("active");
+      loadLawCase();
     }
   }
 
@@ -378,29 +393,45 @@
   function nextQuestion() { if (currentIndex < currentQuestions.length - 1) { currentIndex++; loadQuestion(); } }
   function prevQuestion() { if (currentIndex > 0) { currentIndex--; loadQuestion(); } }
 
-  // Concept Logic
+  // Concept & Law Loaders
   function loadConcept() {
     const idx = document.getElementById("conceptSelect").value;
     const c = concepts[idx];
-    const container = document.getElementById("conceptContent");
-
     let html = `<p><strong>Szenario:</strong> ${c.scenario}</p>`;
-    
     c.steps.forEach(step => {
-      html += `
-        <div class="concept-step">
-          <div class="concept-title">${step.name}</div>
-          <div>${step.text}</div>
-        </div>
-      `;
+      html += `<div class="section-card"><div class="section-title">${step.name}</div><div>${step.text}</div></div>`;
     });
-
-    container.innerHTML = html;
+    document.getElementById("conceptContent").innerHTML = html;
   }
 
-  window.onload = () => {
-    loadQuestion();
-  };
+  function loadLawCase() {
+    const idx = document.getElementById("lawSelect").value;
+    const l = lawCases[idx];
+    let html = `
+      <div style="background:#fff3cd; padding:12px; border-radius:6px; margin-bottom:15px; border-left:4px solid #ffc107;">
+        <strong>📌 Sachverhalt:</strong><br>${l.sachverhalt}
+      </div>
+      <div class="section-card law-card">
+        <div class="section-title law-title">1. Strafrechtliche Würdigung (StGB)</div>
+        <div>${l.strafrecht}</div>
+      </div>
+      <div class="section-card law-card">
+        <div class="section-title law-title">2. Zivilrechtliche Würdigung (BGB)</div>
+        <div>${l.zivilrecht}</div>
+      </div>
+      <div class="section-card law-card">
+        <div class="section-title law-title">3. Befugnisse der Sicherheitskraft</div>
+        <div>${l.befugnisse}</div>
+      </div>
+      <div class="section-card law-card">
+        <div class="section-title law-title">4. Verhältnismäßigkeitsprüfung</div>
+        <div>${l.verhaeltnis}</div>
+      </div>
+    `;
+    document.getElementById("lawContent").innerHTML = html;
+  }
+
+  window.onload = () => { loadQuestion(); };
 </script>
 </body>
 </html>
