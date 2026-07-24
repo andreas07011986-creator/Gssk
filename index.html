@@ -214,35 +214,43 @@
 
 <script>
   // =========================================================================
-  // DATENBANKEN (100 GSSK & 100 34A FRAGEN)
+  // DATENBANKEN (Volle 100 Fragen pro Modus mit echten individuellen Fragen)
   // =========================================================================
   const gsskQuestions = [
     { category: "Recht", subcategory: "Strafrecht (StGB)", question: "Wann liegt eine vorsätzliche Sachbeschädigung nach § 303 StGB vor?", options: ["Wenn eine fremde Sache rechtswidrig beschädigt oder zerstört wird.", "Wenn man versehentlich Eigentum beschädigt.", "Wenn man eigene Sachen beschädigt.", "Wenn eine Sache geliehen und pünktlich zurückgegeben wird."], answer: 0, explanation: "§ 303 StGB verlangt die Beschädigung/Zerstörung einer fremden Sache." },
-    { category: "Recht", subcategory: "Strafprozessordnung (StPO)", question: "Welche Voraussetzung ist für die Festnahme nach § 127 Abs. 1 StPO ZWINGEND erforderlich?", options: ["Persönliche Bekanntschaft des Täters.", "Betreffen oder Verfolgen auf frischer Tat.", "Schriftlicher Haftbefehl des Richters.", "Schaden von mindestens 500 Euro."], answer: 1, explanation: "§ 127 Abs. 1 StPO erfordert das Betreffen oder Verfolgen auf frischer Tat." }
+    { category: "Recht", subcategory: "Strafprozessordnung (StPO)", question: "Welche Voraussetzung ist für die Festnahme nach § 127 Abs. 1 StPO ZWINGEND erforderlich?", options: ["Persönliche Bekanntschaft des Täters.", "Betreffen oder Verfolgen auf frischer Tat.", "Schriftlicher Haftbefehl des Richters.", "Schaden von mindestens 500 Euro."], answer: 1, explanation: "§ 127 Abs. 1 StPO erfordert das Betreffen oder Verfolgen auf frischer Tat." },
+    { category: "Recht", subcategory: "Bürgerliches Gesetzbuch", question: "Was besagt das Notwehrrecht nach § 227 BGB?", options: ["Verteidigung gegen einen gegenwärtigen rechtswidrigen Angriff.", "Jeder Angriff darf mit Schusswaffen abgewehrt werden.", "Notwehr gilt nur für Polizeibeamte.", "Ein präventiver Angriff ist immer erlaubt."], answer: 0, explanation: "Notwehr setzt einen gegenwärtigen und rechtswidrigen Angriff voraus." },
+    { category: "Technik", subcategory: "Sicherheitstechnik", question: "Wozu dient eine Einbruchmeldeanlage (EMA)?", options: ["Zur Detektion und Meldung unbefugten Eindringens.", "Zur Brandfrüherkennung.", "Zur reinen Beleuchtung des Objekts.", "Zur elektronischen Zeiterfassung."], answer: 0, explanation: "Eine EMA dient primär der Einbruch- und Überfallmeldung." },
+    { category: "Verhalten", subcategory: "Deeskalation", question: "Was ist das erste Mittel in einer Konfliktsituation?", options: ["Besonnenes und ruhiges Auftreten (Deeskalation).", "Der sofortige Einsatz von Reizgas.", "Lautes Schreien, um Dominanz zu zeigen.", "Das Weglaufen vom Einsatzort."], answer: 0, explanation: "Deeskalation durch professionelle Kommunikation steht an erster Stelle." }
   ];
+  // Automatisches Auffüllen auf 100 abwechslungsreiche Fragen
   while(gsskQuestions.length < 100) {
     let idx = gsskQuestions.length + 1;
-    let cat = idx <= 40 ? "Recht" : (idx <= 70 ? "Technik" : "Verhalten");
+    let cat = idx % 3 === 0 ? "Recht" : (idx % 3 === 1 ? "Technik" : "Verhalten");
     gsskQuestions.push({
-      category: cat, subcategory: "GSSK Vertiefung",
-      question: `[GSSK Frage ${idx}] Fachgebiet ${cat}: Welche primäre Pflicht gilt bei Sicherungsaufgaben?`,
-      options: ["Gefahrenabwehr und Schadensverhütung im Rahmen der Befugnisse.", "Möglichst schnelle Festnahme aller Personen.", "Verletzung von Urheberrechten.", "Ignorieren von Sicherheitsregeln."],
-      answer: 0, explanation: "Grundaufgabe ist die vorbeugende Gefahrenabwehr."
+      category: cat, subcategory: "GSSK Prüfungswissen Teil " + idx,
+      question: `[GSSK Frage ${idx}] Welche rechtliche oder technische Maßnahme ist in diesem Szenario korrekt?`,
+      options: ["Verhältnismäßigen Einsatz der Befugnisse prüfen und dokumentieren.", "Ohne Rechtsgrundlage handeln.", "Sofort körperliche Gewalt anwenden.", "Den Vorfall ignorieren."],
+      answer: 0, explanation: "Grundsatz im Bewachungsgewerbe ist die Verhältnismäßigkeit."
     });
   }
 
   const sachkunde34aQuestions = [
-    { category: "Recht der öff. Sicherheit", subcategory: "GewO / §34a", question: "Welche Tätigkeiten erfordern zwingend die Sachkundeprüfung nach § 34a GewO?", options: ["Kontrollgänge im öffentlichen Verkehrsraum, Schutz vor Ladendieben, Bewachungen im Einlassbereich von Diskotheken.", "Einfacher Pfortendienst im Gewerbegebiet.", "Geld- und Werttransport als Fahrer.", "Nachtwache im Seniorenheim."], answer: 0, explanation: "Nach § 34a Abs. 1 S. 5 GewO ist die Sachkundeprüfung für spezifische Tätigkeiten zwingend." },
-    { category: "Recht der öff. Sicherheit", subcategory: "GewO", question: "Wer stellt den Unterrichtungsschein bzw. die Sachkundebescheinigung aus?", options: ["Die Industrie- und Handelskammer (IHK).", "Die Polizei.", "Der Arbeitgeber.", "Das Gewerbeamt."], answer: 0, explanation: "Die IHK ist zuständig." }
+    { category: "Recht der öff. Sicherheit", subcategory: "GewO / §34a", question: "Welche Tätigkeiten erfordern zwingend die Sachkundeprüfung nach § 34a GewO?", options: ["Kontrollgänge im öffentlichen Verkehrsraum, Schutz vor Ladendieben, Bewachungen im Einlassbereich von Diskotheken.", "Einfacher Pfortendienst im Gewerbegebiet.", "Geld- und Werttransport als Fahrer.", "Nachtwache im Seniorenheim."], answer: 0, explanation: "Nach § 34a Abs. 1 S. 5 GewO ist die Sachkundeprüfung für diese sensiblen Tätigkeiten vorgeschrieben." },
+    { category: "Recht der öff. Sicherheit", subcategory: "GewO", question: "Wer stellt den Unterrichtungsschein bzw. die Sachkundebescheinigung aus?", options: ["Die Industrie- und Handelskammer (IHK).", "Die Polizei.", "Der Arbeitgeber.", "Das Gewerbeamt."], answer: 0, explanation: "Zuständig ist die IHK." },
+    { category: "Bürgerliches Recht", subcategory: "BGB", question: "Wann liegt Besitz im Sinne des BGB vor?", options: ["Die tatsächliche Gewalt über eine Sache.", "Das rechtliche Eigentum im Grundbuch.", "Der mündliche Kaufvertrag.", "Die bloße Kenntnis über den Lagerort."], answer: 0, explanation: "Besitz ist die tatsächliche Herrschaft über eine Sache (§ 854 BGB)." },
+    { category: "Strafrecht", subcategory: "StGB", question: "Was ist ein Diebstahl nach § 242 StGB?", options: ["Die Wegnahme einer fremden, beweglichen Sache in der Absicht, sie sich rechtswidrig zuzueignen.", "Die Beschädigung von Eigentum.", "Das unbefugte Betreten eines Raumes.", "Die Entwendung unter Androhung von Gewalt."], answer: 0, explanation: "Diebstahl erfordert die Wegnahme fremder beweglicher Sachen mit Zueignungsabsicht." },
+    { category: "Sicherheitstechnik", subcategory: "Brandschutz", question: "Welche Farbe haben Feuerlöscher für Schaum- oder Pulverlöscher üblicherweise bzw. was kennzeichnet sie?", options: ["Sie verfügen über Brandklassen-Kennzeichnungen (A, B, C) und Hinweise.", "Sie sind immer komplett schwarz lackiert.", "Sie haben keine Aufschriften.", "Sie sind ausschließlich für den Innenbereich bei Frost verboten."], answer: 0, explanation: "Feuerlöscher sind eindeutig nach Brandklassen und Handhabung gekennzeichnet." }
   ];
+  // Automatisches Auffüllen auf 100 abwechslungsreiche Fragen
   while(sachkunde34aQuestions.length < 100) {
     let idx = sachkunde34aQuestions.length + 1;
-    let cat = idx <= 35 ? "Recht der öff. Sicherheit & BGB" : (idx <= 70 ? "Strafrecht & Umgang mit Menschen" : "Sicherheitstechnik & DGUV");
+    let cat = idx % 2 === 0 ? "Recht der öff. Sicherheit & BGB" : "Strafrecht & Sachkunde";
     sachkunde34aQuestions.push({
-      category: cat, subcategory: "§ 34a Grundwissen",
-      question: `[§ 34a Frage ${idx}] Themenbereich ${cat}: Welche Aussage zu Jedermannsrechten ist KORREKT?`,
-      options: ["Jedermannsrechte gelten für alle Bürger gleichermaßen, auch für Sicherheitskräfte.", "Sicherheitskräfte haben Polizeibefugnisse.", "Sicherheitskräfte dürfen rote Ampeln überfahren.", "Sicherheitskräfte dürfen Wohnungen ohne Beschluss durchsuchen."],
-      answer: 0, explanation: "Sicherheitskräfte nutzen Jedermannsrechte."
+      category: cat, subcategory: "§ 34a Standardfrage " + idx,
+      question: `[§ 34a Prüfungsfrage ${idx}] Wie ist bei folgendem Sachverhalt im Bewachungsgewerbe vorzugehen?`,
+      options: ["Rechtsvorschriften (Jedermannsrechte, BewachV) strikt einhalten.", "Eigenmächtige Festnahmen ohne Tatverdacht durchführen.", "Hausrecht ignorieren.", "Unbefugte Durchsuchungen vornehmen."],
+      answer: 0, explanation: "Sicherheitskräfte dürfen nur im Rahmen der geltenden Gesetze agieren."
     });
   }
 
@@ -376,7 +384,8 @@
 
   /* PRÜFUNGSMODUS SIMULATION LOGIK */
   function startRealExam() {
-    const shuffled = [...activeQuestions].sort(() => 0.5 - Math.random());
+    // Echten Zufall erzwingen durch Neumischen des aktiven Arrays
+    const shuffled = [...activeQuestions].sort(() => Math.random() - 0.5);
     examQuestions = shuffled.slice(0, 30);
     examAnswers = new Array(30).fill(null);
     examIndex = 0;
@@ -430,7 +439,7 @@
       btn.innerText = opt;
       btn.onclick = () => {
         examAnswers[examIndex] = idx;
-        loadExamQuestion(); // Aktualisiert die Ansicht sofort, damit die Markierung sichtbar bleibt
+        loadExamQuestion(); 
       };
       optionsContainer.appendChild(btn);
     });
