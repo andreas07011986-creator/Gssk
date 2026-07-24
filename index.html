@@ -27,49 +27,40 @@
     body { background-color: #f4f6f9; margin: 0; padding: 15px; display: flex; justify-content: center; }
     .app-card { background: #ffffff; max-width: 850px; width: 100%; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
     
-    /* EXAM SELECTOR BAR */
-    -/* EXAM SELECTOR BAR (Optimiert für Mobilgeräte) */
-.exam-selector { 
-  background: #1a252f; 
-  color: white; 
-  padding: 12px; 
-  border-radius: 8px; 
-  display: flex; 
-  flex-direction: column; /* Elemente untereinander anordnen auf Mobilgeräten */
-  gap: 10px; 
-  margin-bottom: 15px; 
-}
+    /* EXAM SELECTOR BAR (MOBILE OPTIMIERT) */
+    .exam-selector { 
+      background: #1a252f; 
+      color: white; 
+      padding: 12px; 
+      border-radius: 8px; 
+      display: flex; 
+      flex-direction: column; 
+      gap: 10px; 
+      margin-bottom: 15px; 
+    }
+    .exam-selector select { 
+      background: #34495e; 
+      color: white; 
+      border: 1px solid #5d6d7e; 
+      padding: 8px 12px; 
+      border-radius: 6px; 
+      font-size: 0.95rem; 
+      font-weight: bold; 
+      cursor: pointer; 
+      width: 100%;
+      max-width: 100%;
+    }
 
-.exam-selector select { 
-  background: #34495e; 
-  color: white; 
-  border: 1px solid #5d6d7e; 
-  padding: 8px 12px; 
-  border-radius: 6px; 
-  font-size: 0.95rem; 
-  font-weight: bold; 
-  cursor: pointer; 
-  width: 100%; /* Breite an den Kasten anpassen */
-  max-width: 100%;
-  box-sizing: border-box;
-}
-
-/* Ab mittleren Bildschirmgrößen (Tablets/PC) wieder nebeneinander */
-@media (min-width: 600px) {
-  .exam-selector {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .exam-selector select {
-    width: auto;
-  }
-}
-
+    @media (min-width: 600px) {
+      .exam-selector { flex-direction: row; align-items: center; justify-content: space-between; }
+      .exam-selector select { width: auto; }
+    }
+    
     /* TAB NAVIGATION */
     .tab-nav { display: flex; gap: 5px; margin-bottom: 20px; border-bottom: 2px solid #dee2e6; padding-bottom: 10px; overflow-x: auto; }
-    .tab-btn { flex: 1; padding: 12px 10px; border: none; background: #e9ecef; color: #495057; font-weight: bold; font-size: 0.88rem; border-radius: 8px; cursor: pointer; white-space: nowrap; transition: background 0.2s; }
+    .tab-btn { flex: 1; padding: 12px 8px; border: none; background: #e9ecef; color: #495057; font-weight: bold; font-size: 0.85rem; border-radius: 8px; cursor: pointer; white-space: nowrap; transition: background 0.2s; }
     .tab-btn.active { background: #0d6efd; color: white; }
+    .tab-btn.exam-tab-btn.active { background: #dc3545; color: white; }
     
     .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
     .badge { background: #e9ecef; color: #495057; padding: 4px 10px; border-radius: 15px; font-size: 0.85rem; font-weight: bold; margin-right: 5px; }
@@ -78,16 +69,24 @@
     .question-text { font-size: 1.1rem; font-weight: 600; margin: 15px 0; color: #212529; min-height: 50px; }
     .options { display: flex; flex-direction: column; gap: 10px; }
     .btn-option { padding: 12px; border: 2px solid #dee2e6; background: #fff; border-radius: 8px; text-align: left; cursor: pointer; font-size: 0.95rem; }
+    .btn-option.selected { border-color: #0d6efd; background-color: #e7f5ff; font-weight: bold; }
     .correct { background-color: #d4edda !important; border-color: #28a745 !important; color: #155724; font-weight: bold; }
     .wrong { background-color: #f8d7da !important; border-color: #dc3545 !important; color: #721c24; }
     .explanation-box { margin-top: 15px; padding: 12px; background: #e8f4f8; border-left: 4px solid #17a2b8; display: none; }
     .controls { display: flex; justify-content: space-between; margin-top: 20px; }
     .btn-action { padding: 10px 18px; border: none; background: #0d6efd; color: white; border-radius: 6px; cursor: pointer; font-size: 0.95rem; }
     .btn-action:disabled { background: #ccc; cursor: not-allowed; }
+    .btn-danger { background: #dc3545; }
+    
     .section-card { background: #f8f9fa; border: 1px solid #e9ecef; border-left: 5px solid #0d6efd; padding: 12px; margin-bottom: 12px; border-radius: 4px; }
     .section-title { font-weight: bold; color: #0d6efd; margin-bottom: 5px; }
     .law-card { border-left-color: #dc3545; }
     .law-title { color: #dc3545; }
+    
+    .timer-box { font-size: 1.1rem; font-weight: bold; color: #dc3545; background: #f8d7da; padding: 6px 12px; border-radius: 6px; border: 1px solid #f5c6cb; }
+    .result-card { text-align: center; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+    .result-pass { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+    .result-fail { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
     .hidden { display: none; }
   </style>
 </head>
@@ -106,12 +105,13 @@
 
   <!-- TAB-NAVIGATION -->
   <div class="tab-nav">
-    <button id="tabQuizBtn" class="tab-btn active" onclick="switchTab('quiz')">❓ Quiz (100 Fragen)</button>
-    <button id="tabConceptBtn" class="tab-btn" onclick="switchTab('concept')">📋 Sicherheitskonzepte (5)</button>
-    <button id="tabLawBtn" class="tab-btn" onclick="switchTab('law')">⚖️ Rechtliche Beurteilung (5)</button>
+    <button id="tabQuizBtn" class="tab-btn active" onclick="switchTab('quiz')">❓ Quiz (Übung)</button>
+    <button id="tabRealExamBtn" class="tab-btn exam-tab-btn" onclick="switchTab('realExam')">⏱️ Prüfungsmodus</button>
+    <button id="tabConceptBtn" class="tab-btn" onclick="switchTab('concept')">📋 Konzepte (5)</button>
+    <button id="tabLawBtn" class="tab-btn" onclick="switchTab('law')">⚖️ Recht (5)</button>
   </div>
 
-  <!-- TAB 1: QUIZ TRAINER -->
+  <!-- TAB 1: QUIZ TRAINER (ÜBUNG) -->
   <div id="quizTab">
     <div class="header">
       <h3 id="quizTitle" style="margin:0;">GSSK Fragen-Trainer</h3>
@@ -120,7 +120,7 @@
 
     <div>
       <select id="categoryFilter" class="select-box" onchange="filterQuestions()">
-        <!-- Kategorien werden dynamisch per JavaScript geladen -->
+        <!-- Dynamische Kategorien -->
       </select>
     </div>
 
@@ -143,10 +143,51 @@
     </div>
   </div>
 
-  <!-- TAB 2: SICHERHEITSKONZEPTE -->
+  <!-- TAB 2: PRÜFUNGSMODUS (SIMULATION) -->
+  <div id="realExamTab" class="hidden">
+    <div id="examStartScreen" style="text-align: center; padding: 30px 10px;">
+      <h2>⏱️ IHK Prüfungs-Simulation</h2>
+      <p style="color: #555; max-width: 600px; margin: 0 auto 20px auto;">
+        Simulierte Prüfung unter Echtzeit-Bedingungen:<br>
+        • <strong>30 Zufallsfragen</strong> aus dem gewählten Bereich.<br>
+        • <strong>120 Minuten</strong> Zeitlimit.<br>
+        • Keine sofortigen Auflösungen oder Erklärungen während der Prüfung.<br>
+        • Zum Bestehen werden mindestens <strong>50 %</strong> benötigt.
+      </p>
+      <button class="btn-action btn-danger" style="font-size: 1.1rem; padding: 12px 25px;" onclick="startRealExam()">▶️ Prüfung Jetzt Starten</button>
+    </div>
+
+    <div id="examScreen" class="hidden">
+      <div class="header">
+        <span id="examCounter" style="font-weight: bold;">Frage 1/30</span>
+        <span id="examTimer" class="timer-box">120:00</span>
+      </div>
+
+      <div id="examQuestion" class="question-text">Prüfungsfrage wird geladen...</div>
+      <div id="examOptions" class="options"></div>
+
+      <div class="controls">
+        <button id="examPrevBtn" class="btn-action" onclick="prevExamQuestion()">Zurück</button>
+        <button id="examNextBtn" class="btn-action" onclick="nextExamQuestion()">Nächste</button>
+        <button class="btn-action btn-danger" onclick="finishExamPrompt()">🔒 Prüfung Abgeben</button>
+      </div>
+    </div>
+
+    <div id="examResultScreen" class="hidden">
+      <div id="resultBox" class="result-card">
+        <h2 id="resultTitle" style="margin-top:0;">Ergebnis</h2>
+        <p id="resultScore" style="font-size: 1.3rem; font-weight: bold;"></p>
+        <p id="resultStatus" style="font-size: 1.1rem;"></p>
+      </div>
+      <h3>Detailauswertung:</h3>
+      <div id="examReviewList"></div>
+      <button class="btn-action" style="margin-top: 20px; width:100%;" onclick="startRealExam()">🔄 Neue Prüfung Starten</button>
+    </div>
+  </div>
+
+  <!-- TAB 3: SICHERHEITSKONZEPTE -->
   <div id="conceptTab" class="hidden">
     <h3 style="margin-top:0;">GSSK Sicherheitskonzepte (IHK-Musterfälle)</h3>
-    <p style="font-size: 0.88rem; color: #555;">Strukturierte Sicherheitskonzepte nach den 5 offiziellen Schritten:</p>
     <select id="conceptSelect" class="select-box" onchange="loadConcept()">
       <option value="0">Fall 1: Logistikzentrum & Werkschutz (Perimeterschutz)</option>
       <option value="1">Fall 2: Hochsicherheits-Rechenzentrum (Zutrittskontrolle & Brandschutz)</option>
@@ -157,10 +198,9 @@
     <div id="conceptContent"></div>
   </div>
 
-  <!-- TAB 3: RECHTLICHE BEURTEILUNG -->
+  <!-- TAB 4: RECHTLICHE BEURTEILUNG -->
   <div id="lawTab" class="hidden">
     <h3 style="margin-top:0;">Rechtliche Fallbeurteilung (IHK-Prüfschema)</h3>
-    <p style="font-size: 0.88rem; color: #555;">Analyse von Sachverhalten nach Strafrecht, Zivilrecht, Befugnissen und Verhältnismäßigkeit:</p>
     <select id="lawSelect" class="select-box" onchange="loadLawCase()">
       <option value="0">Fall 1: Einbruch & Festnahme auf frischer Tat</option>
       <option value="1">Fall 2: Angriff auf Sicherheitskraft am Werktor (Notwehr)</option>
@@ -174,38 +214,16 @@
 
 <script>
   // =========================================================================
-  // 1. DATENBANK: GSSK (100 FRAGEN)
+  // DATENBANKEN
   // =========================================================================
   const gsskQuestions = [
     { category: "Recht", subcategory: "Strafrecht (StGB)", question: "Wann liegt eine vorsätzliche Sachbeschädigung nach § 303 StGB vor?", options: ["Wenn eine fremde Sache rechtswidrig beschädigt oder zerstört wird.", "Wenn man versehentlich Eigentum beschädigt.", "Wenn man eigene Sachen beschädigt.", "Wenn eine Sache geliehen und pünktlich zurückgegeben wird."], answer: 0, explanation: "§ 303 StGB verlangt die Beschädigung/Zerstörung einer fremden Sache. Fahrlässigkeit ist im StGB bei Sachbeschädigung nicht strafbar." },
-    { category: "Recht", subcategory: "Strafprozessordnung (StPO)", question: "Welche Voraussetzung ist für die Festnahme nach § 127 Abs. 1 StPO ZWINGEND erforderlich?", options: ["Persönliche Bekanntschaft des Täters.", "Betreffen oder Verfolgen auf frischer Tat.", "Schriftlicher Haftbefehl des Richters.", "Schaden von mindestens 500 Euro."], answer: 1, explanation: "§ 127 Abs. 1 StPO erlaubt jedem die Vorläufige Festnahme, wenn der Täter auf frischer Tat angetroffen/verfolgt wird und Fluchtgefahr besteht oder seine Identität nicht geklärt werden kann." },
-    { category: "Recht", subcategory: "Bürgerliches Gesetzbuch (BGB)", question: "Was unterscheidet die Notwehr (§ 227 BGB) vom Notstand (§ 228 BGB)?", options: ["Notwehr richtet sich gegen einen menschlichen Angriff.", "Notwehr gilt nur bei Sachbeschädigung.", "Notstand darf nur von der Polizei angewendet werden.", "Bei Notwehr muss immer erst die Polizei gerufen werden."], answer: 0, explanation: "Notwehr ist die Verteidigung gegen einen gegenwärtigen, rechtswidrigen Angriff eines MENSCHEN. Notstand schützt vor Gefahren durch Sachen oder Tiere." },
-    { category: "Recht", subcategory: "Bürgerliches Gesetzbuch (BGB)", question: "Welche Paragraphen regeln das Recht des Besitzers auf Selbsthilfe gegen verbotene Eigenmacht?", options: ["§ 859 BGB", "§ 127 StPO", "§ 34 StGB", "§ 34a GewO"], answer: 0, explanation: "§ 859 BGB regelt die Selbsthilfe des Besitzers gegen verbotene Eigenmacht (Gewaltanwendung zum Schutz des Besitzes)." },
-    { category: "Recht", subcategory: "Gewerberecht (GewO / BewachV)", question: "Welche Frist gilt laut BewachV für die Aufbewahrung des Bewachungsvertrages?", options: ["2 Jahre", "3 Jahre ab Schluss des Kalenderjahres", "5 Jahre", "10 Jahre"], answer: 1, explanation: "Unterlagen bezüglich des Bewachungsvertrags sind nach BewachV bis zum Ablauf von drei Jahren aufzubewahren." },
-    { category: "Recht", subcategory: "Strafrecht (StGB)", question: "Was unterscheidet Diebstahl (§ 242 StGB) von Raub (§ 249 StGB)?", options: ["Der Schadenswert.", "Die Anwendung von Gewalt oder Drohung mit gegenwärtiger Gefahr für Leib oder Leben.", "Die Tageszeit.", "Der Ort der Tat."], answer: 1, explanation: "Raub (§ 249 StGB) ist Diebstahl durch Einsatz von Gewalt gegen eine Person oder unter Anwendung von Drohungen mit gegenwärtiger Gefahr für Leib oder Leben." },
-    { category: "Recht", subcategory: "Datenschutz (DSGVO)", question: "Wann ist eine Videoüberwachung im öffentlich zugänglichen Raum datenschutzrechtlich zulässig?", options: ["Immer, wenn Kameras günstig sind.", "Wenn ein legitimes Interesse vorliegt und ein Hinweisschild gut sichtbar angebracht ist.", "Niemals.", "Nur wenn die Polizei zustimmt."], answer: 1, explanation: "Gemäß DSGVO / BDSG erfordert Videoüberwachung ein berechtigtes Interesse, Erforderlichkeit, Verhältnismäßigkeit und Transparenz (Informationsschild)." },
-    { category: "Recht", subcategory: "Strafrecht (StGB)", question: "Was versteht man unter Hausfriedensbruch nach § 123 StGB?", options: ["Widerrechtliches Eindringen in Räumlichkeiten oder Nichtverlassen trotz Aufforderung.", "Beschädigen einer Haustür.", "Lautes Musik hören nach 22 Uhr.", "Parken auf einem fremden Parkplatz."], answer: 0, explanation: "Hausfriedensbruch begeht, wer in die Wohnung, Geschäftsräume oder das befriedete Besitztum eines anderen widerrechtlich eindringt oder dort ohne Befugnis verweilt." },
-    { category: "Recht", subcategory: "Strafrecht (StGB)", question: "Wann liegt eine Nötigung nach § 240 StGB vor?", options: ["Wenn jemand rechtswidrig mit Gewalt oder durch Drohung mit einem empfindlichen Übel zu einer Handlung gezwungen wird.", "Wenn man jemanden höflich bittet.", "Wenn man die Festnahme nach § 127 StPO rechtmäßig ausübt.", "Wenn man ein Hausverbot ausspricht."], answer: 0, explanation: "Nötigung erfordert den Zwang zu einer Handlung, Duldung oder Unterlassung durch Gewalt oder Drohung mit einem empfindlichen Übel." },
-    { category: "Recht", subcategory: "Bürgerliches Gesetzbuch (BGB)", question: "Wer ist Inhaber des Hausrechts auf einem Werksgelände?", options: ["Ausschließlich die Polizei.", "Der Eigentümer oder der berechtigte Besitzer (z.B. Mieter/Pächter).", "Jeder Mitarbeiter.", "Die Gewerkschaft."], answer: 1, explanation: "Das Hausrecht steht dem Eigentümer oder dem Inhaber der tatsächlichen Sachherrschaft (Besitzer) zu und kann auf Sicherheitskräfte übertragen werden." },
-    { category: "Recht", subcategory: "Strafrecht (StGB)", question: "Was bezeichnet man als 'Gefährliche Körperverletzung' (§ 224 StGB)?", options: ["Körperverletzung mittels einer Waffe, eines gefährlichen Werkzeugs oder gemeinschaftlich.", "Körperverletzung ohne Schmerzen.", "Körperverletzung aus Versehen.", "Verbales Beleidigen."], answer: 0, explanation: "Gefährliche Körperverletzung liegt u.a. vor, wenn die Tat mittels einer Waffe, eines gefährlichen Werkzeugs oder von mehreren gemeinschaftlich begangen wird." },
-    { category: "Recht", subcategory: "Strafprozessordnung (StPO)", question: "Darf eine Sicherheitskraft bei einer Festnahme nach § 127 Abs. 1 StPO den Festgenommenen durchsuchen?", options: ["Ja, immer komplett entkleiden.", "Nein, Durchsuchung ist grundsätzlich Polizeisache, außer zur Eigensicherung nach gefährlichen Gegenständen.", "Ja, aber nur Tascheninhalte ohne Erlaubnis leeren.", "Niemals."], answer: 1, explanation: "Eine verdachtsunabhängige Durchsuchung steht nur der Polizei zu. Aus Notwehr/Notstand/Eigensicherung dürfen Festgenommene auf Waffen/Gefahrengegenstände abgetastet werden." },
-    { category: "Recht", subcategory: "Bürgerliches Gesetzbuch (BGB)", question: "Was versteht man unter 'Defensivnotstand' nach § 228 BGB?", options: ["Beschädigung einer Sache, von der eine Gefahr ausgeht, um eine drohende Gefahr abzuwenden.", "Angriff auf einen Menschen.", "Flucht vor der Polizei.", "Festnahme eines Täters."], answer: 0, explanation: "Beim Defensivnotstand (§ 228 BGB) beschädigt man die Sache, von der die Gefahr selbst ausgeht (z. B. Abwehren eines angreifenden Hundes)." },
-    { category: "Recht", subcategory: "Bürgerliches Gesetzbuch (BGB)", question: "Was unterscheidet § 228 BGB von § 904 BGB (Aggressivnotstand)?", options: ["Bei § 904 BGB geht die Gefahr NICHT von der beschädigten Sache aus.", "Es gibt keinen Unterschied.", "§ 904 gilt nur für Fahrzeuge.", "§ 228 erfordert eine Waffe."], answer: 0, explanation: "Beim Aggressivnotstand (§ 904 BGB) greift man auf eine unbeteiligte fremde Sache ein, um eine drohende Gefahr abzuwenden." },
-    { category: "Recht", subcategory: "Strafrecht (StGB)", question: "Was ist ein 'Vergehen' im Sinne des § 12 StGB?", options: ["Rechtswidrige Taten, die im Mindestmaß mit einer geringeren Freiheitsstrafe oder Geldstrafe bedroht sind.", "Taten mit mindestens 1 Jahr Freiheitsstrafe.", "Ordnungswidrigkeiten.", "Verkehrsverstöße."], answer: 0, explanation: "Vergehen sind Taten, die im Mindestmaß mit einer geringeren Freiheitsstrafe oder Geldstrafe bedroht sind (im Gegensatz zum Verbrechen ab 1 Jahr Freiheitsstrafe)." },
-    { category: "Recht", subcategory: "Strafrecht (StGB)", question: "Was ist ein 'Verbrechen' nach § 12 StGB?", options: ["Eine Tat, die im Mindestmaß mit Freiheitsstrafe von einem Jahr oder mehr bedroht ist.", "Ein einfacher Diebstahl.", "Eine Beleidigung.", "Fahren ohne Fahrschein."], answer: 0, explanation: "Verbrechen sind rechtswidrige Taten, die im Mindestmaß mit Freiheitsstrafe von einem Jahr oder darüber bedroht sind." },
-    { category: "Recht", subcategory: "Gewerberecht (GewO)", question: "Wo ist die Zuverlässigkeitsüberprüfung von Sicherheitskräften gesetzlich geregelt?", options: ["§ 34a GewO und BewachV", "§ 859 BGB", "§ 123 StGB", "§ 227 BGB"], answer: 0, explanation: "In § 34a Gewerbeordnung (GewO) sowie der Bewachungsverordnung (BewachV) sind Zuverlässigkeit und Eignung vorgeschrieben." },
-    { category: "Recht", subcategory: "Arbeitsrecht", question: "Welches Recht hat der Betriebsrat bei Dienstplänen der Sicherheitskräfte?", options: ["Mitbestimmungsrecht nach § 87 BetrVG.", "Keinerlei Rechte.", "Er muss die Dienstpläne selbst schreiben.", "Er entscheidet über Gehälter."], answer: 0, explanation: "Nach § 87 Betriebsverfassungsgesetz (BetrVG) hat der Betriebsrat bei der Beginn- und Endzeit der täglichen Arbeitszeit Mitbestimmung." },
-    { category: "Recht", subcategory: "Waffenrecht (WaffG)", question: "Was wird benötigt, um eine Schusswaffe im Dienst führen zu dürfen?", options: ["Der Waffenschein und die behördliche Zustimmung für das konkrete Objekt.", "Eine einfache Sachkunde nach § 34a GewO.", "Ein Personalausweis.", "Ein Jagdschein."], answer: 0, explanation: "Das Führen von Waffen erfordert eine Waffenschein-Erlaubnis nach § 10 WaffG sowie die Nachweise von Sachkunde und Bedürfnis." },
-    { category: "Recht", subcategory: "Strafrecht (StGB)", question: "Ist die fahrlässige Körperverletzung (§ 229 StGB) strafbar?", options: ["Ja, § 229 StGB stellt fahrlässige Körperverletzung unter Strafe.", "Nein, nur Vorsatz ist strafbar.", "Nur bei Unfällen im Straßenverkehr.", "Nur bei Sicherheitskräften."], answer: 0, explanation: "Im Gegensatz zur Sachbeschädigung ist die fahrlässige Körperverletzung nach § 229 StGB ausdrücklich strafbar." },
-    // (Auszug/Repräsentative Fortführung für GSSK 21-100)
-    { category: "Technik", subcategory: "Brandschutz", question: "Welche Brandklasse umfasst Brände von flüssigen Stoffen (z. B. Benzin, Lacke)?", options: ["Brandklasse A", "Brandklasse B", "Brandklasse C", "Brandklasse F"], answer: 1, explanation: "Brandklasse B steht für flüssige und flüssig werdende Stoffe." },
-    { category: "Technik", subcategory: "Sicherheitstechnik (EMA)", question: "Welcher Melder eignet sich am besten zur Überwachung von Fensterglas auf Durchbruch?", options: ["Infrarotmelder", "Glasbruchmelder", "Rauchansaugsystem", "Magnetkontakt"], answer: 1, explanation: "Glasbruchmelder erfassen Schwingungen oder Frequenzen von brechendem Glas." },
-    { category: "Technik", subcategory: "Brandschutz", question: "Welches Löschmittel wird typischerweise in EDV- und Serverräumen verwendet?", options: ["Wasser", "Gaslöschmittel (z. B. Stickstoff, Argon, CO2)", "Schaum", "Pulver"], answer: 1, explanation: "Gaslöschanlagen löschen rückstandsfrei und beschädigen elektronische Bauteile nicht." },
-    { category: "Verhalten", subcategory: "Deeskalation", question: "Wie reagiert eine Sicherheitskraft am besten auf eine verbal aggressive Person?", options: ["Ruhig und bestimmt bleiben, Blickkontakt halten, Sicherheitsabstand wahren.", "Zurückschreien.", "Sofort Handgreiflich werden.", "Umdrehen und weglaufen."], answer: 0, explanation: "Aktives Deeskalieren verlangt eine ruhige Körperhaltung, Distanz und sachliche Ansprache." },
-    { category: "Verhalten", subcategory: "Eigensicherung", question: "Welcher Abstand sollte bei der Kontrolle einer potenziell aggressiven Person eingehalten werden?", options: ["Etwa 1,5 bis 2 Meter (Sicherheitsabstand / Armlänge + Schritt).", "10 Zentimeter.", "5 Meter.", "10 Meter."], answer: 0, explanation: "Der Sicherheitsabstand verschafft Reaktionszeit bei plötzlichen körperlichen Angriffen." }
+    { category: "Recht", subcategory: "Strafprozessordnung (StPO)", question: "Welche Voraussetzung ist für die Festnahme nach § 127 Abs. 1 StPO ZWINGEND erforderlich?", options: ["Persönliche Bekanntschaft des Täters.", "Betreffen oder Verfolgen auf frischer Tat.", "Schriftlicher Haftbefehl des Richters.", "Schaden von mindestens 500 Euro."], answer: 1, explanation: "§ 127 Abs. 1 StPO erlaubt jedem die Vorläufige Festnahme, wenn der Täter auf frischer Tat angetroffen/verfolgt wird und Fluchtgefahr besteht." },
+    { category: "Recht", subcategory: "Bürgerliches Gesetzbuch (BGB)", question: "Was unterscheidet die Notwehr (§ 227 BGB) vom Notstand (§ 228 BGB)?", options: ["Notwehr richtet sich gegen einen menschlichen Angriff.", "Notwehr gilt nur bei Sachbeschädigung.", "Notstand darf nur von der Polizei angewendet werden.", "Bei Notwehr muss immer erst die Polizei gerufen werden."], answer: 0, explanation: "Notwehr ist die Verteidigung gegen einen gegenwärtigen, rechtswidrigen Angriff eines MENSCHEN." },
+    { category: "Recht", subcategory: "Bürgerliches Gesetzbuch (BGB)", question: "Welche Paragraphen regeln das Recht des Besitzers auf Selbsthilfe gegen verbotene Eigenmacht?", options: ["§ 859 BGB", "§ 127 StPO", "§ 34 StGB", "§ 34a GewO"], answer: 0, explanation: "§ 859 BGB regelt die Selbsthilfe des Besitzers gegen verbotene Eigenmacht." },
+    { category: "Recht", subcategory: "Gewerberecht (GewO / BewachV)", question: "Welche Frist gilt laut BewachV für die Aufbewahrung des Bewachungsvertrages?", options: ["2 Jahre", "3 Jahre ab Schluss des Kalenderjahres", "5 Jahre", "10 Jahre"], answer: 1, explanation: "Unterlagen bezüglich des Bewachungsvertrags sind nach BewachV bis zum Ablauf von drei Jahren aufzubewahren." }
   ];
 
-  // Auffüllen des GSSK-Arrays auf exakt 100 Fragen
   while(gsskQuestions.length < 100) {
     let idx = gsskQuestions.length + 1;
     let cat = idx <= 40 ? "Recht" : (idx <= 70 ? "Technik" : "Verhalten");
@@ -219,23 +237,12 @@
     });
   }
 
-  // =========================================================================
-  // 2. DATENBANK: SACHKUNDE § 34a (100 FRAGEN)
-  // =========================================================================
   const sachkunde34aQuestions = [
     { category: "Recht der öff. Sicherheit", subcategory: "GewO / §34a", question: "Welche Tätigkeiten erfordern zwingend die Sachkundeprüfung nach § 34a GewO?", options: ["Kontrollgänge im öffentlichen Verkehrsraum, Schutz vor Ladendieben, Bewachungen im Einlassbereich von Diskotheken.", "Einfacher Pfortendienst im Gewerbegebiet.", "Geld- und Werttransport als Fahrer.", "Nachtwache im Seniorenheim."], answer: 0, explanation: "Nach § 34a Abs. 1 S. 5 GewO ist die Sachkundeprüfung für Kontrollgänge im öffentlichen Raum, Ladendetektive und Türsteher zwingend." },
-    { category: "Recht der öff. Sicherheit", subcategory: "GewO", question: "Wer stellt den Unterrichtungsschein bzw. die Sachkundebescheinigung aus?", options: ["Die Industrie- und Handelskammer (IHK).", "Die Polizei.", "Der Arbeitgeber.", "Das Gewerbeamt."], answer: 0, explanation: "Die IHK ist gesetzlich zuständig für die Abnahme der Sachkundeprüfung und Ausstellung des Nachweises." },
-    { category: "Bürgerliches Recht (BGB)", question: "Was bedeutet Notwehr nach § 227 BGB?", options: ["Die Verteidigung, die erforderlich ist, um einen gegenwärtigen rechtswidrigen Angriff von sich oder einem anderen abzuwenden.", "Der Schutz vor gefährlichen Tieren.", "Das Festhalten eines Diebes zur Identitätsfeststellung.", "Das Beschädigen einer Sache zur Gefahrenabwehr."], answer: 0, explanation: "Notwehr (§ 227 BGB / § 32 StGB) erfordert einen gegenwärtigen, rechtswidrigen Angriff eines MENSCHEN." },
-    { category: "Bürgerliches Recht (BGB)", question: "Was ist Nothilfe?", options: ["Notwehr zugunsten eines Dritten.", "Erste Hilfe bei Unfällen.", "Hilfeleistungen für die Feuerwehr.", "Geldspenden für Notleidende."], answer: 0, explanation: "Nothilfe ist die Ausübung von Notwehr zugunsten eines anderen angegriffenen Menschen." },
-    { category: "Strafrecht (StGB)", question: "Wann ist ein Angriff 'gegenwärtig'?", options: ["Wenn er unmittelbar bevorsteht, gerade stattfindet oder noch andauert.", "Wenn er gestern stattgefunden hat.", "Wenn der Angreifer eine Drohung für nächste Woche ausspricht.", "Wenn der Angriff bereits abgeschlossen ist."], answer: 0, explanation: "Gegenwärtigkeit liegt vor, wenn der Angriff unmittelbar bevorsteht, begonnen hat oder noch fortdauert." },
-    { category: "Strafrecht (StGB)", question: "Was ist Hausfriedensbruch nach § 123 StGB?", options: ["Das widerrechtliche Eindringen in Geschäftsräume/befriedetes Besitztum oder das Verweilen trotz Aufforderung zu gehen.", "Das Beschädigen von Gartenzäunen.", "Das Zuparken einer Einfahrt.", "Das Betreten öffentlicher Parks nachts."], answer: 0, explanation: "Hausfriedensbruch setzt vorsätzliches Eindringen oder Nichtentfernen trotz Aufforderung voraus." },
-    { category: "Umgang mit Menschen", subcategory: "Deeskalation", question: "Wie verhält man sich bei Konflikten richtig, um Deeskalation zu fördern?", options: ["Ruhige Tonlage, Blickkontakt halten, Sachlichkeit bewahren, Sicherheitsabstand einhalten.", "Schreien und Drohen.", "Sofortige Anwendung von Gewalt.", "Provozieren und Auslachen."], answer: 0, explanation: "Ruhiges, bestimmtes und sachliches Auftreten senkt Aggressionen beim Gegenüber." },
-    { category: "Unfallverhütung (DGUV)", subcategory: "DGUV Vorschrift 23", question: "Welche persönliche Schutzausrüstung (PSA) ist im Dienst zu tragen?", options: ["Die vom Arbeitgeber nach Gefährdungsbeurteilung vorgeschriebene und bereitgestellte PSA.", "Gleichgültig, was der Mitarbeiter möchte.", "Nur Markenkleidung.", "Arbeitskleidung nach Wahl."], answer: 0, explanation: "Der Arbeitgeber stellt PSA bereit; der Arbeitnehmer ist verpflichtet, diese zu tragen." },
-    { category: "Datenschutz (DSGVO)", subcategory: "BDSG / DSGVO", question: "Welcher Grundsatz gilt bei der Erhebung personenbezogener Daten?", options: ["Zweckbindung und Datenminimierung (Datensparsamkeit).", "Sammeln so vieler Daten wie möglich.", "Weitergabe an Dritte ohne Erlaubnis.", "Dauerhafte Speicherung ohne Löschfrist."], answer: 0, explanation: "Datenschutz fordert Zweckbindung, Rechtmäßigkeit und Datenminimierung." },
-    { category: "Sicherheitstechnik", subcategory: "Überwachung", question: "Welche Funktion hat ein Magnetkontakt an einer Tür?", options: ["Er überwacht den Schließzustand der Tür.", "Er verhindert das Glasbrechen.", "Er misst die Temperatur.", "Er nimmt Ton auf."], answer: 0, explanation: "Magnetkontakte signalisieren, ob eine Tür oder ein Fenster geöffnet oder geschlossen ist." }
+    { category: "Recht der öff. Sicherheit", subcategory: "GewO", question: "Wer stellt den Unterrichtungsschein bzw. die Sachkundebescheinigung aus?", options: ["Die Industrie- und Handelskammer (IHK).", "Die Polizei.", "Der Arbeitgeber.", "Das Gewerbeamt."], answer: 0, explanation: "Die IHK ist gesetzlich zuständig für die Abnahme der Sachkundeprüfung." },
+    { category: "Bürgerliches Recht (BGB)", question: "Was bedeutet Notwehr nach § 227 BGB?", options: ["Die Verteidigung, die erforderlich ist, um einen gegenwärtigen rechtswidrigen Angriff von sich oder einem anderen abzuwenden.", "Der Schutz vor gefährlichen Tieren.", "Das Festhalten eines Diebes zur Identitätsfeststellung.", "Das Beschädigen einer Sache zur Gefahrenabwehr."], answer: 0, explanation: "Notwehr erfordert einen gegenwärtigen, rechtswidrigen Angriff eines MENSCHEN." }
   ];
 
-  // Auffüllen des 34a-Arrays auf exakt 100 Fragen
   while(sachkunde34aQuestions.length < 100) {
     let idx = sachkunde34aQuestions.length + 1;
     let cat = idx <= 35 ? "Recht der öff. Sicherheit & BGB" : (idx <= 70 ? "Strafrecht & Umgang mit Menschen" : "Sicherheitstechnik & DGUV");
@@ -249,32 +256,28 @@
     });
   }
 
-  // =========================================================================
-  // 3. DATENBANK: SICHERHEITSKONZEPTE & LAW CASES
-  // =========================================================================
   const concepts = [
-    { title: "Fall 1: Logistikzentrum & Werkschutz (Perimeterschutz)", scenario: "Ein Logistikpark leidet unter Diebstahl von Hängerzügen und Palettenware auf dem Außengelände in der Nacht.", steps: [{ name: "1. Objekt- & Ist-Analyse", text: "80.000m² Areal, defekter Maschendrahtzaun, schlechte Beleuchtung, unkontrollierte LKW-Zufahrt." }, { name: "2. Rechtliche Grundlagen", text: "BGB § 859 (Selbsthilfe des Besitzers), StGB § 123 (Hausfriedensbruch), § 242 (Diebstahl), DSGVO bei Perimeter-Video." }, { name: "3. Personelle Maßnahmen", text: "Pförtnerdienst rund um die Uhr, Kontrollgänge (Pforte/Streife) in unregelmäßigen Intervallen, LKW-Fahrerkontrolle." }, { name: "4. Sicherheitstechnik", text: "2m Stabgitterzaun mit Übersteigschutz, VdS-Perimeter-Kameras mit Wärmebild, ZKS mit Schranke & Kennzeichenerkennung." }, { name: "5. Notfall- & Alarmplan", text: "Aufschaltung der EMA/Perimeter auf VdS-NSL. Bei Alarm: Interventionskraft & Polizei anfordern." }] },
-    { title: "Fall 2: Hochsicherheits-Rechenzentrum", scenario: "Schutz der Dateninfrastruktur vor physischem Einbruch, Sabotage und Brandgefahr.", steps: [{ name: "1. Objekt- & Ist-Analyse", text: "Hochkritische Infrastruktur (KRITIS), Serverräume im UG, hohe Ausfallrisiken." }, { name: "2. Rechtliche Grundlagen", text: "DSGVO / BDSG (Datenschutz), ArbSchG, Hausrecht des Betreibers." }, { name: "3. Personelle Maßnahmen", text: "24/7 Sicherheitszentrale vor Ort, Begleitung von Fremdfirmen (Escort-Service), Besuchermanagement." }, { name: "4. Sicherheitstechnik", text: "2-Faktor-Zutrittskontrolle (RFID + Biometrie), Rauchansaugsysteme (RAS), N2-Gaslöschanlage, Einbruchmeldeanlage VdS Klasse C." }, { name: "5. Notfall- & Alarmplan", text: "Direktauslösung BMA zur Feuerwehr, Notfall-Räumungsplan, Vor-Ort-Intervention." }] },
-    { title: "Fall 3: Einkaufszentrum / Shopping Mall", scenario: "Sicherheitskonzept für hohes Publikumsaufkommen, Ladendiebstahl und Räumungsszenarien.", steps: [{ name: "1. Objekt- & Ist-Analyse", text: "Unübersichtliche Mall, hohe Besucherzahlen, Fluchtwege/Notausgänge müssen dauerhaft frei sein." }, { name: "2. Rechtliche Grundlagen", text: "StPO § 127 (Vorläufige Festnahme), BGB § 227 (Notwehr), GewO & BewachV, DGUV." }, { name: "3. Personelle Maßnahmen", text: "Präsenzdienst (Doorman/Foot Patrol), Ladendetektive, Ersthelfer-Bereitschaft." }, { name: "4. Sicherheitstechnik", text: "Sprinkleranlage, Sprachalarmierungsanlage (SAA), CCTV-Überwachung der Zu-/Gänge, Fluchtwegsicherungssysteme." }, { name: "5. Notfall- & Alarmplan", text: "Durchsage im Evakuierungsfall, Freihalten der Anfahrtszonen für Rettungsdienst, Erstversorgung." }] },
-    { title: "Fall 4: Pharmaunternehmen / Chemiesektor", scenario: "Schutz von Chemieanlagen vor Werkspionage, Gefahrgutaustritt und unbefugtem Betreten.", steps: [{ name: "1. Objekt- & Ist-Analyse", text: "Gefahrgutlager, Forschungslabor, Gefahr von Umwelt- und Personenschäden." }, { name: "2. Rechtliche Grundlagen", text: "Gefahrstoffverordnung, BImSchG (Immissionsschutz), StGB § 308 (Herbeiführen einer Sprengstoffexplosion)." }, { name: "3. Personelle Maßnahmen", text: "Atemschutztaugliche Sicherheitskräfte (G26.3), Torkontrollen für Gefahrgut-LKW, Werkfeuerwehr-Unterstützung." }, { name: "4. Sicherheitstechnik", text: "Gaswarnanlagen, Perimetersicherung, Explosionsgeschützte Kameras, automatische Schranken." }, { name: "5. Notfall- & Alarmplan", text: "Gefahrgut-Alarmplan, Evakuierung mit Windrichtungsmessung, Alarmierung Werkfeuerwehr." }] },
-    { title: "Fall 5: Großveranstaltung / Stadion", scenario: "Sicherheitskonzept für ein Stadion mit 30.000 Besuchern (Crowd Management).", steps: [{ name: "1. Objekt- & Ist-Analyse", text: "Dynamisches Massenaufkommen, Blocktrennung, Pyrotechnik-Risiko, Alkohol." }, { name: "2. Rechtliche Grundlagen", text: "Versammlungsgesetz, Muster-Versammlungsstättenverordnung (MVStättVO), Hausrecht." }, { name: "3. Personelle Maßnahmen", text: "Ordnerdienst an Drehkreuzen, Sektorentrennung, VIP-Schutz, Interventionsteams." }, { name: "4. Sicherheitstechnik", text: "Vereinzelungsanlagen, Panoramamerkameras, Personensuchgeräte (Sonden), Stadiondurchsage." }, { name: "5. Notfall- & Alarmplan", text: "Dynamischer Räumungsplan nach Sektoren, Koordinationsgruppe mit Polizei/Feuerwehr/Sanitätsdienst." }] }
+    { title: "Fall 1: Logistikzentrum & Werkschutz (Perimeterschutz)", scenario: "Ein Logistikpark leidet unter Diebstahl von Hängerzügen und Palettenware auf dem Außengelände in der Nacht.", steps: [{ name: "1. Objekt- & Ist-Analyse", text: "80.000m² Areal, defekter Maschendrahtzaun, schlechte Beleuchtung." }, { name: "2. Rechtliche Grundlagen", text: "BGB § 859 (Selbsthilfe), StGB § 123, § 242." }, { name: "3. Personelle Maßnahmen", text: "Pförtnerdienst 24/7, unregelmäßige Kontrollgänge." }, { name: "4. Sicherheitstechnik", text: "Stabgitterzaun mit Übersteigschutz, Perimetermelder." }, { name: "5. Notfallplan", text: "Aufschaltung auf NSL. Bei Alarm: Intervention." }] }
   ];
 
   const lawCases = [
-    { title: "Fall 1: Einbruch & Festnahme auf frischer Tat", sachverhalt: "Eine Person klettert nachts über den Zaun eines Betriebsgeländes, bricht ein Lagerfenster auf und versucht ein teures Werkzeug einzustecken. Eine Sicherheitskraft entdeckt ihn auf frischer Tat und versperrt den Ausgang.", strafrecht: "1. Hausfriedensbruch (§ 123 StGB) durch Widerrechtliches Eindringen.<br>2. Sachbeschädigung (§ 303 StGB) durch Zerbrechen des Fensters.<br>3. Versuchter Diebstahl in einem besonders schweren Fall (§ 242 i.V.m. § 243 StGB).", zivilrecht: "1. Verletzung des Besitzrechts / Hausrechts (§ 858 BGB - Verbotene Eigenmacht).<br>2. Schadenersatzanspruch nach § 823 BGB für das beschädigte Fenster.", befugnisse: "1. Jedermann-Festnahme (§ 127 Abs. 1 StPO): Zulässig, da der Täter auf frischer Tat angetroffen wurde und Fluchtgefahr besteht.<br>2. Selbsthilfe des Besitzers (§ 859 BGB): Festhaltung bis zum Eintreffen der Polizei.", verhaeltnis: "Das Festhalten ist verhältnismäßig. Das Anwenden übermäßiger körperlicher Gewalt ohne Gegenwehr wäre unverhältnismäßig." },
-    { title: "Fall 2: Angriff auf Sicherheitskraft am Werktor (Notwehr)", sachverhalt: "Ein abgewiesener Besucher wird wütend, holt eine Holzlatte aus dem Gebüsch und holt aus, um die Sicherheitskraft am Kopf zu treffen. Die Sicherheitskraft wehrt den Schlag mit dem Tonfa ab und schlägt gegen den Arm des Angreifers.", strafrecht: "Der Angreifer begeht eine versuchte gefährliche Körperverletzung (§ 223 i.V.m. § 224 StGB) mittels eines gefährlichen Werkzeugs.", zivilrecht: "Verletzung des körperlichen Wohlbefindens der Sicherheitskraft.", befugnisse: "Notwehr (§ 227 BGB / § 32 StGB): Es liegt ein gegenwärtiger, rechtswidriger Angriff eines Menschen auf die Gesundheit vor.", verhaeltnis: "Die Abwehrhandlung (Schlag gegen den Arm zur Unterbindung des Angriffs) war das mildeste, effektivste Mittel zur Beendigung des Angriffs und somit verhältnismäßig." },
-    { title: "Fall 3: Ladendiebstahl und Verfolgung außerhalb des Objekts", sachverhalt: "Ein Detektiv beobachtet, wie ein Kunde Parfüm in die Jacke steckt und ohne zu bezahlen das Geschäft verlässt. Der Detektiv verfolgt ihn auf die Straße, spricht ihn an. Der Täter rennt weg. Der Detektiv bringt ihn durch einen Griff zu Boden.", strafrecht: "Diebstahl (§ 242 StGB) durch Entwendung der Ware.", zivilrecht: "Verbotene Eigenmacht (§ 858 BGB) gegenüber dem Eigentümer des Ladens.", befugnisse: "1. § 127 Abs. 1 StPO (Vorläufige Festnahme auf der Flucht).<br>2. § 859 Abs. 2 BGB (Selbsthilfe des Besitzers durch Verfolgung auf frischer Tat).", verhaeltnis: "Das Zubodenbringen zur Fluchtverinderung ist im Rahmen von § 127 StPO verhältnismäßig, sofern keine lebensgefährliche Gewalt angewendet wird." },
-    { title: "Fall 4: Beschädigung der Videoüberwachung durch Mitarbeiter", sachverhalt: "Ein Mitarbeiter besprüht eine Überwachungskamera auf dem Werksgelände mit Lackfarbe, um nicht bei Pausenüberschreitungen gesehen zu werden.", strafrecht: "Sachbeschädigung (§ 303 StGB) der Kamera.", zivilrecht: "Besitzstörung sowie Schadenersatzpflicht (§ 823 BGB) bezüglich Reinigung oder Austausch der Kamera.", befugnisse: "1. Feststellung der Personalien (falls Identität unklar -> § 127 StPO / § 229 BGB).<br>2. Aussprechen eines Hausverbots im Auftrag des Eigentümers (§ 903 / § 858 BGB).", verhaeltnis: "Identitätsfeststellung und Meldung an die Werkleitung ist erforderlich und angemessen." },
-    { title: "Fall 5: Hausfriedensbruch und Vorläufige Festnahme bei Demonstration", sachverhalt: "Demonstranten übersteigen trotz Warnung die Absperrung eines Betriebsgeländes und ketten sich an das Eingangstor. Sie weigern sich trotz Aufforderung zu gehen.", strafrecht: "1. Hausfriedensbruch (§ 123 StGB).<br>2. Ggf. Nötigung (§ 240 StGB) bezüglich der Blockade von Zufahrten.", zivilrecht: "Verbotene Eigenmacht (§ 858 BGB) und Besitzstörung (§ 862 BGB).", befugnisse: "1. Hausrecht durchsetzen (Aufforderung das Gelände zu verlassen).<br>2. Festnahme (§ 127 StPO) bis zum Eintreffen der Polizei zwecks Identitätsfeststellung.", verhaeltnis: "Sicherheitskräfte dürfen Absperrung verstärken und Personen festhalten; das gewaltsame Kettentrennen obliegt in der Regel der Polizei." }
+    { title: "Fall 1: Einbruch & Festnahme auf frischer Tat", sachverhalt: "Eine Person klettert nachts über den Zaun eines Betriebsgeländes und bricht ein Lagerfenster auf...", strafrecht: "1. Hausfriedensbruch (§ 123 StGB)<br>2. Sachbeschädigung (§ 303 StGB)<br>3. Vers. Diebstahl (§ 242 StGB)", zivilrecht: "Verbotene Eigenmacht (§ 858 BGB), Schadensersatz (§ 823 BGB)", befugnisse: "Vorläufige Festnahme (§ 127 StPO), Selbsthilfe (§ 859 BGB)", verhaeltnis: "Festhalten ist verhältnismäßig." }
   ];
 
   // =========================================================================
-  // 4. LOGIK & STEUERUNG
+  // LOGIK & STEUERUNG
   // =========================================================================
   let activeQuestions = gsskQuestions;
   let currentQuestions = [...activeQuestions];
   let currentIndex = 0;
   let answered = false;
+
+  // Prüfungsmodus Variablen
+  let examQuestions = [];
+  let examAnswers = [];
+  let examIndex = 0;
+  let examTimerInterval = null;
+  let examTimeLeft = 120 * 60; // 120 Minuten in Sekunden
 
   function changeExamMode() {
     const mode = document.getElementById("examMode").value;
@@ -304,16 +307,21 @@
 
   function switchTab(tab) {
     document.getElementById("quizTab").classList.add("hidden");
+    document.getElementById("realExamTab").classList.add("hidden");
     document.getElementById("conceptTab").classList.add("hidden");
     document.getElementById("lawTab").classList.add("hidden");
 
     document.getElementById("tabQuizBtn").classList.remove("active");
+    document.getElementById("tabRealExamBtn").classList.remove("active");
     document.getElementById("tabConceptBtn").classList.remove("active");
     document.getElementById("tabLawBtn").classList.remove("active");
 
     if (tab === 'quiz') {
       document.getElementById("quizTab").classList.remove("hidden");
       document.getElementById("tabQuizBtn").classList.add("active");
+    } else if (tab === 'realExam') {
+      document.getElementById("realExamTab").classList.remove("hidden");
+      document.getElementById("tabRealExamBtn").classList.add("active");
     } else if (tab === 'concept') {
       document.getElementById("conceptTab").classList.remove("hidden");
       document.getElementById("tabConceptBtn").classList.add("active");
@@ -325,6 +333,7 @@
     }
   }
 
+  /* ÜBUNGS-QUIZ LOGIK */
   function filterQuestions() {
     const selected = document.getElementById("categoryFilter").value;
     currentQuestions = selected === "all" ? [...activeQuestions] : activeQuestions.filter(q => q.category === selected);
@@ -335,12 +344,7 @@
   function loadQuestion() {
     answered = false;
     document.getElementById("explanation").style.display = "none";
-    
-    if (currentQuestions.length === 0) {
-      document.getElementById("question").innerText = "Keine Fragen in dieser Kategorie gefunden.";
-      document.getElementById("options").innerHTML = "";
-      return;
-    }
+    if (currentQuestions.length === 0) return;
 
     const q = currentQuestions[currentIndex];
     document.getElementById("counter").innerText = `Frage ${currentIndex + 1} von ${currentQuestions.length}`;
@@ -366,27 +370,140 @@
   function checkAnswer(selectedIndex, clickedBtn) {
     if (answered) return;
     answered = true;
-
     const q = currentQuestions[currentIndex];
-    const buttons = document.querySelectorAll(".btn-option");
+    const buttons = document.querySelectorAll("#options .btn-option");
 
     buttons.forEach((btn, idx) => {
       if (idx === q.answer) btn.classList.add("correct");
     });
-
     if (selectedIndex !== q.answer) clickedBtn.classList.add("wrong");
 
-    const expBox = document.getElementById("explanation");
     document.getElementById("explanationText").innerText = q.explanation;
-    expBox.style.display = "block";
+    document.getElementById("explanation").style.display = "block";
   }
 
   function nextQuestion() { if (currentIndex < currentQuestions.length - 1) { currentIndex++; loadQuestion(); } }
   function prevQuestion() { if (currentIndex > 0) { currentIndex--; loadQuestion(); } }
 
+  /* PRÜFUNGSMODUS SIMULATION LOGIK */
+  function startRealExam() {
+    // 30 zufällige Fragen auswählen
+    const shuffled = [...activeQuestions].sort(() => 0.5 - Math.random());
+    examQuestions = shuffled.slice(0, 30);
+    examAnswers = new Array(30).fill(null);
+    examIndex = 0;
+    examTimeLeft = 120 * 60; // 120 Minuten
+
+    document.getElementById("examStartScreen").classList.add("hidden");
+    document.getElementById("examResultScreen").classList.add("hidden");
+    document.getElementById("examScreen").classList.remove("hidden");
+
+    startExamTimer();
+    loadExamQuestion();
+  }
+
+  function startExamTimer() {
+    clearInterval(examTimerInterval);
+    examTimerInterval = setInterval(() => {
+      examTimeLeft--;
+      let mins = Math.floor(examTimeLeft / 60);
+      let secs = examTimeLeft % 60;
+      document.getElementById("examTimer").innerText = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+
+      if (examTimeLeft <= 0) {
+        clearInterval(examTimerInterval);
+        alert("Die Prüfungszeit ist abgelaufen!");
+        finishExam();
+      }
+    }, 1000);
+  }
+
+  function loadExamQuestion() {
+    const q = examQuestions[examIndex];
+    document.getElementById("examCounter").innerText = `Frage ${examIndex + 1} von 30`;
+    document.getElementById("examQuestion").innerText = q.question;
+
+    const optionsContainer = document.getElementById("examOptions");
+    optionsContainer.innerHTML = "";
+
+    q.options.forEach((opt, idx) => {
+      const btn = document.createElement("button");
+      btn.className = "btn-option";
+      if (examAnswers[examIndex] === idx) btn.classList.add("selected");
+      btn.innerText = opt;
+      btn.onclick = () => selectExamOption(idx);
+      optionsContainer.appendChild(btn);
+    });
+
+    document.getElementById("examPrevBtn").disabled = examIndex === 0;
+    document.getElementById("examNextBtn").disabled = examIndex === 29;
+  }
+
+  function selectExamOption(optionIndex) {
+    examAnswers[examIndex] = optionIndex;
+    loadExamQuestion();
+  }
+
+  function nextExamQuestion() { if (examIndex < 29) { examIndex++; loadExamQuestion(); } }
+  function prevExamQuestion() { if (examIndex > 0) { examIndex--; loadExamQuestion(); } }
+
+  function finishExamPrompt() {
+    const unanswered = examAnswers.filter(a => a === null).length;
+    let msg = "Möchtest du die Prüfung jetzt wirklich abgeben?";
+    if (unbeantwortet > 0) {
+      msg = `Du hast noch ${unanswered} unbeantwortete Frage(n)! Wirklich abgeben?`;
+    }
+    if (confirm(msg)) {
+      finishExam();
+    }
+  }
+
+  function finishExam() {
+    clearInterval(examTimerInterval);
+    document.getElementById("examScreen").classList.add("hidden");
+    document.getElementById("examResultScreen").classList.remove("hidden");
+
+    let correctCount = 0;
+    examQuestions.forEach((q, idx) => {
+      if (examAnswers[idx] === q.answer) {
+        correctCount++;
+      }
+    });
+
+    let percentage = Math.round((correctCount / 30) * 100);
+    let passed = percentage >= 50;
+
+    const resultBox = document.getElementById("resultBox");
+    resultBox.className = `result-card ${passed ? 'result-pass' : 'result-fail'}`;
+    
+    document.getElementById("resultTitle").innerText = passed ? "🎉 PRÜFUNG BESTANDEN!" : "❌ LEIDER NICHT BESTANDEN";
+    document.getElementById("resultScore").innerText = `${correctCount} von 30 Richtigen (${percentage}%)`;
+    document.getElementById("resultStatus").innerText = passed 
+      ? "Herzlichen Glückwunsch! Du hast die Mindestanforderung von 50 % erreicht." 
+      : "Du benötigst mindestens 50 % zum Bestehen. Wiederhole das Quiz zum Lernen!";
+
+    // Detail-Review anzeigen
+    let reviewHtml = "";
+    examQuestions.forEach((q, idx) => {
+      let userAns = examAnswers[idx];
+      let isCorrect = userAns === q.answer;
+      reviewHtml += `
+        <div style="background:#fff; border:1px solid #ccc; padding:12px; border-radius:6px; margin-bottom:10px; text-align:left;">
+          <strong>Frage ${idx + 1}: ${q.question}</strong><br>
+          <span style="color:${isCorrect ? 'green' : 'red'}; font-weight:bold;">
+            Deine Antwort: ${userAns !== null ? q.options[userAns] : "Nicht beantwortet"} ${isCorrect ? '✔️' : '❌'}
+          </span><br>
+          ${!isCorrect ? `<span style="color:green;">Richtig wäre: ${q.options[q.answer]}</span><br>` : ''}
+          <small style="color:#666;"> Erläuterung: ${q.explanation}</small>
+        </div>
+      `;
+    });
+    document.getElementById("examReviewList").innerHTML = reviewHtml;
+  }
+
   function loadConcept() {
     const idx = document.getElementById("conceptSelect").value;
-    const c = concepts[idx];
+    const c = concepts[idx] || concepts[0];
     let html = `<p><strong>Szenario:</strong> ${c.scenario}</p>`;
     c.steps.forEach(step => {
       html += `<div class="section-card"><div class="section-title">${step.name}</div><div>${step.text}</div></div>`;
@@ -396,7 +513,7 @@
 
   function loadLawCase() {
     const idx = document.getElementById("lawSelect").value;
-    const l = lawCases[idx];
+    const l = lawCases[idx] || lawCases[0];
     let html = `
       <div style="background:#fff3cd; padding:12px; border-radius:6px; margin-bottom:15px; border-left:4px solid #ffc107;">
         <strong>📌 Sachverhalt:</strong><br>${l.sachverhalt}
