@@ -118,7 +118,7 @@
     <div id="examStartScreen" style="text-align: center; padding: 30px 10px;">
       <h2>⏱️ Offizielle IHK-Prüfungssimulation</h2>
       <p style="color: #555; max-width: 600px; margin: 0 auto 20px auto;">
-        Simulation mit genau 30 originalen Prüfungsfragen. Mit Vor- und Zurück-Navigation, 45 Minuten Zeitlimit und detaillierter Auswertung nach IHK-Standard.
+        Simulation mit originalen Prüfungsfragen. Mit Vor- und Zurück-Navigation, 45 Minuten Zeitlimit und detaillierter Auswertung nach IHK-Standard.
       </p>
       <button class="btn-action btn-danger" style="font-size: 1.1rem; padding: 12px 25px;" onclick="startRealExam()">▶️ IHK-Prüfung Starten</button>
     </div>
@@ -151,7 +151,7 @@
 
   <!-- LAW CASES TAB -->
   <div id="lawTab" class="hidden">
-    <h3 style="margin-top:0;">Rechtliche Fallbeurteilung & Falltraining (20 Original IHK-Fälle)</h3>
+    <h3 style="margin-top:0;">Rechtliche Fallbeurteilung & Falltraining</h3>
     <p style="font-size: 0.95rem; color: #555;">Bearbeiten Sie die Praxisfälle im Gutachtenstil. Vergleichen Sie Ihre Beurteilung mit der offiziellen Musterlösung.</p>
     <div id="caseContainer">
       <!-- Wird per JS befüllt -->
@@ -576,24 +576,82 @@
     document.getElementById('examResultScreen').classList.add('hidden');
   }
 
-  // --- RECHTSFÄLLE (DUMMY DATA FÜR DEMO) ---
+  // --- RECHTSFÄLLE ---
   function loadLawCases() {
     const container = document.getElementById('caseContainer');
     container.innerHTML = `
+      <!-- FALL 1: Jedermann-Festnahmerecht -->
       <div class="section-card law-card">
-        <div class="section-title law-title">Fall 1: Diebstahl auf dem Werksgelände</div>
+        <div class="section-title law-title">Fall 1: Diebstahl auf dem Werksgelände (§ 127 StPO)</div>
         <p>Während Ihres Dienstes als Werkschutzmitarbeiter beobachten Sie über die Videoanlage, wie ein betriebsfremder Handwerker eine teure Bohrmaschine in seinen Rucksack steckt und in Richtung Haupttor flieht. Sie eilen hinaus und stellen ihn am Tor.</p>
         <strong>Prüfungsauftrag:</strong> Nennen und prüfen Sie die rechtlichen Voraussetzungen für das Festhalten der Person.
         <textarea class="textarea-case" placeholder="Ihre gutachterliche Prüfung hier eintragen (Tatbestand, Subsumtion, Ergebnis)..."></textarea>
         <button class="btn-action" style="margin-top: 10px;" onclick="toggleSolution(this)">Musterlösung anzeigen</button>
         <div class="solution-box">
           <strong>Offizielle Lösungshinweise:</strong><br><br>
-          Es greift das Jedermann-Festnahmerecht gem. § 127 Abs. 1 StPO.<br>
+          Es greift das Jedermann-Festnahmerecht gem. <strong>§ 127 Abs. 1 StPO</strong>.<br>
           Voraussetzungen:<br>
-          1. <strong>Auf frischer Tat betroffen:</strong> Der Handwerker hat soeben den Diebstahl begangen und wurde noch am Tatort (Werksgelände) angetroffen.<br>
-          2. <strong>Fluchtverdacht:</strong> Der Täter befindet sich auf dem Weg zum Haupttor, um sich der Strafverfolgung zu entziehen.<br>
-          3. <strong>Identität nicht sofort feststellbar:</strong> Da er ein betriebsfremder Handwerker ist, ist seine Identität nicht unmittelbar zweifelsfrei geklärt, bis er einen Ausweis vorzeigt.<br><br>
-          <strong>Fazit:</strong> Der Werkschutzmitarbeiter ist berechtigt, die Person bis zum Eintreffen der Polizei vorläufig festzunehmen.
+          1. <strong>Auf frischer Tat betroffen:</strong> Der Handwerker hat soeben den Diebstahl begangen und wurde noch am Tatort angetroffen.<br>
+          2. <strong>Fluchtverdacht:</strong> Der Täter befindet sich auf dem Weg zum Tor, um sich zu entziehen.<br>
+          3. <strong>Identität nicht sofort feststellbar:</strong> Da er ein betriebsfremder Handwerker ist, ist seine Identität nicht zweifelsfrei geklärt.<br><br>
+          <strong>Fazit:</strong> Die vorläufige Festnahme ist gerechtfertigt.
+        </div>
+      </div>
+
+      <!-- FALL 2: Rechtfertigungsgrund Notwehr -->
+      <div class="section-card law-card">
+        <div class="section-title law-title">Fall 2: Körperlicher Angriff an der Tür (Rechtfertigungsgrund)</div>
+        <p>Ein abgewiesener, aggressiver Gast schlägt am Einlass plötzlich mit der Faust nach dem Türsteher. Der Türsteher weicht aus und schlägt den Angreifer mit einem gezielten Schlag nieder, um weitere Schläge abzuwehren. Der Gast wird dabei leicht verletzt.</p>
+        <strong>Prüfungsauftrag:</strong> Handelte der Türsteher rechtmäßig? Prüfen Sie den einschlägigen Rechtfertigungsgrund.
+        <textarea class="textarea-case" placeholder="Ihre gutachterliche Prüfung hier eintragen..."></textarea>
+        <button class="btn-action" style="margin-top: 10px;" onclick="toggleSolution(this)">Musterlösung anzeigen</button>
+        <div class="solution-box">
+          <strong>Offizielle Lösungshinweise:</strong><br><br>
+          Das Handeln ist durch <strong>Notwehr gem. § 32 StGB</strong> gerechtfertigt.<br>
+          Voraussetzungen der Notwehrlage:<br>
+          1. <strong>Angriff:</strong> Ein menschliches Verhalten, das Rechtsgüter (hier: körperliche Unversehrtheit) bedroht (Faustschlag).<br>
+          2. <strong>Gegenwärtig:</strong> Der Angriff steht unmittelbar bevor, findet statt oder dauert an.<br>
+          3. <strong>Rechtswidrig:</strong> Der Gast hatte kein Recht zuzuschlagen.<br><br>
+          Voraussetzungen der Notwehrhandlung:<br>
+          1. <strong>Erforderlich:</strong> Der Schlag war das mildeste, sofort wirksame Mittel, um den Angriff sicher zu beenden.<br>
+          2. <strong>Geboten:</strong> Es liegen keine Einschränkungen des Notwehrrechts vor (wie z.B. bei Kindern).<br><br>
+          <strong>Fazit:</strong> Der Türsteher hat sich nicht strafbar gemacht, sein Handeln ist gerechtfertigt.
+        </div>
+      </div>
+
+      <!-- FALL 3: Rechtfertigender Notstand -->
+      <div class="section-card law-card">
+        <div class="section-title law-title">Fall 3: Hund im heißen Auto (Rechtfertigender Notstand)</div>
+        <p>Auf seinem Revierstreifengang bemerkt ein Sicherheitsmitarbeiter an einem heißen Hochsommertag einen Hund in einem verschlossenen PKW in der prallen Sonne. Der Hund hechelt stark, taumelt und droht offensichtlich zu kollabieren. Der Besitzer ist nicht auffindbar. Um den Hund zu retten, schlägt der Mitarbeiter eine Seitenscheibe ein.</p>
+        <strong>Prüfungsauftrag:</strong> Ist die Sachbeschädigung (Einschlagen der Scheibe) gerechtfertigt?
+        <textarea class="textarea-case" placeholder="Ihre gutachterliche Prüfung hier eintragen..."></textarea>
+        <button class="btn-action" style="margin-top: 10px;" onclick="toggleSolution(this)">Musterlösung anzeigen</button>
+        <div class="solution-box">
+          <strong>Offizielle Lösungshinweise:</strong><br><br>
+          Die Sachbeschädigung ist durch den <strong>rechtfertigenden Notstand gem. § 34 StGB</strong> (bzw. Defensivnotstand gem. § 228 BGB) gerechtfertigt.<br>
+          Voraussetzungen:<br>
+          1. <strong>Gegenwärtige Gefahr:</strong> Das Leben des Tieres (sowie das Eigentum des Halters am Tier) ist akut bedroht.<br>
+          2. <strong>Nicht anders abwendbar:</strong> Der Besitzer war nicht auffindbar, Warten auf Polizei/Feuerwehr hätte zu lange gedauert.<br>
+          3. <strong>Interessenabwägung:</strong> Das gerettete Rechtsgut (Leben des Tieres) überwiegt das beeinträchtigte Rechtsgut (Sachwert der Autoscheibe) wesentlich.<br>
+          4. <strong>Angemessenheit:</strong> Das Einschlagen einer Seitenscheibe (nicht der teuren Frontscheibe) ist ein angemessenes Mittel.<br><br>
+          <strong>Fazit:</strong> Das Handeln ist gerechtfertigt, keine Strafbarkeit wegen Sachbeschädigung.
+        </div>
+      </div>
+
+      <!-- FALL 4: Schuldausschließungsgrund -->
+      <div class="section-card law-card">
+        <div class="section-title law-title">Fall 4: Notwehrexzess aus Todesangst (Schuldausschließungsgrund)</div>
+        <p>Ein Wachmann wird auf einem unbeleuchteten Schrottplatz nachts plötzlich von einem Täter mit einem Messer angegriffen. In massiver Todesangst wehrt sich der Wachmann und schlägt den Täter nieder. Obwohl der Täter kampfunfähig am Boden liegt, das Messer fallen gelassen hat und der Angriff definitiv beendet ist, tritt der Wachmann aus reiner Panik, vollkommener Verwirrung und Furcht noch einmal kräftig zu.</p>
+        <strong>Prüfungsauftrag:</strong> Wie ist das Nachtreten rechtlich zu bewerten?
+        <textarea class="textarea-case" placeholder="Ihre gutachterliche Prüfung hier eintragen..."></textarea>
+        <button class="btn-action" style="margin-top: 10px;" onclick="toggleSolution(this)">Musterlösung anzeigen</button>
+        <div class="solution-box">
+          <strong>Offizielle Lösungshinweise:</strong><br><br>
+          1. <strong>Prüfung der Notwehr (§ 32 StGB):</strong> Das Nachtreten war <em>nicht</em> mehr durch Notwehr gerechtfertigt, da der Angriff zu diesem Zeitpunkt bereits beendet und somit nicht mehr <em>gegenwärtig</em> war (sog. extensiver Notwehrexzess). Die Handlung ist rechtswidrig.<br><br>
+          2. <strong>Prüfung der Schuldausschließungsgründe:</strong> Hier greift <strong>§ 33 StGB (Überschreitung der Notwehr)</strong>.<br>
+          Überschreitet der Täter die Grenzen der Notwehr aus Verwirrung, Furcht oder Schrecken (sog. asthenische Affekte), so wird er nicht bestraft.<br>
+          Da der Wachmann laut Sachverhalt aus "reiner Panik, vollkommener Verwirrung und Furcht" handelte, entfällt seine Schuld.<br><br>
+          <strong>Fazit:</strong> Die Körperverletzung durch das Nachtreten war zwar rechtswidrig, der Wachmann handelte jedoch ohne Schuld und bleibt somit straffrei.
         </div>
       </div>
     `;
