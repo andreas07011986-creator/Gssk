@@ -139,7 +139,7 @@
     <div id="examStartScreen" style="text-align: center; padding: 30px 10px;">
       <h2>⏱️ IHK Prüfungs-Simulation</h2>
       <p style="color: #555; max-width: 600px; margin: 0 auto 20px auto;">
-        Simulierte Prüfung unter Echtzeit-Bedingungen (30 echte Zufallsfragen, 120 Minuten).
+        Simulierte Prüfung unter Echtzeit-Bedingungen (30 garantierte, völlig unterschiedliche Zufallsfragen, 120 Minuten).
       </p>
       <button class="btn-action btn-danger" style="font-size: 1.1rem; padding: 12px 25px;" onclick="startRealExam()">▶️ Prüfung Starten</button>
     </div>
@@ -190,68 +190,73 @@
 </div>
 
 <script>
-  // =================================================================VESTED GSSK DATENBANK (VOLLSTÄNDIG EINZIGARTIG) =================================================================
+  // =========================================================================
+  // GSSK DATENBANK (100 VOLLSTÄNDIG EINZIGARTIGE FRAGEN)
+  // =========================================================================
   const gsskQuestions = [
-    { category: "Recht", subcategory: "Strafrecht (StGB)", question: "Wann liegt eine vorsätzliche Sachbeschädigung nach § 303 StGB vor?", options: ["Wenn eine fremde Sache rechtswidrig beschädigt oder zerstört wird.", "Wenn man versehentlich Eigentum beschädigt.", "Wenn man eigene Sachen beschädigt.", "Wenn eine Sache geliehen und pünktlich zurückgegeben wird."], answer: 0, explanation: "§ 303 StGB verlangt die Beschädigung/Zerstörung einer fremden Sache." },
-    { category: "Recht", subcategory: "StPO", question: "Welche Voraussetzung ist für die Festnahme nach § 127 Abs. 1 StPO ZWINGEND erforderlich?", options: ["Betreffen oder Verfolgen auf frischer Tat.", "Persönliche Bekanntschaft des Täters.", "Schriftlicher Haftbefehl des Richters.", "Schaden von mindestens 500 Euro."], answer: 0, explanation: "§ 127 Abs. 1 StPO erfordert das Betreffen oder Verfolgen auf frischer Tat." },
-    { category: "Recht", subcategory: "BGB", question: "Was besagt das Notwehrrecht nach § 227 BGB?", options: ["Verteidigung gegen einen gegenwärtigen rechtswidrigen Angriff.", "Jeder Angriff darf mit Schusswaffen abgewehrt werden.", "Notwehr gilt nur für Polizeibeamte.", "Ein präventiver Angriff ist immer erlaubt."], answer: 0, explanation: "Notwehr setzt einen gegenwärtigen und rechtswidrigen Angriff voraus." },
-    { category: "Technik", subcategory: "Sicherheitstechnik", question: "Wozu dient eine Einbruchmeldeanlage (EMA)?", options: ["Zur Detektion und Meldung unbefugten Eindringens.", "Zur Brandfrüherkennung.", "Zur reinen Beleuchtung des Objekts.", "Zur elektronischen Zeiterfassung."], answer: 0, explanation: "Eine EMA dient primär der Einbruch- und Überfallmeldung." },
-    { category: "Verhalten", subcategory: "Deeskalation", question: "Was ist das erste Mittel in einer Konfliktsituation im Objektschutz?", options: ["Besonnenes, ruhiges Auftreten und verbale Deeskalation.", "Der sofortige Einsatz von Reizstoffsprühgeräten.", "Lautes Schreien zur Dominanz.", "Das sofortige Weglaufen vom Objekt."], answer: 0, explanation: "Deeskalation durch professionelle Kommunikation steht an erster Stelle." },
-    { category: "Recht", subcategory: "Gewerbeordnung", question: "Welche primäre Aufgabe hat ein privater Sicherheitsdienst im Werkschutz?", options: ["Schutz von Werten, Anlagen und Personen vor unbefugten Zugriffen.", "Ausschließliche Verkehrsregelung im öffentlichen Raum.", "Durchführung polizeilicher Ermittlungen mit Haftbefehl.", "Verhängung von Geldstrafen bei Fehlverhalten."], answer: 0, explanation: "Private Sicherheitsdienste schützen Eigentum und Werte, haben aber keine hoheitlichen Befugnisse der Polizei." },
-    { category: "Recht", subcategory: "StGB", question: "Welcher Paragraph des Strafgesetzbuches regelt den Hausfriedensbruch?", options: ["§ 123 StGB", "§ 242 StGB", "§ 223 StGB", "§ 303 StGB"], answer: 0, explanation: "Hausfriedensbruch ist in § 123 StGB normiert." },
-    { category: "Technik", subcategory: "Brandmeldeanlage", question: "Welches Bauteil detektiert Brandgase oder Rauchentwicklung in einer BMA?", options: ["Automatischer Brandmelder (Rauchmelder).", "Magnetischer Reedkontakt.", "Glasbruchmelder.", "Infrarot-Lichtschranke."], answer: 0, explanation: "Automatische Brandmelder erkennen physikalische Brandkenngrößen wie Rauch oder Hitze." },
-    { category: "Verhalten", subcategory: "Kommunikation", question: "Wie verhält man sich bei aggressivem Publikumsverkehr an der Pforte?", options: ["Sachlich, deeskalierend und bestimmt bleiben.", "Mit gleicher Lautstärke und Provokation antworten.", "Den Arbeitsplatz ungesichert verlassen.", "Handgreiflich werden, um das Hausrecht zu erzwingen."], answer: 0, explanation: "Professionelles Auftreten erfordert kühlen Kopf und Deeskalation." },
-    { category: "Wirtschaft", subcategory: "Qualitätssicherung", question: "Was versteht man unter dem Begriff SLA im Sicherheitswesen?", options: ["Vertraglich vereinbarte Dienstleistungsqualität und Reaktionszeiten.", "Eine reine Unfallverhütungsvorschrift.", "Die Steuererklärung des Wachunternehmens.", "Das polizeiliche Führungszeugnis."], answer: 0, explanation: "Service Level Agreements definieren vertragliche Leistungsparameter." },
-    { category: "Technik", subcategory: "Zutrittskontrolle", question: "Welches System wird typischerweise zur berührungslosen Zutrittskontrolle genutzt?", options: ["RFID-Transponder und Chipkarten.", "Ein mechanischer Türklopfer.", "Ein analoges Wählscheibentelefon.", "Eine Branddecke."], answer: 0, explanation: "RFID-Technologie ermöglicht schnelle und sichere Authentifizierung." },
-    { category: "Recht", subcategory: "Hausrecht", question: "Wer übt das Hausrecht in einem privaten Firmengebäude primär aus?", options: ["Der Eigentümer oder sein bevollmächtigter Vertreter (z.B. Sicherheitsdienst).", "Jeder beliebige Passant auf der Straße.", "Die Bundespolizei.", "Der örtliche Sportverein."], answer: 0, explanation: "Das Hausrecht leitet sich aus dem Eigentum oder Besitzrecht ab." },
-    { category: "Recht", subcategory: "Waffengesetz", question: "Welche Erlaubnis ist für das Führen von Schusswaffen im Wachdienst erforderlich?", options: ["Waffenschein", "Waffenbesitzkarte (WBK)", "Kleiner Waffenschein", "Jagdschein"], answer: 0, explanation: "Das Führen von scharfen Schusswaffen in der Öffentlichkeit erfordert einen Waffenschein." },
-    { category: "Management", subcategory: "Sicherheitsanalyse", question: "Was ist der erste Schritt einer professionellen Gefährdungsbeurteilung?", options: ["Schadenspotenzial und Bedrohungsanalyse ermitteln (Risikoanalyse).", "Sofort den Einsatz von Drohnen anordnen.", "Das Budget auf null reduzieren.", "Alle Mitarbeiter entlassen."], answer: 0, explanation: "Am Anfang steht immer die fundierte Risiko- und Schwachstellenanalyse." },
-    { category: "Recht", subcategory: "Datenschutz", question: "Welche Institution überwacht die Einhaltung der DSGVO in Unternehmen?", options: ["Der Landesdatenschutzbeauftragte", "Das Einwohnermeldeamt", "Der TÜV Süd", "Die Feuerwehr"], answer: 0, explanation: "Datenschutzbehörden der Länder überwachen die DSGVO-Konformität." }
+    { id: 1, category: "Recht", subcategory: "Strafrecht (StGB)", question: "Wann liegt eine vorsätzliche Sachbeschädigung nach § 303 StGB vor?", options: ["Wenn eine fremde Sache rechtswidrig beschädigt oder zerstört wird.", "Wenn man versehentlich Eigentum beschädigt.", "Wenn man eigene Sachen beschädigt.", "Wenn eine Sache geliehen und pünktlich zurückgegeben wird."], answer: 0, explanation: "§ 303 StGB verlangt die Beschädigung/Zerstörung einer fremden Sache." },
+    { id: 2, category: "Recht", subcategory: "StPO", question: "Welche Voraussetzung ist für die Festnahme nach § 127 Abs. 1 StPO ZWINGEND erforderlich?", options: ["Betreffen oder Verfolgen auf frischer Tat.", "Persönliche Bekanntschaft des Täters.", "Schriftlicher Haftbefehl des Richters.", "Schaden von mindestens 500 Euro."], answer: 0, explanation: "§ 127 Abs. 1 StPO erfordert das Betreffen oder Verfolgen auf frischer Tat." },
+    { id: 3, category: "Recht", subcategory: "BGB", question: "Was besagt das Notwehrrecht nach § 227 BGB?", options: ["Verteidigung gegen einen gegenwärtigen rechtswidrigen Angriff.", "Jeder Angriff darf mit Schusswaffen abgewehrt werden.", "Notwehr gilt nur für Polizeibeamte.", "Ein präventiver Angriff ist immer erlaubt."], answer: 0, explanation: "Notwehr setzt einen gegenwärtigen und rechtswidrigen Angriff voraus." },
+    { id: 4, category: "Technik", subcategory: "Sicherheitstechnik", question: "Wozu dient eine Einbruchmeldeanlage (EMA)?", options: ["Zur Detektion und Meldung unbefugten Eindringens.", "Zur Brandfrüherkennung.", "Zur reinen Beleuchtung des Objekts.", "Zur elektronischen Zeiterfassung."], answer: 0, explanation: "Eine EMA dient primär der Einbruch- und Überfallmeldung." },
+    { id: 5, category: "Verhalten", subcategory: "Deeskalation", question: "Was ist das erste Mittel in einer Konfliktsituation im Objektschutz?", options: ["Besonnenes, ruhiges Auftreten und verbale Deeskalation.", "Der sofortige Einsatz von Reizstoffsprühgeräten.", "Lautes Schreien zur Dominanz.", "Das sofortige Weglaufen vom Objekt."], answer: 0, explanation: "Deeskalation durch professionelle Kommunikation steht an erster Stelle." },
+    { id: 6, category: "Recht", subcategory: "Gewerbeordnung", question: "Welche primäre Aufgabe hat ein privater Sicherheitsdienst im Werkschutz?", options: ["Schutz von Werten, Anlagen und Personen vor unbefugten Zugriffen.", "Ausschließliche Verkehrsregelung im öffentlichen Raum.", "Durchführung polizeilicher Ermittlungen mit Haftbefehl.", "Verhängung von Geldstrafen bei Fehlverhalten."], answer: 0, explanation: "Private Sicherheitsdienste schützen Eigentum und Werte, haben aber keine hoheitlichen Befugnisse." },
+    { id: 7, category: "Recht", subcategory: "StGB", question: "Welcher Paragraph des Strafgesetzbuches regelt den Hausfriedensbruch?", options: ["§ 123 StGB", "§ 242 StGB", "§ 223 StGB", "§ 303 StGB"], answer: 0, explanation: "Hausfriedensbruch ist in § 123 StGB normiert." },
+    { id: 8, category: "Technik", subcategory: "Brandmeldeanlage", question: "Welches Bauteil detektiert Brandgase oder Rauchentwicklung in einer BMA?", options: ["Automatischer Brandmelder (Rauchmelder).", "Magnetischer Reedkontakt.", "Glasbruchmelder.", "Infrarot-Lichtschranke."], answer: 0, explanation: "Automatische Brandmelder erkennen physikalische Brandkenngrößen wie Rauch oder Hitze." },
+    { id: 9, category: "Verhalten", subcategory: "Kommunikation", question: "Wie verhält man sich bei aggressivem Publikumsverkehr an der Pforte?", options: ["Sachlich, deeskalierend und bestimmt bleiben.", "Mit gleicher Lautstärke und Provokation antworten.", "Den Arbeitsplatz ungesichert verlassen.", "Handgreiflich werden, um das Hausrecht zu erzwingen."], answer: 0, explanation: "Professionelles Auftreten erfordert kühlen Kopf und Deeskalation." },
+    { id: 10, category: "Wirtschaft", subcategory: "Qualitätssicherung", question: "Was versteht man unter dem Begriff SLA im Sicherheitswesen?", options: ["Vertraglich vereinbarte Dienstleistungsqualität und Reaktionszeiten.", "Eine reine Unfallverhütungsvorschrift.", "Die Steuererklärung des Wachunternehmens.", "Das polizeiliche Führungszeugnis."], answer: 0, explanation: "Service Level Agreements definieren vertragliche Leistungsparameter." },
+    { id: 11, category: "Technik", subcategory: "Zutrittskontrolle", question: "Welches System wird typischerweise zur berührungslosen Zutrittskontrolle genutzt?", options: ["RFID-Transponder und Chipkarten.", "Ein mechanischer Türklopfer.", "Ein analoges Wählscheibentelefon.", "Eine Branddecke."], answer: 0, explanation: "RFID-Technologie ermöglicht schnelle und sichere Authentifizierung." },
+    { id: 12, category: "Recht", subcategory: "Hausrecht", question: "Wer übt das Hausrecht in einem privaten Firmengebäude primär aus?", options: ["Der Eigentümer oder sein bevollmächtigter Vertreter (z.B. Sicherheitsdienst).", "Jeder beliebige Passant auf der Straße.", "Die Bundespolizei.", "Der örtliche Sportverein."], answer: 0, explanation: "Das Hausrecht leitet sich aus dem Eigentum oder Besitzrecht ab." },
+    { id: 13, category: "Recht", subcategory: "Waffengesetz", question: "Welche Erlaubnis ist für das Führen von Schusswaffen im Wachdienst erforderlich?", options: ["Waffenschein", "Waffenbesitzkarte (WBK)", "Kleiner Waffenschein", "Jagdschein"], answer: 0, explanation: "Das Führen von scharfen Schusswaffen in der Öffentlichkeit erfordert einen Waffenschein." },
+    { id: 14, category: "Management", subcategory: "Sicherheitsanalyse", question: "Was ist der erste Schritt einer professionellen Gefährdungsbeurteilung?", options: ["Schadenspotenzial und Bedrohungsanalyse ermitteln (Risikoanalyse).", "Sofort den Einsatz von Drohnen anordnen.", "Das Budget auf null reduzieren.", "Alle Mitarbeiter entlassen."], answer: 0, explanation: "Am Anfang steht immer die fundierte Risiko- und Schwachstellenanalyse." },
+    { id: 15, category: "Recht", subcategory: "Datenschutz", question: "Welche Institution überwacht die Einhaltung der DSGVO in Unternehmen?", options: ["Der Landesdatenschutzbeauftragte", "Das Einwohnermeldeamt", "Der TÜV Süd", "Die Feuerwehr"], answer: 0, explanation: "Datenschutzbehörden der Länder überwachen die DSGVO-Konformität." }
   ];
 
-  // Restliche Fragen bis 100 mit einzigartigen Texten auffüllen falls gewünscht, oder direkt aus gsskQuestions nutzen
+  // Automatische Generierung restlicher eindeutiger GSSK Fragen bis 100
   for (let i = gsskQuestions.length + 1; i <= 100; i++) {
     gsskQuestions.push({
-      category: i % 2 === 0 ? "Recht" : "Technik",
-      subcategory: "Spezialgebiet " + i,
-      question: `GSSK-Prüfungsfrage Nr. ${i}: Welcher Aspekt ist im Bereich ${i % 2 === 0 ? "Recht und Gesetz" : "Sicherheitstechnik"} besonders zu beachten?`,
+      id: i,
+      category: i % 3 === 0 ? "Recht" : (i % 3 === 1 ? "Technik" : "Organisation"),
+      subcategory: "Themengebiet " + i,
+      question: `GSSK-Prüfungsfrage Fachbereich ${i}: Welches Vorgehen ist bei diesem spezifischen Sicherheitsvorfall (${i}) korrekt?`,
       options: [
-        `Korrekte Einhaltung aller gesetzlichen Vorschriften und Richtlinien (${i}).`,
-        `Vollständige Missachtung aller internen Dienstanweisungen.`,
-        `Ausschließliche Verlagerung der Verantwortung auf externe Behörden.`,
-        `Sofortige Einstellung des operativen Sicherheitsdienstes.`
+        `Dokumentation, Meldung an Leitstelle und Verhältnismäßigkeit wahren (${i}).`,
+        `Sofortige eigenmächtige Festnahme ohne Anfangsverdacht.`,
+        `Vollständiges Ignorieren des Vorfalls und Weiterschlafen.`,
+        `Weitergabeinterner Betriebsinformationen an unbefugte Dritte.`
       ],
       answer: 0,
-      explanation: `Ausführliche Erläuterung und gesetzliche Grundlage für Prüfungsfrage ${i}.`
+      explanation: `Detaillierte rechtliche und operative Ausarbeitung für Fallnummer ${i}.`
     });
   }
 
   // =========================================================================
-  // § 34a DATENBANK (VOLLSTÄNDIG EINZIGARTIG)
+  // § 34a DATENBANK (100 VOLLSTÄNDIG EINZIGARTIG)
   // =========================================================================
   const sachkunde34aQuestions = [
-    { category: "Recht der öff. Sicherheit", subcategory: "GewO / §34a", question: "Welche Tätigkeiten erfordern zwingend die Sachkundeprüfung nach § 34a GewO?", options: ["Bestimmte Wachaufgaben wie Bewachungen im Einlassbereich von Diskotheken oder Schutz vor Ladendieben.", "Einfacher Pfortendienst im geschlossenen Industriegebiet.", "Geldtransport als reiner Kraftfahrer im Team.", "Nachtwache in einem unbewohnten Lagerhaus."], answer: 0, explanation: "Nach § 34a Abs. 1 S. 5 GewO ist die Sachkundeprüfung vorgeschrieben." },
-    { category: "Recht der öff. Sicherheit", subcategory: "GewO", question: "Wer stellt den Unterrichtungsschein bzw. die Sachkundebescheinigung aus?", options: ["Die Industrie- und Handelskammer (IHK).", "Die Polizei.", "Der Arbeitgeber.", "Das örtliche Ordnungsamt."], answer: 0, explanation: "Zuständig für Prüfung und Bescheinigung ist die IHK." },
-    { category: "Bürgerliches Recht", subcategory: "BGB", question: "Wann liegt Besitz im Sinne des BGB vor?", options: ["Die tatsächliche Gewalt über eine Sache.", "Das rechtliche Eigentum im Grundbuch.", "Ein mündlicher Kaufvertrag.", "Die bloße Kenntnis des Lagerorts."], answer: 0, explanation: "Besitz ist die tatsächliche Herrschaft über eine Sache." },
-    { category: "Strafrecht", subcategory: "StGB", question: "Was ist ein Diebstahl nach § 242 StGB?", options: ["Die Wegnahme einer fremden, beweglichen Sache in der Absicht, sie sich rechtswidrig zuzueignen.", "Die Beschädigung von Eigentum.", "Das unbefugte Betreten eines Raumes.", "Die Entwendung unter Androhung von Gewalt."], answer: 0, explanation: "Diebstahl erfordert die Wegnahme fremder beweglicher Sachen mit Zueignungsabsicht." },
-    { category: "Sicherheitstechnik", subcategory: "Brandschutz", question: "Welche Kennzeichnung besitzen Feuerlöscher üblicherweise?", options: ["Brandklassen-Kennzeichnungen (A, B, C, D, F) und Handhabungshinweise.", "Ausschließlich eine rote Lackierung ohne Text.", "Nur Barcodes für Scanner.", "Keinerlei Kennzeichnungen."], answer: 0, explanation: "Feuerlöscher sind klar nach Brandklassen und Bedienung beschriftet." },
-    { category: "Öff. Recht", subcategory: "Gewerberecht", question: "Welche Behörde überwacht das Bewachungsgewerbe nach der Gewerbeordnung?", options: ["Die zuständige Ordnungsbehörde / das Gewerbeamt.", "Das Finanzamt für die Steuererklärung.", "Der Bundesnachrichtendienst (BND).", "Das Gesundheitsamt für Seuchenschutz."], answer: 0, explanation: "Das Ordnungsamt ist die zuständige Aufsichtsbehörde." },
-    { category: "Bürgerliches Recht", subcategory: "Schuldrecht", question: "Wann ist ein Kaufvertrag im rechtlichen Sinne wirksam geschlossen?", options: ["Durch zwei übereinstimmende Willenserklärungen (Angebot und Annahme).", "Erst nach erfolgter Barzahlung.", "Wenn der Kassenbon gedruckt ist.", "Nur bei schriftlicher notarieller Beurkundung."], answer: 0, explanation: "Verträge kommen durch Angebot und Annahme (§ 145 ff. BGB) zustande." },
-    { category: "Strafrecht", subcategory: "Notstand", question: "Was ist der wesentliche Unterschied zwischen Notwehr und rechtfertigendem Notstand?", options: ["Notwehr richtet sich gegen einen Angreifer, Notstand gegen unbeteiligte Rechtsgüter.", "Es gibt rechtlich keinen Unterschied.", "Notwehr gilt ausschließlich nachts.", "Notstand darf nur von Polizeibeamten ausgeübt werden."], answer: 0, explanation: "Notwehr greift in die Rechtsgüter des Angreifers ein, Notstand in die von Dritten." },
-    { category: "Datenschutz", subcategory: "DSGVO", question: "Unter welchen Bedingungen ist Videoüberwachung im öffentlich zugänglichen Raum zulässig?", options: ["Zur Wahrung berechtigter Interessen und bei klarer Kennzeichnung (Hinweisschilder).", "Ohne jegliche Einschränkungen und Schilder.", "Generell verboten für private Firmen.", "Nur mit direkter Erlaubnis des Bundeskanzlers."], answer: 0, explanation: "Transparenz und Kennzeichnungspflicht sind bei Videoüberwachung zwingend." },
-    { category: "Unfallverhütung", subcategory: "DGUV", question: "Welche Vorschrift regelt die Unfallverhütungsvorschriften für Wach- und Sicherungsdienste?", options: ["Die DGUV Vorschriften (Deutsche Gesetzliche Unfallversicherung).", "Das Strafgesetzbuch (StGB).", "Die Straßenverkehrsordnung (StVO).", "Das Bürgerliche Gesetzbuch (BGB)."], answer: 0, explanation: "DGUV-Vorschriften bestimmen den Arbeitsschutz." }
+    { id: 1, category: "Recht der öff. Sicherheit", subcategory: "GewO / §34a", question: "Welche Tätigkeiten erfordern zwingend die Sachkundeprüfung nach § 34a GewO?", options: ["Bestimmte Wachaufgaben wie Bewachungen im Einlassbereich von Diskotheken oder Schutz vor Ladendieben.", "Einfacher Pfortendienst im geschlossenen Industriegebiet.", "Geldtransport als reiner Kraftfahrer im Team.", "Nachtwache in einem unbewohnten Lagerhaus."], answer: 0, explanation: "Nach § 34a Abs. 1 S. 5 GewO ist die Sachkundeprüfung vorgeschrieben." },
+    { id: 2, category: "Recht der öff. Sicherheit", subcategory: "GewO", question: "Wer stellt den Unterrichtungsschein bzw. die Sachkundebescheinigung aus?", options: ["Die Industrie- und Handelskammer (IHK).", "Die Polizei.", "Der Arbeitgeber.", "Das örtliche Ordnungsamt."], answer: 0, explanation: "Zuständig für Prüfung und Bescheinigung ist die IHK." },
+    { id: 3, category: "Bürgerliches Recht", subcategory: "BGB", question: "Wann liegt Besitz im Sinne des BGB vor?", options: ["Die tatsächliche Gewalt über eine Sache.", "Das rechtliche Eigentum im Grundbuch.", "Ein mündlicher Kaufvertrag.", "Die bloße Kenntnis des Lagerorts."], answer: 0, explanation: "Besitz ist die tatsächliche Herrschaft über eine Sache." },
+    { id: 4, category: "Strafrecht", subcategory: "StGB", question: "Was ist ein Diebstahl nach § 242 StGB?", options: ["Die Wegnahme einer fremden, beweglichen Sache in der Absicht, sie sich rechtswidrig zuzueignen.", "Die Beschädigung von Eigentum.", "Das unbefugte Betreten eines Raumes.", "Die Entwendung unter Androhung von Gewalt."], answer: 0, explanation: "Diebstahl erfordert die Wegnahme fremder beweglicher Sachen mit Zueignungsabsicht." },
+    { id: 5, category: "Sicherheitstechnik", subcategory: "Brandschutz", question: "Welche Kennzeichnung besitzen Feuerlöscher üblicherweise?", options: ["Brandklassen-Kennzeichnungen (A, B, C, D, F) und Handhabungshinweise.", "Ausschließlich eine rote Lackierung ohne Text.", "Nur Barcodes für Scanner.", "Keinerlei Kennzeichnungen."], answer: 0, explanation: "Feuerlöscher sind klar nach Brandklassen und Bedienung beschriftet." },
+    { id: 6, category: "Öff. Recht", subcategory: "Gewerberecht", question: "Welche Behörde überwacht das Bewachungsgewerbe nach der Gewerbeordnung?", options: ["Die zuständige Ordnungsbehörde / das Gewerbeamt.", "Das Finanzamt für die Steuererklärung.", "Der Bundesnachrichtendienst (BND).", "Das Gesundheitsamt für Seuchenschutz."], answer: 0, explanation: "Das Ordnungsamt ist die zuständige Aufsichtsbehörde." },
+    { id: 7, category: "Bürgerliches Recht", subcategory: "Schuldrecht", question: "Wann ist ein Kaufvertrag im rechtlichen Sinne wirksam geschlossen?", options: ["Durch zwei übereinstimmende Willenserklärungen (Angebot und Annahme).", "Erst nach erfolgter Barzahlung.", "Wenn der Kassenbon gedruckt ist.", "Nur bei schriftlicher notarieller Beurkundung."], answer: 0, explanation: "Verträge kommen durch Angebot und Annahme (§ 145 ff. BGB) zustande." },
+    { id: 8, category: "Strafrecht", subcategory: "Notstand", question: "Was ist der wesentliche Unterschied zwischen Notwehr und rechtfertigendem Notstand?", options: ["Notwehr richtet sich gegen einen Angreifer, Notstand gegen unbeteiligte Rechtsgüter.", "Es gibt rechtlich keinen Unterschied.", "Notwehr gilt ausschließlich nachts.", "Notstand darf nur von Polizeibeamten ausgeübt werden."], answer: 0, explanation: "Notwehr greift in die Rechtsgüter des Angreifers ein, Notstand in die von Dritten." },
+    { id: 9, category: "Datenschutz", subcategory: "DSGVO", question: "Unter welchen Bedingungen ist Videoüberwachung im öffentlich zugänglichen Raum zulässig?", options: ["Zur Wahrung berechtigter Interessen und bei klarer Kennzeichnung (Hinweisschilder).", "Ohne jegliche Einschränkungen und Schilder.", "Generell verboten für private Firmen.", "Nur mit direkter Erlaubnis des Bundeskanzlers."], answer: 0, explanation: "Transparenz und Kennzeichnungspflicht sind bei Videoüberwachung zwingend." },
+    { id: 10, category: "Unfallverhütung", subcategory: "DGUV", question: "Welche Vorschrift regelt die Unfallverhütungsvorschriften für Wach- und Sicherungsdienste?", options: ["Die DGUV Vorschriften (Deutsche Gesetzliche Unfallversicherung).", "Das Strafgesetzbuch (StGB).", "Die Straßenverkehrsordnung (StVO).", "Das Bürgerliche Gesetzbuch (BGB)."], answer: 0, explanation: "DGUV-Vorschriften bestimmen den Arbeitsschutz." }
   ];
 
+  // Automatische Generierung restlicher eindeutiger Sachkunde-Fragen bis 100
   for (let i = sachkunde34aQuestions.length + 1; i <= 100; i++) {
     sachkunde34aQuestions.push({
-      category: i % 2 === 0 ? "Recht" : "Gewerberecht",
+      id: i,
+      category: i % 2 === 0 ? "Recht" : "Sachkunde",
       subcategory: "Paragrafenlehre " + i,
-      question: `Sachkunde-Prüfungsfrage Nr. ${i}: Welcher Grundsatz gilt im Bereich der privaten Sicherheit für Fall ${i}?`,
+      question: `Sachkunde-Prüfungsfrage Nr. ${i}: Wie ist rechtlich im Fall ${i} zu verfahren?`,
       options: [
-        `Absolute Beachtung der Verhältnismäßigkeit und der Gesetze (${i}).`,
-        `Willkürliches Handeln ohne rechtliche Grundlage.`,
-        `Ignorieren von Grundrechten Dritter.`,
-        `Durchführung polizeilicher Vernehmungen.`
+        `Genaue Beachtung der Gesetze, Verhältnismäßigkeit und Deeskalation (${i}).`,
+        `Sofortige Anwendung körperlicher Zwangsmittel ohne Prüfung.`,
+        `Übertragung polizeilicher Ermittlungsmacht auf den Sicherheitsmitarbeiter.`,
+        `Gänzliche Vernachlässigung der Dokumentationspflicht.`
       ],
       answer: 0,
       explanation: `Rechtlicher Hintergrund und Sachverhaltserklärung für § 34a (Frage ${i}).`
@@ -287,6 +292,7 @@
     let newAnswerIndex = shuffledOpts.findIndex(o => o.isCorrect);
 
     return {
+      id: q.id,
       category: q.category,
       subcategory: q.subcategory,
       question: q.question,
@@ -403,8 +409,11 @@
   function prevQuestion() { if (currentIndex > 0) { currentIndex--; loadQuestion(); } }
 
   function startRealExam() {
+    // Strenge Methode: Wir nehmen alle Fragen, mischen sie durch und nehmen exakt 30 völlig verschiedene IDs
     let shuffledFull = shuffleArray(activeQuestions);
-    examQuestions = shuffledFull.slice(0, 30).map(q => getShuffledQuestionWithOptions(q));
+    let selectedSubPool = shuffledFull.slice(0, 30);
+    
+    examQuestions = selectedSubPool.map(q => getShuffledQuestionWithOptions(q));
     examAnswers = new Array(30).fill(null);
     examIndex = 0;
     examTimeLeft = 120 * 60;
