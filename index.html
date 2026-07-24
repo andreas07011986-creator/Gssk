@@ -1,293 +1,406 @@
-```html
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GSSK Trainer Pro 100</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
-        .opt-btn { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
-        .opt-btn:active { transform: scale(0.98); }
-        .explanation-box { display: none; }
-        .explanation-box.visible { display: block; animation: slideUp 0.3s ease-out; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GSSK Prüfungstrainer & Konzept-Tool</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+    body {
+      background-color: #f4f6f9;
+      margin: 0;
+      padding: 15px;
+      display: flex;
+      justify-content: center;
+    }
+    .app-card {
+      background: #ffffff;
+      max-width: 700px;
+      width: 100%;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    }
+    /* Tab-Navigation */
+    .tab-nav {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #dee2e6;
+      padding-bottom: 10px;
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      background: #e9ecef;
+      color: #495057;
+      font-weight: bold;
+      font-size: 0.95rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .tab-btn.active {
+      background: #0d6efd;
+      color: white;
+    }
+    /* Quiz Styling */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    .badge {
+      background: #e9ecef;
+      color: #495057;
+      padding: 4px 10px;
+      border-radius: 15px;
+      font-size: 0.85rem;
+      font-weight: bold;
+      margin-right: 5px;
+    }
+    .badge-sub {
+      background: #e7f5ff;
+      color: #1971c2;
+    }
+    .filter-box select, .concept-select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+      margin-bottom: 15px;
+    }
+    .question-text {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin: 15px 0;
+    }
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .btn-option {
+      padding: 12px;
+      border: 2px solid #dee2e6;
+      background: #fff;
+      border-radius: 8px;
+      text-align: left;
+      cursor: pointer;
+    }
+    .correct { background-color: #d4edda !important; border-color: #28a745 !important; }
+    .wrong { background-color: #f8d7da !important; border-color: #dc3545 !important; }
+    .explanation-box {
+      margin-top: 15px;
+      padding: 12px;
+      background: #e8f4f8;
+      border-left: 4px solid #17a2b8;
+      display: none;
+    }
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+    .btn-action {
+      padding: 10px 18px;
+      border: none;
+      background: #0d6efd;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .btn-action:disabled { background: #ccc; }
+
+    /* Concept Styling */
+    .concept-step {
+      background: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-left: 5px solid #0d6efd;
+      padding: 12px;
+      margin-bottom: 12px;
+      border-radius: 4px;
+    }
+    .concept-title {
+      font-weight: bold;
+      color: #0d6efd;
+      margin-bottom: 5px;
+    }
+    .solution-btn {
+      width: 100%;
+      padding: 10px;
+      background: #198754;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+    .hidden { display: none; }
+  </style>
 </head>
-<body class="bg-slate-100 min-h-screen pb-12">
+<body>
 
-<div class="max-w-2xl mx-auto px-4 pt-6">
-    <div class="bg-white rounded-3xl shadow-2xl overflow-hidden border border-slate-200">
-        <!-- Header -->
-        <div class="bg-gradient-to-r from-blue-700 to-indigo-800 p-6 text-white text-center">
-            <h1 class="text-2xl font-bold tracking-tight">GSSK Prüfungstrainer</h1>
-            <p class="text-blue-100 text-sm opacity-90">100 Fragen Komplett-Edition</p>
-        </div>
+<div class="app-card">
+  <!-- TAB-NAVIGATION -->
+  <div class="tab-nav">
+    <button id="tabQuizBtn" class="tab-btn active" onclick="switchTab('quiz')">❓ Quiz-Trainer</button>
+    <button id="tabConceptBtn" class="tab-btn" onclick="switchTab('concept')">📋 Sicherheitskonzept</button>
+  </div>
 
-        <!-- Filter & Stats -->
-        <div class="p-4 border-b border-slate-100 bg-slate-50 space-y-3">
-            <select id="catFilter" class="w-full p-4 rounded-2xl border-none bg-white shadow-sm ring-1 ring-slate-200 focus:ring-2 focus:ring-blue-500 outline-none text-slate-700 font-semibold appearance-none">
-                <option value="all">Alle 100 Fragen (Komplettmix)</option>
-                <option value="Recht">1. Rechts- & Aufgabenbezogenes Handeln</option>
-                <option value="Technik">2. Gefahrenabwehr & Technik</option>
-                <option value="Verhalten">3. Verhalten & Kommunikation</option>
-            </select>
-            
-            <div class="flex justify-between items-center px-2">
-                <div id="progressText" class="text-xs font-black uppercase tracking-widest text-slate-400">Frage -- / --</div>
-                <div id="categoryBadge" class="text-[10px] font-bold bg-blue-600 text-white px-3 py-1 rounded-full uppercase tracking-tighter">BEREICH</div>
-            </div>
-            <!-- Progress Bar -->
-            <div class="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
-                <div id="progressBar" class="bg-blue-600 h-full transition-all duration-500" style="width: 0%"></div>
-            </div>
-        </div>
-
-        <!-- Question Area -->
-        <div class="p-6">
-            <div id="subCategoryText" class="text-xs text-blue-600 font-bold mb-2 uppercase tracking-wide">Unterkategorie</div>
-            <div id="questionText" class="text-xl font-bold text-slate-800 leading-snug mb-8">Lade Fragen-Datenbank...</div>
-            
-            <div id="optionsGrid" class="grid gap-3">
-                <!-- Dynamic Buttons -->
-            </div>
-
-            <!-- Explanation Box -->
-            <div id="explanationBox" class="explanation-box mt-8 p-5 bg-indigo-50 border-l-4 border-indigo-500 rounded-r-2xl">
-                <h4 class="text-indigo-900 font-bold text-sm mb-2 flex items-center">
-                    <span class="mr-2">💡</span> Lösung & Analyse:
-                </h4>
-                <p id="explanationContent" class="text-indigo-800 text-sm leading-relaxed font-medium"></p>
-            </div>
-        </div>
-
-        <!-- Navigation -->
-        <div class="p-4 bg-slate-50 border-t border-slate-100 flex gap-4">
-            <button id="prevBtn" class="flex-1 py-4 px-4 bg-white border border-slate-200 text-slate-600 font-bold rounded-2xl shadow-sm hover:bg-slate-50 disabled:opacity-30">Zurück</button>
-            <button id="nextBtn" class="flex-[2] py-4 px-4 bg-blue-600 text-white font-bold rounded-2xl shadow-lg shadow-blue-200 hover:bg-blue-700 active:bg-blue-800">Nächste</button>
-        </div>
+  <!-- TAB 1: QUIZ TRAINER -->
+  <div id="quizTab">
+    <div class="header">
+      <h3 style="margin:0;">Fragen-Trainer</h3>
+      <span id="counter" style="font-weight: bold; color: #6c757d;">Frage 1/--</span>
     </div>
+
+    <div class="filter-box">
+      <select id="categoryFilter" onchange="filterQuestions()">
+        <option value="all">Alle Themenbereiche</option>
+        <option value="Recht">1. Rechts- und Aufgabenbezogenes Handeln</option>
+        <option value="Technik">2. Gefahrenabwehr & Sicherheitstechnik</option>
+        <option value="Verhalten">3. Verhalten & Kommunikation</option>
+      </select>
+    </div>
+
+    <div>
+      <span id="catBadge" class="badge">Kategorie</span>
+      <span id="subCatBadge" class="badge badge-sub">Unterkategorie</span>
+    </div>
+
+    <div id="question" class="question-text">Frage wird geladen...</div>
+    <div id="options" class="options"></div>
+
+    <div id="explanation" class="explanation-box">
+      <strong>💡 Erklärung & Rechtsgrundlage:</strong>
+      <div id="explanationText" style="margin-top: 5px;"></div>
+    </div>
+
+    <div class="controls">
+      <button id="prevBtn" class="btn-action" onclick="prevQuestion()">Zurück</button>
+      <button id="nextBtn" class="btn-action" onclick="nextQuestion()">Nächste</button>
+    </div>
+  </div>
+
+  <!-- TAB 2: SICHERHEITSKONZEPT MODUL -->
+  <div id="conceptTab" class="hidden">
+    <h3 style="margin-top:0;">GSSK Sicherheitskonzept Ausarbeiten</h3>
+    <p style="font-size: 0.9rem; color: #555;">Wähle ein IHK-Szenario und gehe die 5 offiziellen Schritte für das Sicherheitskonzept durch:</p>
+
+    <select id="conceptSelect" class="concept-select" onchange="loadConcept()">
+      <option value="0">Fall 1: Logistikzentrum (Perimeterschutz & Werkschutz)</option>
+      <option value="1">Fall 2: Rechenzentrum (Zutrittskontrolle & Brandschutz)</option>
+      <option value="2">Fall 3: Einkaufszentrum (Mengensteuerung & Ladendiebstahl)</option>
+    </select>
+
+    <div id="conceptContent"></div>
+  </div>
 </div>
 
 <script>
-const questions = [
-    // --- RECHT (Frage 1-40) ---
-    { cat: "Recht", sub: "BGB", q: "Welche Form der Notwehr nach BGB erlaubt die Beschädigung einer Sache, von der die Gefahr ausgeht?", opts: ["Defensiver Notstand (§ 228)", "Aggressiver Notstand (§ 904)", "Besitzwehr (§ 859)", "Selbsthilfe (§ 229)"], ans: 0, exp: "§ 228 BGB (Defensiver Notstand): Wer eine fremde Sache beschädigt, um eine durch sie drohende Gefahr abzuwenden, handelt nicht widerrechtlich." },
-    { cat: "Recht", sub: "StPO", q: "Was ist die zwingende Folge einer Festnahme nach § 127 StPO durch eine Privatperson?", opts: ["Man darf den Täter nach Hause schicken", "Der Festgenommene muss unverzüglich der Polizei übergeben werden", "Man muss ein Protokoll für das Amtsgericht schreiben", "Man darf den Täter 24h einsperren"], ans: 1, exp: "Die Jedermann-Festnahme dient nur der Identitätsfeststellung oder Fluchtverhinderung bis zum Eintreffen der Polizei." },
-    { cat: "Recht", sub: "StGB", q: "Was unterscheidet den Raub vom Diebstahl?", opts: ["Der Wert der Beute", "Die Anwendung von Gewalt oder Drohung gegen eine Person", "Die Tatzeit (Nacht/Tag)", "Die Beteiligung von mehr als 3 Personen"], ans: 1, exp: "Raub (§ 249 StGB) kombiniert Diebstahl mit Gewalt gegen eine Person oder Drohung mit gegenwärtiger Gefahr für Leib oder Leben." },
-    { cat: "Recht", sub: "GewO", q: "Welche Qualifikation benötigt man laut § 34a GewO für Tätigkeiten im Einlassbereich von Diskotheken?", opts: ["Nur die Unterrichtung", "Die Sachkundeprüfung", "Ein abgeschlossenes Studium", "Keine Qualifikation"], ans: 1, exp: "Für Türsteher in Diskotheken sowie für Citystreifen und Ladendetektive ist die Sachkundeprüfung zwingend vorgeschrieben." },
-    { cat: "Recht", sub: "BDSG/DSGVO", q: "Was ist der Grundsatz der 'Datenminimierung'?", opts: ["Man darf keine Daten löschen", "Nur so viele Daten erheben, wie für den Zweck unbedingt nötig", "Daten müssen klein geschrieben werden", "Nur digitale Daten zählen"], ans: 1, exp: "Personenbezogene Daten müssen dem Zweck angemessen und auf das notwendige Maß beschränkt sein." },
-    { cat: "Recht", sub: "StGB", q: "Wann handelt jemand in 'Putativnotwehr'?", opts: ["Wenn er sich betrunken wehrt", "Wenn er irrtümlich glaubt, angegriffen zu werden", "Wenn er zu spät reagiert", "Wenn er für andere eintritt"], ans: 1, exp: "Putativnotwehr ist ein Irrtum über das Vorliegen einer Notwehrlage (man glaubt fälschlich, man würde angegriffen)." },
-    { cat: "Recht", sub: "BewachV", q: "Wie lange müssen Dienstbücher/Wachbücher aufbewahrt werden?", opts: ["1 Jahr", "3 Jahre", "5 Jahre", "10 Jahre"], ans: 1, exp: "Unterlagen über Bewachungsverträge und Dienstausweise sind nach der BewachV 3 Jahre aufzubewahren." },
-    { cat: "Recht", sub: "BGB", q: "Was ist eine 'verbotene Eigenmacht'?", opts: ["Besitzstörung ohne Willen des Besitzers und ohne gesetzliche Gestattung", "Polizeiliche Durchsuchung", "Verkauf einer Sache", "Miete bezahlen"], ans: 0, exp: "§ 858 BGB definiert verbotene Eigenmacht als Beeinträchtigung des Besitzes ohne Zustimmung des Besitzers." },
-    { cat: "Recht", sub: "StGB", q: "Was ist ein 'echtes Unterlassungsdelikt'?", opts: ["Körperverletzung", "Nichthilfeleistung (§ 323c)", "Diebstahl", "Hausfriedensbruch"], ans: 1, exp: "Echte Unterlassungsdelikte sind Straftatbestände, die das bloße Unterlassen einer gebotenen Handlung bestrafen." },
-    { cat: "Recht", sub: "StPO", q: "Darf eine Privatperson bei einer Festnahme eine Durchsuchung der Person durchführen?", opts: ["Ja, immer", "Nur zur Eigensicherung (Waffensuche)", "Nur wenn der Täter einverstanden ist", "Nein, niemals"], ans: 1, exp: "Im Rahmen der Eigensicherung und zur Identitätsfeststellung ist ein vorsichtiges Abtasten nach Waffen erlaubt." },
-    { cat: "Recht", sub: "Grundgesetz", q: "Welches Grundrecht ist unantastbar?", opts: ["Die Freiheit der Person", "Die Würde des Menschen (Art. 1)", "Die Berufsfreiheit", "Das Briefgeheimnis"], ans: 1, exp: "Die Würde des Menschen ist unantastbar. Sie zu achten und zu schützen ist Verpflichtung aller staatlichen Gewalt." },
-    { cat: "Recht", sub: "BetrVG", q: "Darf der Betriebsrat bei der Kündigung eines Mitarbeiters mitbestimmen?", opts: ["Nein, das entscheidet der Chef allein", "Ja, er muss vor jeder Kündigung gehört werden", "Nur bei Führungskräften", "Nur bei Azubis"], ans: 1, exp: "Gemäß § 102 BetrVG ist der Betriebsrat vor jeder Kündigung zu hören, sonst ist sie unwirksam." },
-    { cat: "Recht", sub: "WaffG", q: "Wer benötigt einen 'Kleinen Waffenschein'?", opts: ["Jemand, der eine scharfe Pistole führt", "Wer eine Schreckschusswaffe in der Öffentlichkeit führen will", "Polizisten", "Sportschützen"], ans: 1, exp: "Zum Führen (Beisichführen) von Signal-, Reizstoff- und Schreckschusswaffen außerhalb der eigenen Wohnung ist der Kleine Waffenschein nötig." },
-    { cat: "Recht", sub: "BGB", q: "Was ist der Unterschied zwischen Besitz und Eigentum?", opts: ["Es gibt keinen", "Besitz ist die rechtliche, Eigentum die tatsächliche Gewalt", "Besitz ist die tatsächliche, Eigentum die rechtliche Gewalt", "Eigentum gilt nur für Häuser"], ans: 2, exp: "Besitz (§ 854 BGB) = Tatsächliche Gewalt; Eigentum (§ 903 BGB) = Rechtliche Herrschaftsmacht." },
-    { cat: "Recht", sub: "StGB", q: "Wann ist ein Hausfriedensbruch ein 'Antragsdelikt'?", opts: ["Nur nachts", "Immer", "Nur wenn ein Schaden über 50€ entsteht", "Wenn der Berechtigte den Strafantrag stellt"], ans: 1, exp: "Hausfriedensbruch (§ 123 StGB) wird grundsätzlich nur auf Antrag verfolgt." },
-    { cat: "Recht", sub: "DSGVO", q: "Wie muss ein Hinweisschild für Videoüberwachung gestaltet sein?", opts: ["Muss nicht existieren", "Deutlich erkennbar mit Angaben zum Verantwortlichen und Zweck", "Nur für Mitarbeiter sichtbar", "Ganz klein an der Decke"], ans: 1, exp: "Transparenzpflicht: Der Betroffene muss wissen, wer filmt, warum und wie er seine Rechte wahrnehmen kann." },
-    { cat: "Recht", sub: "StGB", q: "Was ist 'Amtsanmaßung' (§ 132 StGB)?", opts: ["Sich als Sicherheitsmitarbeiter ausgeben", "Sich fälschlich als Inhaber eines öffentlichen Amtes ausgeben (z.B. Polizist)", "Einen falschen Namen benutzen", "Zu schnell fahren"], ans: 1, exp: "Wer unbefugt sich mit der Ausübung eines öffentlichen Amtes befasst oder eine Handlung vornimmt, die nur Kraft eines öffentlichen Amtes vorgenommen werden darf." },
-    { cat: "Recht", sub: "BGB", q: "Wer ist 'Besitzdiener'?", opts: ["Der Chef einer Firma", "Ein Angestellter, der Weisungen des Besitzers folgt", "Der Eigentümer", "Ein Dieb"], ans: 1, exp: "Sicherheitskräfte sind typische Besitzdiener (§ 855 BGB). Sie üben die Gewalt für den Arbeitgeber aus." },
-    { cat: "Recht", sub: "StPO", q: "Was versteht man unter 'Gefahr im Verzug'?", opts: ["Wenn der Bus Verspätung hat", "Wenn die Einholung eines richterlichen Beschlusses den Erfolg gefährden würde", "Wenn es brennt", "Wenn der Sicherheitsdienst Pause macht"], ans: 1, exp: "Ein Rechtsbegriff, der Behörden erlaubt, ohne richterlichen Beschluss zu handeln, wenn Warten zu riskant wäre." },
-    { cat: "Recht", sub: "WaffG", q: "Was bedeutet 'Führen' einer Waffe?", opts: ["Sie im Tresor lagern", "Die tatsächliche Gewalt außerhalb der eigenen Wohnung/Geschäftsräume ausüben", "Sie verkaufen", "Sie im Internet anschauen"], ans: 1, exp: "Führen bedeutet, die Waffe zugriffsbereit außerhalb befriedeten Besitztums bei sich zu haben." },
-    { cat: "Recht", sub: "StGB", q: "Was ist eine 'Gefährliche Körperverletzung'?", opts: ["Eine Ohrfeige", "Körperverletzung mittels einer Waffe oder eines gefährlichen Werkzeugs", "Nur wenn man ins Krankenhaus muss", "Beleidigung"], ans: 1, exp: "§ 224 StGB: Z.B. mittels Gift, Waffe, hinterlistigem Überfall oder gemeinschaftlich mit anderen." },
-    { cat: "Recht", sub: "Arbeitsschutz", q: "Was ist die DGUV Vorschrift 23?", opts: ["Brandschutzordnung", "Unfallverhütungsvorschrift für Wach- und Sicherungsdienste", "Datenschutzregelung", "Waffengesetz"], ans: 1, exp: "Die DGUV V23 (früher BGV C7) ist die spezifische Unfallverhütungsvorschrift für das Bewachungsgewerbe." },
-    { cat: "Recht", sub: "StGB", q: "Was ist 'Nötigung'?", opts: ["Jemanden zum Lachen bringen", "Jemanden rechtswidrig mit Gewalt oder Drohung zu einer Handlung/Duldung zwingen", "Eine Ware teurer verkaufen", "Sich vordrängeln"], ans: 1, exp: "§ 240 StGB schützt die Willensentschließungs- und Willensbetätigungsfreiheit." },
-    { cat: "Recht", sub: "BGB", q: "Wann beginnt die Rechtsfähigkeit eines Menschen?", opts: ["Mit der Geburt", "Mit 18 Jahren", "Mit 7 Jahren", "Bei der Zeugung"], ans: 0, exp: "Die Rechtsfähigkeit des Menschen beginnt mit der Vollendung der Geburt (§ 1 BGB)." },
-    { cat: "Recht", sub: "StGB", q: "Ist der Versuch eines Diebstahls strafbar?", opts: ["Nein, nur der vollendete Diebstahl", "Ja, immer", "Nur ab 100€ Wert", "Nur bei Einbruch"], ans: 1, exp: "Der Versuch eines Vergehens ist strafbar, wenn das Gesetz es bestimmt. Beim Diebstahl ist der Versuch ausdrücklich strafbar." },
-    { cat: "Recht", sub: "Gewerberecht", q: "Darf ein Sicherheitsunternehmen Streifendienst im öffentlichen Verkehrsraum durchführen?", opts: ["Ja, mit Genehmigung der Gemeinde und Sachkundenachweis", "Nein, das darf nur die Polizei", "Nur mit Schusswaffe", "Nur nachts"], ans: 0, exp: "Bewachung im öffentlichen Verkehrsraum (Citystreife) ist unter Auflagen (Sachkunde!) erlaubt." },
-    { cat: "Recht", sub: "StGB", q: "Was ist der Unterschied zwischen Mord und Totschlag?", opts: ["Mord ist teurer", "Mord erfordert spezifische Mordmerkmale (z.B. Habgier, Heimtücke)", "Gibt keinen Unterschied", "Totschlag passiert nur aus Versehen"], ans: 1, exp: "Mord (§ 211 StGB) setzt voraus, dass der Täter aus niedrigen Beweggründen, heimtückisch oder grausam tötet." },
-    { cat: "Recht", sub: "BGB", q: "Was bedeutet 'Schadenersatzpflicht'?", opts: ["Man muss ins Gefängnis", "Wer vorsätzlich oder fahrlässig Leben, Körper, Eigentum etc. verletzt, muss den Schaden ersetzen", "Man muss sich entschuldigen", "Gilt nur für Firmen"], ans: 1, exp: "Zentrale Norm ist § 823 BGB (Unerlaubte Handlungen)." },
-    { cat: "Recht", sub: "StPO", q: "Wer ist Herrin des Ermittlungsverfahrens?", opts: ["Die Polizei", "Die Staatsanwaltschaft", "Das Gericht", "Der Detektiv"], ans: 1, exp: "Die Staatsanwaltschaft leitet die Ermittlungen; die Polizei ist ihr Hilfsorgan." },
-    { cat: "Recht", sub: "BewachV", q: "Welche Farbe muss der Dienstausweis haben?", opts: ["Blau", "Keine Farbe vorgeschrieben, muss aber Namen, Foto und Betrieb enthalten", "Gelb", "Rot"], ans: 1, exp: "Die BewachV schreibt den Inhalt vor (Name SMA, Name Firma, Lichtbild), nicht die Farbe." },
-    { cat: "Recht", sub: "Arbeitsrecht", q: "Wie lang ist die gesetzliche Mindest-Kündigungsfrist in der Probezeit?", opts: ["1 Monat", "2 Wochen", "3 Tage", "Gibt keine"], ans: 1, exp: "In der Probezeit kann das Arbeitsverhältnis mit einer Frist von zwei Wochen gekündigt werden (§ 622 BGB)." },
-    { cat: "Recht", sub: "StGB", q: "Was ist 'Unterlassene Hilfeleistung'?", opts: ["Sich nicht für einen Job bewerben", "Nicht helfen bei Unglücksfällen trotz Zumutbarkeit", "Zu spät kommen", "Nur für Ärzte relevant"], ans: 1, exp: "§ 323c StGB verpflichtet jeden zur Hilfe im Rahmen des Möglichen und Zumutbaren." },
-    { cat: "Recht", sub: "WaffG", q: "Was ist ein 'Waffenschein'?", opts: ["Erlaubnis zum Kaufen", "Erlaubnis zum Führen einer scharfen Waffe in der Öffentlichkeit", "Mitgliedskarte im Schützenverein", "Jagdschein"], ans: 1, exp: "Der Waffenschein (groß) erlaubt das Führen. Die WBK (Waffenbesitzkarte) erlaubt nur den Besitz." },
-    { cat: "Recht", sub: "BGB", q: "Ab wann ist ein Kind beschränkt geschäftsfähig?", opts: ["Ab Geburt", "Ab 7 Jahren", "Ab 14 Jahren", "Ab 16 Jahren"], ans: 1, exp: "Minderjährige zwischen 7 und 18 Jahren sind beschränkt geschäftsfähig (§ 106 BGB)." },
-    { cat: "Recht", sub: "StGB", q: "Was ist 'Betrug'?", opts: ["Etwas klauen", "Verschaffen eines Vermögensvorteils durch Täuschung und Irrtumserregung", "Zu laut Musik hören", "Lügen allgemein"], ans: 1, exp: "§ 263 StGB setzt Täuschung, Irrtum, Vermögensverfügung und Vermögensschaden voraus." },
-    { cat: "Recht", sub: "Polizei", q: "Haben Sicherheitskräfte Sonderrechte im Straßenverkehr?", opts: ["Ja, mit Blaulicht", "Nein, sie sind Privatpersonen", "Nur bei Geldtransporten", "Nur auf Parkplätzen"], ans: 1, exp: "Sicherheitsmitarbeiter haben keine hoheitlichen Befugnisse und müssen sich wie jeder Bürger an die StVO halten." },
-    { cat: "Recht", sub: "Gewerberecht", q: "Muss ein SMA während des Dienstes ein Namensschild tragen?", opts: ["Ja, immer", "Nur wenn der Auftraggeber es will", "In der Regel ja (Dienstausweis sichtbar führen), außer bei besonderen Gefahrenlagen", "Nein, Datenschutz"], ans: 2, exp: "Der Dienstausweis ist mitzuführen. Sichtbares Tragen ist branchenüblich und oft vorgeschrieben." },
-    { cat: "Recht", sub: "StGB", q: "Was ist 'Heimtücke'?", opts: ["Besonders laut schreien", "Das Ausnutzen der Arg- und Wehrlosigkeit des Opfers", "Weglaufen nach der Tat", "Sich verkleiden"], ans: 1, exp: "Heimtücke ist ein Mordmerkmal (§ 211 StGB)." },
-    { cat: "Recht", sub: "BGB", q: "Was ist 'Notstandshilfe'?", opts: ["Spenden sammeln", "Notstand für eine andere Person ausüben", "Erste Hilfe Kurs", "Polizeihilfe"], ans: 1, exp: "Analog zur Nothilfe bei der Notwehr kann man auch Notstand für Dritte leisten." },
-    { cat: "Recht", sub: "DSGVO", q: "Darf man Tonaufnahmen mit Videoüberwachung kombinieren?", opts: ["Ja, immer", "In der Regel verboten (Verletzung der Vertraulichkeit des Wortes)", "Nur im Freien", "Nur mit Megaphon"], ans: 1, exp: "Tonaufzeichnung ist meist ein massiver Eingriff und strafbar (§ 201 StGB)." },
+  // --- FRAGEN DATENBANK ---
+  const questions = [
+    {
+      category: "Recht",
+      subcategory: "Strafrecht (StGB)",
+      question: "Wann liegt eine vorsätzliche Sachbeschädigung nach § 303 StGB vor?",
+      options: [
+        "Wenn eine fremde Sache rechtswidrig beschädigt oder zerstört wird.",
+        "Wenn man versehentlich das Eigentum eines Kunden beschädigt.",
+        "Wenn man eine eigene Sache aus Versehen fallen lässt.",
+        "Wenn eine Sache nur geliehen und pünktlich zurückgegeben wird."
+      ],
+      answer: 0,
+      explanation: "Eine Sachbeschädigung erfordert die Beschädigung oder Zerstörung einer fremden Sache. Vorsatz ist zwingend nötig; fahrlässige Sachbeschädigung ist im StGB nicht strafbar."
+    },
+    {
+      category: "Recht",
+      subcategory: "Strafprozessordnung (StPO)",
+      question: "Welche Voraussetzung ist für die Festnahme nach § 127 Abs. 1 StPO (Jedermann-Festnahme) ZWINGEND erforderlich?",
+      options: [
+        "Der Täter muss der Sicherheitskraft persönlich bekannt sein.",
+        "Der Täter muss auf frischer Tat betroffen oder verfolgt werden.",
+        "Es muss ein schriftlicher Haftbefehl des Richters vorliegen.",
+        "Der Schaden muss mindestens 500 Euro betragen."
+      ],
+      answer: 1,
+      explanation: "Die Jedermann-Festnahme erlaubt jedem die vorläufige Festnahme, wenn jemand auf frischer Tat angetroffen oder verfolgt wird und Fluchtgefahr besteht bzw. die Identität nicht sofort geklärt werden kann."
+    },
+    {
+      category: "Technik",
+      subcategory: "Brandschutz",
+      question: "Welche Brandklasse umfasst Brände von flüssigen oder flüssig werdenden Stoffen (z. B. Benzin, Lacke, Wachs)?",
+      options: [
+        "Brandklasse A",
+        "Brandklasse B",
+        "Brandklasse C",
+        "Brandklasse F"
+      ],
+      answer: 1,
+      explanation: "Brandklasse A = feste Stoffe, Brandklasse B = flüssige/flüssig werdende Stoffe, Brandklasse C = Gase, Brandklasse F = Speiseöle/Fette."
+    },
+    {
+      category: "Verhalten",
+      subcategory: "Deeskalation & Kommunikation",
+      question: "Wie reagiert eine Sicherheitskraft in einer Konfliktsituation am besten auf eine verbal aggressive Person?",
+      options: [
+        "Ebenfalls laut werden, um Stärke zu demonstrieren.",
+        "Ruhig und sachlich bleiben, aktives Zuhören anwenden und Distanz wahren.",
+        "Die Person sofort körperlich fixieren.",
+        "Sich umdrehen und die Person ignorieren."
+      ],
+      answer: 1,
+      explanation: "Deeskalation erfordert eine ruhige, bestimmte Stimmlage, Sicherheitsabstand und sachliche Argumente, um die Lage zu beruhigen."
+    }
+  ];
 
-    // --- TECHNIK (Frage 41-70) ---
-    { cat: "Technik", sub: "Brandschutz", q: "Welche Brandklasse gilt für Metallbrände (z.B. Magnesium)?", opts: ["Brandklasse B", "Brandklasse C", "Brandklasse D", "Brandklasse F"], ans: 2, exp: "Brandklasse D umfasst brennbare Metalle. Hier darf NIEMALS mit Wasser gelöscht werden!" },
-    { cat: "Technik", sub: "EMA", q: "Was bedeutet 'Zwangsläufigkeit'?", opts: ["Dass man zur Arbeit gezwungen wird", "Verhinderung von Scharfschaltung bei nicht ordnungsgemäßem Zustand", "Automatische Alarmierung der Feuerwehr", "Stromausfall-Schutz"], ans: 1, exp: "Zwangsläufigkeit sorgt dafür, dass eine EMA nur scharf geschaltet werden kann, wenn alle Melder (z.B. Fenster) geschlossen sind." },
-    { cat: "Technik", sub: "Mechanik", q: "Welche Widerstandsklasse (RC) wird für normale Gewerbeobjekte meist empfohlen?", opts: ["RC 1", "RC 2 bis RC 3", "RC 6", "Keine"], ans: 1, exp: "RC 2 und RC 3 bieten einen guten Schutz gegen Gelegenheitstäter mit Werkzeugen." },
-    { cat: "Technik", sub: "Video", q: "Was ist ein 'VMD' in der Videotechnik?", opts: ["Very Many Data", "Video Motion Detection (Bewegungserkennung)", "Virtueller Monitor Dienst", "Veralteter Modus"], ans: 1, exp: "VMD löst einen Alarm oder eine Aufzeichnung aus, sobald sich im Bildinhalt etwas verändert." },
-    { cat: "Technik", sub: "Brandschutz", q: "Was ist ein 'Rauchansaugsystem' (RAS)?", opts: ["Ein Staubsauger", "System, das Luftproben ansaugt und auf Rauchpartikel prüft", "Ventilator für Raucherzimmer", "Abzug für die Küche"], ans: 1, exp: "RAS sind sehr empfindlich und werden oft in Hochregallagern oder EDV-Räumen eingesetzt." },
-    { cat: "Technik", sub: "Zutritt", q: "Was ist Biometrie?", opts: ["Messung von Abgasen", "Erkennung von Personen anhand körperlicher Merkmale (Fingerabdruck, Iris)", "Ein ökologischer Baustoff", "Mathematik"], ans: 1, exp: "Biometrische Systeme nutzen unverwechselbare Merkmale zur Identifikation." },
-    { cat: "Technik", sub: "Brandschutz", q: "Wie löscht man einen Fettbrand richtig?", opts: ["Mit Wasser", "Mit einem Deckel oder einer Löschdecke/Speziallöscher Brandklasse F", "Pusten", "Mehl drüber schütten"], ans: 1, exp: "Wasser auf Fettbrand führt zur Fettexplosion! Lebensgefahr!" },
-    { cat: "Technik", sub: "EMA", q: "Was ist ein 'Passiv-Infrarot-Melder' (PIR)?", opts: ["Melder, der Wärmestrahlung empfängt", "Melder, der aktiv Licht aussendet", "Ein Rauchmelder", "Ein Glasbruchmelder"], ans: 0, exp: "PIR-Melder reagieren auf die Änderung der Infrarotstrahlung (Körperwärme) im Erfassungsbereich." },
-    { cat: "Technik", sub: "Funk", q: "Was bedeutet 'Simplex' im Funkverkehr?", opts: ["Sprechen und Hören gleichzeitig", "Sprechen und Hören abwechselnd auf einer Frequenz", "Verschlüsselung", "Automatische Ansage"], ans: 1, exp: "Wechselsprechen: Wer spricht, kann nicht gleichzeitig hören." },
-    { cat: "Technik", sub: "Licht", q: "Welche Beleuchtungsstärke wird für Außenüberwachung empfohlen?", opts: ["Dunkelheit ist besser", "Mindestens 5 bis 20 Lux", "1000 Lux", "Nur Schwarzlicht"], ans: 1, exp: "Eine ausreichende Beleuchtung ist Voraussetzung für gute Videobilder und zur Abschreckung." },
-    { cat: "Technik", sub: "Mechanik", q: "Was ist ein 'Panikschloss'?", opts: ["Schloss, das bei Angst klemmt", "Schloss, das von innen immer ohne Schlüssel zu öffnen ist", "Schloss mit Sirene", "Ein Tresorschloss"], ans: 1, exp: "Panikschlösser sichern den Fluchtweg von innen, auch wenn die Tür von außen verschlossen ist." },
-    { cat: "Technik", sub: "Brandschutz", q: "Welche Farbe hat ein Pulverlöscher?", opts: ["Blau", "Rot", "Gelb", "Grün"], ans: 1, exp: "Feuerlöscher sind nach Norm (DIN EN 3) rot." },
-    { cat: "Technik", sub: "ÜMT", q: "Was ist eine 'Übertagungseinrichtung' (ÜE)?", opts: ["Ein Lautsprecher", "Gerät, das Alarme an eine hilfeleistende Stelle weiterleitet", "Ein Fernseher", "Ein USB-Stick"], ans: 1, exp: "Die ÜE verbindet die EMA/BMA mit der Notruf- und Serviceleitstelle (NSL)." },
-    { cat: "Technik", sub: "Arbeitsmittel", q: "Was muss man vor der Benutzung einer Leiter prüfen?", opts: ["Nichts", "Sicht- und Funktionsprüfung auf Schäden", "Ob sie sauber ist", "Das Gewicht"], ans: 1, exp: "Arbeitsmittel müssen vor Gebrauch auf offensichtliche Mängel kontrolliert werden." },
-    { cat: "Technik", sub: "Brandschutz", q: "Was ist ein 'Handfeuermelder'?", opts: ["Ein Feuerzeug", "Der 'Einschlagknopf' (Druckknopfmelder) an der Wand", "Ein Handy", "Ein Feuerwehrmann"], ans: 1, exp: "Nicht-automatischer Brandmelder zur manuellen Alarmauslösung." },
-    { cat: "Technik", sub: "Zutritt", q: "Was ist 'Mechatronik'?", opts: ["Ein Roboter", "Kombination aus mechanischen Schlössern und elektronischer Berechtigung", "Ein Auto", "Veraltete Technik"], ans: 1, exp: "Moderne Schließanlagen kombinieren oft mechanische Zylinder mit elektronischen Chips." },
-    { cat: "Technik", sub: "Melder", q: "Wofür steht 'Dualmelder'?", opts: ["Zwei Melder nebeneinander", "Kombination zweier Wirkprinzipien (z.B. PIR und Mikrowelle) zur Fehlalarmreduzierung", "Ein Ersatzmelder", "Melder für zwei Räume"], ans: 1, exp: "Erst wenn beide Sensoren ansprechen, wird der Alarm ausgelöst." },
-    { cat: "Technik", sub: "Zentrale", q: "Was ist die Aufgabe einer Notstromversorgung (USV)?", opts: ["Günstiger Strom", "Aufrechterhaltung des Betriebs bei Netzausfall für eine bestimmte Zeit", "Spannung erhöhen", "Geräte ausschalten"], ans: 1, exp: "Sicherheitssysteme müssen auch bei Stromausfall (z.B. Sabotage) weiter funktionieren." },
-    { cat: "Technik", sub: "Brandschutz", q: "Welches Löschmittel verursacht die geringsten Folgeschäden in EDV-Räumen?", opts: ["Wasser", "CO2 (Kohlendioxid)", "Pulver", "Schaum"], ans: 1, exp: "CO2 ist rückstandsfrei und nicht leitend, daher ideal für elektrische Anlagen." },
-    { cat: "Technik", sub: "Perimeter", q: "Was ist ein 'Übersteigschutz'?", opts: ["Eine Treppe", "Zusatz am Zaun (z.B. S-Draht), um Überklettern zu erschweren", "Ein Aufzug", "Ein Regenschirm"], ans: 1, exp: "Mechanische Barriere an der Oberseite von Zäunen oder Mauern." },
-    { cat: "Technik", sub: "Melder", q: "Wie funktioniert ein Magnetkontakt?", opts: ["Durch Wärme", "Durch Unterbrechung eines Magnetfeldes beim Öffnen von Fenstern/Türen", "Durch Schall", "Durch Druck"], ans: 1, exp: "Einfache und effektive Verschlussüberwachung." },
-    { cat: "Technik", sub: "EMA", q: "Was ist eine 'Stiller Alarm'?", opts: ["Ein Alarm ohne Sirene, der nur zur Leitstelle geht", "Ein Alarm, der nichts macht", "Ein kaputter Alarm", "Ein leises Flüstern"], ans: 0, exp: "Dient oft dem Personenschutz (Überfall), um den Täter nicht zu provozieren." },
-    { cat: "Technik", sub: "Brandschutz", q: "Was ist die 'Rauchschutztür'?", opts: ["Tür für Raucher", "Tür, die das Durchdringen von Rauch behindert (RS)", "Eine offene Tür", "Eine Glastür"], ans: 1, exp: "Rauchschutztüren müssen selbstschließend sein." },
-    { cat: "Technik", sub: "PSA", q: "Wofür steht 'PSA'?", opts: ["Personen-Schutz-Anlage", "Persönliche Schutzausrüstung", "Polizei-Sonder-Abteilung", "Privat-Sicherheits-Agentur"], ans: 1, exp: "Helm, Sicherheitsschuhe, Handschuhe etc. – vom Arbeitgeber gestellt." },
-    { cat: "Technik", sub: "Gefahren", q: "Was ist ein 'Revisionsschalter'?", opts: ["Schalter zum Licht einschalten", "Schalter zur Außerbetriebnahme von Anlagenteilen für Wartungsarbeiten", "Ein Not-Aus", "Ein Lautstärkeregler"], ans: 1, exp: "Wichtig für die Sicherheit von Technikern während der Wartung." },
-    { cat: "Technik", sub: "EMA", q: "Wann muss eine EMA gewartet werden?", opts: ["Nie", "Gemäß Herstellervorgaben / VdS-Richtlinien (meist 1-4 mal jährlich)", "Alle 10 Jahre", "Nur wenn sie kaputt ist"], ans: 1, exp: "Regelmäßige Wartung sichert die Funktion und verhindert Fehlalarme." },
-    { cat: "Technik", sub: "Brandschutz", q: "Welche Aufgabe hat eine Sprinkleranlage?", opts: ["Blumen gießen", "Automatisches Löschen und Alarmieren bei Brand", "Staub wischen", "Luft befeuchten"], ans: 1, exp: "Selektives Löschen dort, wo die Temperatur den Glaskolben zum Platzen bringt." },
-    { cat: "Technik", sub: "Zutritt", q: "Was ist ein 'Kartenleser'?", opts: ["Ein Buch", "Eingabeeinheit zur Identifikation mittels Ausweiskarten", "Ein Taschenrechner", "Ein Spielzeug"], ans: 1, exp: "Teil der elektronischen Zutrittskontrolle (Zuko)." },
-    { cat: "Technik", sub: "Video", q: "Was bedeutet 'Full-HD' Auflösung?", opts: ["Ganz schlechtes Bild", "1920 x 1080 Pixel", "400 x 300 Pixel", "Analoge Technik"], ans: 1, exp: "Standard für moderne Überwachungskameras." },
-    { cat: "Technik", sub: "Mechanik", q: "Was ist ein 'Ziehschutz' am Schließzylinder?", opts: ["Schutz gegen das Herausziehen des Kerns mit Spezialwerkzeug", "Ein Handgriff", "Ein Schloss für Züge", "Ein Magnet"], ans: 0, exp: "Verhindert die Kernziehmethode bei Einbrüchen." },
+  // --- SICHERHEITSKONZEPTE DATENBANK (5-SCHRITTE-MODELL) ---
+  const concepts = [
+    {
+      title: "Fall 1: Logistikzentrum mit Freigelände",
+      scenario: "Ein Logistikunternehmen meldet vermehrt Diebstähle von Palettenware auf dem Außengelände in den Nachtstunden. Erstelle das Sicherheitskonzept.",
+      steps: [
+        { name: "1. Objekt- & Ist-Analyse", text: "Weitläufiges Außengelände, teilweise lückenhafter Maschendrahtzaun, schlechte Ausleuchtung, unbesetzter Hintereingang." },
+        { name: "2. Rechtliche Grundlagen", text: "BGB (§ 859 Selbsthilfe des Besitzers), StGB (§ 123 Hausfriedensbruch, § 242 Diebstahl), DSGVO bei Videoüberwachung auf dem Gelände." },
+        { name: "3. Personelle Maßnahmen", text: "Bestellung eines Werk- und Objektschutzdienstes: Pförtner am Haupttor (24/7) sowie unregelmäßige Bestreifung des Außengeländes nachts." },
+        { name: "4. Sicherheitstechnik", text: "Erneuerung des Zauns (2m Übersteigschutz), Installation einer ZKS (Zutrittskontrollanlage) für LKW-Fahrer, VdS-konforme Perimeter-Videoüberwachung mit Infrarot/Wärmebild." },
+        { name: "5. Notfall- & Alarmplan", text: "Bei Alarmauslösung (Kamera/EMA): Aufschaltung auf eine VdS-zertifizierte Notruf- und Serviceleitstelle (NSL). Interventionskraft anfahren lassen, ggf. Polizei (110) hinzuziehen." }
+      ]
+    },
+    {
+      title: "Fall 2: Hochsicherheits-Rechenzentrum",
+      scenario: "Schutz eines Rechenzentrums vor unbefugtem Zutritt, Spionage und Feuer.",
+      steps: [
+        { name: "1. Objekt- & Ist-Analyse", text: "Serverräume im Untergeschoss, hohe Kriterien an Ausfallsicherheit und Vertraulichkeit." },
+        { name: "2. Rechtliche Grundlagen", text: "DSGVO (Datenschutz), ArbSchG, Hausrecht des Betreibers." },
+        { name: "3. Personelle Maßnahmen", text: "Kontrolle des Besucherverkehrs, Begleitung von Fremdfirmen/Technikern (Escort-Service), Protokollierung." },
+        { name: "4. Sicherheitstechnik", text: "Zwei-Faktoren-Zutrittskontrolle (RFID-Karte + Biometrie/PIN), Rauchansaugsysteme (RAS) zur Brandfrüherkennung, N2-Gaslöschanlage." },
+        { name: "5. Notfall- & Alarmplan", text: "Direktauslösung BMA an die Feuerwehr, Räumungsplan für Personal, automatische Schottung der Serverräume." }
+      ]
+    },
+    {
+      title: "Fall 3: Einkaufszentrum (Shopping Mall)",
+      scenario: "Gefahrenabwehr bei Großveranstaltungen, Deeskalation und Schutz vor Ladendiebstahl.",
+      steps: [
+        { name: "1. Objekt- & Ist-Analyse", text: "Hohes Publikumsaufkommen, viele Fluchtwege, unübersichtliche Bereiche, Ecken mit Vandalismusrisiko." },
+        { name: "2. Rechtliche Grundlagen", text: "StPO § 127 (Vorläufige Festnahme), BGB § 227 (Notwehr), GewO & BewachV." },
+        { name: "3. Personelle Maßnahmen", text: "Präsenzdienst im Innenbereich (Foot Patrol), Einsatz von Doormen / Ladendetektiven." },
+        { name: "4. Sicherheitstechnik", text: "Flucht- und Rettungswegsicherung, CCTV-Kameras an Zu- und Ausgängen, Sprinkleranlage." },
+        { name: "5. Notfall- & Alarmplan", text: "Lautsprecherdurchsagen für Räumung, Freihalten der Anfahrtswege für Rettungskräfte, Erste-Hilfe-Erstversorgung." }
+      ]
+    }
+  ];
 
-    // --- VERHALTEN (Frage 71-100) ---
-    { cat: "Verhalten", sub: "Kommunikation", q: "Was ist 'Aktives Zuhören'?", opts: ["Den anderen unterbrechen", "Aufmerksamkeit signalisieren, paraphrasieren, Blickkontakt halten", "Nebenbei aufs Handy schauen", "Widersprechen"], ans: 1, exp: "Wichtige Technik zur Deeskalation und zum Verständnis." },
-    { cat: "Verhalten", sub: "Deeskalation", q: "Wie sollte die Körperhaltung in einem Konflikt sein?", opts: ["Verschränkte Arme", "Sicherer Stand, offene Hände, angemessene Distanz", "Ganz nah ran gehen", "Sich auf den Boden setzen"], ans: 1, exp: "Souveränität und Sicherheit ausstrahlen ohne zu provozieren." },
-    { cat: "Verhalten", sub: "Psychologie", q: "Was ist das '4-Ohren-Modell'?", opts: ["Ein Modell von Schulz von Thun (Sachinhalt, Beziehung, Selbstoffenbarung, Appell)", "Ein Hörgerät", "Modell für vier Personen", "Biologisches Phänomen"], ans: 0, exp: "Jede Nachricht hat vier Seiten, die vom Empfänger unterschiedlich gehört werden können." },
-    { cat: "Verhalten", sub: "Stress", q: "Welches körperliche Symptom deutet auf akuten Stress hin?", opts: ["Niedriger Puls", "Erhöhte Atemfrequenz, Schwitzen, Herzklopfen", "Müdigkeit", "Hungergefühl"], ans: 1, exp: "Adrenalinausschüttung bereitet den Körper auf Kampf oder Flucht vor." },
-    { cat: "Verhalten", sub: "Team", q: "Was ist wichtig für die Übergabe im Objektschutz?", opts: ["Nur 'Hallo' sagen", "Vollständige Weitergabe aller Vorkommnisse und Besonderheiten", "Früher gehen", "Gar nichts sagen"], ans: 1, exp: "Die Übergabe ist sicherheitskritisch. Lücken können zu Gefahren führen." },
-    { cat: "Verhalten", sub: "Kommunikation", q: "Was ist eine 'Ich-Botschaft'?", opts: ["Dem anderen Vorwürfe machen ('Du bist schuld!')", "Eigene Gefühle und Bedürfnisse ausdrücken ('Ich nehme wahr, dass...')", "Nur von sich selbst reden", "Ein Telegramm"], ans: 1, exp: "Ich-Botschaften wirken weniger anklagend und fördern die Verständigung." },
-    { cat: "Verhalten", sub: "Konflikt", q: "Was ist die 'Eskalationsspirale'?", opts: ["Eine Treppe", "Prozess, bei dem sich Aggressionen gegenseitig hochschaukeln", "Ein Spielzeug", "Ein Lüftungssystem"], ans: 1, exp: "Ziel des SMA ist es, diese Spirale frühzeitig zu durchbrechen." },
-    { cat: "Verhalten", sub: "Beruf", q: "Was bedeutet 'Dienstleistungsorientierung' im Sicherheitsdienst?", opts: ["Den Kunden ignorieren", "Sicherheit gewährleisten und dabei freundlich und hilfsbereit auftreten", "Nur Befehle ausführen", "Kaffee kochen"], ans: 1, exp: "Der SMA ist Visitenkarte des Unternehmens und des Kunden." },
-    { cat: "Verhalten", sub: "Deeskalation", q: "Was versteht man unter der 'Distanzzone'?", opts: ["Die Entfernung zum nächsten Ort", "Den physischen Raum um eine Person, in dem sie sich sicher fühlt", "Ein Sperrgebiet", "Entfernung zum Mond"], ans: 1, exp: "Das Unterschreiten der Intimdistanz (ca. 0,5m) wirkt oft aggressiv oder bedrohlich." },
-    { cat: "Verhalten", sub: "Kultur", q: "Was ist bei interkultureller Kommunikation wichtig?", opts: ["Ignorieren von Unterschieden", "Respekt, Wissen um andere Sitten und nonverbale Zeichen", "Alle gleich behandeln ohne Rücksicht", "Nur Deutsch sprechen"], ans: 1, exp: "Vermeidung von Missverständnissen durch interkulturelle Kompetenz." },
-    { cat: "Verhalten", sub: "Einsatz", q: "Wie verhält man sich bei einem Fund von verdächtigen Gegenständen?", opts: ["Anfassen und schütteln", "Nicht berühren, Bereich absperren, Vorgesetzte/Polizei informieren", "In den Müll werfen", "Mitnehmen"], ans: 1, exp: "Eigensicherung geht vor! USBV-Gefahr beachten." },
-    { cat: "Verhalten", sub: "Kommunikation", q: "Was bedeutet 'Paraphrasieren'?", opts: ["Lügen", "Den Inhalt des Gesagten mit eigenen Worten wiederholen", "Ganz laut sprechen", "Ein Bild malen"], ans: 1, exp: "Dient zur Kontrolle, ob man den anderen richtig verstanden hat." },
-    { cat: "Verhalten", sub: "Stress", q: "Wie kann man Stress abbauen?", opts: ["Noch mehr arbeiten", "Atemübungen, Sport, ausreichend Schlaf", "Viel Kaffee trinken", "Gar nicht"], ans: 1, exp: "Stressmanagement ist wichtig für die langfristige Gesundheit und Einsatzfähigkeit." },
-    { cat: "Verhalten", sub: "Kommunikation", q: "Was gehört zur 'Nonverbalen Kommunikation'?", opts: ["Nur das geschriebene Wort", "Mimik, Gestik, Körperhaltung, Blickkontakt", "Schreien", "Funkverkehr"], ans: 1, exp: "Mehr als 80% der Kommunikation findet nonverbal statt." },
-    { cat: "Verhalten", sub: "Einsatz", q: "Was ist eine 'Lagemeldung'?", opts: ["Ein Wetterbericht", "Präzise Beschreibung der aktuellen Situation vor Ort", "Ein Witz", "Eine Krankmeldung"], ans: 1, exp: "Wichtig für die Koordination von Unterstützungskräften." },
-    { cat: "Verhalten", sub: "Berufsethik", q: "Darf ein SMA Geschenke von Kunden annehmen?", opts: ["Ja, immer", "In der Regel nein (Gefahr der Bestechlichkeit / Compliance-Regeln)", "Nur Geld", "Nur teure Uhren"], ans: 1, exp: "Vermeidung von Abhängigkeiten und Wahrung der Neutralität." },
-    { cat: "Verhalten", sub: "Konflikt", q: "Wann sollte man sich aus einem Konflikt zurückziehen?", opts: ["Nie", "Wenn Eigengefährdung droht oder Deeskalation gescheitert ist", "Sobald es langweilig wird", "Wenn man keine Lust mehr hat"], ans: 1, exp: "Eigensicherung steht immer an erster Stelle." },
-    { cat: "Verhalten", sub: "Wahrnehmung", q: "Was ist der 'Halo-Effekt'?", opts: ["Ein Heiligenschein", "Ein Beurteilungsfehler, bei dem ein Merkmal alles andere überstrahlt", "Ein Wetterphänomen", "Ein Computerspiel"], ans: 1, exp: "Wichtiger Faktor bei der Personenbeschreibung und Zeugenaussagen." },
-    { cat: "Verhalten", sub: "Kommunikation", q: "Was ist ein 'Killerphrase'?", opts: ["Ein Kompliment", "Sätze, die das Gespräch abwürgen (z.B. 'Das haben wir schon immer so gemacht!')", "Ein Krimi-Titel", "Fremdwörter"], ans: 1, exp: "Blockiert die kreative Lösungssuche und Kommunikation." },
-    { cat: "Verhalten", sub: "Psychologie", q: "Was versteht man unter 'Gruppendynamik'?", opts: ["Ein Sportkurs", "Verhaltensabläufe und Interaktionen innerhalb einer Gruppe", "Eine Musikband", "Gruppenreisen"], ans: 1, exp: "Wichtig bei der Bewältigung von Menschenansammlungen." },
-    { cat: "Verhalten", sub: "Kommunikation", q: "Was ist eine 'Offene Frage'?", opts: ["Eine Frage, die man mit Ja/Nein beantwortet", "W-Frage (Wer, Wie, Was...), die zum Erzählen anregt", "Eine dumme Frage", "Eine Frage ohne Antwort"], ans: 1, exp: "Fördert den Informationsfluss." },
-    { cat: "Verhalten", sub: "Einsatz", q: "Wie geht man mit betrunkenen Personen um?", opts: ["Auslachen", "Ruhig, bestimmt, klare Ansagen, erhöhte Distanz wegen Unberechenbarkeit", "Gleich zuschlagen", "Ignorieren"], ans: 1, exp: "Alkoholisierte Personen haben oft eine herabgesetzte Hemmschwelle." },
-    { cat: "Verhalten", sub: "Psychologie", q: "Was ist der 'Zuschauer-Effekt' (Bystander-Effekt)?", opts: ["Dass alle helfen", "Dass die Wahrscheinlichkeit für Hilfe sinkt, je mehr Leute zusehen", "Dass man gerne zuschaut", "Ein Video-Effekt"], ans: 1, exp: "Verantwortungsdiffusion führt dazu, dass keiner handelt." },
-    { cat: "Verhalten", sub: "Beruf", q: "Was ist die Schweigepflicht?", opts: ["Dass man nicht sprechen darf", "Pflicht, über alle betrieblichen Geheimnisse und Personen Interna zu schweigen", "Verbot zu flüstern", "Gilt nur für Zeugen"], ans: 1, exp: "Teil des Arbeitsvertrages und oft durch NDA geschützt." },
-    { cat: "Verhalten", sub: "Stress", q: "Was ist 'Burnout'?", opts: ["Ein Feuer", "Zustand emotionaler, geistiger und körperlicher Erschöpfung", "Ein schnelles Auto", "Ein Sport-Trend"], ans: 1, exp: "Prävention durch gesundes Stressmanagement ist essenziell." },
-    { cat: "Verhalten", sub: "Kommunikation", q: "Was bedeutet 'Kongruenz'?", opts: ["Dass man lügt", "Übereinstimmung von verbaler und nonverbaler Botschaft", "Ein mathematischer Satz", "Verschlüsselung"], ans: 1, exp: "Wirkt glaubwürdig und vertrauenserweckend." },
-    { cat: "Verhalten", sub: "Einsatz", q: "Wozu dient ein Protokoll?", opts: ["Zum Malen", "Zur beweissicheren Dokumentation von Abläufen", "Als Papierflieger", "Zum Zeitvertreib"], ans: 1, exp: "Wichtig für spätere Ermittlungen oder Gerichtsverfahren." },
-    { cat: "Verhalten", sub: "Deeskalation", q: "Was ist ein 'verbaler Rückzug'?", opts: ["Weglaufen", "Sich für Fehler entschuldigen oder das Gespräch deeskalierend beenden", "Ganz leise sprechen", "Schimpfwörter"], ans: 1, exp: "Kann eine Situation beruhigen, bevor sie eskaliert." },
-    { cat: "Verhalten", sub: "Wahrnehmung", q: "Warum sind Zeugenaussagen oft ungenau?", opts: ["Weil alle lügen", "Wegen selektiver Wahrnehmung, Stress und Zeitablauf", "Weil es dunkel ist", "Gar nicht"], ans: 1, exp: "Das menschliche Gedächtnis ist lückenhaft und interpretierend." },
-    { cat: "Verhalten", sub: "Team", q: "Was ist konstruktive Kritik?", opts: ["Jemanden beleidigen", "Sachbezogene Rückmeldung mit Verbesserungsvorschlägen", "Nichts sagen", "Nur das Schlechte sehen"], ans: 1, exp: "Dient der Weiterentwicklung des Teams und der Sicherheit." }
-];
+  // --- LOGIK & FUNCTIONS ---
+  let currentQuestions = [...questions];
+  let currentIndex = 0;
+  let answered = false;
 
-let filteredQuestions = [];
-let currentIdx = 0;
-let canAnswer = true;
+  function switchTab(tab) {
+    if (tab === 'quiz') {
+      document.getElementById("quizTab").classList.remove("hidden");
+      document.getElementById("conceptTab").classList.add("hidden");
+      document.getElementById("tabQuizBtn").classList.add("active");
+      document.getElementById("tabConceptBtn").classList.remove("active");
+    } else {
+      document.getElementById("quizTab").classList.add("hidden");
+      document.getElementById("conceptTab").classList.remove("hidden");
+      document.getElementById("tabQuizBtn").classList.remove("active");
+      document.getElementById("tabConceptBtn").classList.add("active");
+      loadConcept();
+    }
+  }
 
-const elements = {
-    catFilter: document.getElementById('catFilter'),
-    progressText: document.getElementById('progressText'),
-    progressBar: document.getElementById('progressBar'),
-    categoryBadge: document.getElementById('categoryBadge'),
-    subCategoryText: document.getElementById('subCategoryText'),
-    questionText: document.getElementById('questionText'),
-    optionsGrid: document.getElementById('optionsGrid'),
-    explanationBox: document.getElementById('explanationBox'),
-    explanationContent: document.getElementById('explanationContent'),
-    prevBtn: document.getElementById('prevBtn'),
-    nextBtn: document.getElementById('nextBtn')
-};
+  function filterQuestions() {
+    const selected = document.getElementById("categoryFilter").value;
+    currentQuestions = selected === "all" ? [...questions] : questions.filter(q => q.category === selected);
+    currentIndex = 0;
+    loadQuestion();
+  }
 
-function init() {
-    elements.catFilter.addEventListener('change', applyFilter);
-    elements.prevBtn.addEventListener('click', () => navigate(-1));
-    elements.nextBtn.addEventListener('click', () => navigate(1));
-    applyFilter();
-}
-
-function applyFilter() {
-    const val = elements.catFilter.value;
-    filteredQuestions = val === 'all' 
-        ? [...questions] 
-        : questions.filter(q => q.cat === val);
+  function loadQuestion() {
+    answered = false;
+    document.getElementById("explanation").style.display = "none";
     
-    currentIdx = 0;
-    renderQuestion();
-}
-
-function renderQuestion() {
-    if (filteredQuestions.length === 0) {
-        elements.questionText.innerText = "Keine Fragen gefunden.";
-        elements.optionsGrid.innerHTML = "";
-        return;
+    if (currentQuestions.length === 0) {
+      document.getElementById("question").innerText = "Keine Fragen gefunden.";
+      document.getElementById("options").innerHTML = "";
+      return;
     }
 
-    canAnswer = true;
-    const q = filteredQuestions[currentIdx];
-    
-    // UI Update
-    elements.progressText.innerText = `Frage ${currentIdx + 1} / ${filteredQuestions.length}`;
-    elements.progressBar.style.width = `${((currentIdx + 1) / filteredQuestions.length) * 100}%`;
-    elements.categoryBadge.innerText = q.cat;
-    elements.subCategoryText.innerText = q.sub;
-    elements.questionText.innerText = q.q;
-    elements.explanationBox.classList.remove('visible');
-    
-    // Clear & Build Options
-    elements.optionsGrid.innerHTML = "";
-    q.opts.forEach((opt, index) => {
-        const btn = document.createElement('button');
-        btn.className = "opt-btn w-full p-5 text-left border-2 border-slate-200 rounded-2xl font-semibold hover:border-blue-400 hover:bg-blue-50 text-slate-700 shadow-sm bg-white";
-        btn.innerText = opt;
-        btn.onclick = () => handleAnswer(index, btn);
-        elements.optionsGrid.appendChild(btn);
+    const q = currentQuestions[currentIndex];
+    document.getElementById("counter").innerText = `Frage ${currentIndex + 1} von ${currentQuestions.length}`;
+    document.getElementById("catBadge").innerText = q.category;
+    document.getElementById("subCatBadge").innerText = q.subcategory || "Allgemein";
+    document.getElementById("question").innerText = q.question;
+
+    const optionsContainer = document.getElementById("options");
+    optionsContainer.innerHTML = "";
+
+    q.options.forEach((opt, index) => {
+      const btn = document.createElement("button");
+      btn.className = "btn-option";
+      btn.innerText = opt;
+      btn.onclick = () => checkAnswer(index, btn);
+      optionsContainer.appendChild(btn);
     });
 
-    elements.prevBtn.disabled = currentIdx === 0;
-    elements.nextBtn.innerText = currentIdx === filteredQuestions.length - 1 ? "Prüfung beenden" : "Nächste Frage";
-}
+    document.getElementById("prevBtn").disabled = currentIndex === 0;
+    document.getElementById("nextBtn").disabled = currentIndex === currentQuestions.length - 1;
+  }
 
-function handleAnswer(choiceIdx, btn) {
-    if (!canAnswer) return;
-    canAnswer = false;
+  function checkAnswer(selectedIndex, clickedBtn) {
+    if (answered) return;
+    answered = true;
 
-    const q = filteredQuestions[currentIdx];
-    const allBtns = elements.optionsGrid.querySelectorAll('button');
+    const q = currentQuestions[currentIndex];
+    const buttons = document.querySelectorAll(".btn-option");
 
-    // Highlight Correct
-    allBtns[q.ans].classList.remove('border-slate-200', 'hover:border-blue-400', 'bg-white');
-    allBtns[q.ans].classList.add('border-emerald-500', 'bg-emerald-50', 'text-emerald-800', 'ring-2', 'ring-emerald-500');
+    buttons.forEach((btn, idx) => {
+      if (idx === q.answer) btn.classList.add("correct");
+    });
 
-    // If Wrong
-    if (choiceIdx !== q.ans) {
-        btn.classList.remove('border-slate-200', 'hover:border-blue-400', 'bg-white');
-        btn.classList.add('border-rose-500', 'bg-rose-50', 'text-rose-800');
-    }
+    if (selectedIndex !== q.answer) clickedBtn.classList.add("wrong");
 
-    // Show Explanation
-    elements.explanationContent.innerText = q.exp;
-    elements.explanationBox.classList.add('visible');
-}
+    const expBox = document.getElementById("explanation");
+    document.getElementById("explanationText").innerText = q.explanation;
+    expBox.style.display = "block";
+  }
 
-function navigate(dir) {
-    const newIdx = currentIdx + dir;
-    if (newIdx >= 0 && newIdx < filteredQuestions.length) {
-        currentIdx = newIdx;
-        renderQuestion();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    } else if (newIdx === filteredQuestions.length) {
-        alert("Glückwunsch! Du hast alle " + filteredQuestions.length + " Fragen bearbeitet.");
-        if(confirm("Möchtest du diesen Bereich noch einmal von vorne starten?")) {
-            currentIdx = 0;
-            renderQuestion();
-        }
-    }
-}
+  function nextQuestion() { if (currentIndex < currentQuestions.length - 1) { currentIndex++; loadQuestion(); } }
+  function prevQuestion() { if (currentIndex > 0) { currentIndex--; loadQuestion(); } }
 
-window.onload = init;
+  // Concept Logic
+  function loadConcept() {
+    const idx = document.getElementById("conceptSelect").value;
+    const c = concepts[idx];
+    const container = document.getElementById("conceptContent");
+
+    let html = `<p><strong>Szenario:</strong> ${c.scenario}</p>`;
+    
+    c.steps.forEach(step => {
+      html += `
+        <div class="concept-step">
+          <div class="concept-title">${step.name}</div>
+          <div>${step.text}</div>
+        </div>
+      `;
+    });
+
+    container.innerHTML = html;
+  }
+
+  window.onload = () => {
+    loadQuestion();
+  };
 </script>
-
 </body>
 </html>
-
-```
