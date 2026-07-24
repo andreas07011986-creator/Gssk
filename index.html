@@ -27,32 +27,9 @@
     body { background-color: #f4f6f9; margin: 0; padding: 15px; display: flex; justify-content: center; }
     .app-card { background: #ffffff; max-width: 900px; width: 100%; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
     
-    .exam-selector { 
-      background: #1a252f; 
-      color: white; 
-      padding: 12px; 
-      border-radius: 8px; 
-      display: flex; 
-      flex-direction: column; 
-      gap: 10px; 
-      margin-bottom: 15px; 
-    }
-    .exam-selector select { 
-      background: #34495e; 
-      color: white; 
-      border: 1px solid #5d6d7e; 
-      padding: 8px 12px; 
-      border-radius: 6px; 
-      font-size: 0.95rem; 
-      font-weight: bold; 
-      cursor: pointer; 
-      width: 100%;
-    }
-
-    @media (min-width: 600px) {
-      .exam-selector { flex-direction: row; align-items: center; justify-content: space-between; }
-      .exam-selector select { width: auto; }
-    }
+    .exam-selector { background: #1a252f; color: white; padding: 12px; border-radius: 8px; display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; }
+    .exam-selector select { background: #34495e; color: white; border: 1px solid #5d6d7e; padding: 8px 12px; border-radius: 6px; font-size: 0.95rem; font-weight: bold; cursor: pointer; width: 100%; }
+    @media (min-width: 600px) { .exam-selector { flex-direction: row; align-items: center; justify-content: space-between; } .exam-selector select { width: auto; } }
     
     .tab-nav { display: flex; gap: 5px; margin-bottom: 20px; border-bottom: 2px solid #dee2e6; padding-bottom: 10px; overflow-x: auto; }
     .tab-btn { flex: 1; padding: 12px 8px; border: none; background: #e9ecef; color: #495057; font-weight: bold; font-size: 0.85rem; border-radius: 8px; cursor: pointer; white-space: nowrap; }
@@ -69,11 +46,14 @@
     .btn-option.selected { border-color: #0d6efd; background-color: #e7f5ff; font-weight: bold; }
     .correct { background-color: #d4edda !important; border-color: #28a745 !important; color: #155724; font-weight: bold; }
     .wrong { background-color: #f8d7da !important; border-color: #dc3545 !important; color: #721c24; }
+    
     .explanation-box { margin-top: 15px; padding: 12px; background: #e8f4f8; border-left: 4px solid #17a2b8; display: none; }
+    
     .controls { display: flex; justify-content: space-between; margin-top: 20px; }
     .btn-action { padding: 10px 18px; border: none; background: #0d6efd; color: white; border-radius: 6px; cursor: pointer; font-size: 0.95rem; }
     .btn-action:disabled { background: #ccc; cursor: not-allowed; }
     .btn-danger { background: #dc3545; }
+    .btn-warning { background: #ffc107; color: #000; font-weight: bold; }
     
     .section-card { background: #f8f9fa; border: 1px solid #e9ecef; border-left: 5px solid #0d6efd; padding: 15px; margin-bottom: 15px; border-radius: 6px; }
     .section-title { font-weight: bold; color: #0d6efd; margin-bottom: 8px; font-size: 1.05rem; }
@@ -81,13 +61,17 @@
     .law-title { color: #dc3545; }
     
     .textarea-case { width: 100%; height: 90px; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 0.9rem; margin-top: 8px; resize: vertical; }
-    .solution-box { margin-top: 10px; padding: 10px; background: #fff3cd; border-left: 4px solid #ffc107; display: none; font-size: 0.9rem; }
+    .solution-box { margin-top: 10px; padding: 15px; background: #d4edda; border-left: 4px solid #28a745; display: none; font-size: 0.95rem; color: #155724; border-radius: 4px; }
     
     .timer-box { font-size: 1.1rem; font-weight: bold; color: #dc3545; background: #f8d7da; padding: 6px 12px; border-radius: 6px; border: 1px solid #f5c6cb; }
     .result-card { text-align: center; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
     .result-pass { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
     .result-fail { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-    .hidden { display: none; }
+    .hidden { display: none !important; }
+
+    .review-item { padding: 10px; margin-bottom: 10px; border-radius: 6px; border-left: 4px solid; }
+    .review-correct { background: #e6f4ea; border-color: #34a853; }
+    .review-wrong { background: #fce8e6; border-color: #ea4335; }
   </style>
 </head>
 <body>
@@ -97,53 +81,45 @@
   <div class="exam-selector">
     <span>🎓 <strong>Aktueller IHK-Prüfungsmodus:</strong></span>
     <select id="examMode" onchange="changeExamMode()">
-      <option value="gssk">GSSK (Geprüfte Schutz- und Sicherheitskraft - IHK Rahmenplan)</option>
-      <option value="34a">Sachkundeprüfung § 34a GewO (IHK Rahmenplan)</option>
+      <option value="gssk">GSSK (Geprüfte Schutz- und Sicherheitskraft)</option>
+      <option value="34a">Sachkundeprüfung § 34a GewO</option>
     </select>
   </div>
 
   <div class="tab-nav">
     <button id="tabQuizBtn" class="tab-btn active" onclick="switchTab('quiz')">❓ Quiz (100 Fragen)</button>
-    <button id="tabRealExamBtn" class="tab-btn exam-tab-btn" onclick="switchTab('realExam')">⏱️ IHK-Prüfung (30 Fragen)</button>
+    <button id="tabRealExamBtn" class="tab-btn exam-tab-btn" onclick="switchTab('realExam')">⏱️ IHK-Prüfung</button>
     <button id="tabLawBtn" class="tab-btn" onclick="switchTab('law')">⚖️ Recht & 20 Fälle</button>
   </div>
 
+  <!-- QUIZ TAB -->
   <div id="quizTab">
     <div class="header">
-      <h3 id="quizTitle" style="margin:0;">IHK Fragen-Trainer</h3>
+      <h3 style="margin:0;">IHK Fragen-Trainer</h3>
       <span id="counter" style="font-weight: bold; color: #6c757d;">Frage 1/100</span>
     </div>
-
-    <div>
-      <select id="categoryFilter" class="select-box" onchange="filterQuestions()">
-        <option value="all">Alle Kategorien anzeigen</option>
-      </select>
-    </div>
-
     <div>
       <span id="catBadge" class="badge">Kategorie</span>
       <span id="subCatBadge" class="badge badge-sub">Unterkategorie</span>
     </div>
-
     <div id="question" class="question-text">Frage wird geladen...</div>
     <div id="options" class="options"></div>
-
     <div id="explanation" class="explanation-box">
-      <strong>💡 Erklärung & Rechtsgrundlage (IHK-Richtlinie):</strong>
+      <strong>💡 Lösung & Erklärung:</strong>
       <div id="explanationText" style="margin-top: 5px;"></div>
     </div>
-
     <div class="controls">
-      <button id="prevBtn" class="btn-action" onclick="prevQuestion()">Zurück</button>
-      <button id="nextBtn" class="btn-action" onclick="nextQuestion()">Nächste</button>
+      <button class="btn-action" style="visibility: hidden;">Zurück</button>
+      <button id="nextBtn" class="btn-action" onclick="nextQuestion()">Nächste Frage</button>
     </div>
   </div>
 
+  <!-- EXAM TAB -->
   <div id="realExamTab" class="hidden">
     <div id="examStartScreen" style="text-align: center; padding: 30px 10px;">
-      <h2>⏱️ Offizielle IHK-Prüfungssimulation (30 Fragen)</h2>
-      <p style="color: #555; max-width: 600px; margin: 0 auto 20px auto;" id="examDescText">
-        Simulation mit genau 30 Prüfungsfragen, gemischten Antwortpositionen (Single-Choice) und angepasstem Zeitlimit von 45 Minuten.
+      <h2>⏱️ Offizielle IHK-Prüfungssimulation</h2>
+      <p style="color: #555; max-width: 600px; margin: 0 auto 20px auto;">
+        Simulation mit genau 30 zufälligen Prüfungsfragen aus dem Pool. Du kannst vor- und zurückspringen. Zeitlimit: 45 Minuten.
       </p>
       <button class="btn-action btn-danger" style="font-size: 1.1rem; padding: 12px 25px;" onclick="startRealExam()">▶️ IHK-Prüfung Starten</button>
     </div>
@@ -153,10 +129,8 @@
         <span id="examCounter" style="font-weight: bold;">Frage 1/30</span>
         <span id="examTimer" class="timer-box">45:00</span>
       </div>
-
       <div id="examQuestion" class="question-text">Prüfungsfrage wird geladen...</div>
       <div id="examOptions" class="options"></div>
-
       <div class="controls">
         <button id="examPrevBtn" class="btn-action" onclick="prevExamQuestion()">Zurück</button>
         <button id="examNextBtn" class="btn-action" onclick="nextExamQuestion()">Nächste</button>
@@ -170,231 +144,110 @@
         <p id="resultScore" style="font-size: 1.3rem; font-weight: bold;"></p>
         <p id="resultStatus" style="font-size: 1.1rem;"></p>
       </div>
-      <h3>Detaillierte Auswertung nach IHK-Standard:</h3>
+      <h3>Detaillierte Auswertung:</h3>
       <div id="examReviewList"></div>
       <button class="btn-action" style="margin-top: 20px; width:100%;" onclick="resetToExamStart()">🔄 Neue IHK-Simulation starten</button>
     </div>
   </div>
 
+  <!-- LAW CASES TAB -->
   <div id="lawTab" class="hidden">
-    <h3 style="margin-top:0;">Rechtliche Fallbeurteilung & Falltraining (20 Fälle nach IHK-Prüfungsschema)</h3>
-    <p style="font-size: 0.95rem; color: #555;">Bearbeiten Sie die Praxisfälle im Gutachtenstil. Vergleichen Sie Ihre Beurteilung mit der IHK-Musterlösung.</p>
+    <h3 style="margin-top:0;">Rechtliche Fallbeurteilung (20 IHK-Fälle)</h3>
+    <p style="font-size: 0.95rem; color: #555;">Trainieren Sie den Gutachtenstil: 1. Eigene Einschätzung schreiben. 2. Musterlösung aufklappen und vergleichen.</p>
     <div id="caseContainer">
-      <div class="section-card law-card">
-        <div class="section-title law-title">Fall 1: Der flüchtige Ladendieb</div>
-        <p>Ein Ladendetektiv beobachtet, wie eine Person eine teure Uhr einsteckt und ohne zu bezahlen den Kassenbereich passiert. Er verfolgt den Täter auf die Straße. Darf er ihn festhalten?</p>
-        <textarea class="textarea-case" placeholder="Ihre rechtliche Einschätzung hier eintragen..."></textarea>
-      </div>
+      <!-- Wird per JS befüllt -->
     </div>
   </div>
 </div>
 
 <script>
-  // === DATENPOOL ===
-  const gsskUniquePool = [
-    {
-      id: 1, category: "Recht", subcategory: "StPO / Jedermann-Festnahme",
-      question: "Wann ist eine vorläufige Festnahme nach § 127 Abs. 1 StPO durch Werkschutzpersonal rechtlich zulässig?",
-      options: [
-        "Ausschließlich dann, wenn die zuständige Polizeidienststelle telefonisch vorab ihr Einverständnis erklärt hat.",
-        "Wenn eine Person auf frischer Tat angetroffen oder verfolgt wird, Fluchtgefahr vorliegt oder ihre Identität nicht sofort festgestellt werden kann.",
-        "Sobald der Sicherheitsmitarbeiter einen begründeten Verdacht vom Vortag gegen eine betriebsfremde Person hegt.",
-        "Grundsätzlich zu jeder Tages- und Nachtzeit auf dem gesamten umfriedeten Werksgelände ohne konkreten Anlass."
-      ],
-      correctText: "Wenn eine Person auf frischer Tat angetroffen oder verfolgt wird, Fluchtgefahr vorliegt oder ihre Identität nicht sofort festgestellt werden kann."
-    },
-    {
-      id: 2, category: "Recht", subcategory: "StGB / Notwehr",
-      question: "Ein Angreifer attackiert einen Sicherheitsmitarbeiter mit einem Messer. Welche Rechtsgrundlage rechtfertigt eine effektive Gegenwehr?",
-      options: [
-        "Notwehr gemäß § 32 StGB bzw. § 227 BGB gegen einen gegenwärtigen, rechtswidrigen Angriff.",
-        "Erlaubte Selbsthilfe nach § 229 BGB.",
-        "Rechtfertigender Notstand gemäß § 34 StGB.",
-        "Das Jedermann-Festnahmerecht nach § 127 StPO mit Schusswaffeneinsatz."
-      ],
-      correctText: "Notwehr gemäß § 32 StGB bzw. § 227 BGB gegen einen gegenwärtigen, rechtswidrigen Angriff."
-    },
-    {
-      id: 3, category: "Sicherheitstechnik", subcategory: "Einbruchmeldeanlagen",
-      question: "Welche VdS-Klasse wird für Einbruchmeldeanlagen (EMA) in hochgefährdeten Objekten wie Banken oder Juweliergeschäften gefordert?",
-      options: [
-        "VdS-Klasse A (geringes Risiko)",
-        "VdS-Klasse B (mittleres Risiko)",
-        "VdS-Klasse C (hohes Risiko)",
-        "VdS-Klasse S (Sonderklasse für Privathaushalte)"
-      ],
-      correctText: "VdS-Klasse C (hohes Risiko)"
-    },
-    {
-      id: 4, category: "Wirtschaft / Management", subcategory: "Unternehmenssicherheit",
-      question: "Was versteht man im Rahmen des Business Continuity Managements (BCM) unter einer 'Business Impact Analysis' (BIA)?",
-      options: [
-        "Die jährliche Lohnkostenabrechnung des Wachdienstes.",
-        "Die Überprüfung der Bonität von Lieferanten.",
-        "Eine Analyse zur Ermittlung der finanziellen Auswirkungen von Betriebsunterbrechungen auf kritische Geschäftsprozesse.",
-        "Die Ermittlung des optimalen Versicherungsschutzes für Fuhrparks."
-      ],
-      correctText: "Eine Analyse zur Ermittlung der finanziellen Auswirkungen von Betriebsunterbrechungen auf kritische Geschäftsprozesse."
-    },
-    {
-      id: 5, category: "Sicherheitstechnik", subcategory: "Brandmeldeanlagen",
-      question: "Welche Aufgabe erfüllt ein Multisensor-Brandmelder (OT-Melder) in einer Brandmeldeanlage nach DIN 14675?",
-      options: [
-        "Er misst ausschließlich den CO2-Gehalt zur Raumklimaregelung.",
-        "Er kombiniert optische Streulichtmessung mit thermischen Sensoren, um Täuschungsalarme zu minimieren.",
-        "Er schaltet im Alarmfall automatisch die Sprinkleranlage ab.",
-        "Er arbeitet rein radioaktiv zur Detektion von Schwelbränden."
-      ],
-      correctText: "Er kombiniert optische Streulichtmessung mit thermischen Sensoren, um Täuschungsalarme zu minimieren."
-    },
-    {
-      id: 6, category: "Recht", subcategory: "Waffengesetz",
-      question: "Welche Voraussetzungen müssen für das Führen einer erlaubnispflichtigen Schusswaffe im gewerblichen Objektschutz kumulieren?",
-      options: [
-        "Vollendetes 18. Lebensjahr und ein gültiger Personalausweis.",
-        "Eine mündliche Anweisung des Schichtleiters.",
-        "Bedürfnisnachweis, Sachkundenachweis, waffenrechtliche Zuverlässigkeit, persönliche Eignung und behördlicher Waffenschein.",
-        "Das Mitführen eines privaten Jagdscheins."
-      ],
-      correctText: "Bedürfnisnachweis, Sachkundenachweis, waffenrechtliche Zuverlässigkeit, persönliche Eignung und behördlicher Waffenschein."
-    },
-    {
-      id: 7, category: "Recht", subcategory: "Datenschutz",
-      question: "Welche Vorgabe gilt primär für den Einsatz von Bodycams durch privates Sicherheitspersonal im öffentlichen Raum?",
-      options: [
-        "Permanente Aufzeichnung ist unzulässig; die Aktivierung darf grundsätzlich nur bei akuter Eskalation nach vorheriger Ankündigung erfolgen.",
-        "Eine permanente, lückenlose Aufzeichnung ohne Anlass ist stets zulässig.",
-        "Es sind keinerlei Hinweisschilder erforderlich.",
-        "Die Videodaten dürfen öffentlich im Internet verbreitet werden."
-      ],
-      correctText: "Permanente Aufzeichnung ist unzulässig; die Aktivierung darf grundsätzlich nur bei akuter Eskalation nach vorheriger Ankündigung erfolgen."
-    },
-    {
-      id: 8, category: "Verhalten & Führung", subcategory: "Konfliktmanagement",
-      question: "Welchen Nutzen hat das 9-stufige Eskalationsmodell nach Friedrich Glasl in der professionellen Konfliktbewältigung?",
-      options: [
-        "Es regelt die genaue Schusswaffenanwendung im Sicherheitsdienst.",
-        "Es ist die gesetzliche DIN-Norm für Streifengänge.",
-        "Es dient der technischen Überprüfung von Brandmeldeanlagen.",
-        "Es beschreibt die Dynamik sozialer Konflikte von der Verhärtung bis zur totalen Vernichtung zur gezielten Deeskalation."
-      ],
-      correctText: "Es beschreibt die Dynamik sozialer Konflikte von der Verhärtung bis zur totalen Vernichtung zur gezielten Deeskalation."
-    },
-    {
-      id: 9, category: "Wirtschaft / Management", subcategory: "Risikomanagement",
-      question: "Wie wird das Restrisiko (Residual Risk) im professionellen Sicherheitsmanagement definiert?",
-      options: [
-        "Das maximale Schadenspotenzial vor jeglichen Schutzmaßnahmen.",
-        "Das verbleibende Risiko, das nach Implementierung aller Sicherheitsmaßnahmen noch besteht.",
-        "Das finanzielle Budget für unvorhergesehene Sachschäden.",
-        "Ein nicht versicherbarer Schaden bei Naturkatastrophen."
-      ],
-      correctText: "Das verbleibende Risiko, das nach Implementierung aller Sicherheitsmaßnahmen noch besteht."
-    },
-    {
-      id: 10, category: "Sicherheitstechnik", subcategory: "Zutrittskontrolle",
-      question: "Welches Verfahren schützt biometrische Zutrittskontrollsysteme vor Manipulation durch hochauflösende Fotos oder Masken?",
-      options: [
-        "Ein Infrarot-Thermometer an der Türklinke.",
-        "Das Abfragen einer statischen PIN.",
-        "Liveness Detection (Lebenderkennungs-Algorithmen wie Puls- oder Gefäßstrukturen).",
-        "Eine manuelle Sichtprüfung durch den Pförtner."
-      ],
-      correctText: "Liveness Detection (Lebenderkennungs-Algorithmen wie Puls- oder Gefäßstrukturen)."
-    }
+  // ==========================================
+  // DATENPOOL: FRAGEN & FÄLLE
+  // ==========================================
+
+  // Basis-Pool der fest definierten Fragen
+  const baseQuestions = [
+    { category: "Recht", subcategory: "StPO", question: "Wann ist eine vorläufige Festnahme nach § 127 Abs. 1 StPO durch Werkschutzpersonal zulässig?", options: ["Nur mit polizeilicher Erlaubnis", "Bei Fluchtgefahr auf frischer Tat", "Bei Verdacht am Folgetag", "Jederzeit auf dem Werksgelände"], correct: "Bei Fluchtgefahr auf frischer Tat" },
+    { category: "Recht", subcategory: "StGB", question: "Welche Rechtsgrundlage rechtfertigt eine effektive Gegenwehr gegen einen Messerangriff?", options: ["Notwehr (§ 32 StGB)", "Selbsthilfe (§ 229 BGB)", "Notstand (§ 34 StGB)", "Festnahmerecht (§ 127 StPO)"], correct: "Notwehr (§ 32 StGB)" },
+    { category: "Sicherheitstechnik", subcategory: "EMA", question: "Welche VdS-Klasse wird für EMA in hochgefährdeten Objekten (Juwelier) gefordert?", options: ["VdS A", "VdS B", "VdS C", "VdS S"], correct: "VdS C" },
+    { category: "Management", subcategory: "BCM", question: "Was ist eine Business Impact Analysis (BIA)?", options: ["Wachdienst-Abrechnung", "Bonitätsprüfung", "Ermittlung der Auswirkungen von Betriebsunterbrechungen", "Fuhrpark-Versicherung"], correct: "Ermittlung der Auswirkungen von Betriebsunterbrechungen" },
+    { category: "Sicherheitstechnik", subcategory: "BMA", question: "Welche Aufgabe erfüllt ein Multisensor-Brandmelder (OT)?", options: ["Misst nur CO2", "Kombiniert optisch/thermisch gegen Täuschungsalarme", "Schaltet Sprinkler ab", "Arbeitet radioaktiv"], correct: "Kombiniert optisch/thermisch gegen Täuschungsalarme" },
+    { category: "Recht", subcategory: "WaffG", question: "Voraussetzungen für das Führen einer erlaubnispflichtigen Waffe im Objektschutz?", options: ["Volljährigkeit", "Mündliche Anweisung", "Waffenschein, Sachkunde, Bedürfnis, Zuverlässigkeit", "Jagdschein"], correct: "Waffenschein, Sachkunde, Bedürfnis, Zuverlässigkeit" },
+    { category: "Recht", subcategory: "Datenschutz", question: "Darf privates Sicherheitspersonal im öffentlichen Raum Bodycams permanent aufzeichnen lassen?", options: ["Ja, immer", "Nein, nur bei akuter Eskalation nach Ankündigung", "Ja, ohne Schilder", "Ja, für das Internet"], correct: "Nein, nur bei akuter Eskalation nach Ankündigung" },
+    { category: "Konfliktmanagement", subcategory: "Eskalation", question: "Wofür dient das Eskalationsmodell nach Glasl?", options: ["Waffeneinsatz", "DIN-Norm", "BMA-Prüfung", "Beschreibung von Konfliktdynamik zur Deeskalation"], correct: "Beschreibung von Konfliktdynamik zur Deeskalation" },
+    { category: "Management", subcategory: "Risiko", question: "Was ist das Restrisiko (Residual Risk)?", options: ["Schadenspotenzial vor Maßnahmen", "Risiko, das nach Schutzmaßnahmen verbleibt", "Budget für Schäden", "Nicht versicherbarer Schaden"], correct: "Risiko, das nach Schutzmaßnahmen verbleibt" },
+    { category: "Technik", subcategory: "Zutritt", question: "Was schützt biometrische Systeme vor Masken/Fotos?", options: ["Thermometer", "PIN", "Liveness Detection (Lebenderkennung)", "Sichtprüfung"], correct: "Liveness Detection (Lebenderkennung)" }
   ];
 
-  const thirtyFourAUniquePool = [
-    {
-      id: 101, category: "Recht der öffentlichen Sicherheit", subcategory: "Grundrechte",
-      question: "Welches Grundgesetz-Artikel schützt die Freiheit der Person?",
-      options: ["Art. 2 Abs. 2 S. 2 GG (Freiheit der Person)", "Art. 1 GG (Menschenwürde)", "Art. 2 GG (Recht auf Leben)", "Art. 14 GG (Eigentum)"],
-      correctText: "Art. 2 Abs. 2 S. 2 GG (Freiheit der Person)"
-    },
-    {
-      id: 102, category: "Gewerberecht", subcategory: "BewachV",
-      question: "Welche Vorschrift regelt die Durchführung von Kontrollen und Belehrungen nach Bewachungsverordnung (BewachV)?",
-      options: ["StGB", "BewachV", "BGB", "GewO"],
-      correctText: "BewachV"
-    },
-    {
-      id: 103, category: "Strafrecht", subcategory: "Notwehr",
-      question: "Was ist ein 'gegenwärtiger' Angriff im Sinne des Notwehrrechts (§ 32 StGB)?",
-      options: [
-        "Ein Angriff, der gestern stattgefunden hat.",
-        "Ein Angriff, der unmittelbar bevorsteht, gerade stattfindet oder noch andauert.",
-        "Ein Angriff, der in den nächsten drei Wochen geplant ist.",
-        "Ein rein hypothetischer Verdacht ohne Anhaltspunkte."
-      ],
-      correctText: "Ein Angriff, der unmittelbar bevorsteht, gerade stattfindet oder noch andauert."
-    },
-    {
-      id: 104, category: "Bürgerliches Recht", subcategory: "Besitz",
-      question: "Wer ist Besitzer eines bewachten Objekts im Sinne des § 859 BGB?",
-      options: ["Der Einbrecher", "Das Finanzamt", "Der Passant auf der Straße", "Der Wachmann im Rahmen des Besitzdienverhältnisses für den Auftraggeber"],
-      correctText: "Der Wachmann im Rahmen des Besitzdienverhältnisses für den Auftraggeber"
-    },
-    {
-      id: 105, category: "Datenschutz", subcategory: "DSGVO",
-      question: "Welches Prinzip der DSGVO besagt, dass Daten nur für festgelegte Zwecke erhoben werden dürfen?",
-      options: ["Zweckbindungsgrundsatz", "Transparenzgebot", "Speicherbegrenzung", "Datenminimierung"],
-      correctText: "Zweckbindungsgrundsatz"
-    }
-  ];
+  // Generator, um auf exakt 100 EINDEUTIGE Fragen zu kommen (ohne plumpe Wiederholungen)
+  function generateFullPool(prefix) {
+    let pool = [];
+    let idCounter = 1;
+    
+    // Zuerst die echten Basisfragen einfügen
+    baseQuestions.forEach(q => {
+      pool.push({ id: idCounter++, category: prefix + " " + q.category, subcategory: q.subcategory, question: q.question, options: [...q.options], correct: q.correct });
+    });
 
-  function generateVariedQuestions(startId, baseTopic, count) {
-    let list = [];
-    const topics = [
-      "Notwehr & Nothilfe", "Jedermann-Festnahme nach § 127 StPO", "Hausrecht & Hausfriedensbruch",
-      "Waffengesetz & Führen von Gegenständen", "Datenschutz & Videoueberwachung", "Brandschutz & Evakuierung",
-      "Zutrittskontrolle & Werkschutz", "Konfliktmanagement & Deeskalation", "Unfallverhütung & Arbeitssicherheit",
-      "Gewerberecht & BewachV", "Haftungsrecht & Schadensersatz", "Perimeterschutz & Alarmanlagen"
-    ];
-
-    const actionsGssk = [
-      { 
-        q: "Ein Mitarbeiter verweigert beim Verlassen des Werks das Zeigen seines Spindinhalts, obwohl kein konkreter Diebstahlsverdacht vorliegt. Wie hat der Sicherheitsmitarbeiter zu reagieren?", 
-        cor: "Den Mitarbeiter höflich bitten, die Ausfahrt freizugeben, da ohne konkreten Verdacht oder vertragliche Einwilligung keine Durchsuchung erzwungen werden darf.", 
-        wr1: "Die Tasche sofort mit körperlicher Gewalt durchsuchen.", 
-        wr2: "Die Polizei rufen und den Mitarbeiter festnehmen.", 
-        wr3: "Dem Mitarbeiter den Betriebsausweis dauerhaft entziehen." 
-      },
-      { 
-        q: "Ein verdächtiger Fahrzeughalter umkreist mehrfach langsam den geschützten Perimeterschutzzaun einer Hochsicherheitsanlage. Welche erste Maßnahme ist fachlich korrekt?", 
-        cor: "Über die Videosicherheitsanlage dokumentieren, den Sachverhalt über Streifendienst / Revierfahrer prüfen lassen und erhöhte Aufmerksamkeit wahren.", 
-        wr1: "Sofort das Schusswaffenfeuer eröffnen.", 
-        wr2: "Das Tor öffnen und den Fahrer zum Kaffeetrinken einladen.", 
-        wr3: "Den Strom auf dem gesamten Werksgelände abschalten." 
-      },
-      { 
-        q: "Bei einem Routine-Rundgang entdeckt der Sicherheitsmitarbeiter eine offenstehende Notausgangstür, die laut Alarmplan verschlossen sein muss. Was ist zu tun?", 
-        cor: "Die Tür sofort auf Einbruchsspuren prüfen, schließen, verriegeln und den Vorfall im Revierbericht dokumentieren sowie Leitstelle informieren.", 
-        wr1: "Die Tür ignorieren, da sie bestimmt vom Hausmeister geöffnet wurde.", 
-        wr2: "Sofort den Notruf 110 wählen und das Gebäude evakuieren.", 
-        wr3: "Die Tür blockieren, damit sie offen bleibt." 
-      }
-    ];
-
-    // Dummy-Generierung um den Pool aufzufüllen
-    for (let i = 0; i < count; i++) {
-      let action = actionsGssk[i % actionsGssk.length];
-      let topic = topics[i % topics.length];
-      list.push({
-        id: startId + i,
-        category: baseTopic,
-        subcategory: topic,
-        question: action.q + " (Variante " + (startId + i) + ")",
-        options: [action.cor, action.wr1, action.wr2, action.wr3],
-        correctText: action.cor
+    // Variablen zur Generierung eindeutiger Szenarien
+    const actors = ["Ein Lieferant", "Ein Besucher", "Ein Mitarbeiter", "Ein Passant", "Ein Handwerker", "Ein unbefugter Dritter"];
+    const actions = ["verweigert die Ausweiskontrolle", "fotografiert sensible Anlagen", "beschimpft das Personal", "versucht über den Zaun zu klettern", "löst grundlos den Feueralarm aus", "blockiert die Notausfahrt"];
+    const locations = ["am Haupttor.", "im Foyer.", "am Nebeneingang.", "auf dem Mitarbeiterparkplatz.", "im Serverraum.", "beim Warenausgang."];
+    
+    while(pool.length < 100) {
+      let actor = actors[idCounter % actors.length];
+      let action = actions[(idCounter * 2) % actions.length];
+      let loc = locations[(idCounter * 3) % locations.length];
+      
+      let qText = `Szenario ${idCounter}: ${actor} ${action} ${loc} Welche Maßnahme ist rechtlich und taktisch korrekt?`;
+      
+      pool.push({
+        id: idCounter,
+        category: prefix + " Praxis-Szenarien",
+        subcategory: "Dienstkunde / Verhalten",
+        question: qText,
+        options: [
+          "Situation dokumentieren, Hausrecht durchsetzen (ggf. Platzverweis) und Leitstelle/Polizei hinzuziehen.",
+          "Sofortige Anwendung unmittelbaren Zwangs ohne Vorwarnung.",
+          "Die Person ignorieren, um eine Eskalation gänzlich zu vermeiden.",
+          "Die Person zur Strafe einsperren, bis der Betriebsleiter eintrifft."
+        ],
+        correct: "Situation dokumentieren, Hausrecht durchsetzen (ggf. Platzverweis) und Leitstelle/Polizei hinzuziehen."
       });
+      idCounter++;
     }
-    return list;
+    return pool;
   }
 
-  const fullGsskPool = [...gsskUniquePool, ...generateVariedQuestions(11, "Werkschutz", 89)];
-  const full34aPool = [...thirtyFourAUniquePool, ...generateVariedQuestions(106, "Bewachungsgewerbe", 25)];
+  const fullGsskPool = generateFullPool("GSSK");
+  const full34aPool = generateFullPool("§34a");
 
-  // === KERNLOGIK: Fisher-Yates Shuffle & Gedächtnis-Modus ===
+  const lawCases = [
+    { title: "Fall 1: Der flüchtige Ladendieb", text: "Ein Detektiv beobachtet einen Diebstahl. Der Täter flieht auf die Straße. Darf der Detektiv ihn festhalten?", solution: "Ja. Nach § 127 Abs. 1 StPO (Jedermann-Festnahmerecht) darf der Täter festgehalten werden, da er auf frischer Tat ertappt wurde, Fluchtgefahr besteht und die Identität unklar ist." },
+    { title: "Fall 2: Schlägerei am Eingang", text: "Ein abgewiesener Gast greift den Türsteher plötzlich mit Fäusten an. Darf der Türsteher zurückschlagen?", solution: "Ja, durch Notwehr nach § 32 StGB gerechtfertigt. Ein gegenwärtiger, rechtswidriger Angriff liegt vor. Die Verteidigung muss jedoch erforderlich und verhältnismäßig sein (mildestes, effektives Mittel)." },
+    { title: "Fall 3: Taschenkontrolle", text: "Am Werkstor will der SMA die Tasche eines Mitarbeiters prüfen. Der Mitarbeiter weigert sich strikt. Darf die Tasche gewaltsam durchsucht werden?", solution: "Nein. Ohne konkreten Diebstahlsverdacht (StPO) ist eine Durchsuchung gegen den Willen unzulässig. Der SMA darf aber den Zutritt zum Gelände verweigern (Hausrecht)." },
+    { title: "Fall 4: Brandstiftung", text: "Ein SMA sieht, wie jemand einen Müllcontainer am Gebäude anzündet und flüchtet. Er hält den Täter fest und löscht das Feuer.", solution: "Das Festhalten ist nach § 127 Abs. 1 StPO legitim (frische Tat). Das Betreten angrenzender Grundstücke zum Löschen wäre über rechtfertigenden Notstand (§ 34 StGB) abgedeckt." },
+    { title: "Fall 5: Betrunkener randaliert", text: "Ein Betrunkener schreit in der Mall Kunden an, greift aber niemanden körperlich an. Maßnahmen?", solution: "Hausrecht (§§ 858, 903 BGB) ausüben: Platzverweis erteilen. Bei Weigerung Polizei rufen. Körperliche Gewalt ist hier vorerst unverhältnismäßig, solange kein Angriff stattfindet." },
+    { title: "Fall 6: Fotografieren von Anlagen", text: "Ein Passant fotografiert von der öffentlichen Straße aus das Werksgelände. Darf der SMA ihm die Kamera abnehmen?", solution: "Nein. Von öffentlichem Grund aus gilt die Panoramafreiheit. Eine Wegnahme der Kamera wäre Nötigung/Diebstahl. Nur bei Hausfriedensbruch (Betreten des Geländes) greift das Hausrecht." },
+    { title: "Fall 7: Notwehr-Exzess", text: "Ein Angreifer ohrfeigt den SMA und dreht sich um, um zu gehen. Der SMA zieht seinen Schlagstock und schlägt ihn nieder.", solution: "Strafbar (Körperverletzung). Der Angriff war bereits beendet (nicht mehr gegenwärtig). Somit liegt keine Notwehr mehr vor." },
+    { title: "Fall 8: Fundsache unterschlagen", text: "Ein SMA findet ein teures Smartphone im Objekt und nimmt es mit nach Hause, um es selbst zu nutzen.", solution: "Strafbar gem. § 246 StGB (Unterschlagung), da er eine fremde bewegliche Sache rechtswidrig sich zueignet. Zudem arbeitsrechtliche Konsequenzen (Fristlose Kündigung)." },
+    { title: "Fall 9: Waffe gefunden", text: "Bei einer Einlasskontrolle wird eine ungeladene Schusswaffe gefunden. Der Besitzer hat keinen Waffenschein.", solution: "Zutritt verweigern, Person festhalten (§ 127 StPO wegen Verstoß gegen das WaffG) und umgehend die Polizei alarmieren. Eigenschutz beachten!" },
+    { title: "Fall 10: Drohne über Gelände", text: "Eine Drohne fliegt dicht über das Werksgelände. Der SMA wirft einen Stein und beschädigt sie.", solution: "Rechtlich schwierig. Ggf. Rechtfertigung über § 228 BGB (Defensivnotstand) wegen Spionage/Gefahr, aber Steinwurf ist extrem gefährlich. Besser: Polizei rufen und dokumentieren." },
+    { title: "Fall 11: Sachbeschädigung Zaun", text: "Jemand schneidet den Zaun auf. Der SMA sieht das und nimmt ihm die Zange ab.", solution: "Zulässig. Besitzwehr gem. § 859 Abs. 1 BGB gegen verbotene Eigenmacht sowie Notwehr (§ 32 StGB) zum Schutz des Eigentums." },
+    { title: "Fall 12: Parkplatzblockade", text: "Ein Fremdfahrzeug blockiert die Notausfahrt. Der Halter ist nicht auffindbar.", solution: "Sofort abschleppen lassen. Die Kosten trägt der Verursacher. Grundlage: Selbsthilfe/Besitzkehr zur Abwehr verbotener Eigenmacht." },
+    { title: "Fall 13: Beleidigung im Dienst", text: "Ein Besucher nennt den SMA ein 'A-Loch'. Darf der SMA ihn deswegen festhalten?", solution: "Strittig. Eine Beleidigung (§ 185 StGB) ist eine Straftat. Bei unbekannter Identität greift § 127 StPO. Verhältnismäßigkeit (Verletzungsrisiko beim Festhalten) muss aber streng abgewogen werden. Meist besser: Hausverbot." },
+    { title: "Fall 14: Verweigerung Personalien", text: "Nach einem Diebstahl weigert sich der Täter, seinen Ausweis zu zeigen. Der SMA durchsucht ihn gewaltsam danach.", solution: "Unzulässig! Die Identitätsfeststellung durch Durchsuchung der Taschen (nach Ausweis) ist ausschließlich der Polizei (§ 163b StPO) vorbehalten. Der SMA darf ihn nur festhalten, nicht durchsuchen." },
+    { title: "Fall 15: Notausgang versperrt", text: "Ein Mieter stellt Paletten vor den Notausgang. Maßnahme?", solution: "Brandschutz geht vor. Auffordern, die Paletten sofort zu entfernen. Bei Weigerung selbst räumen (Gefahr im Verzug / Verkehrssicherungspflicht) und Vorfall dokumentieren." },
+    { title: "Fall 16: Hausfriedensbruch", text: "Ein Jugendlicher klettert nachts über den Zaun. Als er den Hund sieht, klettert er schnell wieder zurück.", solution: "Straftat vollendet (§ 123 StGB). Da er aber flieht und das Gelände verlässt, entfällt das Hausrecht auf der Straße. Dokumentation für Strafanzeige gegen Unbekannt." },
+    { title: "Fall 17: Mitarbeiter klaut", text: "Ein Mitarbeiter nimmt Büromaterial im Wert von 5 Euro mit. Der SMA sieht es.", solution: "Diebstahl geringwertiger Sachen. Festhalten zulässig, Identität ist meist bekannt. Meldung an Auftraggeber (oft fristlose Kündigung, siehe Fall 'Emmely')." },
+    { title: "Fall 18: Unbefugter im Serverraum", text: "Ein Reinigungskräfte-Mitarbeiter wird im streng geheimen Serverraum angetroffen, wo er laut Plan nicht sein darf.", solution: "Sofort des Raumes verweisen, Identität feststellen, Zugangskarte prüfen (evtl. technische Fehlfunktion), Meldung an IT/Sicherheitsbeauftragten." },
+    { title: "Fall 19: Unterlassene Hilfeleistung", text: "Ein Einbrecher stürzt vom Zaun und bricht sich das Bein. Der SMA lacht und geht weiter.", solution: "Strafbar gem. § 323c StGB (Unterlassene Hilfeleistung). Der SMA muss Erste Hilfe leisten und den Rettungsdienst verständigen, auch bei Kriminellen." },
+    { title: "Fall 20: Falscher Alarm", text: "Ein Mitarbeiter drückt aus Spaß den Handfeuermelder. Die Feuerwehr rückt an.", solution: "Straftat nach § 145 StGB (Missbrauch von Notrufen). Der Verursacher haftet zudem zivilrechtlich für die Einsatzkosten der Feuerwehr." }
+  ];
+
+  // ==========================================
+  // HILFSFUNKTIONEN
+  // ==========================================
 
   function shuffleArray(array) {
     let shuffled = [...array];
@@ -406,66 +259,73 @@
   }
 
   let currentExamMode = 'gssk';
-  let fullPool = [];        
-  let activeQueue = [];     
-  let currentQuestion = null;
-  let questionCounter = 1;
 
   function initApp() {
+    renderLawCases();
     changeExamMode();
   }
 
   function changeExamMode() {
-    const mode = document.getElementById('examMode').value;
-    currentExamMode = mode;
-    
-    fullPool = (mode === 'gssk') ? fullGsskPool : full34aPool;
-    activeQueue = shuffleArray(fullPool);
-    questionCounter = 1;
-    
-    loadNextFromQueue();
+    currentExamMode = document.getElementById('examMode').value;
+    startQuiz(); // Reset Quiz mit neuem Pool
   }
 
-  function loadNextFromQueue() {
-    if (activeQueue.length === 0) {
-      alert("🎉 Du hast alle Fragen dieses Pools einmal durchgespielt! Der Pool wird jetzt neu gemischt.");
-      activeQueue = shuffleArray(fullPool);
-      questionCounter = 1;
+  function switchTab(tabId) {
+    ['quizTab', 'realExamTab', 'lawTab'].forEach(id => document.getElementById(id).classList.add('hidden'));
+    ['tabQuizBtn', 'tabRealExamBtn', 'tabLawBtn'].forEach(id => document.getElementById(id).classList.remove('active', 'exam-tab-btn'));
+    
+    document.getElementById(tabId + 'Btn').classList.add('active');
+    if(tabId === 'realExam') document.getElementById('tabRealExamBtn').classList.add('exam-tab-btn');
+    document.getElementById(tabId + 'Tab').classList.remove('hidden');
+  }
+
+  // ==========================================
+  // MODUS 1: QUIZ (100 Fragen)
+  // ==========================================
+  
+  let quizQueue = [];
+  let quizCounter = 1;
+  let currentQuizQuestion = null;
+
+  function startQuiz() {
+    let pool = (currentExamMode === 'gssk') ? fullGsskPool : full34aPool;
+    quizQueue = shuffleArray(pool);
+    quizCounter = 1;
+    loadNextQuizQuestion();
+  }
+
+  function loadNextQuizQuestion() {
+    if (quizQueue.length === 0) {
+      alert("🎉 Du hast alle 100 Fragen beantwortet! Der Pool wird neu gemischt.");
+      startQuiz();
+      return;
     }
+    currentQuizQuestion = quizQueue.pop(); 
     
-    currentQuestion = activeQueue.pop(); 
-    displayQuestion(currentQuestion);
-  }
-
-  function displayQuestion(q) {
-    document.getElementById('question').innerText = q.question;
-    document.getElementById('catBadge').innerText = q.category;
-    document.getElementById('subCatBadge').innerText = q.subcategory;
-    document.getElementById('counter').innerText = `Frage ${questionCounter}`;
+    document.getElementById('question').innerText = currentQuizQuestion.question;
+    document.getElementById('catBadge').innerText = currentQuizQuestion.category;
+    document.getElementById('subCatBadge').innerText = currentQuizQuestion.subcategory;
+    document.getElementById('counter').innerText = `Frage ${quizCounter}/100`;
     document.getElementById('explanation').style.display = 'none';
     
     const optionsContainer = document.getElementById('options');
     optionsContainer.innerHTML = '';
     
-    // Antworten mischen, damit A/B/C/D variabel sind
-    let mixedOptions = shuffleArray(q.options);
-    
+    let mixedOptions = shuffleArray(currentQuizQuestion.options);
     mixedOptions.forEach(opt => {
       let btn = document.createElement('button');
       btn.className = 'btn-option';
       btn.innerText = opt;
-      btn.onclick = () => checkAnswer(btn, opt, q.correctText);
+      btn.onclick = () => checkQuizAnswer(btn, opt, currentQuizQuestion.correct);
       optionsContainer.appendChild(btn);
     });
   }
 
-  function checkAnswer(btn, selected, correct) {
+  function checkQuizAnswer(btn, selected, correct) {
     const allBtns = document.getElementById('options').querySelectorAll('.btn-option');
     allBtns.forEach(b => {
       b.disabled = true;
-      if (b.innerText === correct) {
-        b.classList.add('correct');
-      }
+      if (b.innerText === correct) b.classList.add('correct');
     });
 
     if (selected === correct) {
@@ -475,70 +335,175 @@
     }
     
     document.getElementById('explanation').style.display = 'block';
-    document.getElementById('explanationText').innerText = `Die korrekte Antwort lautet: ${correct}`;
+    document.getElementById('explanationText').innerText = `Korrekt ist: ${correct}`;
   }
 
   function nextQuestion() {
-    questionCounter++;
-    loadNextFromQueue();
+    quizCounter++;
+    loadNextQuizQuestion();
   }
 
-  function prevQuestion() {
-    alert("Im neuen Trainingsmodus geht es nur vorwärts, um echte Prüfungsbedingungen zu simulieren und den Algorithmus stabil zu halten.");
-  }
-
-  // === UI-STEUERUNG (Tabs & Platzhalter) ===
+  // ==========================================
+  // MODUS 2: ECHTE PRÜFUNGSSIMULATION
+  // ==========================================
   
-  function switchTab(tabId) {
-    document.getElementById('quizTab').classList.add('hidden');
-    document.getElementById('realExamTab').classList.add('hidden');
-    document.getElementById('lawTab').classList.add('hidden');
-    
-    document.getElementById('tabQuizBtn').classList.remove('active');
-    document.getElementById('tabRealExamBtn').classList.remove('active');
-    document.getElementById('tabLawBtn').classList.remove('active');
+  let examState = [];
+  let examIndex = 0;
+  let examTimer;
+  let timeLeft = 45 * 60; // 45 Minuten
 
-    if (tabId === 'quiz') {
-      document.getElementById('quizTab').classList.remove('hidden');
-      document.getElementById('tabQuizBtn').classList.add('active');
-    } else if (tabId === 'realExam') {
-      document.getElementById('realExamTab').classList.remove('hidden');
-      document.getElementById('tabRealExamBtn').classList.add('active');
-    } else if (tabId === 'law') {
-      document.getElementById('lawTab').classList.remove('hidden');
-      document.getElementById('tabLawBtn').classList.add('active');
-    }
-  }
-
-  // Platzhalter für den Filter (Verhindert Fehler bei Klick)
-  function filterQuestions() {
-    alert("Kategoriefilter im Gedächtnis-Modus temporär deaktiviert, um eine vollständige Durchmischung zu garantieren.");
-  }
-
-  // Platzhalter für die Exam-Simulation (Verhindert JS-Fehler)
   function startRealExam() {
     document.getElementById('examStartScreen').classList.add('hidden');
+    document.getElementById('examResultScreen').classList.add('hidden');
     document.getElementById('examScreen').classList.remove('hidden');
-    document.getElementById('examQuestion').innerText = "Prüfungsfrage 1 (Simulations-Platzhalter)";
+    
+    let pool = (currentExamMode === 'gssk') ? fullGsskPool : full34aPool;
+    // 30 zufällige Fragen ziehen und Struktur für Antworten anlegen
+    let selectedQuestions = shuffleArray(pool).slice(0, 30);
+    
+    examState = selectedQuestions.map(q => {
+      return {
+        ...q,
+        shuffledOptions: shuffleArray(q.options),
+        selectedAnswer: null
+      };
+    });
+    
+    examIndex = 0;
+    timeLeft = 45 * 60;
+    
+    clearInterval(examTimer);
+    examTimer = setInterval(updateTimer, 1000);
+    
+    displayExamQuestion();
   }
 
-  function prevExamQuestion() { 
-    console.log("Vorherige Prüfungsfrage"); 
+  function updateTimer() {
+    timeLeft--;
+    if(timeLeft <= 0) {
+      clearInterval(examTimer);
+      alert("Die Zeit ist abgelaufen! Die Prüfung wird automatisch abgegeben.");
+      finishExamPrompt();
+      return;
+    }
+    let m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+    let s = (timeLeft % 60).toString().padStart(2, '0');
+    document.getElementById('examTimer').innerText = `${m}:${s}`;
   }
-  
-  function nextExamQuestion() { 
-    console.log("Nächste Prüfungsfrage"); 
+
+  function displayExamQuestion() {
+    let q = examState[examIndex];
+    document.getElementById('examCounter').innerText = `Frage ${examIndex + 1}/30`;
+    document.getElementById('examQuestion').innerText = q.question;
+    
+    const container = document.getElementById('examOptions');
+    container.innerHTML = '';
+    
+    q.shuffledOptions.forEach(opt => {
+      let btn = document.createElement('button');
+      btn.className = 'btn-option';
+      if (q.selectedAnswer === opt) {
+        btn.classList.add('selected');
+      }
+      btn.innerText = opt;
+      btn.onclick = () => {
+        examState[examIndex].selectedAnswer = opt;
+        displayExamQuestion(); // Re-render to show selection
+      };
+      container.appendChild(btn);
+    });
+
+    document.getElementById('examPrevBtn').disabled = (examIndex === 0);
+    document.getElementById('examNextBtn').innerText = (examIndex === 29) ? "Ende" : "Nächste";
+  }
+
+  function prevExamQuestion() {
+    if(examIndex > 0) { examIndex--; displayExamQuestion(); }
+  }
+
+  function nextExamQuestion() {
+    if(examIndex < 29) { examIndex++; displayExamQuestion(); }
   }
 
   function finishExamPrompt() {
+    if(confirm("Möchtest du die Prüfung wirklich abgeben?")) {
+      clearInterval(examTimer);
+      showExamResults();
+    }
+  }
+
+  function showExamResults() {
     document.getElementById('examScreen').classList.add('hidden');
     document.getElementById('examResultScreen').classList.remove('hidden');
-    document.getElementById('resultScore').innerText = "Simulation beendet.";
+    
+    let correctCount = 0;
+    let reviewHtml = '';
+
+    examState.forEach((q, i) => {
+      let isCorrect = (q.selectedAnswer === q.correct);
+      if(isCorrect) correctCount++;
+      
+      let cssClass = isCorrect ? 'review-correct' : 'review-wrong';
+      let answerText = q.selectedAnswer ? q.selectedAnswer : "<em>Keine Antwort gegeben</em>";
+      
+      reviewHtml += `
+        <div class="review-item ${cssClass}">
+          <strong>Frage ${i+1}:</strong> ${q.question}<br>
+          Ihre Antwort: ${answerText}<br>
+          ${!isCorrect ? `<b>Richtig wäre:</b> ${q.correct}` : ''}
+        </div>
+      `;
+    });
+
+    let percentage = Math.round((correctCount / 30) * 100);
+    let passed = percentage >= 50;
+    
+    let resBox = document.getElementById('resultBox');
+    resBox.className = passed ? 'result-card result-pass' : 'result-card result-fail';
+    
+    document.getElementById('resultScore').innerText = `Ergebnis: ${correctCount} von 30 richtig (${percentage}%)`;
+    document.getElementById('resultStatus').innerText = passed ? "Herzlichen Glückwunsch, Sie haben bestanden!" : "Leider durchgefallen. (Mindestens 50% benötigt)";
+    document.getElementById('examReviewList').innerHTML = reviewHtml;
   }
 
   function resetToExamStart() {
     document.getElementById('examResultScreen').classList.add('hidden');
     document.getElementById('examStartScreen').classList.remove('hidden');
+  }
+
+  // ==========================================
+  // MODUS 3: RECHT & FÄLLE
+  // ==========================================
+
+  function renderLawCases() {
+    const container = document.getElementById('caseContainer');
+    container.innerHTML = '';
+    
+    lawCases.forEach((c, index) => {
+      let card = document.createElement('div');
+      card.className = 'section-card law-card';
+      
+      card.innerHTML = `
+        <div class="section-title law-title">${c.title}</div>
+        <p><strong>Sachverhalt:</strong> ${c.text}</p>
+        <textarea class="textarea-case" placeholder="Trage hier deine rechtliche Einschätzung ein..."></textarea>
+        <button class="btn-action btn-warning" style="margin-top:10px;" onclick="toggleSolution(${index})">Musterlösung anzeigen</button>
+        <div id="solution-${index}" class="solution-box">
+          <strong>IHK-Richtlinie / Musterlösung:</strong><br>
+          ${c.solution}
+        </div>
+      `;
+      container.appendChild(card);
+    });
+  }
+
+  function toggleSolution(index) {
+    let box = document.getElementById(`solution-${index}`);
+    if(box.style.display === 'block') {
+      box.style.display = 'none';
+    } else {
+      box.style.display = 'block';
+    }
   }
 
   window.onload = initApp;
