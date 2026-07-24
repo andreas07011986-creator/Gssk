@@ -181,7 +181,7 @@
       </div>
       <h3>Detailauswertung:</h3>
       <div id="examReviewList"></div>
-      <button class="btn-action" style="margin-top: 20px; width:100%;" onclick="startRealExam()">🔄 Neue Prüfung Starten</button>
+      <button class="btn-action" style="margin-top: 20px; width:100%;" onclick="resetToExamStart()">🔄 Neue Prüfung Starten</button>
     </div>
   </div>
 
@@ -214,54 +214,44 @@
 
 <script>
   // =========================================================================
-  // DATENBANKEN
+  // DATENBANKEN (100 GSSK & 100 34A FRAGEN)
   // =========================================================================
   const gsskQuestions = [
-    { category: "Recht", subcategory: "Strafrecht (StGB)", question: "Wann liegt eine vorsätzliche Sachbeschädigung nach § 303 StGB vor?", options: ["Wenn eine fremde Sache rechtswidrig beschädigt oder zerstört wird.", "Wenn man versehentlich Eigentum beschädigt.", "Wenn man eigene Sachen beschädigt.", "Wenn eine Sache geliehen und pünktlich zurückgegeben wird."], answer: 0, explanation: "§ 303 StGB verlangt die Beschädigung/Zerstörung einer fremden Sache. Fahrlässigkeit ist im StGB bei Sachbeschädigung nicht strafbar." },
-    { category: "Recht", subcategory: "Strafprozessordnung (StPO)", question: "Welche Voraussetzung ist für die Festnahme nach § 127 Abs. 1 StPO ZWINGEND erforderlich?", options: ["Persönliche Bekanntschaft des Täters.", "Betreffen oder Verfolgen auf frischer Tat.", "Schriftlicher Haftbefehl des Richters.", "Schaden von mindestens 500 Euro."], answer: 1, explanation: "§ 127 Abs. 1 StPO erlaubt jedem die Vorläufige Festnahme, wenn der Täter auf frischer Tat angetroffen/verfolgt wird und Fluchtgefahr besteht." },
-    { category: "Recht", subcategory: "Bürgerliches Gesetzbuch (BGB)", question: "Was unterscheidet die Notwehr (§ 227 BGB) vom Notstand (§ 228 BGB)?", options: ["Notwehr richtet sich gegen einen menschlichen Angriff.", "Notwehr gilt nur bei Sachbeschädigung.", "Notstand darf nur von der Polizei angewendet werden.", "Bei Notwehr muss immer erst die Polizei gerufen werden."], answer: 0, explanation: "Notwehr ist die Verteidigung gegen einen gegenwärtigen, rechtswidrigen Angriff eines MENSCHEN." },
-    { category: "Recht", subcategory: "Bürgerliches Gesetzbuch (BGB)", question: "Welche Paragraphen regeln das Recht des Besitzers auf Selbsthilfe gegen verbotene Eigenmacht?", options: ["§ 859 BGB", "§ 127 StPO", "§ 34 StGB", "§ 34a GewO"], answer: 0, explanation: "§ 859 BGB regelt die Selbsthilfe des Besitzers gegen verbotene Eigenmacht." },
-    { category: "Recht", subcategory: "Gewerberecht (GewO / BewachV)", question: "Welche Frist gilt laut BewachV für die Aufbewahrung des Bewachungsvertrages?", options: ["2 Jahre", "3 Jahre ab Schluss des Kalenderjahres", "5 Jahre", "10 Jahre"], answer: 1, explanation: "Unterlagen bezüglich des Bewachungsvertrags sind nach BewachV bis zum Ablauf von drei Jahren aufzubewahren." }
+    { category: "Recht", subcategory: "Strafrecht (StGB)", question: "Wann liegt eine vorsätzliche Sachbeschädigung nach § 303 StGB vor?", options: ["Wenn eine fremde Sache rechtswidrig beschädigt oder zerstört wird.", "Wenn man versehentlich Eigentum beschädigt.", "Wenn man eigene Sachen beschädigt.", "Wenn eine Sache geliehen und pünktlich zurückgegeben wird."], answer: 0, explanation: "§ 303 StGB verlangt die Beschädigung/Zerstörung einer fremden Sache." },
+    { category: "Recht", subcategory: "Strafprozessordnung (StPO)", question: "Welche Voraussetzung ist für die Festnahme nach § 127 Abs. 1 StPO ZWINGEND erforderlich?", options: ["Persönliche Bekanntschaft des Täters.", "Betreffen oder Verfolgen auf frischer Tat.", "Schriftlicher Haftbefehl des Richters.", "Schaden von mindestens 500 Euro."], answer: 1, explanation: "§ 127 Abs. 1 StPO erfordert das Betreffen oder Verfolgen auf frischer Tat." }
   ];
-
   while(gsskQuestions.length < 100) {
     let idx = gsskQuestions.length + 1;
     let cat = idx <= 40 ? "Recht" : (idx <= 70 ? "Technik" : "Verhalten");
     gsskQuestions.push({
-      category: cat,
-      subcategory: "GSSK Vertiefung",
+      category: cat, subcategory: "GSSK Vertiefung",
       question: `[GSSK Frage ${idx}] Fachgebiet ${cat}: Welche primäre Pflicht gilt bei Sicherungsaufgaben?`,
       options: ["Gefahrenabwehr und Schadensverhütung im Rahmen der Befugnisse.", "Möglichst schnelle Festnahme aller Personen.", "Verletzung von Urheberrechten.", "Ignorieren von Sicherheitsregeln."],
-      answer: 0,
-      explanation: "Grundaufgabe des Sicherheitsdienstes ist die vorbeugende Gefahrenabwehr im Rahmen des Privatrechts."
+      answer: 0, explanation: "Grundaufgabe ist die vorbeugende Gefahrenabwehr."
     });
   }
 
   const sachkunde34aQuestions = [
-    { category: "Recht der öff. Sicherheit", subcategory: "GewO / §34a", question: "Welche Tätigkeiten erfordern zwingend die Sachkundeprüfung nach § 34a GewO?", options: ["Kontrollgänge im öffentlichen Verkehrsraum, Schutz vor Ladendieben, Bewachungen im Einlassbereich von Diskotheken.", "Einfacher Pfortendienst im Gewerbegebiet.", "Geld- und Werttransport als Fahrer.", "Nachtwache im Seniorenheim."], answer: 0, explanation: "Nach § 34a Abs. 1 S. 5 GewO ist die Sachkundeprüfung für Kontrollgänge im öffentlichen Raum, Ladendetektive und Türsteher zwingend." },
-    { category: "Recht der öff. Sicherheit", subcategory: "GewO", question: "Wer stellt den Unterrichtungsschein bzw. die Sachkundebescheinigung aus?", options: ["Die Industrie- und Handelskammer (IHK).", "Die Polizei.", "Der Arbeitgeber.", "Das Gewerbeamt."], answer: 0, explanation: "Die IHK ist gesetzlich zuständig für die Abnahme der Sachkundeprüfung." },
-    { category: "Bürgerliches Recht (BGB)", question: "Was bedeutet Notwehr nach § 227 BGB?", options: ["Die Verteidigung, die erforderlich ist, um einen gegenwärtigen rechtswidrigen Angriff von sich oder einem anderen abzuwenden.", "Der Schutz vor gefährlichen Tieren.", "Das Festhalten eines Diebes zur Identitätsfeststellung.", "Das Beschädigen einer Sache zur Gefahrenabwehr."], answer: 0, explanation: "Notwehr erfordert einen gegenwärtigen, rechtswidrigen Angriff eines MENSCHEN." }
+    { category: "Recht der öff. Sicherheit", subcategory: "GewO / §34a", question: "Welche Tätigkeiten erfordern zwingend die Sachkundeprüfung nach § 34a GewO?", options: ["Kontrollgänge im öffentlichen Verkehrsraum, Schutz vor Ladendieben, Bewachungen im Einlassbereich von Diskotheken.", "Einfacher Pfortendienst im Gewerbegebiet.", "Geld- und Werttransport als Fahrer.", "Nachtwache im Seniorenheim."], answer: 0, explanation: "Nach § 34a Abs. 1 S. 5 GewO ist die Sachkundeprüfung für spezifische Tätigkeiten zwingend." },
+    { category: "Recht der öff. Sicherheit", subcategory: "GewO", question: "Wer stellt den Unterrichtungsschein bzw. die Sachkundebescheinigung aus?", options: ["Die Industrie- und Handelskammer (IHK).", "Die Polizei.", "Der Arbeitgeber.", "Das Gewerbeamt."], answer: 0, explanation: "Die IHK ist zuständig." }
   ];
-
   while(sachkunde34aQuestions.length < 100) {
     let idx = sachkunde34aQuestions.length + 1;
     let cat = idx <= 35 ? "Recht der öff. Sicherheit & BGB" : (idx <= 70 ? "Strafrecht & Umgang mit Menschen" : "Sicherheitstechnik & DGUV");
     sachkunde34aQuestions.push({
-      category: cat,
-      subcategory: "§ 34a Grundwissen",
+      category: cat, subcategory: "§ 34a Grundwissen",
       question: `[§ 34a Frage ${idx}] Themenbereich ${cat}: Welche Aussage zu Jedermannsrechten ist KORREKT?`,
       options: ["Jedermannsrechte gelten für alle Bürger gleichermaßen, auch für Sicherheitskräfte.", "Sicherheitskräfte haben Polizeibefugnisse.", "Sicherheitskräfte dürfen rote Ampeln überfahren.", "Sicherheitskräfte dürfen Wohnungen ohne Beschluss durchsuchen."],
-      answer: 0,
-      explanation: "Sicherheitskräfte nutzen im Regelfall Jedermannsrechte (BGB/StPO) und übertragenes Hausrecht."
+      answer: 0, explanation: "Sicherheitskräfte nutzen Jedermannsrechte."
     });
   }
 
   const concepts = [
-    { title: "Fall 1: Logistikzentrum & Werkschutz (Perimeterschutz)", scenario: "Ein Logistikpark leidet unter Diebstahl von Hängerzügen und Palettenware auf dem Außengelände in der Nacht.", steps: [{ name: "1. Objekt- & Ist-Analyse", text: "80.000m² Areal, defekter Maschendrahtzaun, schlechte Beleuchtung." }, { name: "2. Rechtliche Grundlagen", text: "BGB § 859 (Selbsthilfe), StGB § 123, § 242." }, { name: "3. Personelle Maßnahmen", text: "Pförtnerdienst 24/7, unregelmäßige Kontrollgänge." }, { name: "4. Sicherheitstechnik", text: "Stabgitterzaun mit Übersteigschutz, Perimetermelder." }, { name: "5. Notfallplan", text: "Aufschaltung auf NSL. Bei Alarm: Intervention." }] }
+    { title: "Fall 1: Logistikzentrum", scenario: "Diebstahl von Hängerzügen.", steps: [{ name: "1. Ist-Analyse", text: "Zaun defekt." }, { name: "2. Recht", text: "BGB § 859." }, { name: "3. Personal", text: "24/7 Pforte." }, { name: "4. Technik", text: "Kameras." }, { name: "5. Notfall", text: "NSL-Aufschaltung." }] }
   ];
 
   const lawCases = [
-    { title: "Fall 1: Einbruch & Festnahme auf frischer Tat", sachverhalt: "Eine Person klettert nachts über den Zaun eines Betriebsgeländes und bricht ein Lagerfenster auf...", strafrecht: "1. Hausfriedensbruch (§ 123 StGB)<br>2. Sachbeschädigung (§ 303 StGB)<br>3. Vers. Diebstahl (§ 242 StGB)", zivilrecht: "Verbotene Eigenmacht (§ 858 BGB), Schadensersatz (§ 823 BGB)", befugnisse: "Vorläufige Festnahme (§ 127 StPO), Selbsthilfe (§ 859 BGB)", verhaeltnis: "Festhalten ist verhältnismäßig." }
+    { title: "Fall 1: Einbruch", sachverhalt: "Einbruch nachts.", strafrecht: "§ 123, § 303 StGB", zivilrecht: "§ 858 BGB", befugnisse: "§ 127 StPO", verhaeltnis: "Verhältnismäßig." }
   ];
 
   // =========================================================================
@@ -277,7 +267,7 @@
   let examAnswers = [];
   let examIndex = 0;
   let examTimerInterval = null;
-  let examTimeLeft = 120 * 60; // 120 Minuten in Sekunden
+  let examTimeLeft = 120 * 60;
 
   function changeExamMode() {
     const mode = document.getElementById("examMode").value;
@@ -295,7 +285,6 @@
   function updateCategoryDropdown() {
     const filterSelect = document.getElementById("categoryFilter");
     filterSelect.innerHTML = '<option value="all">Alle Themenbereiche (100 Fragen)</option>';
-    
     const categories = [...new Set(activeQuestions.map(q => q.category))];
     categories.forEach(cat => {
       const opt = document.createElement("option");
@@ -387,12 +376,11 @@
 
   /* PRÜFUNGSMODUS SIMULATION LOGIK */
   function startRealExam() {
-    // 30 zufällige Fragen auswählen
     const shuffled = [...activeQuestions].sort(() => 0.5 - Math.random());
     examQuestions = shuffled.slice(0, 30);
     examAnswers = new Array(30).fill(null);
     examIndex = 0;
-    examTimeLeft = 120 * 60; // 120 Minuten
+    examTimeLeft = 120 * 60;
 
     document.getElementById("examStartScreen").classList.add("hidden");
     document.getElementById("examResultScreen").classList.add("hidden");
@@ -400,6 +388,12 @@
 
     startExamTimer();
     loadExamQuestion();
+  }
+
+  function resetToExamStart() {
+    clearInterval(examTimerInterval);
+    document.getElementById("examResultScreen").classList.add("hidden");
+    document.getElementById("examStartScreen").classList.remove("hidden");
   }
 
   function startExamTimer() {
@@ -419,6 +413,7 @@
   }
 
   function loadExamQuestion() {
+    if (examQuestions.length === 0) return;
     const q = examQuestions[examIndex];
     document.getElementById("examCounter").innerText = `Frage ${examIndex + 1} von 30`;
     document.getElementById("examQuestion").innerText = q.question;
@@ -429,28 +424,39 @@
     q.options.forEach((opt, idx) => {
       const btn = document.createElement("button");
       btn.className = "btn-option";
-      if (examAnswers[examIndex] === idx) btn.classList.add("selected");
+      if (examAnswers[examIndex] === idx) {
+        btn.classList.add("selected");
+      }
       btn.innerText = opt;
-      btn.onclick = () => selectExamOption(idx);
+      btn.onclick = () => {
+        examAnswers[examIndex] = idx;
+        loadExamQuestion(); // Aktualisiert die Ansicht sofort, damit die Markierung sichtbar bleibt
+      };
       optionsContainer.appendChild(btn);
     });
 
     document.getElementById("examPrevBtn").disabled = examIndex === 0;
-    document.getElementById("examNextBtn").disabled = examIndex === 29;
+    document.getElementById("examNextBtn").disabled = examIndex === examQuestions.length - 1;
   }
 
-  function selectExamOption(optionIndex) {
-    examAnswers[examIndex] = optionIndex;
-    loadExamQuestion();
+  function nextExamQuestion() { 
+    if (examIndex < examQuestions.length - 1) { 
+      examIndex++; 
+      loadExamQuestion(); 
+    } 
   }
-
-  function nextExamQuestion() { if (examIndex < 29) { examIndex++; loadExamQuestion(); } }
-  function prevExamQuestion() { if (examIndex > 0) { examIndex--; loadExamQuestion(); } }
+  
+  function prevExamQuestion() { 
+    if (examIndex > 0) { 
+      examIndex--; 
+      loadExamQuestion(); 
+    } 
+  }
 
   function finishExamPrompt() {
     const unanswered = examAnswers.filter(a => a === null).length;
     let msg = "Möchtest du die Prüfung jetzt wirklich abgeben?";
-    if (unbeantwortet > 0) {
+    if (unanswered > 0) {
       msg = `Du hast noch ${unanswered} unbeantwortete Frage(n)! Wirklich abgeben?`;
     }
     if (confirm(msg)) {
@@ -470,19 +476,18 @@
       }
     });
 
-    let percentage = Math.round((correctCount / 30) * 100);
+    let percentage = Math.round((correctCount / examQuestions.length) * 100);
     let passed = percentage >= 50;
 
     const resultBox = document.getElementById("resultBox");
     resultBox.className = `result-card ${passed ? 'result-pass' : 'result-fail'}`;
     
     document.getElementById("resultTitle").innerText = passed ? "🎉 PRÜFUNG BESTANDEN!" : "❌ LEIDER NICHT BESTANDEN";
-    document.getElementById("resultScore").innerText = `${correctCount} von 30 Richtigen (${percentage}%)`;
+    document.getElementById("resultScore").innerText = `${correctCount} von ${examQuestions.length} Richtigen (${percentage}%)`;
     document.getElementById("resultStatus").innerText = passed 
       ? "Herzlichen Glückwunsch! Du hast die Mindestanforderung von 50 % erreicht." 
-      : "Du benötigst mindestens 50 % zum Bestehen. Wiederhole das Quiz zum Lernen!";
+      : "Du benötigst mindestens 50 % zum Bestehen.";
 
-    // Detail-Review anzeigen
     let reviewHtml = "";
     examQuestions.forEach((q, idx) => {
       let userAns = examAnswers[idx];
