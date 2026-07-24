@@ -28,9 +28,44 @@
     .app-card { background: #ffffff; max-width: 850px; width: 100%; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
     
     /* EXAM SELECTOR BAR */
-    .exam-selector { background: #1a252f; color: white; padding: 12px; border-radius: 8px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; }
-    .exam-selector select { background: #34495e; color: white; border: 1px solid #5d6d7e; padding: 8px 12px; border-radius: 6px; font-size: 1rem; font-weight: bold; cursor: pointer; }
-    
+    -/* EXAM SELECTOR BAR (Optimiert für Mobilgeräte) */
+.exam-selector { 
+  background: #1a252f; 
+  color: white; 
+  padding: 12px; 
+  border-radius: 8px; 
+  display: flex; 
+  flex-direction: column; /* Elemente untereinander anordnen auf Mobilgeräten */
+  gap: 10px; 
+  margin-bottom: 15px; 
+}
+
+.exam-selector select { 
+  background: #34495e; 
+  color: white; 
+  border: 1px solid #5d6d7e; 
+  padding: 8px 12px; 
+  border-radius: 6px; 
+  font-size: 0.95rem; 
+  font-weight: bold; 
+  cursor: pointer; 
+  width: 100%; /* Breite an den Kasten anpassen */
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Ab mittleren Bildschirmgrößen (Tablets/PC) wieder nebeneinander */
+@media (min-width: 600px) {
+  .exam-selector {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .exam-selector select {
+    width: auto;
+  }
+}
+
     /* TAB NAVIGATION */
     .tab-nav { display: flex; gap: 5px; margin-bottom: 20px; border-bottom: 2px solid #dee2e6; padding-bottom: 10px; overflow-x: auto; }
     .tab-btn { flex: 1; padding: 12px 10px; border: none; background: #e9ecef; color: #495057; font-weight: bold; font-size: 0.88rem; border-radius: 8px; cursor: pointer; white-space: nowrap; transition: background 0.2s; }
