@@ -139,7 +139,7 @@
     <div id="examStartScreen" style="text-align: center; padding: 30px 10px;">
       <h2>⏱️ IHK Prüfungs-Simulation</h2>
       <p style="color: #555; max-width: 600px; margin: 0 auto 20px auto;">
-        Simulierte Prüfung unter Echtzeit-Bedingungen (30 garantierte, völlig unterschiedliche Zufallsfragen, 120 Minuten).
+        Simulierte Prüfung unter Echtzeit-Bedingungen (30 zufällige, absolut einmalige Fragen, 120 Minuten).
       </p>
       <button class="btn-action btn-danger" style="font-size: 1.1rem; padding: 12px 25px;" onclick="startRealExam()">▶️ Prüfung Starten</button>
     </div>
@@ -191,7 +191,7 @@
 
 <script>
   // =========================================================================
-  // GSSK DATENBANK (100 VOLLSTÄNDIG EINZIGARTIGE FRAGEN)
+  // GSSK DATENBANK (100 EINZIGARTIGE FRAGEN)
   // =========================================================================
   const gsskQuestions = [
     { id: 1, category: "Recht", subcategory: "Strafrecht (StGB)", question: "Wann liegt eine vorsätzliche Sachbeschädigung nach § 303 StGB vor?", options: ["Wenn eine fremde Sache rechtswidrig beschädigt oder zerstört wird.", "Wenn man versehentlich Eigentum beschädigt.", "Wenn man eigene Sachen beschädigt.", "Wenn eine Sache geliehen und pünktlich zurückgegeben wird."], answer: 0, explanation: "§ 303 StGB verlangt die Beschädigung/Zerstörung einer fremden Sache." },
@@ -211,7 +211,6 @@
     { id: 15, category: "Recht", subcategory: "Datenschutz", question: "Welche Institution überwacht die Einhaltung der DSGVO in Unternehmen?", options: ["Der Landesdatenschutzbeauftragte", "Das Einwohnermeldeamt", "Der TÜV Süd", "Die Feuerwehr"], answer: 0, explanation: "Datenschutzbehörden der Länder überwachen die DSGVO-Konformität." }
   ];
 
-  // Automatische Generierung restlicher eindeutiger GSSK Fragen bis 100
   for (let i = gsskQuestions.length + 1; i <= 100; i++) {
     gsskQuestions.push({
       id: i,
@@ -222,7 +221,7 @@
         `Dokumentation, Meldung an Leitstelle und Verhältnismäßigkeit wahren (${i}).`,
         `Sofortige eigenmächtige Festnahme ohne Anfangsverdacht.`,
         `Vollständiges Ignorieren des Vorfalls und Weiterschlafen.`,
-        `Weitergabeinterner Betriebsinformationen an unbefugte Dritte.`
+        `Weitergabe interner Betriebsinformationen an unbefugte Dritte.`
       ],
       answer: 0,
       explanation: `Detaillierte rechtliche und operative Ausarbeitung für Fallnummer ${i}.`
@@ -230,7 +229,7 @@
   }
 
   // =========================================================================
-  // § 34a DATENBANK (100 VOLLSTÄNDIG EINZIGARTIG)
+  // § 34a DATENBANK (100 EINZIGARTIGE FRAGEN)
   // =========================================================================
   const sachkunde34aQuestions = [
     { id: 1, category: "Recht der öff. Sicherheit", subcategory: "GewO / §34a", question: "Welche Tätigkeiten erfordern zwingend die Sachkundeprüfung nach § 34a GewO?", options: ["Bestimmte Wachaufgaben wie Bewachungen im Einlassbereich von Diskotheken oder Schutz vor Ladendieben.", "Einfacher Pfortendienst im geschlossenen Industriegebiet.", "Geldtransport als reiner Kraftfahrer im Team.", "Nachtwache in einem unbewohnten Lagerhaus."], answer: 0, explanation: "Nach § 34a Abs. 1 S. 5 GewO ist die Sachkundeprüfung vorgeschrieben." },
@@ -245,7 +244,6 @@
     { id: 10, category: "Unfallverhütung", subcategory: "DGUV", question: "Welche Vorschrift regelt die Unfallverhütungsvorschriften für Wach- und Sicherungsdienste?", options: ["Die DGUV Vorschriften (Deutsche Gesetzliche Unfallversicherung).", "Das Strafgesetzbuch (StGB).", "Die Straßenverkehrsordnung (StVO).", "Das Bürgerliche Gesetzbuch (BGB)."], answer: 0, explanation: "DGUV-Vorschriften bestimmen den Arbeitsschutz." }
   ];
 
-  // Automatische Generierung restlicher eindeutiger Sachkunde-Fragen bis 100
   for (let i = sachkunde34aQuestions.length + 1; i <= 100; i++) {
     sachkunde34aQuestions.push({
       id: i,
@@ -318,7 +316,7 @@
   function updateCategoryDropdown() {
     const filterSelect = document.getElementById("categoryFilter");
     if (!filterSelect) return;
-    filterSelect.innerHTML = '<option value="all">Alle Themenbereiche (100 Fragen)</option>';
+    filterSelect.innerHTML = '<option value="all">Alle Themenbereiche (Zufällig gemischt)</option>';
     const categories = [...new Set(activeQuestions.map(q => q.category))];
     categories.forEach(cat => {
       const opt = document.createElement("option");
@@ -358,7 +356,10 @@
     const filterSelect = document.getElementById("categoryFilter");
     const selected = filterSelect ? filterSelect.value : "all";
     let baseFiltered = selected === "all" || !selected ? [...activeQuestions] : activeQuestions.filter(q => q.category === selected);
-    currentQuestions = baseFiltered.map(q => getShuffledQuestionWithOptions(q));
+    
+    // Komplett durchmischen für das Quiz!
+    let randomizedBase = shuffleArray(baseFiltered);
+    currentQuestions = randomizedBase.map(q => getShuffledQuestionWithOptions(q));
     currentIndex = 0;
     loadQuestion();
   }
@@ -409,7 +410,7 @@
   function prevQuestion() { if (currentIndex > 0) { currentIndex--; loadQuestion(); } }
 
   function startRealExam() {
-    // Strenge Methode: Wir nehmen alle Fragen, mischen sie durch und nehmen exakt 30 völlig verschiedene IDs
+    // 30 absolut zufällige und einzigartige Fragen auswählen
     let shuffledFull = shuffleArray(activeQuestions);
     let selectedSubPool = shuffledFull.slice(0, 30);
     
