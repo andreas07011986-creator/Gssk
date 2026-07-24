@@ -4,6 +4,24 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GSSK Prüfungstrainer Pro</title>
+
+  <!-- PASSWORTSCHUTZ SKRIPT -->
+  <script>
+    (function() {
+      const PASSWORT = "GSSK2026"; 
+      let eingabe = prompt("Bitte gib das Passwort ein, um auf den GSSK-Trainer zuzugreifen:");
+      
+      while (eingabe !== PASSWORT) {
+        if (eingabe === null) {
+          document.write("<div style='text-align:center; margin-top:50px; font-family:Arial;'><h2>Zugriff verweigert</h2><p>Bitte lade die Seite neu und gib das richtige Passwort ein.</p></div>");
+          window.stop();
+          return;
+        }
+        eingabe = prompt("Falsches Passwort! Bitte erneut versuchen:");
+      }
+    })();
+  </script>
+
   <style>
     * { box-sizing: border-box; font-family: Arial, sans-serif; }
     body { background-color: #f4f6f9; margin: 0; padding: 15px; display: flex; justify-content: center; }
@@ -108,7 +126,7 @@
 <script>
   // --- 100 VOLLSTÄNDIGE GSSK FRAGEN ---
   const questions = [
-    // --- RECHT (1-40) ---
+    // RECHT (1-40)
     { category: "Recht", subcategory: "Strafrecht (StGB)", question: "Wann liegt eine vorsätzliche Sachbeschädigung nach § 303 StGB vor?", options: ["Wenn eine fremde Sache rechtswidrig beschädigt oder zerstört wird.", "Wenn man versehentlich Eigentum beschädigt.", "Wenn man eigene Sachen beschädigt.", "Wenn eine Sache geliehen und pünktlich zurückgegeben wird."], answer: 0, explanation: "§ 303 StGB verlangt die Beschädigung/Zerstörung einer fremden Sache. Fahrlässigkeit ist im StGB bei Sachbeschädigung nicht strafbar." },
     { category: "Recht", subcategory: "Strafprozessordnung (StPO)", question: "Welche Voraussetzung ist für die Festnahme nach § 127 Abs. 1 StPO ZWINGEND erforderlich?", options: ["Persönliche Bekanntschaft des Täters.", "Betreffen oder Verfolgen auf frischer Tat.", "Schriftlicher Haftbefehl des Richters.", "Schaden von mindestens 500 Euro."], answer: 1, explanation: "§ 127 Abs. 1 StPO erlaubt jedem die Vorläufige Festnahme, wenn der Täter auf frischer Tat angetroffen/verfolgt wird und Fluchtgefahr besteht oder seine Identität nicht geklärt werden kann." },
     { category: "Recht", subcategory: "Bürgerliches Gesetzbuch (BGB)", question: "Was unterscheidet die Notwehr (§ 227 BGB) vom Notstand (§ 228 BGB)?", options: ["Notwehr richtet sich gegen einen menschlichen Angriff.", "Notwehr gilt nur bei Sachbeschädigung.", "Notstand darf nur von der Polizei angewendet werden.", "Bei Notwehr muss immer erst die Polizei gerufen werden."], answer: 0, explanation: "Notwehr ist die Verteidigung gegen einen gegenwärtigen, rechtswidrigen Angriff eines MENSCHEN. Notstand schützt vor Gefahren durch Sachen oder Tiere." },
@@ -150,7 +168,7 @@
     { category: "Recht", subcategory: "Bürgerliches Gesetzbuch (BGB)", question: "Wer haftet für Schäden, die ein Verrichtungsgehilfe (Mitarbeiter) im Dienst anrichtet?", options: ["Der Geschäftsherr/Arbeitgeber nach § 831 BGB, sofern er sich nicht entlasten kann.", "Niemand.", "Nur der Staat.", "Der Kunde."], answer: 0, explanation: "Nach § 831 BGB haftet der Arbeitgeber für Schäden, die sein Mitarbeiter in Ausführung der Verrichtung einem Dritten zufügt." },
     { category: "Recht", subcategory: "Strafprozessordnung (StPO)", question: "Darf eine festgenommene Person nach § 127 StPO durch körperlichen Zwang festgehalten werden?", options: ["Ja, Verhältnismäßiger Zwang ist erlaubt, wenn der Täter flüchten will.", "Nein, körperlicher Zwang ist verboten.", "Nur mit Handschellen der Polizei.", "Nur mit Erlaubnis der Staatsanwaltschaft."], answer: 0, explanation: "Verhältnismäßiger Zwang ist gedeckt, soweit er nötig ist, um die Flucht bis zum Eintreffen der Polizei zu verhindern." },
 
-    // --- TECHNIK & GEFAHRENABWEHR (41-70) ---
+    // TECHNIK & GEFAHRENABWEHR (41-70)
     { category: "Technik", subcategory: "Brandschutz", question: "Welche Brandklasse umfasst Brände von flüssigen Stoffen (z. B. Benzin, Lacke)?", options: ["Brandklasse A", "Brandklasse B", "Brandklasse C", "Brandklasse F"], answer: 1, explanation: "Brandklasse B steht für flüssige und flüssig werdende Stoffe." },
     { category: "Technik", subcategory: "Sicherheitstechnik (EMA)", question: "Welcher Melder eignet sich am besten zur Überwachung von Fensterglas auf Durchbruch?", options: ["Infrarotmelder", "Glasbruchmelder", "Rauchansaugsystem", "Magnetkontakt"], answer: 1, explanation: "Glasbruchmelder erfassen Schwingungen oder Frequenzen von brechendem Glas." },
     { category: "Technik", subcategory: "Brandschutz", question: "Welches Löschmittel wird typischerweise in EDV- und Serverräumen verwendet?", options: ["Wasser", "Gaslöschmittel (z. B. Stickstoff, Argon, CO2)", "Schaum", "Pulver"], answer: 1, explanation: "Gaslöschanlagen löschen rückstandsfrei und beschädigen elektronische Bauteile nicht." },
@@ -182,7 +200,7 @@
     { category: "Technik", subcategory: "Brandschutz", question: "Was ist die Hauptgefahr bei einem Brand in geschlossenen Räumen?", options: ["Rauchgasvergiftung (z.B. durch Kohlenmonoxid CO).", "Verbrennungen 3. Grades.", "Einsturz von Wänden.", "Lärmbelastung."], answer: 0, explanation: "Die meisten Brandopfer ersticken an giftigen Rauchgasen, bevor Flammen sie erreichen." },
     { category: "Technik", subcategory: "Einbruchmeldeanlage (EMA)", question: "Was ist ein 'Körperschallmelder'?", options: ["Sensor an Tresoren/Wänden, der typische Frequenzen von Bohren, Meißeln oder Schneiden erkennt.", "Ein Mikrofon im Raum.", "Ein Bewegungsmelder.", "Ein Glasbruchsensor."], answer: 0, explanation: "Körperschallmelder registrieren Gefüge-Schwingungen in festen Materialien beim Einbruchversuch." },
 
-    // --- VERHALTEN & KOMMUNIKATION (71-100) ---
+    // VERHALTEN & KOMMUNIKATION (71-100)
     { category: "Verhalten", subcategory: "Deeskalation", question: "Wie reagiert eine Sicherheitskraft am besten auf eine verbal aggressive Person?", options: ["Ruhig und bestimmt bleiben, Blickkontakt halten, Sicherheitsabstand wahren.", "Zurückschreien.", "Sofort Handgreiflich werden.", "Umdrehen und weglaufen."], answer: 0, explanation: "Aktives Deeskalieren verlangt eine ruhige Körperhaltung, Distanz und sachliche Ansprache." },
     { category: "Verhalten", subcategory: "Kommunikation", question: "Was versteht man unter 'Aktivem Zuhören'?", options: ["Dem Gesprächspartner Aufmerksamkeit signalisieren, Nachfragen stellen und Gesagtes kurz zusammenfassen.", "Schweigen und an etwas anderes denken.", "Den Gesprächspartner ständig unterbrechen.", "Notizen machen ohne hinzusehen."], answer: 0, explanation: "Aktives Zuhören baut Vertrauen auf und sichert das gegenseitige Verständnis im Konflikt." },
     { category: "Verhalten", subcategory: "Psychologie", question: "Was ist der 'Halo-Effekt' bei der Personenbeurteilung?", options: ["Ein einzelnes auffälliges Merkmal überstrahlt den Gesamteindruck einer Person.", "Eine optische Täuschung.", "Ein Hörfehler.", "Eine Erschöpfung im Dienst."], answer: 0, explanation: "Halo-Effekt: Wahrnehmungsfehler, bei dem eine Eigenschaft (z.B. Kleidung) das Gesamtbild dominiert." },
@@ -215,7 +233,7 @@
     { category: "Verhalten", subcategory: "Qualitätssicherung", question: "Was regelt die Dienstanweisung (DA) für das Objekt?", options: ["Die konkreten Aufgaben, Pflichten, Rechte und Verhaltensregeln für das spezifische Objekt.", "Den Urlaubsanspruch.", "Die Lohnhöhe.", "Den Renteneintritt."], answer: 0, explanation: "Die Dienstanweisung ist verbindliche Dienstanweisung des Arbeitgebers für die Sicherheit vor Ort." }
   ];
 
-  // --- 5 VOLLSTÄNDIGE SICHERHEITSKONZEPTE ---
+  // --- 5 SICHERHEITSKONZEPTE ---
   const concepts = [
     {
       title: "Fall 1: Logistikzentrum & Werkschutz (Perimeterschutz)",
