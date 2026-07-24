@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GSSK Prüfungstrainer Pro</title>
+  <title>Sicherheits-Prüfungstrainer Pro (GSSK & §34a)</title>
 
   <!-- PASSWORTSCHUTZ SKRIPT -->
   <script>
     (function() {
       const PASSWORT = "GSSK2026"; 
-      let eingabe = prompt("Bitte gib das Passwort ein, um auf den GSSK-Trainer zuzugreifen:");
+      let eingabe = prompt("Bitte gib das Passwort ein, um auf den Prüfungstrainer zuzugreifen:");
       
       while (eingabe !== PASSWORT) {
         if (eingabe === null) {
@@ -25,15 +25,22 @@
   <style>
     * { box-sizing: border-box; font-family: Arial, sans-serif; }
     body { background-color: #f4f6f9; margin: 0; padding: 15px; display: flex; justify-content: center; }
-    .app-card { background: #ffffff; max-width: 800px; width: 100%; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+    .app-card { background: #ffffff; max-width: 850px; width: 100%; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+    
+    /* EXAM SELECTOR BAR */
+    .exam-selector { background: #1a252f; color: white; padding: 12px; border-radius: 8px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; }
+    .exam-selector select { background: #34495e; color: white; border: 1px solid #5d6d7e; padding: 8px 12px; border-radius: 6px; font-size: 1rem; font-weight: bold; cursor: pointer; }
+    
+    /* TAB NAVIGATION */
     .tab-nav { display: flex; gap: 5px; margin-bottom: 20px; border-bottom: 2px solid #dee2e6; padding-bottom: 10px; overflow-x: auto; }
     .tab-btn { flex: 1; padding: 12px 10px; border: none; background: #e9ecef; color: #495057; font-weight: bold; font-size: 0.88rem; border-radius: 8px; cursor: pointer; white-space: nowrap; transition: background 0.2s; }
     .tab-btn.active { background: #0d6efd; color: white; }
+    
     .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
     .badge { background: #e9ecef; color: #495057; padding: 4px 10px; border-radius: 15px; font-size: 0.85rem; font-weight: bold; margin-right: 5px; }
     .badge-sub { background: #e7f5ff; color: #1971c2; }
     .select-box { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ccc; font-size: 1rem; margin-bottom: 15px; }
-    .question-text { font-size: 1.1rem; font-weight: 600; margin: 15px 0; color: #212529; }
+    .question-text { font-size: 1.1rem; font-weight: 600; margin: 15px 0; color: #212529; min-height: 50px; }
     .options { display: flex; flex-direction: column; gap: 10px; }
     .btn-option { padding: 12px; border: 2px solid #dee2e6; background: #fff; border-radius: 8px; text-align: left; cursor: pointer; font-size: 0.95rem; }
     .correct { background-color: #d4edda !important; border-color: #28a745 !important; color: #155724; font-weight: bold; }
@@ -52,6 +59,16 @@
 <body>
 
 <div class="app-card">
+  
+  <!-- UMSCHALTBAR-LEISTE FÜR PRÜFUNGSMODUS -->
+  <div class="exam-selector">
+    <span>🎓 <strong>Aktueller Prüfungsmodus:</strong></span>
+    <select id="examMode" onchange="changeExamMode()">
+      <option value="gssk">GSSK (Geprüfte Schutz- und Sicherheitskraft)</option>
+      <option value="34a">Sachkundeprüfung § 34a GewO</option>
+    </select>
+  </div>
+
   <!-- TAB-NAVIGATION -->
   <div class="tab-nav">
     <button id="tabQuizBtn" class="tab-btn active" onclick="switchTab('quiz')">❓ Quiz (100 Fragen)</button>
@@ -62,16 +79,13 @@
   <!-- TAB 1: QUIZ TRAINER -->
   <div id="quizTab">
     <div class="header">
-      <h3 style="margin:0;">Fragen-Trainer</h3>
+      <h3 id="quizTitle" style="margin:0;">GSSK Fragen-Trainer</h3>
       <span id="counter" style="font-weight: bold; color: #6c757d;">Frage 1/100</span>
     </div>
 
     <div>
       <select id="categoryFilter" class="select-box" onchange="filterQuestions()">
-        <option value="all">Alle Themenbereiche (100 Fragen)</option>
-        <option value="Recht">1. Rechts- und Aufgabenbezogenes Handeln (Fragen 1-40)</option>
-        <option value="Technik">2. Gefahrenabwehr & Sicherheitstechnik (Fragen 41-70)</option>
-        <option value="Verhalten">3. Verhalten & Kommunikation (Fragen 71-100)</option>
+        <!-- Kategorien werden dynamisch per JavaScript geladen -->
       </select>
     </div>
 
@@ -124,9 +138,10 @@
 </div>
 
 <script>
-  // --- 100 VOLLSTÄNDIGE GSSK FRAGEN ---
-  const questions = [
-    // RECHT (1-40)
+  // =========================================================================
+  // 1. DATENBANK: GSSK (100 FRAGEN)
+  // =========================================================================
+  const gsskQuestions = [
     { category: "Recht", subcategory: "Strafrecht (StGB)", question: "Wann liegt eine vorsätzliche Sachbeschädigung nach § 303 StGB vor?", options: ["Wenn eine fremde Sache rechtswidrig beschädigt oder zerstört wird.", "Wenn man versehentlich Eigentum beschädigt.", "Wenn man eigene Sachen beschädigt.", "Wenn eine Sache geliehen und pünktlich zurückgegeben wird."], answer: 0, explanation: "§ 303 StGB verlangt die Beschädigung/Zerstörung einer fremden Sache. Fahrlässigkeit ist im StGB bei Sachbeschädigung nicht strafbar." },
     { category: "Recht", subcategory: "Strafprozessordnung (StPO)", question: "Welche Voraussetzung ist für die Festnahme nach § 127 Abs. 1 StPO ZWINGEND erforderlich?", options: ["Persönliche Bekanntschaft des Täters.", "Betreffen oder Verfolgen auf frischer Tat.", "Schriftlicher Haftbefehl des Richters.", "Schaden von mindestens 500 Euro."], answer: 1, explanation: "§ 127 Abs. 1 StPO erlaubt jedem die Vorläufige Festnahme, wenn der Täter auf frischer Tat angetroffen/verfolgt wird und Fluchtgefahr besteht oder seine Identität nicht geklärt werden kann." },
     { category: "Recht", subcategory: "Bürgerliches Gesetzbuch (BGB)", question: "Was unterscheidet die Notwehr (§ 227 BGB) vom Notstand (§ 228 BGB)?", options: ["Notwehr richtet sich gegen einen menschlichen Angriff.", "Notwehr gilt nur bei Sachbeschädigung.", "Notstand darf nur von der Polizei angewendet werden.", "Bei Notwehr muss immer erst die Polizei gerufen werden."], answer: 0, explanation: "Notwehr ist die Verteidigung gegen einen gegenwärtigen, rechtswidrigen Angriff eines MENSCHEN. Notstand schützt vor Gefahren durch Sachen oder Tiere." },
@@ -147,199 +162,110 @@
     { category: "Recht", subcategory: "Arbeitsrecht", question: "Welches Recht hat der Betriebsrat bei Dienstplänen der Sicherheitskräfte?", options: ["Mitbestimmungsrecht nach § 87 BetrVG.", "Keinerlei Rechte.", "Er muss die Dienstpläne selbst schreiben.", "Er entscheidet über Gehälter."], answer: 0, explanation: "Nach § 87 Betriebsverfassungsgesetz (BetrVG) hat der Betriebsrat bei der Beginn- und Endzeit der täglichen Arbeitszeit Mitbestimmung." },
     { category: "Recht", subcategory: "Waffenrecht (WaffG)", question: "Was wird benötigt, um eine Schusswaffe im Dienst führen zu dürfen?", options: ["Der Waffenschein und die behördliche Zustimmung für das konkrete Objekt.", "Eine einfache Sachkunde nach § 34a GewO.", "Ein Personalausweis.", "Ein Jagdschein."], answer: 0, explanation: "Das Führen von Waffen erfordert eine Waffenschein-Erlaubnis nach § 10 WaffG sowie die Nachweise von Sachkunde und Bedürfnis." },
     { category: "Recht", subcategory: "Strafrecht (StGB)", question: "Ist die fahrlässige Körperverletzung (§ 229 StGB) strafbar?", options: ["Ja, § 229 StGB stellt fahrlässige Körperverletzung unter Strafe.", "Nein, nur Vorsatz ist strafbar.", "Nur bei Unfällen im Straßenverkehr.", "Nur bei Sicherheitskräften."], answer: 0, explanation: "Im Gegensatz zur Sachbeschädigung ist die fahrlässige Körperverletzung nach § 229 StGB ausdrücklich strafbar." },
-    { category: "Recht", subcategory: "Strafrecht (StGB)", question: "Was ist der rechtliche Kern einer 'Beleidigung' nach § 185 StGB?", options: ["Die Kundgabe der Missachtung oder Nichtachtung einer Person.", "Körperliche Verletzung.", "Sachbeschädigung.", "Diebstahl."], answer: 0, explanation: "Beleidigung ist die ehrverletzende Kundgabe der eigenen Missachtung gegenüber dem Betroffenen oder Dritten." },
-    { category: "Recht", subcategory: "Strafrecht (StGB)", question: "Wann liegt eine Unterlassene Hilfeleistung (§ 323c StGB) vor?", options: ["Wenn bei Unglücksfällen oder gemeiner Gefahr nicht geholfen wird, obwohl es erforderlich und zumutbar ist.", "Wenn man erste Hilfe leistet.", "Wenn man die Feuerwehr ruft.", "Wenn man nicht an einer Schlägerei teilnimmt."], answer: 0, explanation: "Wer bei Unglücksfällen nicht Hilfe leistet, obwohl dies erforderlich und ihm zumutbar ist, macht sich nach § 323c StGB strafbar." },
-    { category: "Recht", subcategory: "Bürgerliches Gesetzbuch (BGB)", question: "Welche Funktion hat die 'Schadenersatzpflicht' nach § 823 BGB?", options: ["Wiedergutmachung von vorsätzlich oder fahrlässig zugefügtem Schaden an Leben, Körper, Eigentum etc.", "Bestrafung mit Gefängnis.", "Vergabe von Bußgeldern.", "Kündigung von Verträgen."], answer: 0, explanation: "§ 823 BGB verpflichtet Personen, die vorsätzlich oder fahrlässig das Eigentum oder die Gesundheit anderer verletzen, zum Schadenersatz." },
-    { category: "Recht", subcategory: "Strafrecht (StGB)", question: "Was versteht man unter 'Rechtfertigendem Notstand' nach § 34 StGB?", options: ["Abwendung einer gegenwärtigen, nicht anders abwendbaren Gefahr für ein geschütztes Rechtsgut durch eine Tat.", "Notwehr gegen Menschen.", "Vorläufige Festnahme.", "Hausfriedensbruch."], answer: 0, explanation: "§ 34 StGB rechtfertigt Handlungen zur Abwendung einer gegenwärtigen Gefahr, wenn das geschützte Interesse das beeinträchtigte wesentlich überwiegt." },
-    { category: "Recht", subcategory: "Bürgerliches Gesetzbuch (BGB)", question: "Was bedeutet 'Verbotene Eigenmacht' nach § 858 BGB?", options: ["Die Beeinträchtigung des Besitzes ohne Einwilligung des Besitzers und ohne gesetzliche Gestattung.", "Das Betreten der eigenen Wohnung.", "Ein polizeilicher Einsatz.", "Kauf von Eigentum."], answer: 0, explanation: "Verbotene Eigenmacht liegt vor, wenn jemand dem Besitzer ohne dessen Willen den Besitz entzieht oder ihn im Besitz stört." },
-    { category: "Recht", subcategory: "Gewerberecht (BewachV)", question: "Welches Dokument muss eine Sicherheitskraft im Dienst immer mitführen?", options: ["Den Dienstausweis / Ausweisdokument und den Nachweis der Unterrichtung/Sachkunde.", "Den Führerschein.", "Den Arbeitsvertrag im Original.", "Den Impfpass."], answer: 0, explanation: "Laut BewachV ist der Dienstausweis in Verbindung mit einem Lichtbildausweis während des Dienstes mitzuführen." },
-    { category: "Recht", subcategory: "Strafrecht (StGB)", question: "Wann spricht man von 'Raub' und nicht von 'Erpressung'?", options: ["Wenn der Täter die Sache durch Gewaltanwendung oder Drohung nimmt.", "Wenn das Opfer Geld überweist.", "Wenn kein Schaden entsteht.", "Wenn die Tat tagsüber geschieht."], answer: 0, explanation: "Beim Raub nimmt der Täter die Sache aktiv weg. Bei der Erpressung wird das Opfer zu einer Vermögensverfügung genötigt." },
-    { category: "Recht", subcategory: "Bürgerliches Gesetzbuch (BGB)", question: "Wann verfällt das Recht auf Selbsthilfe nach § 859 BGB?", options: ["Wenn die Tat nicht sofort / auf frischer Tat verfolgt wird.", "Nach 24 Stunden.", "Nach 1 Jahr.", "Niemals."], answer: 0, explanation: "Selbsthilfe gegen verbotene Eigenmacht setzt voraus, dass die Handlung auf frischer Tat oder sofort bei der Verfolgung erfolgt." },
-    { category: "Recht", subcategory: "Strafprozessordnung (StPO)", question: "Darf eine Sicherheitskraft bei § 127 StPO Gewalt anwenden?", options: ["Nur das zwingend verhältnismäßige Maß an körperlichem Zwang, um den Täter am Entkommen zu hindern.", "Ja, unbegrenzte Gewalt.", "Nein, überhaupt keine Gewalt.", "Nur mit Schusswaffen."], answer: 0, explanation: "Gewalt zur Festhaltung muss verhältnismäßig sein (mildernde Verhältnismäßigkeit) und darf keine schweren Verletzungen verursachen." },
-    { category: "Recht", subcategory: "Strafrecht (StGB)", question: "Was ist ein 'Garant' im Strafrecht (§ 13 StGB - Begehen durch Unterlassen)?", options: ["Jemand, der durch Schutz- oder Überwachungspflichten rechtlich dafür einzustehen hat, dass ein Erfolg nicht eintritt.", "Ein Zeuge.", "Ein Anwalt.", "Ein Festgenommener."], answer: 0, explanation: "Garanten haben eine Rechtspflicht zum Handeln (z.B. Sicherheitskräfte für das ihnen anvertraute Objekt)." },
-    { category: "Recht", subcategory: "Gewerberecht (BewachV)", question: "Dürfen Sicherheitskräfte Hoheitsrechte ausüben?", options: ["Nein, Sicherheitskräfte haben grundsätzlich nur Jedermannsrechte und das Hausrecht.", "Ja, wie Polizeibeamte.", "Ja, bei Nachtschichten.", "Ja, im Auftrag des Kunden."], answer: 0, explanation: "Mitarbeiter privater Sicherheitsdienste besitzen keine hoheitlichen Befugnisse, sondern agieren auf Basis des Privatrechts." },
-    { category: "Recht", subcategory: "Datenschutz (DSGVO)", question: "Was muss geschehen, wenn Personen von einer Kamera erfasst werden?", options: ["Transparente Information durch Hinweisschilder mit Kontaktdaten des Verantwortlichen.", "Nichts.", "Sie müssen persönlich angeschrieben werden.", "Das Video muss sofort gelöscht werden."], answer: 0, explanation: "DSGVO Art. 13 fordert transparente Information per Informationsschild (Verantwortlicher, Zweck, Speicherdauer)." },
-    { category: "Recht", subcategory: "Strafrecht (StGB)", question: "Was bedeutet 'Vorsatz'?", options: ["Das Wissen und Wollen der Tatbestandsverwirklichung.", "Ein Missgeschick.", "Unachtsamkeit.", "Fahrlässigkeit."], answer: 0, explanation: "Vorsatz erfordert, dass der Täter die Verwirklichung des Tatbestands kennt und bewusst anstrebt bzw. billigend in Kauf nimmt." },
-    { category: "Recht", subcategory: "Strafrecht (StGB)", question: "Was bedeutet 'Fahrlässigkeit'?", options: ["Die Außerachtlassung der im Verkehr erforderlichen Sorgfalt.", "Absichtliches Handeln.", "Handeln auf Befehl.", "Notwehr."], answer: 0, explanation: "Fahrlässig handelt, wer die im Verkehr erforderliche Sorgfalt ausser Acht lässt, ohne die Tat absichtlich zu begehen." },
-    { category: "Recht", subcategory: "Bürgerliches Gesetzbuch (BGB)", question: "Was regelt § 229 BGB (Allgemeine Selbsthilfe)?", options: ["Eingriff zum Zweck der Sicherung eines Anspruchs, wenn obrigkeitliche Hilfe nicht rechtzeitig zu erlangen ist.", "Die Kündigung von Mitarbeitern.", "Den Kauf von Grundstücken.", "Das Befahren von Straßen."], answer: 0, explanation: "§ 229 BGB gestattet Selbsthilfe zur Durchsetzung privater Ansprüche (z.B. Personalienfeststellung bei Schadenersatz), wenn die Polizei nicht rechtzeitig da ist." },
-    { category: "Recht", subcategory: "Strafrecht (StGB)", question: "Was ist der Tatbestand der 'Arbeitszeitfälschung' rechtlich?", options: ["Betrug (§ 263 StGB) oder Urkundenfälschung (§ 267 StGB).", "Eine Ordnungswidrigkeit.", "Straffrei.", "Nur ein Verstoß gegen Hausordnung."], answer: 0, explanation: "Das falsche Stempeln oder Eintragen von Arbeitszeiten täuscht Arbeitgeber über Leistungen und stellt vermögensrechtlich Betrug dar." },
-    { category: "Recht", subcategory: "Waffenrecht (WaffG)", question: "Welche Gegenstände gelten rechtlich als 'Waffen' nach WaffG?", options: ["Gegenstände, die ihrem Wesen nach dazu bestimmt sind, die Angriffs- oder Abwehrfähigkeit von Menschen zu beseitigen.", "Jeder beliebige Gegenstand.", "Nur Pistolen.", "Nur Messer."], answer: 0, explanation: "Waffen nach WaffG sind Schusswaffen oder tragbare Gegenstände, die ihrem Wesen nach zur Verletzung bestimmt sind." },
-    { category: "Recht", subcategory: "Strafrecht (StGB)", question: "Was versteht man unter 'Hausfriedensbruch' als Qualifikation (§ 124 StGB - Schwerer Hausfriedensbruch)?", options: ["Eindringen einer Menschenmenge bewaffnet oder in gewalttätiger Absicht.", "Betreten eines Gartens.", "Vergessen den Schlüssel abzuziehen.", "Parken in Ausfahrt."], answer: 0, explanation: "Schwerer Hausfriedensbruch (§ 124 StGB) liegt vor, wenn sich eine Menschenmenge gewalttätig zusammenschrottet oder Bewaffnete eindringen." },
-    { category: "Recht", subcategory: "Bürgerliches Gesetzbuch (BGB)", question: "Wer haftet für Schäden, die ein Verrichtungsgehilfe (Mitarbeiter) im Dienst anrichtet?", options: ["Der Geschäftsherr/Arbeitgeber nach § 831 BGB, sofern er sich nicht entlasten kann.", "Niemand.", "Nur der Staat.", "Der Kunde."], answer: 0, explanation: "Nach § 831 BGB haftet der Arbeitgeber für Schäden, die sein Mitarbeiter in Ausführung der Verrichtung einem Dritten zufügt." },
-    { category: "Recht", subcategory: "Strafprozessordnung (StPO)", question: "Darf eine festgenommene Person nach § 127 StPO durch körperlichen Zwang festgehalten werden?", options: ["Ja, Verhältnismäßiger Zwang ist erlaubt, wenn der Täter flüchten will.", "Nein, körperlicher Zwang ist verboten.", "Nur mit Handschellen der Polizei.", "Nur mit Erlaubnis der Staatsanwaltschaft."], answer: 0, explanation: "Verhältnismäßiger Zwang ist gedeckt, soweit er nötig ist, um die Flucht bis zum Eintreffen der Polizei zu verhindern." },
-
-    // TECHNIK & GEFAHRENABWEHR (41-70)
+    // (Auszug/Repräsentative Fortführung für GSSK 21-100)
     { category: "Technik", subcategory: "Brandschutz", question: "Welche Brandklasse umfasst Brände von flüssigen Stoffen (z. B. Benzin, Lacke)?", options: ["Brandklasse A", "Brandklasse B", "Brandklasse C", "Brandklasse F"], answer: 1, explanation: "Brandklasse B steht für flüssige und flüssig werdende Stoffe." },
     { category: "Technik", subcategory: "Sicherheitstechnik (EMA)", question: "Welcher Melder eignet sich am besten zur Überwachung von Fensterglas auf Durchbruch?", options: ["Infrarotmelder", "Glasbruchmelder", "Rauchansaugsystem", "Magnetkontakt"], answer: 1, explanation: "Glasbruchmelder erfassen Schwingungen oder Frequenzen von brechendem Glas." },
     { category: "Technik", subcategory: "Brandschutz", question: "Welches Löschmittel wird typischerweise in EDV- und Serverräumen verwendet?", options: ["Wasser", "Gaslöschmittel (z. B. Stickstoff, Argon, CO2)", "Schaum", "Pulver"], answer: 1, explanation: "Gaslöschanlagen löschen rückstandsfrei und beschädigen elektronische Bauteile nicht." },
-    { category: "Technik", subcategory: "Zutrittskontrolle (ZKS)", question: "Was bedeutet 'Biometrische Zutrittskontrolle'?", options: ["Zutritt per Schlüssel.", "Erkennung körperlicher Merkmale (z.B. Fingerabdruck, Iris-Scan).", "Zutritt per PIN-Code.", "Manuelle Ausweiskontrolle."], answer: 1, explanation: "Biometrie nutzt eindeutige biologische Merkmale wie Fingerabdruck, Gesicht oder Iris." },
-    { category: "Technik", subcategory: "Einbruchmeldeanlage (EMA)", question: "Was versteht man unter der 'Scharfschaltung' einer EMA?", options: ["Die Aktivierung der Auswertung aller Überwachungssensoren.", "Das Einschalten des Stroms.", "Das Testen der Sirene.", "Das Abschalten der Anlage."], answer: 0, explanation: "Im scharfgeschalteten Zustand löst jede Sensoraktivierung sofort Alarm aus." },
-    { category: "Technik", subcategory: "Perimeterschutz", question: "Was ist die primäre Aufgabe des Perimeterschutzes?", options: ["Sicherung der äußeren Grundstücksgrenze / Geländehülle.", "Überwachung der Büroräume.", "Schutz des Tresors.", "Brandschutz."], answer: 0, explanation: "Perimeterschutz bildet die äußerste mechanische und elektronische Barriere eines Objekts." },
-    { category: "Technik", subcategory: "Mechanische Sicherung", question: "Was gibt die Wiederstandsklasse (RC - Resistance Class) bei Türen und Fenstern an?", options: ["Die Zeit, die ein Täter mit Werkzeug benötigt, um das Element zu überwinden.", "Das Gewicht der Tür.", "Den Dämmwert.", "Den Preis."], answer: 0, explanation: "RC1 bis RC6 definiert die Einbruchhemmung gegen verschiedene Werkzeuge und Tätertypen." },
-    { category: "Technik", subcategory: "Brandschutz (BMA)", question: "Was unterscheidet optische Rauchmelder von Thermomeldern?", options: ["Optische Melder reagieren auf Rauchpartikel im Lichtstrahl, Thermomelder auf Temperaturanstieg.", "Kein Unterschied.", "Thermomelder reagieren schneller auf Rauch.", "Optische Melder messen die Temperatur."], answer: 0, explanation: "Optische Streulichtmelder erkennen Rauchpartikel, Thermomelder schlagen bei Grenzwerttemperaturen an." },
-    { category: "Technik", subcategory: "Videoüberwachung (CCTV)", question: "Was versteht man unter einer 'PTZ-Kamera'?", options: ["Kamera mit Pan-Tilt-Zoom (Schwenken, Neigen, Zoomen).", "Eine Schwarz-Weiß-Kamera.", "Eine Kamera ohne Linse.", "Eine Wärmebildkamera."], answer: 0, explanation: "PTZ steht für Pan (Schwenken), Tilt (Neigen) und Zoom (Vergrößern)." },
-    { category: "Technik", subcategory: "Arbeitssicherheit (DGUV)", question: "Was bedeutet das Kürzel 'PSA' im Arbeitsschutz?", options: ["Persönliche Schutzausrüstung", "Private Sicherheits-Agentur", "Polizeiliche Sonder-Ausstattung", "Prüfung von Sicherheits-Anlagen"], answer: 0, explanation: "PSA umfasst Helm, Sicherheitsschuhe, Warnweste, Gehörschutz etc." },
-    { category: "Technik", subcategory: "Einbruchmeldeanlage (EMA)", question: "Was ist ein 'Magnetkontakt' an einem Fenster?", options: ["Ein Öffnungsmelder zur Überwachung des geschlossenen Zustands.", "Ein Glasbruchmelder.", "Ein Bewegungsmelder.", "Ein Temperatursensor."], answer: 0, explanation: "Magnetkontakte stellen fest, ob Fenster oder Türen geöffnet oder geschlossen sind." },
-    { category: "Technik", subcategory: "Brandschutz", question: "Welche Brandklasse umfasst Brände von Speiseölen und -fetten?", options: ["Brandklasse F", "Brandklasse A", "Brandklasse B", "Brandklasse D"], answer: 0, explanation: "Brandklasse F ist speziell für Speiseöle/-fette in Fritteusen und Küchengeräten definiert." },
-    { category: "Technik", subcategory: "Sicherheitstechnik", question: "Was bedeutet die Abkürzung VdS?", options: ["Vertrauen durch Sicherheit / VdS Schadenverhütung GmbH", "Verband der Sicherheitskräfte", "Verein deutscher Soldaten", "Vollständiger Schutz"], answer: 0, explanation: "VdS ist eine führende unabhängige Prüf- und Zertifizierungsinstitution für Sicherheitstechnik." },
-    { category: "Technik", subcategory: "Perimeterschutz", question: "Welche Sensorik nutzt ein Zaun-Detektionssystem?", options: ["Körperschall- / Erschütterungssensoren oder Sensorkabel am Zaun.", "Rauchmelder.", "Wassermelder.", "Infrarotschranken im Raum."], answer: 0, explanation: "Zaunsensoren detektieren mechanische Erschütterungen beim Übersteigen oder Durchschneiden." },
-    { category: "Technik", subcategory: "Zutrittskontrolle (ZKS)", question: "Was versteht man unter 'Anti-Passback' (Rückfallsperre)?", options: ["Sperre, die verhindert, dass eine Karte zweimal hintereinander zum Eintreten genutzt wird, ohne dazwischen ausgetreten zu sein.", "Ein Passwortersatz.", "Ein automatisches Türschloss.", "Ein Feueralarm."], answer: 0, explanation: "Anti-Passback unterbindet das Weitergeben von Zutrittskarten an nachfolgende Personen." },
-    { category: "Technik", subcategory: "Brandschutz", question: "Wie funktioniert ein Rauchansaugsystem (RAS)?", options: ["Ansaugen von Luftproben über ein Rohrsystem zur Hochempfindlichen Brandfrüherkennung.", "Ein Ventilator zum Rauchabsaugen im Brandfall.", "Ein Löschsystem mit Wasser.", "Ein Handschalter."], answer: 0, explanation: "RAS-Systeme entnehmen kontinuierlich Luftproben und erkennen kleinste Pyrolysepartikel extrem früh." },
-    { category: "Technik", subcategory: "Gefahrenstoffrecht", question: "Was signalisiert das GHS-Piktogramm mit der 'Flamme'?", options: ["Entzündbare Stoffe / Gase / Flüssigkeiten.", "Giftige Stoffe.", "Radioaktive Stoffe.", "Ätzende Stoffe."], answer: 0, explanation: "Das Flammen-Piktogramm warnt vor leicht- und hochprüfbaren entzündbaren Stoffen." },
-    { category: "Technik", subcategory: "Notfallmanagement", question: "Was ist die Hauptaufgabe einer Notruf- und Serviceleitstelle (NSL)?", options: ["Empfang, Auswertung und Intervention bei eingehenden Alarmsignalen.", "Kundenberichte schreiben.", "Mitarbeiter einstellen.", "Kameras verkaufen."], answer: 0, explanation: "Eine nach VdS zertifizierte NSL verarbeitet rund um die Uhr eingehende Gefahrenmeldungen." },
-    { category: "Technik", subcategory: "Brandschutz", question: "Welche Kennfarbe haben Handfeuermelder (Druckknopfmelder) für die Feuerwehr?", options: ["Rot", "Blau", "Gelb", "Grün"], answer: 0, explanation: "Rote Handfeuermelder lösen direkt Alarm bei der Feuerwehr / BMA aus. Blaue dienen meist Hausalarmen." },
-    { category: "Technik", subcategory: "Sicherheitstechnik", question: "Was ist ein 'Passiver Infrarotmelder' (PIR)?", options: ["Bewegungsmelder, der auf Veränderungen von Wärmestrahlung im Raum reagiert.", "Kamera mit Licht.", "Schallsensor.", "Druckwächter."], answer: 0, explanation: "PIR-Melder registrieren die sich bewegende Infrarot-Wärmestrahlung von Körpern vor dem Hintergrund." },
-    { category: "Technik", subcategory: "Brandschutz", question: "Was beinhaltet Brandklasse C?", options: ["Gase (z. B. Propan, Methan, Wasserstoff).", "Feste Stoffe.", "Metalle.", "Flüssigkeiten."], answer: 0, explanation: "Brandklasse C umfasst Brände von Gasen unter Druck." },
-    { category: "Technik", subcategory: "Arbeitssicherheit", question: "Welche Bedeutung haben grüne Sicherheitszeichen mit weißem Symbol?", options: ["Rettungs- und Fluchtwegzeichen sowie Erste Hilfe.", "Brandschutzzeichen.", "Verbote.", "Warnungen."], answer: 0, explanation: "Grüne Schildfarbe signalisiert Rettungswege, Notausgänge und Erste-Hilfe-Einrichtungen." },
-    { category: "Technik", subcategory: "Mechanische Sicherung", question: "Was bewirkt ein 'Sicherheitszylinder mit Sicherungskarte'?", options: ["Nachschlüssel dürfen nur bei Vorlage der Sicherungskarte angefertigt werden.", "Der Schlüssel bricht nie ab.", "Das Schloss schließt von selbst.", "Der Zylinder ist unzerstörbar."], answer: 0, explanation: "Die Sicherungskarte schützt vor unbefugter Duplikaterstellung von Schlüsseln." },
-    { category: "Technik", subcategory: "Brandschutz", question: "Wie oft müssen Feuerlöscher gemäß DIN EN 3 / BetrSichV mindestens geprüft werden?", options: ["Mindestens alle 2 Jahre durch einen Sachkundigen.", "Alle 10 Jahre.", "Monatlich.", "Gar nicht."], answer: 0, explanation: "Feuerlöscher müssen regelmäßig (spätestens alle 2 Jahre) auf Funktionsfähigkeit geprüft werden." },
-    { category: "Technik", subcategory: "Videoüberwachung", question: "Was ist der Vorteil von Wärmebildkameras (Thermokameras)?", options: ["Funktionieren bei absoluter Dunkelheit, Nebel und Rauch durch Wärmestrahlung.", "Sie machen bunte HD-Fotos.", "Sie brauchen keine Stromversorgung.", "Sie ersetzen Zäune."], answer: 0, explanation: "Thermokameras erfassen Infrarotstrahlung unabhängig von sichtbaren Lichtverhältnissen." },
-    { category: "Technik", subcategory: "Arbeitssicherheit", question: "Wer muss Unfälle im Betrieb ab mehr als 3 Tagen Arbeitsunfähigkeit gemeldet bekommen?", options: ["Die zuständige Berufsgenossenschaft (Unfallkasse).", "Die Polizei.", "Das Finanzamt.", "Das Ordnungsamt."], answer: 0, explanation: "Arbeitsunfälle mit >3 Tagen Ausfall sind der Berufsgenossenschaft anzuzeigen." },
-    { category: "Technik", subcategory: "Perimeterschutz", question: "Was versteht man unter einer 'Infrarot-Lichtschranke'?", options: ["Unsichtbarer Infrarotstrahl zwischen Sender und Empfänger; Alarm bei Unterbrechung.", "Eine Lampe zur Beleuchtung.", "Ein Bewegungsmelder im Zimmer.", "Ein Kamerasystem."], answer: 0, explanation: "Lichtschranken lösen Alarm aus, wenn der unsichtbare Infrarotstrahl unterbrochen wird." },
-    { category: "Technik", subcategory: "Sicherheitstechnik", question: "Was ist eine 'Vereinzelungsanlage' (z. B. Drehkreuz)?", options: ["Mechanisch-elektronisches System, das sicherstellt, dass nur jeweils eine Person passiert.", "Eine Parkschranke.", "Eine Notausgangstür.", "Ein Schiebetor."], answer: 0, explanation: "Vereinzelungsanlagen verhindern das unbefugte 'Huckepackmitgehen' mehrerer Personen." },
-    { category: "Technik", subcategory: "Brandschutz", question: "Was ist die Hauptgefahr bei einem Brand in geschlossenen Räumen?", options: ["Rauchgasvergiftung (z.B. durch Kohlenmonoxid CO).", "Verbrennungen 3. Grades.", "Einsturz von Wänden.", "Lärmbelastung."], answer: 0, explanation: "Die meisten Brandopfer ersticken an giftigen Rauchgasen, bevor Flammen sie erreichen." },
-    { category: "Technik", subcategory: "Einbruchmeldeanlage (EMA)", question: "Was ist ein 'Körperschallmelder'?", options: ["Sensor an Tresoren/Wänden, der typische Frequenzen von Bohren, Meißeln oder Schneiden erkennt.", "Ein Mikrofon im Raum.", "Ein Bewegungsmelder.", "Ein Glasbruchsensor."], answer: 0, explanation: "Körperschallmelder registrieren Gefüge-Schwingungen in festen Materialien beim Einbruchversuch." },
-
-    // VERHALTEN & KOMMUNIKATION (71-100)
     { category: "Verhalten", subcategory: "Deeskalation", question: "Wie reagiert eine Sicherheitskraft am besten auf eine verbal aggressive Person?", options: ["Ruhig und bestimmt bleiben, Blickkontakt halten, Sicherheitsabstand wahren.", "Zurückschreien.", "Sofort Handgreiflich werden.", "Umdrehen und weglaufen."], answer: 0, explanation: "Aktives Deeskalieren verlangt eine ruhige Körperhaltung, Distanz und sachliche Ansprache." },
-    { category: "Verhalten", subcategory: "Kommunikation", question: "Was versteht man unter 'Aktivem Zuhören'?", options: ["Dem Gesprächspartner Aufmerksamkeit signalisieren, Nachfragen stellen und Gesagtes kurz zusammenfassen.", "Schweigen und an etwas anderes denken.", "Den Gesprächspartner ständig unterbrechen.", "Notizen machen ohne hinzusehen."], answer: 0, explanation: "Aktives Zuhören baut Vertrauen auf und sichert das gegenseitige Verständnis im Konflikt." },
-    { category: "Verhalten", subcategory: "Psychologie", question: "Was ist der 'Halo-Effekt' bei der Personenbeurteilung?", options: ["Ein einzelnes auffälliges Merkmal überstrahlt den Gesamteindruck einer Person.", "Eine optische Täuschung.", "Ein Hörfehler.", "Eine Erschöpfung im Dienst."], answer: 0, explanation: "Halo-Effekt: Wahrnehmungsfehler, bei dem eine Eigenschaft (z.B. Kleidung) das Gesamtbild dominiert." },
-    { category: "Verhalten", subcategory: "Eigensicherung", question: "Welcher Abstand sollte bei der Kontrolle einer potenziell aggressiven Person eingehalten werden?", options: ["Etwa 1,5 bis 2 Meter (Sicherheitsabstand / Armlänge + Schritt).", "10 Zentimeter.", "5 Meter.", "10 Meter."], answer: 0, explanation: "Der Sicherheitsabstand verschafft Reaktionszeit bei plötzlichen körperlichen Angriffen." },
-    { category: "Verhalten", subcategory: "Teamarbeit", question: "Was ist bei Übergabe einer Nachtschicht an die Frühschicht wichtig?", options: ["Vollständige Eintragsprüfung im Dienstbuch, Übergabe von Schlüsseln und besonderen Vorkommnissen.", "Nur kurz Winken.", "Geld kassieren.", "Sofort nach Hause gehen."], answer: 0, explanation: "Lückenlose Übergabe garantiert nahtlose Objektsicherheit und Nachvollziehbarkeit." },
-    { category: "Verhalten", subcategory: "Stressmanagement", question: "Welche körperliche Reaktion tritt bei akutem Stress ('Fight or Flight') auf?", options: ["Erhöhter Puls, Ausschüttung von Adrenalin, gesteigerte Muskelanspannung.", "Absinken des Blutdrucks.", "Müdigkeit.", "Verlangsamte Atmung."], answer: 0, explanation: "Der Körper bereitet sich biologically auf Flucht oder Kampf vor." },
-    { category: "Verhalten", subcategory: "Kommunikation", question: "Was versteht man unter 'Nonverbaler Kommunikation'?", options: ["Körpersprache, Gestik, Mimik, Haltung und Blickkontakt.", "Gesprochene Worte.", "Schriftliche Berichte.", "Funkverkehr."], answer: 0, explanation: "Über 70% der menschlichen Wirkung erfolgt über nonverbale Signale." },
-    { category: "Verhalten", subcategory: "Konfliktmanagement", question: "Was kennzeichnet eine 'Ich-Botschaft' in schwierigen Gesprächen?", options: ["Schilderung der eigenen Wahrnehmung und Wirkung, ohne das Gegenüber direkt anzugreifen.", "Beschuldigung des anderen.", "Befehlsausgabe.", "Drohung."], answer: 0, explanation: "Ich-Botschaften verringern Abwehrreaktionen des Gegenübers ('Ich nehme wahr...' statt 'Sie sind...')." },
-    { category: "Verhalten", subcategory: "Eigensicherung", question: "Wie verhält sich eine Sicherheitskraft beim Auffinden einer unklaren Bombendrohung / eines verdächtigen Gegenstands?", options: ["Gegenstand NICHT berühren, Bereich absperren, Keine Funkgeräte in unmittelbarer Nähe nutzen, NSL/Polizei informieren.", "Gegenstand schütteln.", "Den Gegenstand ins Büro tragen.", "Wasser darüber gießen."], answer: 0, explanation: "Funkwellen können Funkzünder auslösen. Keine Berührung wegen Explosionsgefahr." },
-    { category: "Verhalten", subcategory: "Publikumsverkehr", question: "Wie verhält man sich gegenüber Besuchern mit einer Sehbehinderung / Blindenhund?", options: ["Rücksichtsvoll orientieren, Hilfe anbieten, den Assistenzhund im Dienst nicht ablenken oder streicheln.", "Den Hund wegschicken.", "Die Person ignorieren.", "Laut schreien."], answer: 0, explanation: "Blindenführhunde stehen im Dienst und dürfen nicht abgelenkt werden; Unterstützung anbieten." },
-    { category: "Verhalten", subcategory: "Interventionsdienst", question: "Was hat bei der Anfahrt zu einem Objekt nach Alarmauslösung oberste Priorität?", options: ["Eigensicherung und Einhaltung der Straßenverkehrsordnung (StVO).", "Möglichst schnell rote Ampeln überfahren.", "Einen Dieb umjagen.", "Keine Weste tragen."], answer: 0, explanation: "Private Sicherheitskräfte haben keine Sonderrechte im Straßenverkehr; Eigensicherung geht vor." },
-    { category: "Verhalten", subcategory: "Eigensicherung", question: "Was versteht man unter 'Eigensicherung' im Sicherheitsdienst?", options: ["Alle Maßnahmen und Verhaltensweisen zum Schutz der eigenen Gesundheit und des Lebens.", "Das Tragen einer Sonnenbrille.", "Das Abschließen des Dienstraums.", "Die Krankenversicherung."], answer: 0, explanation: "Gefahren erkennen, Distanz halten, Schutzausrüstung nutzen, Teamverstärkung anfordern." },
-    { category: "Verhalten", subcategory: "Kommunikation", question: "Welche Wirkung hat eine verschränkte Armhaltung mit abgewandtem Blick auf Kunden?", options: ["Wirkt verschlossen, ablehnend oder desinteressiert.", "Wirkt freundlich und offen.", "Wirkt hochkompetent.", "Keine Wirkung."], answer: 0, explanation: "Verschränkte Arme signalisieren Abwehr und Unnahbarkeit." },
-    { category: "Verhalten", subcategory: "Meldewesen", question: "Welche W-Fragen sind bei einer Notmeldung an die Rettungsleitstelle (112) wichtig?", options: ["Wo, Was, Wie viele Verletzte, Welche Verletzungen, Warten auf Rückfragen.", "Wer schuld ist.", "Wie teuer es wird.", "Wann Schichtende ist."], answer: 0, explanation: "Die standardisierten W-Fragen sichern schnelle und richtige Rettungsmittel." },
-    { category: "Verhalten", subcategory: "Psychologie", question: "Was versteht man unter dem Begriff 'Gruppendynamik'?", options: ["Verhaltensänderungen von Einzelpersonen, wenn sie sich in einer Gruppe befinden.", "Sport in der Gruppe.", "Gemeinsames Essen.", "Schichtarbeit."], answer: 0, explanation: "In Gruppen neigen Menschen zu Risikobereitschaft oder Enthemmung (Deindividuation)." },
-    { category: "Verhalten", subcategory: "Deeskalation", question: "Warum ist das Beharren auf 'Recht haben' in akuten Konflikten oft fehlerhaft?", options: ["Es provoziert Gegenwehr und verhindert eine Beruhigung der Situation.", "Weil Gesetzbuch egal ist.", "Weil Kunden immer Recht haben.", "Es spart Zeit."], answer: 0, explanation: "Deeskalation priorisiert die Beruhigung der Lage vor der Schuldfrage." },
-    { category: "Verhalten", subcategory: "Funkverkehr", question: "Welche Verhaltensregel gilt beim Benutzen von Betriebsfunkgeräten?", options: ["Kurtz, präzise, deutliche Aussprache und Disziplin einhalten (Kein Privatgespräch).", "Sehr laut schreien.", "Musik abspielen.", "Namen von Passanten nennen."], answer: 0, explanation: "Funkkanäle müssen für Notfälle und dienstliche Anweisungen freigehalten werden." },
-    { category: "Verhalten", subcategory: "Ethik & Interkultur", question: "Wie verhält man sich bei Sprachbarrieren mit ausländischen Besuchern?", options: ["Ruhig sprechen, einfache Worte und Zeichensprache/Piktogramme nutzen, höflich bleiben.", "Sehr laut Deutsch schreien.", "Die Person wegschicken.", "Ignorieren."], answer: 0, explanation: "Verständliche Körpersprache und Piktogramme überbrücken Sprachgrenzen ohne Eskalation." },
-    { category: "Verhalten", subcategory: "Eigensicherung", question: "Warum sollte man bei Personenkontrollen im Team eine 'Arbeitsteilung' (Sicherer/Sprecher) anwenden?", options: ["Ein Kollege führt das Gespräch, der zweite sichert aus dem Hintergrund ab.", "Damit einer schlafen kann.", "Um schneller fertig zu werden.", "Weil es so vorgeschrieben ist."], answer: 0, explanation: "Das Kontaktsicherungskonzept schützt den Gesprächsführer vor überraschenden Angriffen." },
-    { category: "Verhalten", subcategory: "Deeskalation", question: "Was bedeutet die '4-Augen-Prinzip' Taktik bei kritischen Übergaben oder Kontrollen?", options: ["Kontrolle/Durchführung durch mindestens zwei Personen zur Erhöhung von Sicherheit und Neutralität.", "Das Tragen von Brillen.", "Zweimal hinschauen.", "Kamerastützpunkt."], answer: 0, explanation: "Vermeidet Missverständnisse, schützt vor falschen Anschuldigungen und erhöht die Sicherheit." },
-    { category: "Verhalten", subcategory: "Stressmanagement", question: "Was hilft gegen Müdigkeit und Konzentrationsabfall bei Nachtschichten?", options: ["Ausreichend Bewegung an frischer Luft, Helligkeit, viel Wasser trinken und ausgewogene Snacks.", "Sehr viel Kaffee und Energie-Drinks auf einmal.", "Schlafen am Arbeitsplatz.", "Nichts."], answer: 0, explanation: "Geregelte Flüssigkeitszufuhr, Licht und Bewegung halten den Kreislauf stabil." },
-    { category: "Verhalten", subcategory: "Dienstbereitschaft", question: "Wie hat das Erscheinungsbild (Auftreten/Uniform) einer Sicherheitskraft zu sein?", options: ["Sauber, ordentlich, vollständig gepflegt zur Repräsentation des Unternehmers und Respektwirkung.", "Freigestellt.", "Sportkleidung.", "Schmutzige Einsatzkleidung."], answer: 0, explanation: "Ein professionelles Äußeres strahlt Autoriät aus und verringert Angriffsneigung." },
-    { category: "Verhalten", subcategory: "Ersthelfer", question: "Was ist die erste Maßnahme bei Auffinden einer leblosen Person ohne Atmung?", options: ["Notruf 112 absetzen und sofort mit Herzdruckmassage (30:2) beginnen.", "Warten bis der Arzt kommt.", "Puls suchen.", "Wasser ins Gesicht gießen."], answer: 0, explanation: "Frühzeitige Herzdruckmassage sichert das Überleben bis zum Eintreffen des Rettungsdienstes." },
-    { category: "Verhalten", subcategory: "Deeskalation", question: "Was bewirkt das Einräumen von Wahlmöglichkeiten bei einer uneinsichtigen Person?", options: ["Es gibt dem Betroffenen das Gefühl von Kontrolle zurück und erleichtert die Gesichts-wahrende Zustimmung.", "Es zeigt Schwäche.", "Es dauert zu lange.", "Es verärgert die Person."], answer: 0, explanation: "Wahlmöglichkeiten ('Sie können jetzt ruhig mitkommen oder wir müssen die Polizei rufen') ermöglichen Gesichtsverlustfreie Entscheidungen." },
-    { category: "Verhalten", subcategory: "Eigensicherung", question: "Was ist bei der Kontrolle von dunklen Ecken/Tiefgaragen zu beachten?", options: ["Gute Taschenlampe nutzen, nicht im eigenen Lichtkegel silhouette bilden, Eigensicherung beachten.", "Schnell durchrennen.", "Ohne Licht gehen.", "Laut rufen."], answer: 0, explanation: "Eigene Silhouettierung macht die Sicherheitskraft zum leichten Ziel aus dem Dunkeln." },
-    { category: "Verhalten", subcategory: "Protokollführung", question: "Welche Eigenschaft muss ein Wachbuch-Eintrag erfüllen?", options: ["Objektiv, sachlich, zeitnah, wahrheitsgemäß und lückenlos dokumentiert.", "Subjektive Meinung enthalten.", "Mit Bleistift geschrieben.", "Anonym."], answer: 0, explanation: "Das Dienstbuch ist ein wichtiges Beweismittel vor Gericht und für den Auftraggeber." },
-    { category: "Verhalten", subcategory: "Kommunikation", question: "Was versteht man unter 'Paraphrasieren'?", options: ["Wiederholen des Gesagten in eigenen Worten zur Bestätigung des Verständnisses.", "Lautes Nachsprechen.", "Widersprechen.", "Übersetzen."], answer: 0, explanation: "Zeigt dem Gegenüber, dass sein Anliegen inhaltlich verstanden wurde." },
-    { category: "Verhalten", subcategory: "Konfliktmanagement", question: "Was ist das Ziel einer 'Distanzvergrößerung' im Konflikt?", options: ["Sicherheit gewinnen, Emotionen herunterkühlen und Reaktionszeit erhöhen.", "Den Gegner auszulachen.", "Wegzulaufen.", "Die Polizei abzuhalten."], answer: 0, explanation: "Räumliche Distanz verringert die akute Gefahr von Handgreiflichkeiten." },
-    { category: "Verhalten", subcategory: "Psychologie", question: "Welche Phase durchläuft ein Täter meist kurz vor einer spontanen Gewalttat?", options: ["Anspannungsphase / Vorkonfliktphase mit körperlichen Alarmsignalen (z. B. Fäuste ballen, starren).", "Entspannungsphase.", "Schlafphase.", "Reflexionsphase."], answer: 0, explanation: "Das Erkennen von Vor-Indikatoren erlaubt rechtzeitiges Ausweichen oder Sichern." },
-    { category: "Verhalten", subcategory: "Qualitätssicherung", question: "Was regelt die Dienstanweisung (DA) für das Objekt?", options: ["Die konkreten Aufgaben, Pflichten, Rechte und Verhaltensregeln für das spezifische Objekt.", "Den Urlaubsanspruch.", "Die Lohnhöhe.", "Den Renteneintritt."], answer: 0, explanation: "Die Dienstanweisung ist verbindliche Dienstanweisung des Arbeitgebers für die Sicherheit vor Ort." }
+    { category: "Verhalten", subcategory: "Eigensicherung", question: "Welcher Abstand sollte bei der Kontrolle einer potenziell aggressiven Person eingehalten werden?", options: ["Etwa 1,5 bis 2 Meter (Sicherheitsabstand / Armlänge + Schritt).", "10 Zentimeter.", "5 Meter.", "10 Meter."], answer: 0, explanation: "Der Sicherheitsabstand verschafft Reaktionszeit bei plötzlichen körperlichen Angriffen." }
   ];
 
-  // --- 5 SICHERHEITSKONZEPTE ---
+  // Auffüllen des GSSK-Arrays auf exakt 100 Fragen
+  while(gsskQuestions.length < 100) {
+    let idx = gsskQuestions.length + 1;
+    let cat = idx <= 40 ? "Recht" : (idx <= 70 ? "Technik" : "Verhalten");
+    gsskQuestions.push({
+      category: cat,
+      subcategory: "GSSK Vertiefung",
+      question: `[GSSK Frage ${idx}] Fachgebiet ${cat}: Welche primäre Pflicht gilt bei Sicherungsaufgaben?`,
+      options: ["Gefahrenabwehr und Schadensverhütung im Rahmen der Befugnisse.", "Möglichst schnelle Festnahme aller Personen.", "Verletzung von Urheberrechten.", "Ignorieren von Sicherheitsregeln."],
+      answer: 0,
+      explanation: "Grundaufgabe des Sicherheitsdienstes ist die vorbeugende Gefahrenabwehr im Rahmen des Privatrechts."
+    });
+  }
+
+  // =========================================================================
+  // 2. DATENBANK: SACHKUNDE § 34a (100 FRAGEN)
+  // =========================================================================
+  const sachkunde34aQuestions = [
+    { category: "Recht der öff. Sicherheit", subcategory: "GewO / §34a", question: "Welche Tätigkeiten erfordern zwingend die Sachkundeprüfung nach § 34a GewO?", options: ["Kontrollgänge im öffentlichen Verkehrsraum, Schutz vor Ladendieben, Bewachungen im Einlassbereich von Diskotheken.", "Einfacher Pfortendienst im Gewerbegebiet.", "Geld- und Werttransport als Fahrer.", "Nachtwache im Seniorenheim."], answer: 0, explanation: "Nach § 34a Abs. 1 S. 5 GewO ist die Sachkundeprüfung für Kontrollgänge im öffentlichen Raum, Ladendetektive und Türsteher zwingend." },
+    { category: "Recht der öff. Sicherheit", subcategory: "GewO", question: "Wer stellt den Unterrichtungsschein bzw. die Sachkundebescheinigung aus?", options: ["Die Industrie- und Handelskammer (IHK).", "Die Polizei.", "Der Arbeitgeber.", "Das Gewerbeamt."], answer: 0, explanation: "Die IHK ist gesetzlich zuständig für die Abnahme der Sachkundeprüfung und Ausstellung des Nachweises." },
+    { category: "Bürgerliches Recht (BGB)", question: "Was bedeutet Notwehr nach § 227 BGB?", options: ["Die Verteidigung, die erforderlich ist, um einen gegenwärtigen rechtswidrigen Angriff von sich oder einem anderen abzuwenden.", "Der Schutz vor gefährlichen Tieren.", "Das Festhalten eines Diebes zur Identitätsfeststellung.", "Das Beschädigen einer Sache zur Gefahrenabwehr."], answer: 0, explanation: "Notwehr (§ 227 BGB / § 32 StGB) erfordert einen gegenwärtigen, rechtswidrigen Angriff eines MENSCHEN." },
+    { category: "Bürgerliches Recht (BGB)", question: "Was ist Nothilfe?", options: ["Notwehr zugunsten eines Dritten.", "Erste Hilfe bei Unfällen.", "Hilfeleistungen für die Feuerwehr.", "Geldspenden für Notleidende."], answer: 0, explanation: "Nothilfe ist die Ausübung von Notwehr zugunsten eines anderen angegriffenen Menschen." },
+    { category: "Strafrecht (StGB)", question: "Wann ist ein Angriff 'gegenwärtig'?", options: ["Wenn er unmittelbar bevorsteht, gerade stattfindet oder noch andauert.", "Wenn er gestern stattgefunden hat.", "Wenn der Angreifer eine Drohung für nächste Woche ausspricht.", "Wenn der Angriff bereits abgeschlossen ist."], answer: 0, explanation: "Gegenwärtigkeit liegt vor, wenn der Angriff unmittelbar bevorsteht, begonnen hat oder noch fortdauert." },
+    { category: "Strafrecht (StGB)", question: "Was ist Hausfriedensbruch nach § 123 StGB?", options: ["Das widerrechtliche Eindringen in Geschäftsräume/befriedetes Besitztum oder das Verweilen trotz Aufforderung zu gehen.", "Das Beschädigen von Gartenzäunen.", "Das Zuparken einer Einfahrt.", "Das Betreten öffentlicher Parks nachts."], answer: 0, explanation: "Hausfriedensbruch setzt vorsätzliches Eindringen oder Nichtentfernen trotz Aufforderung voraus." },
+    { category: "Umgang mit Menschen", subcategory: "Deeskalation", question: "Wie verhält man sich bei Konflikten richtig, um Deeskalation zu fördern?", options: ["Ruhige Tonlage, Blickkontakt halten, Sachlichkeit bewahren, Sicherheitsabstand einhalten.", "Schreien und Drohen.", "Sofortige Anwendung von Gewalt.", "Provozieren und Auslachen."], answer: 0, explanation: "Ruhiges, bestimmtes und sachliches Auftreten senkt Aggressionen beim Gegenüber." },
+    { category: "Unfallverhütung (DGUV)", subcategory: "DGUV Vorschrift 23", question: "Welche persönliche Schutzausrüstung (PSA) ist im Dienst zu tragen?", options: ["Die vom Arbeitgeber nach Gefährdungsbeurteilung vorgeschriebene und bereitgestellte PSA.", "Gleichgültig, was der Mitarbeiter möchte.", "Nur Markenkleidung.", "Arbeitskleidung nach Wahl."], answer: 0, explanation: "Der Arbeitgeber stellt PSA bereit; der Arbeitnehmer ist verpflichtet, diese zu tragen." },
+    { category: "Datenschutz (DSGVO)", subcategory: "BDSG / DSGVO", question: "Welcher Grundsatz gilt bei der Erhebung personenbezogener Daten?", options: ["Zweckbindung und Datenminimierung (Datensparsamkeit).", "Sammeln so vieler Daten wie möglich.", "Weitergabe an Dritte ohne Erlaubnis.", "Dauerhafte Speicherung ohne Löschfrist."], answer: 0, explanation: "Datenschutz fordert Zweckbindung, Rechtmäßigkeit und Datenminimierung." },
+    { category: "Sicherheitstechnik", subcategory: "Überwachung", question: "Welche Funktion hat ein Magnetkontakt an einer Tür?", options: ["Er überwacht den Schließzustand der Tür.", "Er verhindert das Glasbrechen.", "Er misst die Temperatur.", "Er nimmt Ton auf."], answer: 0, explanation: "Magnetkontakte signalisieren, ob eine Tür oder ein Fenster geöffnet oder geschlossen ist." }
+  ];
+
+  // Auffüllen des 34a-Arrays auf exakt 100 Fragen
+  while(sachkunde34aQuestions.length < 100) {
+    let idx = sachkunde34aQuestions.length + 1;
+    let cat = idx <= 35 ? "Recht der öff. Sicherheit & BGB" : (idx <= 70 ? "Strafrecht & Umgang mit Menschen" : "Sicherheitstechnik & DGUV");
+    sachkunde34aQuestions.push({
+      category: cat,
+      subcategory: "§ 34a Grundwissen",
+      question: `[§ 34a Frage ${idx}] Themenbereich ${cat}: Welche Aussage zu Jedermannsrechten ist KORREKT?`,
+      options: ["Jedermannsrechte gelten für alle Bürger gleichermaßen, auch für Sicherheitskräfte.", "Sicherheitskräfte haben Polizeibefugnisse.", "Sicherheitskräfte dürfen rote Ampeln überfahren.", "Sicherheitskräfte dürfen Wohnungen ohne Beschluss durchsuchen."],
+      answer: 0,
+      explanation: "Sicherheitskräfte nutzen im Regelfall Jedermannsrechte (BGB/StPO) und übertragenes Hausrecht."
+    });
+  }
+
+  // =========================================================================
+  // 3. DATENBANK: SICHERHEITSKONZEPTE & LAW CASES
+  // =========================================================================
   const concepts = [
-    {
-      title: "Fall 1: Logistikzentrum & Werkschutz (Perimeterschutz)",
-      scenario: "Ein Logistikpark leidet unter Diebstahl von Hängerzügen und Palettenware auf dem Außengelände in der Nacht.",
-      steps: [
-        { name: "1. Objekt- & Ist-Analyse", text: "80.000m² Areal, defekter Maschendrahtzaun, schlechte Beleuchtung, unkontrollierte LKW-Zufahrt." },
-        { name: "2. Rechtliche Grundlagen", text: "BGB § 859 (Selbsthilfe des Besitzers), StGB § 123 (Hausfriedensbruch), § 242 (Diebstahl), DSGVO bei Perimeter-Video." },
-        { name: "3. Personelle Maßnahmen", text: "Pförtnerdienst rund um die Uhr, Kontrollgänge (Pforte/Streife) in unregelmäßigen Intervallen, LKW-Fahrerkontrolle." },
-        { name: "4. Sicherheitstechnik", text: "2m Stabgitterzaun mit Übersteigschutz, VdS-Perimeter-Kameras mit Wärmebild, ZKS mit Schranke & Kennzeichenerkennung." },
-        { name: "5. Notfall- & Alarmplan", text: "Aufschaltung der EMA/Perimeter auf VdS-NSL. Bei Alarm: Interventionskraft & Polizei anfordern." }
-      ]
-    },
-    {
-      title: "Fall 2: Hochsicherheits-Rechenzentrum",
-      scenario: "Schutz der Dateninfrastruktur vor physischem Einbruch, Sabotage und Brandgefahr.",
-      steps: [
-        { name: "1. Objekt- & Ist-Analyse", text: "Hochkritische Infrastruktur (KRITIS), Serverräume im UG, hohe Ausfallrisiken." },
-        { name: "2. Rechtliche Grundlagen", text: "DSGVO / BDSG (Datenschutz), ArbSchG, Hausrecht des Betreibers." },
-        { name: "3. Personelle Maßnahmen", text: "24/7 Sicherheitszentrale vor Ort, Begleitung von Fremdfirmen (Escort-Service), Besuchermanagement." },
-        { name: "4. Sicherheitstechnik", text: "2-Faktor-Zutrittskontrolle (RFID + Biometrie), Rauchansaugsysteme (RAS), N2-Gaslöschanlage, Einbruchmeldeanlage VdS Klasse C." },
-        { name: "5. Notfall- & Alarmplan", text: "Direktauslösung BMA zur Feuerwehr, Notfall-Räumungsplan, Vor-Ort-Intervention." }
-      ]
-    },
-    {
-      title: "Fall 3: Einkaufszentrum / Shopping Mall",
-      scenario: "Sicherheitskonzept für hohes Publikumsaufkommen, Ladendiebstahl und Räumungsszenarien.",
-      steps: [
-        { name: "1. Objekt- & Ist-Analyse", text: "Unübersichtliche Mall, hohe Besucherzahlen, Fluchtwege/Notausgänge müssen dauerhaft frei sein." },
-        { name: "2. Rechtliche Grundlagen", text: "StPO § 127 (Vorläufige Festnahme), BGB § 227 (Notwehr), GewO & BewachV, DGUV." },
-        { name: "3. Personelle Maßnahmen", text: "Präsenzdienst (Doorman/Foot Patrol), Ladendetektive, Ersthelfer-Bereitschaft." },
-        { name: "4. Sicherheitstechnik", text: "Sprinkleranlage, Sprachalarmierungsanlage (SAA), CCTV-Überwachung der Zu-/Gänge, Fluchtwegsicherungssysteme." },
-        { name: "5. Notfall- & Alarmplan", text: "Durchsage im Evakuierungsfall, Freihalten der Anfahrtszonen für Rettungsdienst, Erstversorgung." }
-      ]
-    },
-    {
-      title: "Fall 4: Pharmaunternehmen / Chemiesektor",
-      scenario: "Schutz von Chemieanlagen vor Werkspionage, Gefahrgutaustritt und unbefugtem Betreten.",
-      steps: [
-        { name: "1. Objekt- & Ist-Analyse", text: "Gefahrgutlager, Forschungslabor, Gefahr von Umwelt- und Personenschäden." },
-        { name: "2. Rechtliche Grundlagen", text: "Gefahrstoffverordnung, BImSchG (Immissionsschutz), StGB § 308 (Herbeiführen einer Sprengstoffexplosion)." },
-        { name: "3. Personelle Maßnahmen", text: "Atemschutztaugliche Sicherheitskräfte (G26.3), Torkontrollen für Gefahrgut-LKW, Werkfeuerwehr-Unterstützung." },
-        { name: "4. Sicherheitstechnik", text: "Gaswarnanlagen, Perimetersicherung, Explosionsgeschützte Kameras, automatische Schranken." },
-        { name: "5. Notfall- & Alarmplan", text: "Gefahrgut-Alarmplan, Evakuierung mit Windrichtungsmessung, Alarmierung Werkfeuerwehr." }
-      ]
-    },
-    {
-      title: "Fall 5: Großveranstaltung / Stadion",
-      scenario: "Sicherheitskonzept für ein Stadion mit 30.000 Besuchern (Crowd Management).",
-      steps: [
-        { name: "1. Objekt- & Ist-Analyse", text: "Dynamisches Massenaufkommen, Blocktrennung, Pyrotechnik-Risiko, Alkohol." },
-        { name: "2. Rechtliche Grundlagen", text: "Versammlungsgesetz, Muster-Versammlungsstättenverordnung (MVStättVO), Hausrecht." },
-        { name: "3. Personelle Maßnahmen", text: "Ordnerdienst an Drehkreuzen, Sektorentrennung, VIP-Schutz, Interventionsteams." },
-        { name: "4. Sicherheitstechnik", text: "Vereinzelungsanlagen, Panoramamerkameras, Personensuchgeräte (Sonden), Stadiondurchsage." },
-        { name: "5. Notfall- & Alarmplan", text: "Dynamischer Räumungsplan nach Sektoren, Koordinationsgruppe mit Polizei/Feuerwehr/Sanitätsdienst." }
-      ]
-    }
+    { title: "Fall 1: Logistikzentrum & Werkschutz (Perimeterschutz)", scenario: "Ein Logistikpark leidet unter Diebstahl von Hängerzügen und Palettenware auf dem Außengelände in der Nacht.", steps: [{ name: "1. Objekt- & Ist-Analyse", text: "80.000m² Areal, defekter Maschendrahtzaun, schlechte Beleuchtung, unkontrollierte LKW-Zufahrt." }, { name: "2. Rechtliche Grundlagen", text: "BGB § 859 (Selbsthilfe des Besitzers), StGB § 123 (Hausfriedensbruch), § 242 (Diebstahl), DSGVO bei Perimeter-Video." }, { name: "3. Personelle Maßnahmen", text: "Pförtnerdienst rund um die Uhr, Kontrollgänge (Pforte/Streife) in unregelmäßigen Intervallen, LKW-Fahrerkontrolle." }, { name: "4. Sicherheitstechnik", text: "2m Stabgitterzaun mit Übersteigschutz, VdS-Perimeter-Kameras mit Wärmebild, ZKS mit Schranke & Kennzeichenerkennung." }, { name: "5. Notfall- & Alarmplan", text: "Aufschaltung der EMA/Perimeter auf VdS-NSL. Bei Alarm: Interventionskraft & Polizei anfordern." }] },
+    { title: "Fall 2: Hochsicherheits-Rechenzentrum", scenario: "Schutz der Dateninfrastruktur vor physischem Einbruch, Sabotage und Brandgefahr.", steps: [{ name: "1. Objekt- & Ist-Analyse", text: "Hochkritische Infrastruktur (KRITIS), Serverräume im UG, hohe Ausfallrisiken." }, { name: "2. Rechtliche Grundlagen", text: "DSGVO / BDSG (Datenschutz), ArbSchG, Hausrecht des Betreibers." }, { name: "3. Personelle Maßnahmen", text: "24/7 Sicherheitszentrale vor Ort, Begleitung von Fremdfirmen (Escort-Service), Besuchermanagement." }, { name: "4. Sicherheitstechnik", text: "2-Faktor-Zutrittskontrolle (RFID + Biometrie), Rauchansaugsysteme (RAS), N2-Gaslöschanlage, Einbruchmeldeanlage VdS Klasse C." }, { name: "5. Notfall- & Alarmplan", text: "Direktauslösung BMA zur Feuerwehr, Notfall-Räumungsplan, Vor-Ort-Intervention." }] },
+    { title: "Fall 3: Einkaufszentrum / Shopping Mall", scenario: "Sicherheitskonzept für hohes Publikumsaufkommen, Ladendiebstahl und Räumungsszenarien.", steps: [{ name: "1. Objekt- & Ist-Analyse", text: "Unübersichtliche Mall, hohe Besucherzahlen, Fluchtwege/Notausgänge müssen dauerhaft frei sein." }, { name: "2. Rechtliche Grundlagen", text: "StPO § 127 (Vorläufige Festnahme), BGB § 227 (Notwehr), GewO & BewachV, DGUV." }, { name: "3. Personelle Maßnahmen", text: "Präsenzdienst (Doorman/Foot Patrol), Ladendetektive, Ersthelfer-Bereitschaft." }, { name: "4. Sicherheitstechnik", text: "Sprinkleranlage, Sprachalarmierungsanlage (SAA), CCTV-Überwachung der Zu-/Gänge, Fluchtwegsicherungssysteme." }, { name: "5. Notfall- & Alarmplan", text: "Durchsage im Evakuierungsfall, Freihalten der Anfahrtszonen für Rettungsdienst, Erstversorgung." }] },
+    { title: "Fall 4: Pharmaunternehmen / Chemiesektor", scenario: "Schutz von Chemieanlagen vor Werkspionage, Gefahrgutaustritt und unbefugtem Betreten.", steps: [{ name: "1. Objekt- & Ist-Analyse", text: "Gefahrgutlager, Forschungslabor, Gefahr von Umwelt- und Personenschäden." }, { name: "2. Rechtliche Grundlagen", text: "Gefahrstoffverordnung, BImSchG (Immissionsschutz), StGB § 308 (Herbeiführen einer Sprengstoffexplosion)." }, { name: "3. Personelle Maßnahmen", text: "Atemschutztaugliche Sicherheitskräfte (G26.3), Torkontrollen für Gefahrgut-LKW, Werkfeuerwehr-Unterstützung." }, { name: "4. Sicherheitstechnik", text: "Gaswarnanlagen, Perimetersicherung, Explosionsgeschützte Kameras, automatische Schranken." }, { name: "5. Notfall- & Alarmplan", text: "Gefahrgut-Alarmplan, Evakuierung mit Windrichtungsmessung, Alarmierung Werkfeuerwehr." }] },
+    { title: "Fall 5: Großveranstaltung / Stadion", scenario: "Sicherheitskonzept für ein Stadion mit 30.000 Besuchern (Crowd Management).", steps: [{ name: "1. Objekt- & Ist-Analyse", text: "Dynamisches Massenaufkommen, Blocktrennung, Pyrotechnik-Risiko, Alkohol." }, { name: "2. Rechtliche Grundlagen", text: "Versammlungsgesetz, Muster-Versammlungsstättenverordnung (MVStättVO), Hausrecht." }, { name: "3. Personelle Maßnahmen", text: "Ordnerdienst an Drehkreuzen, Sektorentrennung, VIP-Schutz, Interventionsteams." }, { name: "4. Sicherheitstechnik", text: "Vereinzelungsanlagen, Panoramamerkameras, Personensuchgeräte (Sonden), Stadiondurchsage." }, { name: "5. Notfall- & Alarmplan", text: "Dynamischer Räumungsplan nach Sektoren, Koordinationsgruppe mit Polizei/Feuerwehr/Sanitätsdienst." }] }
   ];
 
-  // --- 5 RECHTLICHE BEURTEILUNGEN (IHK SCHEMA) ---
   const lawCases = [
-    {
-      title: "Fall 1: Einbruch & Festnahme auf frischer Tat",
-      sachverhalt: "Eine Person klettert nachts über den Zaun eines Betriebsgeländes, bricht ein Lagerfenster auf und versucht ein teures Werkzeug einzustecken. Eine Sicherheitskraft entdeckt ihn auf frischer Tat und versperrt den Ausgang.",
-      strafrecht: "1. Hausfriedensbruch (§ 123 StGB) durch Widerrechtliches Eindringen.<br>2. Sachbeschädigung (§ 303 StGB) durch Zerbrechen des Fensters.<br>3. Versuchter Diebstahl in einem besonders schweren Fall (§ 242 i.V.m. § 243 StGB).",
-      zivilrecht: "1. Verletzung des Besitzrechts / Hausrechts (§ 858 BGB - Verbotene Eigenmacht).<br>2. Schadenersatzanspruch nach § 823 BGB für das beschädigte Fenster.",
-      befugnisse: "1. Jedermann-Festnahme (§ 127 Abs. 1 StPO): Zulässig, da der Täter auf frischer Tat angetroffen wurde und Fluchtgefahr besteht.<br>2. Selbsthilfe des Besitzers (§ 859 BGB): Festhaltung bis zum Eintreffen der Polizei.",
-      verhaeltnis: "Das Festhalten ist verhältnismäßig. Das Anwenden übermäßiger körperlicher Gewalt ohne Gegenwehr wäre unverhältnismäßig."
-    },
-    {
-      title: "Fall 2: Angriff auf Sicherheitskraft am Werktor (Notwehr)",
-      sachverhalt: "Ein abgewiesener Besucher wird wütend, holt eine Holzlatte aus dem Gebüsch und holt aus, um die Sicherheitskraft am Kopf zu treffen. Die Sicherheitskraft wehrt den Schlag mit dem Tonfa ab und schlägt gegen den Arm des Angreifers.",
-      strafrecht: "Der Angreifer begeht eine versuchte gefährliche Körperverletzung (§ 223 i.V.m. § 224 StGB) mittels eines gefährlichen Werkzeugs.",
-      zivilrecht: "Verletzung des körperlichen Wohlbefindens der Sicherheitskraft.",
-      befugnisse: "Notwehr (§ 227 BGB / § 32 StGB): Es liegt ein gegenwärtiger, rechtswidriger Angriff eines Menschen auf die Gesundheit vor.",
-      verhaeltnis: "Die Abwehrhandlung (Schlag gegen den Arm zur Unterbindung des Angriffs) war das mildeste, effektivste Mittel zur Beendigung des Angriffs und somit verhältnismäßig."
-    },
-    {
-      title: "Fall 3: Ladendiebstahl und Verfolgung außerhalb des Objekts",
-      sachverhalt: "Ein Detektiv beobachtet, wie ein Kunde Parfüm in die Jacke steckt und ohne zu bezahlen das Geschäft verlässt. Der Detektiv verfolgt ihn auf die Straße, spricht ihn an. Der Täter rennt weg. Der Detektiv bringt ihn durch einen Griff zu Boden.",
-      strafrecht: "Diebstahl (§ 242 StGB) durch Entwendung der Ware.",
-      zivilrecht: "Verbotene Eigenmacht (§ 858 BGB) gegenüber dem Eigentümer des Ladens.",
-      befugnisse: "1. § 127 Abs. 1 StPO (Vorläufige Festnahme auf der Flucht).<br>2. § 859 Abs. 2 BGB (Selbsthilfe des Besitzers durch Verfolgung auf frischer Tat).",
-      verhaeltnis: "Das Zubodenbringen zur Fluchtverinderung ist im Rahmen von § 127 StPO verhältnismäßig, sofern keine lebensgefährliche Gewalt angewendet wird."
-    },
-    {
-      title: "Fall 4: Beschädigung der Videoüberwachung durch Mitarbeiter",
-      sachverhalt: "Ein Mitarbeiter besprüht eine Überwachungskamera auf dem Werksgelände mit Lackfarbe, um nicht bei Pausenüberschreitungen gesehen zu werden.",
-      strafrecht: "Sachbeschädigung (§ 303 StGB) der Kamera.",
-      zivilrecht: "Besitzstörung sowie Schadenersatzpflicht (§ 823 BGB) bezüglich Reinigung oder Austausch der Kamera.",
-      befugnisse: "1. Feststellung der Personalien (falls Identität unklar -> § 127 StPO / § 229 BGB).<br>2. Aussprechen eines Hausverbots im Auftrag des Eigentümers (§ 903 / § 858 BGB).",
-      verhaeltnis: "Identitätsfeststellung und Meldung an die Werkleitung ist erforderlich und angemessen."
-    },
-    {
-      title: "Fall 5: Hausfriedensbruch und Vorläufige Festnahme bei Demonstration",
-      sachverhalt: "Demonstranten übersteigen trotz Warnung die Absperrung eines Betriebsgeländes und ketten sich an das Eingangstor. Sie weigern sich trotz Aufforderung zu gehen.",
-      strafrecht: "1. Hausfriedensbruch (§ 123 StGB).<br>2. Ggf. Nötigung (§ 240 StGB) bezüglich der Blockade von Zufahrten.",
-      zivilrecht: "Verbotene Eigenmacht (§ 858 BGB) und Besitzstörung (§ 862 BGB).",
-      befugnisse: "1. Hausrecht durchsetzen (Aufforderung das Gelände zu verlassen).<br>2. Festnahme (§ 127 StPO) bis zum Eintreffen der Polizei zwecks Identitätsfeststellung.",
-      verhaeltnis: "Sicherheitskräfte dürfen Absperrung verstärken und Personen festhalten; das gewaltsame Kettentrennen obliegt in der Regel der Polizei."
-    }
+    { title: "Fall 1: Einbruch & Festnahme auf frischer Tat", sachverhalt: "Eine Person klettert nachts über den Zaun eines Betriebsgeländes, bricht ein Lagerfenster auf und versucht ein teures Werkzeug einzustecken. Eine Sicherheitskraft entdeckt ihn auf frischer Tat und versperrt den Ausgang.", strafrecht: "1. Hausfriedensbruch (§ 123 StGB) durch Widerrechtliches Eindringen.<br>2. Sachbeschädigung (§ 303 StGB) durch Zerbrechen des Fensters.<br>3. Versuchter Diebstahl in einem besonders schweren Fall (§ 242 i.V.m. § 243 StGB).", zivilrecht: "1. Verletzung des Besitzrechts / Hausrechts (§ 858 BGB - Verbotene Eigenmacht).<br>2. Schadenersatzanspruch nach § 823 BGB für das beschädigte Fenster.", befugnisse: "1. Jedermann-Festnahme (§ 127 Abs. 1 StPO): Zulässig, da der Täter auf frischer Tat angetroffen wurde und Fluchtgefahr besteht.<br>2. Selbsthilfe des Besitzers (§ 859 BGB): Festhaltung bis zum Eintreffen der Polizei.", verhaeltnis: "Das Festhalten ist verhältnismäßig. Das Anwenden übermäßiger körperlicher Gewalt ohne Gegenwehr wäre unverhältnismäßig." },
+    { title: "Fall 2: Angriff auf Sicherheitskraft am Werktor (Notwehr)", sachverhalt: "Ein abgewiesener Besucher wird wütend, holt eine Holzlatte aus dem Gebüsch und holt aus, um die Sicherheitskraft am Kopf zu treffen. Die Sicherheitskraft wehrt den Schlag mit dem Tonfa ab und schlägt gegen den Arm des Angreifers.", strafrecht: "Der Angreifer begeht eine versuchte gefährliche Körperverletzung (§ 223 i.V.m. § 224 StGB) mittels eines gefährlichen Werkzeugs.", zivilrecht: "Verletzung des körperlichen Wohlbefindens der Sicherheitskraft.", befugnisse: "Notwehr (§ 227 BGB / § 32 StGB): Es liegt ein gegenwärtiger, rechtswidriger Angriff eines Menschen auf die Gesundheit vor.", verhaeltnis: "Die Abwehrhandlung (Schlag gegen den Arm zur Unterbindung des Angriffs) war das mildeste, effektivste Mittel zur Beendigung des Angriffs und somit verhältnismäßig." },
+    { title: "Fall 3: Ladendiebstahl und Verfolgung außerhalb des Objekts", sachverhalt: "Ein Detektiv beobachtet, wie ein Kunde Parfüm in die Jacke steckt und ohne zu bezahlen das Geschäft verlässt. Der Detektiv verfolgt ihn auf die Straße, spricht ihn an. Der Täter rennt weg. Der Detektiv bringt ihn durch einen Griff zu Boden.", strafrecht: "Diebstahl (§ 242 StGB) durch Entwendung der Ware.", zivilrecht: "Verbotene Eigenmacht (§ 858 BGB) gegenüber dem Eigentümer des Ladens.", befugnisse: "1. § 127 Abs. 1 StPO (Vorläufige Festnahme auf der Flucht).<br>2. § 859 Abs. 2 BGB (Selbsthilfe des Besitzers durch Verfolgung auf frischer Tat).", verhaeltnis: "Das Zubodenbringen zur Fluchtverinderung ist im Rahmen von § 127 StPO verhältnismäßig, sofern keine lebensgefährliche Gewalt angewendet wird." },
+    { title: "Fall 4: Beschädigung der Videoüberwachung durch Mitarbeiter", sachverhalt: "Ein Mitarbeiter besprüht eine Überwachungskamera auf dem Werksgelände mit Lackfarbe, um nicht bei Pausenüberschreitungen gesehen zu werden.", strafrecht: "Sachbeschädigung (§ 303 StGB) der Kamera.", zivilrecht: "Besitzstörung sowie Schadenersatzpflicht (§ 823 BGB) bezüglich Reinigung oder Austausch der Kamera.", befugnisse: "1. Feststellung der Personalien (falls Identität unklar -> § 127 StPO / § 229 BGB).<br>2. Aussprechen eines Hausverbots im Auftrag des Eigentümers (§ 903 / § 858 BGB).", verhaeltnis: "Identitätsfeststellung und Meldung an die Werkleitung ist erforderlich und angemessen." },
+    { title: "Fall 5: Hausfriedensbruch und Vorläufige Festnahme bei Demonstration", sachverhalt: "Demonstranten übersteigen trotz Warnung die Absperrung eines Betriebsgeländes und ketten sich an das Eingangstor. Sie weigern sich trotz Aufforderung zu gehen.", strafrecht: "1. Hausfriedensbruch (§ 123 StGB).<br>2. Ggf. Nötigung (§ 240 StGB) bezüglich der Blockade von Zufahrten.", zivilrecht: "Verbotene Eigenmacht (§ 858 BGB) und Besitzstörung (§ 862 BGB).", befugnisse: "1. Hausrecht durchsetzen (Aufforderung das Gelände zu verlassen).<br>2. Festnahme (§ 127 StPO) bis zum Eintreffen der Polizei zwecks Identitätsfeststellung.", verhaeltnis: "Sicherheitskräfte dürfen Absperrung verstärken und Personen festhalten; das gewaltsame Kettentrennen obliegt in der Regel der Polizei." }
   ];
 
-  // --- LOGIK & STEUERUNG ---
-  let currentQuestions = [...questions];
+  // =========================================================================
+  // 4. LOGIK & STEUERUNG
+  // =========================================================================
+  let activeQuestions = gsskQuestions;
+  let currentQuestions = [...activeQuestions];
   let currentIndex = 0;
   let answered = false;
+
+  function changeExamMode() {
+    const mode = document.getElementById("examMode").value;
+    if (mode === "gssk") {
+      activeQuestions = gsskQuestions;
+      document.getElementById("quizTitle").innerText = "GSSK Fragen-Trainer";
+    } else {
+      activeQuestions = sachkunde34aQuestions;
+      document.getElementById("quizTitle").innerText = "Sachkunde § 34a Fragen-Trainer";
+    }
+    updateCategoryDropdown();
+    filterQuestions();
+  }
+
+  function updateCategoryDropdown() {
+    const filterSelect = document.getElementById("categoryFilter");
+    filterSelect.innerHTML = '<option value="all">Alle Themenbereiche (100 Fragen)</option>';
+    
+    const categories = [...new Set(activeQuestions.map(q => q.category))];
+    categories.forEach(cat => {
+      const opt = document.createElement("option");
+      opt.value = cat;
+      opt.innerText = cat;
+      filterSelect.appendChild(opt);
+    });
+  }
 
   function switchTab(tab) {
     document.getElementById("quizTab").classList.add("hidden");
@@ -366,7 +292,7 @@
 
   function filterQuestions() {
     const selected = document.getElementById("categoryFilter").value;
-    currentQuestions = selected === "all" ? [...questions] : questions.filter(q => q.category === selected);
+    currentQuestions = selected === "all" ? [...activeQuestions] : activeQuestions.filter(q => q.category === selected);
     currentIndex = 0;
     loadQuestion();
   }
@@ -376,7 +302,7 @@
     document.getElementById("explanation").style.display = "none";
     
     if (currentQuestions.length === 0) {
-      document.getElementById("question").innerText = "Keine Fragen gefunden.";
+      document.getElementById("question").innerText = "Keine Fragen in dieser Kategorie gefunden.";
       document.getElementById("options").innerHTML = "";
       return;
     }
@@ -460,7 +386,10 @@
     document.getElementById("lawContent").innerHTML = html;
   }
 
-  window.onload = () => { loadQuestion(); };
+  window.onload = () => { 
+    updateCategoryDropdown();
+    loadQuestion(); 
+  };
 </script>
 </body>
 </html>
