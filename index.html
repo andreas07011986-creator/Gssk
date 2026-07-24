@@ -161,7 +161,7 @@
 
 <script>
   // =========================================================================
-  // ECHTE IHK-PRÜFUNGSFRAGEN (GSSK & § 34a GewO) - Keine Dummy-Duplikate
+  // ECHTE IHK-PRÜFUNGSFRAGEN (GSSK & § 34a GewO)
   // =========================================================================
 
   const gsskOriginalPool = [
@@ -335,127 +335,102 @@
     },
     {
       category: "Bürgerliches Recht", subcategory: "Besitzdienerschaft",
-      question: "Welche rechtliche Stellung hat ein Sicherheitsmitarbeiter im bewachten Objekt gegenüber dem Auftraggeber im Sinne des § 855 BGB?",
+      question: "Welche rechtliche Stellung hat ein Sicherheitsmitarbeiter im bewachten Objekt?",
       options: [
-        "Er ist Besitzdiener und übt die tatsächliche Gewalt über das Objekt im Weisungsverhältnis für den Besitzer (Auftraggeber) aus.",
-        "Er wird durch die Arbeitsaufnahme automatisch zum Eigentümer des gesamten Betriebsgeländes.",
-        "Er hat keinerlei rechtlichen Schutz und gilt rechtlich als Außenstehender.",
-        "Er ist gesetzlicher Vertreter des zuständigen Amtsgerichts."
+        "Er ist in der Regel Besitzdiener nach § 855 BGB und übt die tatsächliche Gewalt für den Besitzer aus.",
+        "Er wird rechtlich zum Miteigentümer der durch ihn bewachten Gegenstände.",
+        "Er erwirbt die alleinige Verfügungsgewalt über das Grundstück nach § 903 BGB.",
+        "Er ist juristisch stets mit den Befugnissen eines Polizeivollzugsbeamten gleichgestellt."
       ],
-      correct: "Er ist Besitzdiener und übt die tatsächliche Gewalt über das Objekt im Weisungsverhältnis für den Besitzer (Auftraggeber) aus."
-    },
-    {
-      category: "Datenschutz", subcategory: "DSGVO",
-      question: "Welches Prinzip der DSGVO verpflichtet Verantwortliche dazu, nur solche personenbezogenen Daten zu erheben, die für den Verarbeitungszweck 'notwendig' sind?",
-      options: [
-        "Datenminimierung (Art. 5 Abs. 1 lit. c DSGVO)",
-        "Zweckbindung",
-        "Rechtmäßigkeit der Verarbeitung",
-        "Richtigkeit der Daten"
-      ],
-      correct: "Datenminimierung (Art. 5 Abs. 1 lit. c DSGVO)"
+      correct: "Er ist in der Regel Besitzdiener nach § 855 BGB und übt die tatsächliche Gewalt für den Besitzer aus."
     }
   ];
 
-  const lawCases = [
-    { title: "Fall 1: Der flüchtige Ladendieb", text: "Ein Detektiv beobachtet im Supermarkt, wie eine Person eine teure Flasche Parfum einsteckt und den Kassenbereich passiert, ohne zu bezahlen. Er läuft hinterher auf den öffentlichen Gehweg vor dem Markt und fordert die Person zum Stehenbleiben auf. Der Verdächtige flieht weiter. Darf der Detektiv ihn körperlich festhalten?", solution: "Ja. Nach § 127 Abs. 1 StPO (Jedermann-Festnahmerecht) ist das zulässig, da der Täter auf frischer Tat betroffen und verfolgt wird, Fluchtgefahr vorliegt und seine Identität im Moment nicht feststeht." },
-    { title: "Fall 2: Die Schlägerei am Einlass", text: "Ein Club-Gast wird wegen aggressiven Verhaltens abgewiesen. Daraufhin schlägt er dem Türsteher völlig unerwartet mit der Faust ins Gesicht. Darf sich der Türsteher mit körperlicher Gewalt verteidigen?", solution: "Ja. Es liegt ein gegenwärtiger, rechtswidriger Angriff vor. Die Verteidigung ist nach § 32 StGB (Notwehr) gerechtfertigt, sofern sie das mildeste, sofort wirksame Mittel zur Abwehr darstellt." },
-    { title: "Fall 3: Die unzulässige Taschenkontrolle", text: "Am Werktor möchte der Sicherheitsmitarbeiter die Sporttasche eines ausgehenden Mitarbeiters kontrollieren. Der Mitarbeiter weigert sich und zeigt keinerlei Verdachtsmomente. Darf der Mitarbeiter gewaltsam durchsucht werden?", solution: "Nein. Ohne konkreten Tatverdacht (StPO) oder eine ausdrückliche, wirksame arbeitsvertragliche Einwilligung (Hausordnung) ist eine Durchsuchung unzulässig. Der Wachmann darf lediglich den Zutritt verweigern (Hausrecht)." },
-    { title: "Fall 4: Der brennende Müllcontainer", text: "Ein Sicherheitsmitarbeiter beobachtet nachts auf dem Firmengelände, wie ein Unbekannter einen Müllcontainer direkt an der Außenwand des Firmengebäudes anzündet und wegläuft. Der Wachmann fixiert den Täter am Boden und ruft die Feuerwehr.", solution: "Das Festhalten ist nach § 127 Abs. 1 StPO (frische Tat / Fluchtgefahr) rechtlich absolut korrekt gedeckt. Die Verhinderung des Brandschutznachteils rechtfertigt das Eingreifen." },
-    { title: "Fall 5: Der randalierende Betrunkene", text: "Ein stark alkoholisierter Mann betritt das Empfangsfoyer einer Bank und grölt laut herum, greift aber körperlich niemanden an. Der Sicherheitsmitarbeiter erteilt ihm einen Verweis. Der Mann weigert sich zu gehen. Welche Rechtsgrundlage greift?", solution: "Das Hausrecht (§§ 858, 903 BGB). Der Besitzer (bzw. Besitzdiener) kann den Platzverweis aussprechen. Bei Nichtbefolgung liegt Hausfriedensbruch (§ 123 StGB) vor, und die Polizei darf hinzugezogen werden." },
-    { title: "Fall 6: Fotografieren von der Straße", text: "Eine Person steht auf dem öffentlichen Gehweg vor einem gesicherten Werk und fotografiert mit einer Spiegelreflexkamera das Eingangstor. Der Sicherheitsmitarbeiter stürmt heraus und fordert die Löschung der Bilder sowie die Herausgabe der Kamera.", solution: "Unzulässig. Von öffentlichem Grund aus gilt die Panoramafreiheit / Grundrechte der Meinungs- und Pressefreiheit (sofern keine militärische Geheimhaltung vorliegt). Eine Wegnahme der Kamera ist rechtswidrig (Nötigung/Diebstahl)." },
-    { title: "Fall 7: Der unberechtigte Nachschlag (Notwehr-Exzess)", text: "Ein Angreifer schlägt den Sicherheitsmitarbeiter, bricht den Angriff dann aber ab und wendet sich ab, um wegzulaufen. Der Wachmann zieht seinen Einsatzstock (Tonfa) und schlägt dem Fliehenden absichtlich gegen die Beine, um ihn 'zu bestrafen'.", solution: "Strafbar (Körperverletzung nach § 223 StGB). Der Angriff war bereits beendet, womit die Voraussetzung der 'Gegenwärtigkeit' für Notwehr (§ 32 StGB) entfallen ist." },
-    { title: "Fall 8: Das gefundene Smartphone", text: "Ein Sicherheitsmitarbeiter findet während seines Kontrollgangs in der Eingangshalle ein hochwertiges Smartphone. Anstatt es im Fundbüro des Objekts abzugeben, steckt er es ein, um es privat zu behalten.", solution: "Strafbar gem. § 246 StGB (Unterschlagung), da er eine fremde bewegliche Sache rechtswidrig sich zueignet. Zudem führt dies im Bewachungsgewerbe zur fristlosen Entlassung und zum Entzug der Zuverlässigkeit." },
-    { title: "Fall 9: Die gefundene Waffe am Einlass", text: "Bei einer Einlasskontrolle greift ein Besucher in seine Jacke und zieht eine ungeladene Schusswaffe heraus, ohne einen Waffenschein vorzuzeigen. Der Wachmann erkennt dies sofort.", solution: "Sofortige Gefahrenabwehr: Eigenschutz wahren, Person fixieren (§ 127 StPO wegen Verstoß gegen das WaffG) und unverzüglich die Polizei über Notruf 110 alarmieren." },
-    { title: "Fall 10: Die Industriespionage-Drohne", text: "Eine fremde Drohne schwebt in geringer Höhe direkt über dem vertraulichen Betriebsgelände und filmt die Produktionshallen. Der Sicherheitsmitarbeiter wirft einen schweren Schraubenschlüssel nach der Drohne und beschädigt sie schwer.", solution: "Rechtlich problematisch. Zwar besteht ein Abwehrrecht (Defensivnotstand § 228 BGB / Schutz von Geschäftsgeheimnissen), jedoch ist der gezielte Wurf auf Drohnen im Luftraum oft mit Haftungsrisiken verbunden. Fachlich korrekter: Dokumentieren und Polizei rufen." },
-    { title: "Fall 11: Der durchgeschnittene Zaun", text: "Ein Einbrecher schneidet mit einer Kabelschere ein Loch in den Maschendrahtzaun des Werksgeländes, um einzusteigen. Der Wachmann überrascht ihn beim Verursachen des Lochs.", solution: "Anwendung der Besitzwehr (§ 859 Abs. 1 BGB) zur Abwehr verbotener Eigenmacht am Besitz sowie Notwehr (§ 32 StGB) zum Schutz des Eigentums des Auftraggebers." },
-    { title: "Fall 12: Blockierte Rettungswege", text: "Ein Lieferant parkt seinen Lkw trotz mehrfacher Kennzeichnung mitten auf dem markierten Not- und Rettungsweg und geht weg. Der Fahrer ist unauffindbar.", solution: "Sofortige Veranlassung des Abschleppens durch den Betrieb (Besitzkehr / Notgeschäftsführung zur Aufrechterhaltung der Verkehrssicherheit und des Brandschutzes). Kosten trägt der Verursacher." },
-    { title: "Fall 13: Die verbale Beleidigung", text: "Ein aufgebrachter Besucher beschimpft den Sicherheitsmitarbeiter am Infopoint lautstark als 'inkompetenten Idioten'. Darf der Wachmann den Besucher deshalb körperlich festhalten?", solution: "Eine Beleidigung (§ 185 StGB) ist eine Straftat. Das Festnahmerecht nach § 127 StPO greift theoretisch, jedoch ist bei reinen Ehrverletzungen ohne Fluchtgefahr die Verhältnismäßigkeit (körperlicher Eingriff) meist nicht gegeben. Hausverbot aussprechen ist das adäquate Mittel." },
-    { title: "Fall 14: Die Ausweis-Durchsuchung ohne Verdacht", text: "Nach einem gemeldeten Diebstahl im Betrieb verlangt der Wachmann von einem unverdächtigen Angestellten, sofort die Hosentaschen komplett zu leeren, um seine Unschuld zu beweisen.", solution: "Unzulässig! Die Durchsuchung von Personen zur Identitätsfeststellung oder Beweissicherung ist hoheitliche Aufgabe der Polizei (§ 163b StPO). Private Sicherheitskräfte haben hierzu ohne konkreten Tatverdacht und Einwilligung keine Befugnis." },
-    { title: "Fall 15: Zugestellter Notausgang", text: "In einer Lagerhalle stapelt eine Fremdfirma Europaletten direkt vor einen Fluchtweg. Der Sicherheitsmitarbeiter bemerkt dies bei der Brandschutzkontrolle.", solution: "Sofortige Aufforderung zur Räumung der Fluchtwege. Bei Weigerung oder Abwesenheit der Firma muss der Wachdienst im Rahmen der Verkehrssicherungspflicht die Paletten unverzüglich wegräumen." },
-    { title: "Fall 16: Der entkommene Einbrecher", text: "Ein Täter bricht in ein Gebäude ein, wird vom Wachhund gestellt, reißt sich los und flieht über die Grundstücksgrenze hinaus auf die öffentliche Straße.", solution: "Das Hausrecht und die Besitzwehr enden grundsätzlich an der Grundstücksgrenze. Ein weiteres Verfolgen auf öffentlichem Grund unterliegt den strengen Grenzen des § 127 StPO (Verfolgung auf frischer Tat). Polizei sofort einweisen." },
-    { title: "Fall 17: Die geringwertige Sache", text: "Eine Reinigungskraft steckt unbemerkt einen firmeneigenen Kugelschreiber (Wert: 2 Euro) ein. Der Werkschutz beobachtet dies.", solution: "Zwar rechtlich ein Diebstahl geringwertiger Sachen (§ 248a StGB), jedoch ist hier die Verhältnismäßigkeit zu wahren. Diebstahl ist Diebstahl, arbeitsrechtlich droht oft die fristlose Kündigung (bekannt aus der 'Emmely'-Rechtsprechung), aber Verhältnismäßigkeitsprüfung im Betrieb ist zwingend." },
-    { title: "Fall 18: Unbefugter Zutritt im Rechenzentrum", text: "Ein externer Handwerker betritt ohne Freigabe und ohne Begleitung den Hochsicherheits-Serverraum, obwohl sein Auftrag nur für das Treppenhaus gilt.", solution: "Sofortiger Verweis des Handwerkers aus dem sensiblen Bereich, Überprüfung der Berechtigung, Dokumentation des Sicherheitsvorfalls und Meldung an den Sicherheitsbeauftragten." },
-    { title: "Fall 19: Unterlassene Hilfeleistung beim Täter", text: "Ein Einbrecher stürzt bei der Flucht über ein Absperrgitter und bricht sich schwer das Bein. Er liegt schreiend am Boden. Der Sicherheitsmitarbeiter sagt: 'Selbst schuld' und geht weiter.", ...this, solution: "Strafbar gem. § 323c StGB (Unterlassene Hilfeleistung). Auch Straftäter haben ein Recht auf Hilfeleistung und medizinische Versorgung in Notfällen. Der SMA muss sofort Erste Hilfe leisten und den Rettungsdienst verständigen." },
-    { title: "Fall 20: Der mutwillige Feueralarm", text: "Ein Jugendlicher drückt aus Übermut in einem Einkaufszentrum ohne jeglichen Grund den roten Handfeueralarm-Melder. Die Feuerwehr rückt mit einem Großaufgebot an.", solution: "Straftat gem. § 145 StGB (Missbrauch von Notrufen und Beeinträchtigung von Unfallverhütungs- und Nothilfemitteln). Der Verursacher haftet zudem zivilrechtlich für die enormen Kosten des Feuerwehreinsatzes." }
-  ];
-
   // =========================================================================
-  // APP LOGIK & STEUERUNG
+  // APP LOGIK & FUNKTIONEN
   // =========================================================================
 
-  function shuffleArray(array) {
-    let shuffled = [...array];
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
-    return shuffled;
-  }
+  let currentMode = 'gssk';
+  let activePool = gsskOriginalPool;
+  let quizIndex = 0;
 
-  let currentExamMode = 'gssk';
+  let examState = {
+    questions: [],
+    currentIndex: 0,
+    answers: [],
+    timerInterval: null,
+    timeLeft: 45 * 60 // 45 Minuten
+  };
 
-  function initApp() {
-    renderLawCases();
+  // Initialisierung beim Laden
+  window.onload = () => {
     changeExamMode();
-  }
+    loadLawCases();
+  };
 
   function changeExamMode() {
-    currentExamMode = document.getElementById('examMode').value;
-    startQuiz(); 
+    currentMode = document.getElementById('examMode').value;
+    activePool = currentMode === 'gssk' ? gsskOriginalPool : thirtyFourAOriginalPool;
+    quizIndex = 0;
+    if (!document.getElementById('quizTab').classList.contains('hidden')) {
+      loadQuizQuestion();
+    }
   }
 
   function switchTab(tabId) {
-    ['quizTab', 'realExamTab', 'lawTab'].forEach(id => document.getElementById(id).classList.add('hidden'));
-    ['tabQuizBtn', 'tabRealExamBtn', 'tabLawBtn'].forEach(id => document.getElementById(id).classList.remove('active', 'exam-tab-btn'));
+    // Alle Tabs und Buttons zurücksetzen
+    document.getElementById('quizTab').classList.add('hidden');
+    document.getElementById('realExamTab').classList.add('hidden');
+    document.getElementById('lawTab').classList.add('hidden');
     
-    document.getElementById(tabId + 'Btn').classList.add('active');
-    if(tabId === 'realExam') document.getElementById('tabRealExamBtn').classList.add('exam-tab-btn');
-    document.getElementById(tabId + 'Tab').classList.remove('hidden');
-  }
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
 
-  // --- QUIZ MODUS ---
-  let quizQueue = [];
-  let quizCounter = 1;
-  let currentQuizQuestion = null;
-
-  function startQuiz() {
-    let pool = (currentExamMode === 'gssk') ? gsskOriginalPool : thirtyFourAOriginalPool;
-    quizQueue = shuffleArray(pool);
-    quizCounter = 1;
-    loadNextQuizQuestion();
-  }
-
-  function loadNextQuizQuestion() {
-    if (quizQueue.length === 0) {
-      quizQueue = shuffleArray((currentExamMode === 'gssk') ? gsskOriginalPool : thirtyFourAOriginalPool);
-      quizCounter = 1;
+    // Aktiven Tab anzeigen
+    if (tabId === 'quiz') {
+      document.getElementById('quizTab').classList.remove('hidden');
+      document.getElementById('tabQuizBtn').classList.add('active');
+      loadQuizQuestion();
+    } else if (tabId === 'realExam') {
+      document.getElementById('realExamTab').classList.remove('hidden');
+      document.getElementById('tabRealExamBtn').classList.add('active');
+      resetToExamStart();
+    } else if (tabId === 'law') {
+      document.getElementById('lawTab').classList.remove('hidden');
+      document.getElementById('tabLawBtn').classList.add('active');
     }
-    currentQuizQuestion = quizQueue.pop(); 
+  }
+
+  // --- QUIZ FUNKTIONEN ---
+  function loadQuizQuestion() {
+    if (quizIndex >= activePool.length) quizIndex = 0; // Neustart bei Ende
+
+    const q = activePool[quizIndex];
+    document.getElementById('counter').innerText = `Frage ${quizIndex + 1} von ${activePool.length}`;
+    document.getElementById('catBadge').innerText = q.category;
+    document.getElementById('subCatBadge').innerText = q.subcategory;
+    document.getElementById('question').innerText = q.question;
     
-    document.getElementById('question').innerText = currentQuizQuestion.question;
-    document.getElementById('catBadge').innerText = currentQuizQuestion.category;
-    document.getElementById('subCatBadge').innerText = currentQuizQuestion.subcategory;
-    document.getElementById('counter').innerText = `Frage ${quizCounter}`;
+    const optionsDiv = document.getElementById('options');
+    optionsDiv.innerHTML = '';
     document.getElementById('explanation').style.display = 'none';
-    
-    const optionsContainer = document.getElementById('options');
-    optionsContainer.innerHTML = '';
-    
-    let mixedOptions = shuffleArray(currentQuizQuestion.options);
-    mixedOptions.forEach(opt => {
-      let btn = document.createElement('button');
+
+    // Antworten mischen
+    const shuffled = [...q.options].sort(() => Math.random() - 0.5);
+
+    shuffled.forEach(opt => {
+      const btn = document.createElement('div');
       btn.className = 'btn-option';
       btn.innerText = opt;
-      btn.onclick = () => checkQuizAnswer(btn, opt, currentQuizQuestion.correct);
-      optionsContainer.appendChild(btn);
+      btn.onclick = () => checkQuizAnswer(btn, opt, q.correct);
+      optionsDiv.appendChild(btn);
     });
   }
 
   function checkQuizAnswer(btn, selected, correct) {
+    // Klicks deaktivieren
     const allBtns = document.getElementById('options').querySelectorAll('.btn-option');
     allBtns.forEach(b => {
-      b.disabled = true;
+      b.onclick = null;
       if (b.innerText === correct) b.classList.add('correct');
     });
 
@@ -465,170 +440,175 @@
       btn.classList.add('wrong');
     }
     
+    document.getElementById('explanationText').innerText = `Die korrekte Antwort lautet: ${correct}`;
     document.getElementById('explanation').style.display = 'block';
-    document.getElementById('explanationText').innerText = correct;
   }
 
   function nextQuestion() {
-    quizCounter++;
-    loadNextQuizQuestion();
+    quizIndex++;
+    loadQuizQuestion();
   }
 
-  // --- PRÜFUNGSSIMULATION ---
-  let examState = [];
-  let examIndex = 0;
-  let examTimer;
-  let timeLeft = 45 * 60;
-
+  // --- EXAM (PRÜFUNG) FUNKTIONEN ---
   function startRealExam() {
     document.getElementById('examStartScreen').classList.add('hidden');
-    document.getElementById('examResultScreen').classList.add('hidden');
     document.getElementById('examScreen').classList.remove('hidden');
     
-    let pool = (currentExamMode === 'gssk') ? gsskOriginalPool : thirtyFourAOriginalPool;
-    // Wir nehmen den Pool und füllen ihn bei Bedarf auf, damit 30 Fragen erreicht werden
-    let extendedPool = [...pool];
-    while(extendedPool.length < 30) {
-      extendedPool = extendedPool.concat(pool);
-    }
+    // Zufällige Fragen auswählen (hier max 30, oder weniger falls Pool kleiner ist)
+    const shuffled = [...activePool].sort(() => Math.random() - 0.5);
+    const maxQuestions = Math.min(30, shuffled.length);
     
-    let selectedQuestions = shuffleArray(extendedPool).slice(0, 30);
+    examState.questions = shuffled.slice(0, maxQuestions);
+    examState.currentIndex = 0;
+    examState.answers = new Array(examState.questions.length).fill(null);
+    examState.timeLeft = 45 * 60; 
     
-    examState = selectedQuestions.map(q => ({
-      ...q,
-      shuffledOptions: shuffleArray(q.options),
-      selectedAnswer: null
-    }));
+    clearInterval(examState.timerInterval);
+    examState.timerInterval = setInterval(updateTimer, 1000);
     
-    examIndex = 0;
-    timeLeft = 45 * 60;
-    
-    clearInterval(examTimer);
-    examTimer = setInterval(updateTimer, 1000);
-    
-    displayExamQuestion();
+    loadExamQuestion();
   }
 
   function updateTimer() {
-    timeLeft--;
-    if(timeLeft <= 0) {
-      clearInterval(examTimer);
-      alert("Die Zeit ist abgelaufen!");
-      finishExamPrompt();
+    examState.timeLeft--;
+    if (examState.timeLeft <= 0) {
+      clearInterval(examState.timerInterval);
+      finishExamPrompt(true);
       return;
     }
-    let m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
-    let s = (timeLeft % 60).toString().padStart(2, '0');
-    document.getElementById('examTimer').innerText = `${m}:${s}`;
+    const minutes = Math.floor(examState.timeLeft / 60).toString().padStart(2, '0');
+    const seconds = (examState.timeLeft % 60).toString().padStart(2, '0');
+    document.getElementById('examTimer').innerText = `${minutes}:${seconds}`;
   }
 
-  function displayExamQuestion() {
-    let q = examState[examIndex];
-    document.getElementById('examCounter').innerText = `Frage ${examIndex + 1}/30`;
+  function loadExamQuestion() {
+    const q = examState.questions[examState.currentIndex];
+    document.getElementById('examCounter').innerText = `Frage ${examState.currentIndex + 1}/${examState.questions.length}`;
     document.getElementById('examQuestion').innerText = q.question;
     
-    const container = document.getElementById('examOptions');
-    container.innerHTML = '';
-    
-    q.shuffledOptions.forEach(opt => {
-      let btn = document.createElement('button');
+    const optionsDiv = document.getElementById('examOptions');
+    optionsDiv.innerHTML = '';
+
+    q.options.forEach(opt => {
+      const btn = document.createElement('div');
       btn.className = 'btn-option';
-      if (q.selectedAnswer === opt) btn.classList.add('selected');
+      if (examState.answers[examState.currentIndex] === opt) {
+        btn.classList.add('selected');
+      }
       btn.innerText = opt;
-      btn.onclick = () => {
-        examState[examIndex].selectedAnswer = opt;
-        displayExamQuestion();
-      };
-      container.appendChild(btn);
+      btn.onclick = () => selectExamAnswer(opt);
+      optionsDiv.appendChild(btn);
     });
 
-    document.getElementById('examPrevBtn').disabled = (examIndex === 0);
-    document.getElementById('examNextBtn').innerText = (examIndex === 29) ? "Ende" : "Nächste";
+    document.getElementById('examPrevBtn').disabled = (examState.currentIndex === 0);
+    document.getElementById('examNextBtn').disabled = (examState.currentIndex === examState.questions.length - 1);
+  }
+
+  function selectExamAnswer(selectedOption) {
+    examState.answers[examState.currentIndex] = selectedOption;
+    loadExamQuestion(); // Aktualisieren, um die Auswahl optisch hervorzuheben
   }
 
   function prevExamQuestion() {
-    if(examIndex > 0) { examIndex--; displayExamQuestion(); }
-  }
-
-  function nextExamQuestion() {
-    if(examIndex < 29) { examIndex++; displayExamQuestion(); }
-  }
-
-  function finishExamPrompt() {
-    if(confirm("Möchtest du die Prüfung jetzt abgeben?")) {
-      clearInterval(examTimer);
-      showExamResults();
+    if (examState.currentIndex > 0) {
+      examState.currentIndex--;
+      loadExamQuestion();
     }
   }
 
-  function showExamResults() {
+  function nextExamQuestion() {
+    if (examState.currentIndex < examState.questions.length - 1) {
+      examState.currentIndex++;
+      loadExamQuestion();
+    }
+  }
+
+  function finishExamPrompt(forceSubmit = false) {
+    if (!forceSubmit) {
+      const unanswered = examState.answers.filter(a => a === null).length;
+      let msg = "Möchten Sie die Prüfung wirklich beenden?";
+      if (unanswered > 0) msg += `\nSie haben noch ${unanswered} unbeantwortete Fragen!`;
+      if (!confirm(msg)) return;
+    }
+    
+    clearInterval(examState.timerInterval);
     document.getElementById('examScreen').classList.add('hidden');
     document.getElementById('examResultScreen').classList.remove('hidden');
     
-    let correctCount = 0;
-    let reviewHtml = '';
+    evaluateExam();
+  }
 
-    examState.forEach((q, i) => {
-      let isCorrect = (q.selectedAnswer === q.correct);
-      if(isCorrect) correctCount++;
-      
-      let cssClass = isCorrect ? 'review-correct' : 'review-wrong';
-      let answerText = q.selectedAnswer ? q.selectedAnswer : "<em>Keine Antwort</em>";
-      
-      reviewHtml += `
-        <div class="review-item ${cssClass}">
-          <strong>Frage ${i+1}:</strong> ${q.question}<br>
-          Ihre Antwort: ${answerText}<br>
-          ${!isCorrect ? `<b>Richtige Antwort:</b> ${q.correct}` : ''}
-        </div>
+  function evaluateExam() {
+    let correctPoints = 0;
+    const reviewList = document.getElementById('examReviewList');
+    reviewList.innerHTML = '';
+
+    examState.questions.forEach((q, i) => {
+      const userAnswer = examState.answers[i];
+      const isCorrect = (userAnswer === q.correct);
+      if (isCorrect) correctPoints++;
+
+      const reviewItem = document.createElement('div');
+      reviewItem.className = `review-item ${isCorrect ? 'review-correct' : 'review-wrong'}`;
+      reviewItem.innerHTML = `
+        <strong>Frage ${i + 1}: ${q.question}</strong><br>
+        <span style="color: #555;">Ihre Antwort: ${userAnswer || '<i>Keine Antwort</i>'}</span><br>
+        ${!isCorrect ? `<span style="color: #28a745; font-weight: bold;">Richtige Lösung: ${q.correct}</span>` : ''}
       `;
+      reviewList.appendChild(reviewItem);
     });
 
-    let percentage = Math.round((correctCount / 30) * 100);
-    let passed = percentage >= 50;
+    const maxPoints = examState.questions.length;
+    const prozent = Math.round((correctPoints / maxPoints) * 100);
+    const passed = prozent >= 50;
+
+    document.getElementById('resultScore').innerText = `${correctPoints} von ${maxPoints} Punkten (${prozent}%)`;
+    document.getElementById('resultStatus').innerText = passed ? '🎉 Bestanden (IHK-Richtlinie erfüllt)' : '❌ Nicht bestanden (Mindestens 50% erforderlich)';
     
-    let resBox = document.getElementById('resultBox');
-    resBox.className = passed ? 'result-card result-pass' : 'result-card result-fail';
-    
-    document.getElementById('resultScore').innerText = `Ergebnis: ${correctCount} von 30 richtig (${percentage}%)`;
-    document.getElementById('resultStatus').innerText = passed ? "Bestanden! Herzlichen Glückwunsch." : "Nicht bestanden (Mindestens 50% erforderlich).";
-    document.getElementById('examReviewList').innerHTML = reviewHtml;
+    const resultBox = document.getElementById('resultBox');
+    resultBox.className = `result-card ${passed ? 'result-pass' : 'result-fail'}`;
   }
 
   function resetToExamStart() {
-    document.getElementById('examResultScreen').classList.add('hidden');
+    clearInterval(examState.timerInterval);
     document.getElementById('examStartScreen').classList.remove('hidden');
+    document.getElementById('examScreen').classList.add('hidden');
+    document.getElementById('examResultScreen').classList.add('hidden');
   }
 
-  // --- RECHT & FÄLLE TAB ---
-  function renderLawCases() {
+  // --- RECHTSFÄLLE (DUMMY DATA FÜR DEMO) ---
+  function loadLawCases() {
     const container = document.getElementById('caseContainer');
-    container.innerHTML = '';
-    
-    lawCases.forEach((c, index) => {
-      let card = document.createElement('div');
-      card.className = 'section-card law-card';
-      
-      card.innerHTML = `
-        <div class="section-title law-title">${c.title}</div>
-        <p><strong>Sachverhalt:</strong> ${c.text}</p>
-        <textarea class="textarea-case" placeholder="Tragen Sie hier Ihre rechtliche Beurteilung ein..."></textarea>
-        <button class="btn-action btn-warning" style="margin-top:10px;" onclick="toggleSolution(${index})">Musterlösung anzeigen</button>
-        <div id="solution-${index}" class="solution-box">
-          <strong>IHK-Musterlösung / Gutachten:</strong><br>
-          ${c.solution}
+    container.innerHTML = `
+      <div class="section-card law-card">
+        <div class="section-title law-title">Fall 1: Diebstahl auf dem Werksgelände</div>
+        <p>Während Ihres Dienstes als Werkschutzmitarbeiter beobachten Sie über die Videoanlage, wie ein betriebsfremder Handwerker eine teure Bohrmaschine in seinen Rucksack steckt und in Richtung Haupttor flieht. Sie eilen hinaus und stellen ihn am Tor.</p>
+        <strong>Prüfungsauftrag:</strong> Nennen und prüfen Sie die rechtlichen Voraussetzungen für das Festhalten der Person.
+        <textarea class="textarea-case" placeholder="Ihre gutachterliche Prüfung hier eintragen (Tatbestand, Subsumtion, Ergebnis)..."></textarea>
+        <button class="btn-action" style="margin-top: 10px;" onclick="toggleSolution(this)">Musterlösung anzeigen</button>
+        <div class="solution-box">
+          <strong>Offizielle Lösungshinweise:</strong><br><br>
+          Es greift das Jedermann-Festnahmerecht gem. § 127 Abs. 1 StPO.<br>
+          Voraussetzungen:<br>
+          1. <strong>Auf frischer Tat betroffen:</strong> Der Handwerker hat soeben den Diebstahl begangen und wurde noch am Tatort (Werksgelände) angetroffen.<br>
+          2. <strong>Fluchtverdacht:</strong> Der Täter befindet sich auf dem Weg zum Haupttor, um sich der Strafverfolgung zu entziehen.<br>
+          3. <strong>Identität nicht sofort feststellbar:</strong> Da er ein betriebsfremder Handwerker ist, ist seine Identität nicht unmittelbar zweifelsfrei geklärt, bis er einen Ausweis vorzeigt.<br><br>
+          <strong>Fazit:</strong> Der Werkschutzmitarbeiter ist berechtigt, die Person bis zum Eintreffen der Polizei vorläufig festzunehmen.
         </div>
-      `;
-      container.appendChild(card);
-    });
+      </div>
+    `;
   }
 
-  function toggleSolution(index) {
-    let box = document.getElementById(`solution-${index}`);
-    box.style.display = (box.style.display === 'block') ? 'none' : 'block';
+  function toggleSolution(btn) {
+    const solBox = btn.nextElementSibling;
+    if (solBox.style.display === 'block') {
+      solBox.style.display = 'none';
+      btn.innerText = 'Musterlösung anzeigen';
+    } else {
+      solBox.style.display = 'block';
+      btn.innerText = 'Musterlösung ausblenden';
+    }
   }
-
-  window.onload = initApp;
 </script>
 </body>
 </html>
