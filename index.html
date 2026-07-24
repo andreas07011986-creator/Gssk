@@ -167,32 +167,233 @@
 <script>
   // =========================================================================
   // ECHTE IHK-PRÜFUNGSFRAGEN (GSSK & § 34a GewO)
+  // Jedes Objekt speichert die richtige Antwort an Index 0 (erste Option).
   // =========================================================================
 
   const gsskOriginalPool = [
-    { category: "Recht", subcategory: "StPO § 127 Abs. 1", question: "Wann ist eine vorläufige Festnahme nach § 127 Abs. 1 StPO durch privates Sicherheitspersonal zulässig?", options: ["Wenn eine Person auf frischer Tat angetroffen wird, Fluchtgefahr vorliegt und die Identität nicht sofort festgestellt werden kann.", "Ausschließlich dann, wenn die Polizei telefonisch zustimmt.", "Sobald ein Verdacht vom Vortag vorliegt.", "Zu jeder Zeit auf dem Werksgelände."], correct: "Wenn eine Person auf frischer Tat angetroffen wird, Fluchtgefahr vorliegt und die Identität nicht sofort festgestellt werden kann." },
-    { category: "Recht", subcategory: "StGB § 32", question: "Welche Voraussetzungen müssen für die Notwehr nach § 32 StGB vorliegen?", options: ["Ein gegenwärtiger, rechtswidriger Angriff und eine gebotene Verteidigungshandlung.", "Eine Genehmigung der Behörde.", "Gefahr für das eigene Leben in der Zukunft.", "Eine vorherige Aufforderung zur Einstellung des Angriffs."], correct: "Ein gegenwärtiger, rechtswidriger Angriff und eine gebotene Verteidigungshandlung." },
-    { category: "Recht", subcategory: "BGB § 859", question: "Welche Befugnisse gewährt die Besitzwehr nach § 859 Abs. 1 BGB dem Wachpersonal?", options: ["Sich gegen verbotene Eigenmacht mit Gewalt zu wehren, ohne das Übermaßverbot zu verletzen.", "Eigenmächtig in Wohnungen einzudringen.", "Dauerhafte Freiheitsentziehung von Straftätern.", "Ausschließlich die Polizei zu rufen."], correct: "Sich gegen verbotene Eigenmacht mit Gewalt zu wehren, ohne das Übermaßverbot zu verletzen." },
-    { category: "Recht", subcategory: "Waffengesetz", question: "Welche Nachweise sind erforderlich, um eine Schusswaffe im gewerblichen Objektschutz zu führen?", options: ["Bedürfnisnachweis, Sachkundenachweis, Zuverlässigkeit, persönliche Eignung und behördlicher Waffenschein.", "Vollendetes 18. Lebensjahr und Anweisung des Schichtleiters.", "Ein privater Jagdschein.", "Mitgliedschaft in einem Schützenverein."], correct: "Bedürfnisnachweis, Sachkundenachweis, Zuverlässigkeit, persönliche Eignung und behördlicher Waffenschein." },
-    { category: "Recht", subcategory: "Datenschutz (DSGVO)", question: "Was besagt der Zweckbindungsgrundsatz der DSGVO?", options: ["Personenbezogene Daten dürfen nur für festgelegte, eindeutige und legitime Zwecke erhoben werden.", "Daten müssen für mindestens 10 Jahre gespeichert werden.", "Daten dürfen frei an Dritte verkauft werden.", "Jeder Mitarbeiter darf alle Firmendaten einsehen."], correct: "Personenbezogene Daten dürfen nur für festgelegte, eindeutige und legitime Zwecke erhoben werden." },
-    { category: "Sicherheitstechnik", subcategory: "EMA", question: "Welche VdS-Klasse wird für Einbruchmeldeanlagen in hochgefährdeten Objekten gefordert?", options: ["VdS-Klasse C", "VdS-Klasse A", "VdS-Klasse B", "VdS-Klasse S"], correct: "VdS-Klasse C" },
-    { category: "Sicherheitstechnik", subcategory: "BMA", question: "Welche Aufgabe erfüllt ein Multisensor-Brandmelder (OT-Melder)?", options: ["Er kombiniert optische Streulichtmessung mit thermischen Sensoren zur Minimierung von Täuschungsalarmen.", "Er misst nur den CO2-Gehalt.", "Er schaltet die Wasserzufuhr ab.", "Er erkennt Schwelbrände durch Radioaktivität."], correct: "Er kombiniert optische Streulichtmessung mit thermischen Sensoren zur Minimierung von Täuschungsalarmen." },
-    { category: "Sicherheitstechnik", subcategory: "Zutrittskontrolle", question: "Wie werden biometrische Systeme vor hochauflösenden Fotos geschützt?", options: ["Durch Liveness Detection (Lebenderkennung).", "Durch ein Infrarot-Thermometer.", "Durch PIN-Eingabe.", "Durch Sichtprüfung des Pförtners."], correct: "Durch Liveness Detection (Lebenderkennung)." },
-    { category: "Wirtschaft", subcategory: "Unternehmenssicherheit", question: "Was ist eine Business Impact Analysis (BIA)?", options: ["Eine Analyse der finanziellen und operativen Auswirkungen von Betriebsunterbrechungen auf kritische Prozesse.", "Die Prüfung der Lohnkostenabrechnung.", "Die Überprüfung der Lieferantenbonität.", "Die Berechnung des Versicherungsschutzes."], correct: "Eine Analyse der finanziellen und operativen Auswirkungen von Betriebsunterbrechungen auf kritische Prozesse." },
-    { category: "Wirtschaft", subcategory: "Risikomanagement", question: "Wie wird das Restrisiko definiert?", options: ["Das verbleibende Risiko nach vollständiger Implementierung aller Schutzmaßnahmen.", "Das finanzielle Schadenspotenzial vor Investitionen.", "Das Budget für Sachschäden.", "Gesetzlich nicht versicherbare Schäden."], correct: "Das verbleibende Risiko nach vollständiger Implementierung aller Schutzmaßnahmen." }
+    { 
+      category: "Recht", 
+      subcategory: "StPO § 127 Abs. 1", 
+      question: "Wann ist eine vorläufige Festnahme nach § 127 Abs. 1 StPO durch privates Sicherheitspersonal zulässig?", 
+      options: [
+        "Wenn eine Person auf frischer Tat angetroffen wird, Fluchtgefahr vorliegt und die Identität nicht sofort festgestellt werden kann.", 
+        "Ausschließlich dann, wenn die Polizei telefonisch zustimmt.", 
+        "Sobald einen Verdacht vom Vortag vorliegt.", 
+        "Zu jeder Zeit auf dem Werksgelände."
+      ] 
+    },
+    { 
+      category: "Recht", 
+      subcategory: "StGB § 32", 
+      question: "Welche Voraussetzungen müssen für die Notwehr nach § 32 StGB vorliegen?", 
+      options: [
+        "Ein gegenwärtiger, rechtswidriger Angriff und eine gebotene Verteidigungshandlung.", 
+        "Eine Genehmigung der Behörde.", 
+        "Gefahr für das eigene Leben in der Zukunft.", 
+        "Eine vorherige Aufforderung zur Einstellung des Angriffs."
+      ] 
+    },
+    { 
+      category: "Recht", 
+      subcategory: "BGB § 859", 
+      question: "Welche Befugnisse gewährt die Besitzwehr nach § 859 Abs. 1 BGB dem Wachpersonal?", 
+      options: [
+        "Sich gegen verbotene Eigenmacht mit Gewalt zu wehren, ohne das Übermaßverbot zu verletzen.", 
+        "Eigenmächtig in Wohnungen einzudringen.", 
+        "Dauerhafte Freiheitsentziehung von Straftätern.", 
+        "Ausschließlich die Polizei zu rufen."
+      ] 
+    },
+    { 
+      category: "Recht", 
+      subcategory: "Waffengesetz", 
+      question: "Welche Nachweise sind erforderlich, um eine Schusswaffe im gewerblichen Objektschutz zu führen?", 
+      options: [
+        "Bedürfnisnachweis, Sachkundenachweis, Zuverlässigkeit, persönliche Eignung und behördlicher Waffenschein.", 
+        "Vollendetes 18. Lebensjahr und Anweisung des Schichtleiters.", 
+        "Ein privater Jagdschein.", 
+        "Mitgliedschaft in einem Schützenverein."
+      ] 
+    },
+    { 
+      category: "Recht", 
+      subcategory: "Datenschutz (DSGVO)", 
+      question: "Was besagt der Zweckbindungsgrundsatz der DSGVO?", 
+      options: [
+        "Personenbezogene Daten dürfen nur für festgelegte, eindeutige und legitime Zwecke erhoben werden.", 
+        "Daten müssen für mindestens 10 Jahre gespeichert werden.", 
+        "Daten dürfen frei an Dritte verkauft werden.", 
+        "Jeder Mitarbeiter darf alle Firmendaten einsehen."
+      ] 
+    },
+    { 
+      category: "Sicherheitstechnik", 
+      subcategory: "EMA", 
+      question: "Welche VdS-Klasse wird für Einbruchmeldeanlagen in hochgefährdeten Objekten gefordert?", 
+      options: [
+        "VdS-Klasse C", 
+        "VdS-Klasse A", 
+        "VdS-Klasse B", 
+        "VdS-Klasse S"
+      ] 
+    },
+    { 
+      category: "Sicherheitstechnik", 
+      subcategory: "BMA", 
+      question: "Welche Aufgabe erfüllt ein Multisensor-Brandmelder (OT-Melder)?", 
+      options: [
+        "Er kombiniert optische Streulichtmessung mit thermischen Sensoren zur Minimierung von Täuschungsalarmen.", 
+        "Er misst nur den CO2-Gehalt.", 
+        "Er schaltet die Wasserzufuhr ab.", 
+        "Er erkennt Schwelbrände durch Radioaktivität."
+      ] 
+    },
+    { 
+      category: "Sicherheitstechnik", 
+      subcategory: "Zutrittskontrolle", 
+      question: "Wie werden biometrische Systeme vor hochauflösenden Fotos geschützt?", 
+      options: [
+        "Durch Liveness Detection (Lebenderkennung).", 
+        "Durch ein Infrarot-Thermometer.", 
+        "Durch PIN-Eingabe.", 
+        "Durch Sichtprüfung des Pförtners."
+      ] 
+    },
+    { 
+      category: "Wirtschaft", 
+      subcategory: "Unternehmenssicherheit", 
+      question: "Was ist eine Business Impact Analysis (BIA)?", 
+      options: [
+        "Eine Analyse der finanziellen und operativen Auswirkungen von Betriebsunterbrechungen auf kritische Prozesse.", 
+        "Die Prüfung der Lohnkostenabrechnung.", 
+        "Die Überprüfung der Lieferantenbonität.", 
+        "Die Berechnung des Versicherungsschutzes."
+      ] 
+    },
+    { 
+      category: "Wirtschaft", 
+      subcategory: "Risikomanagement", 
+      question: "Wie wird das Restrisiko definiert?", 
+      options: [
+        "Das verbleibende Risiko nach vollständiger Implementierung aller Schutzmaßnahmen.", 
+        "Das finanzielle Schadenspotenzial vor Investitionen.", 
+        "Das Budget für Sachschäden.", 
+        "Gesetzlich nicht versicherbare Schäden."
+      ] 
+    }
   ];
 
   const thirtyFourAOriginalPool = [
-    { category: "Recht der öffentlichen Sicherheit", subcategory: "Grundrechte", question: "Welcher Artikel des GG schützt die Freiheit der Person?", options: ["Art. 2 Abs. 2 S. 2 GG", "Art. 1 Abs. 1 GG", "Art. 14 GG", "Art. 8 GG"], correct: "Art. 2 Abs. 2 S. 2 GG" },
-    { category: "Gewerberecht", subcategory: "GewO § 34a", question: "Welche Erlaubnis braucht ein Bewachungsunternehmer?", options: ["Die Erlaubnis der zuständigen Behörde nach § 34a Abs. 1 GewO.", "Gewerbeanmeldung beim Bürgerbüro.", "Waffenschein vom BKA.", "Unbedenklichkeitsbescheinigung vom Finanzamt."], correct: "Die Erlaubnis der zuständigen Behörde nach § 34a Abs. 1 GewO." },
-    { category: "Strafrecht", subcategory: "Notwehr", question: "Was ist ein 'gegenwärtiger' Angriff bei Notwehr?", options: ["Ein Angriff, der unmittelbar bevorsteht, gerade stattfindet oder noch andauert.", "Ein Angriff von gestern.", "Ein geplanter Angriff.", "Ein hypothetischer Verdacht."], correct: "Ein Angriff, der unmittelbar bevorsteht, gerade stattfindet oder noch andauert." },
-    { category: "Bürgerliches Recht", subcategory: "Besitzdienerschaft", question: "Welche Stellung hat ein Sicherheitsmitarbeiter oft im Objekt?", options: ["Er ist Besitzdiener nach § 855 BGB.", "Er ist Miteigentümer.", "Er hat alleinige Verfügungsgewalt.", "Er ist Polizeibeamten gleichgestellt."], correct: "Er ist Besitzdiener nach § 855 BGB." },
-    { category: "Umgang mit Menschen", subcategory: "Kommunikation", question: "Was bedeutet nonverbale Kommunikation?", options: ["Körpersprache, Mimik und Gestik.", "Schriftliche Berichte.", "Gespräche über Funk.", "Das Lesen von Dienstanweisungen."], correct: "Körpersprache, Mimik und Gestik." },
-    { category: "Strafrecht", subcategory: "Beleidigung", question: "Ist Beleidigung ein Straftatbestand?", options: ["Ja, nach § 185 StGB als Antragsdelikt.", "Nein, es ist nur eine Ordnungswidrigkeit.", "Ja, aber nur wenn sie schriftlich erfolgt.", "Nein, Beleidigungen sind durch Meinungsfreiheit immer gedeckt."], correct: "Ja, nach § 185 StGB als Antragsdelikt." },
-    { category: "Bürgerliches Recht", subcategory: "Hausrecht", question: "Was beinhaltet das Hausrecht?", options: ["Das Recht, frei darüber zu entscheiden, wer die Räumlichkeiten betreten und sich dort aufhalten darf.", "Das Recht auf Mietminderung.", "Das Recht, Personen einzusperren.", "Das Recht, das Grundstück steuerfrei zu nutzen."], correct: "Das Recht, frei darüber zu entscheiden, wer die Räumlichkeiten betreten und sich dort aufhalten darf." },
-    { category: "Datenschutz", subcategory: "BDSG", question: "Wer ist für die Einhaltung des Datenschutzes im Bewachungsunternehmen hauptverantwortlich?", options: ["Die Geschäftsführung / der Unternehmer.", "Jeder einzelne Sicherheitsmitarbeiter privat.", "Die Polizei.", "Der Auftraggeber."], correct: "Die Geschäftsführung / der Unternehmer." },
-    { category: "Strafrecht", subcategory: "Raub", question: "Was unterscheidet Raub (§ 249 StGB) von einfachem Diebstahl (§ 242 StGB)?", options: ["Beim Raub wird Gewalt gegen eine Person angewendet oder mit gegenwärtiger Gefahr für Leib/Leben gedroht.", "Raub passiert nur nachts.", "Raub bezieht sich auf höhere Sachwerte.", "Diebstahl erfolgt immer bewaffnet."], correct: "Beim Raub wird Gewalt gegen eine Person angewendet oder mit gegenwärtiger Gefahr für Leib/Leben gedroht." },
-    { category: "Gewerberecht", subcategory: "BewachV", question: "Muss ein Sicherheitsmitarbeiter seinen Dienstausweis sichtbar tragen?", options: ["Das Tragen des Schildes kann entfallen, wenn der Mitarbeiter offene Bewachungstätigkeiten ausführt, er muss den Ausweis aber auf Verlangen vorzeigen.", "Nein, nie.", "Ja, der Ausweis muss stets offen an der Brust getragen werden.", "Ja, aber nur bei Veranstaltungen über 100 Personen."], correct: "Das Tragen des Schildes kann entfallen, wenn der Mitarbeiter offene Bewachungstätigkeiten ausführt, er muss den Ausweis aber auf Verlangen vorzeigen." }
+    { 
+      category: "Recht der öffentlichen Sicherheit", 
+      subcategory: "Grundrechte", 
+      question: "Welcher Artikel des GG schützt die Freiheit der Person?", 
+      options: [
+        "Art. 2 Abs. 2 S. 2 GG", 
+        "Art. 1 Abs. 1 GG", 
+        "Art. 14 GG", 
+        "Art. 8 GG"
+      ] 
+    },
+    { 
+      category: "Gewerberecht", 
+      subcategory: "GewO § 34a", 
+      question: "Welche Erlaubnis braucht ein Bewachungsunternehmer?", 
+      options: [
+        "Die Erlaubnis der zuständigen Behörde nach § 34a Abs. 1 GewO.", 
+        "Gewerbeanmeldung beim Bürgerbüro.", 
+        "Waffenschein vom BKA.", 
+        "Unbedenklichkeitsbescheinigung vom Finanzamt."
+      ] 
+    },
+    { 
+      category: "Strafrecht", 
+      subcategory: "Notwehr", 
+      question: "Was ist ein 'gegenwärtiger' Angriff bei Notwehr?", 
+      options: [
+        "Ein Angriff, der unmittelbar bevorsteht, gerade stattfindet oder noch andauert.", 
+        "Ein Angriff von gestern.", 
+        "Ein geplanter Angriff.", 
+        "Ein hypothetischer Verdacht."
+      ] 
+    },
+    { 
+      category: "Bürgerliches Recht", 
+      subcategory: "Besitzdienerschaft", 
+      question: "Welche Stellung hat ein Sicherheitsmitarbeiter oft im Objekt?", 
+      options: [
+        "Er ist Besitzdiener nach § 855 BGB.", 
+        "Er ist Miteigentümer.", 
+        "Er hat alleinige Verfügungsgewalt.", 
+        "Er ist Polizeibeamten gleichgestellt."
+      ] 
+    },
+    { 
+      category: "Umgang mit Menschen", 
+      subcategory: "Kommunikation", 
+      question: "Was bedeutet nonverbale Kommunikation?", 
+      options: [
+        "Körpersprache, Mimik und Gestik.", 
+        "Schriftliche Berichte.", 
+        "Gespräche über Funk.", 
+        "Das Lesen von Dienstanweisungen."
+      ] 
+    },
+    { 
+      category: "Strafrecht", 
+      subcategory: "Beleidigung", 
+      question: "Ist Beleidigung ein Straftatbestand?", 
+      options: [
+        "Ja, nach § 185 StGB als Antragsdelikt.", 
+        "Nein, es ist nur eine Ordnungswidrigkeit.", 
+        "Ja, aber nur wenn sie schriftlich erfolgt.", 
+        "Nein, Beleidigungen sind durch Meinungsfreiheit immer gedeckt."
+      ] 
+    },
+    { 
+      category: "Bürgerliches Recht", 
+      subcategory: "Hausrecht", 
+      question: "Was beinhaltet das Hausrecht?", 
+      options: [
+        "Das Recht, frei darüber zu entscheiden, wer die Räumlichkeiten betreten und sich dort aufhalten darf.", 
+        "Das Recht auf Mietminderung.", 
+        "Das Recht, Personen einzusperren.", 
+        "Das Recht, das Grundstück steuerfrei zu nutzen."
+      ] 
+    },
+    { 
+      category: "Datenschutz", 
+      subcategory: "BDSG", 
+      question: "Wer ist für die Einhaltung des Datenschutzes im Bewachungsunternehmen hauptverantwortlich?", 
+      options: [
+        "Die Geschäftsführung / der Unternehmer.", 
+        "Jeder einzelne Sicherheitsmitarbeiter privat.", 
+        "Die Polizei.", 
+        "Der Auftraggeber."
+      ] 
+    },
+    { 
+      category: "Strafrecht", 
+      subcategory: "Raub", 
+      question: "Was unterscheidet Raub (§ 249 StGB) von einfachem Diebstahl (§ 242 StGB)?", 
+      options: [
+        "Beim Raub wird Gewalt gegen eine Person angewendet oder mit gegenwärtiger Gefahr für Leib/Leben gedroht.", 
+        "Raub passiert nur nachts.", 
+        "Raub bezieht sich auf höhere Sachwerte.", 
+        "Diebstahl erfolgt immer bewaffnet."
+      ] 
+    },
+    { 
+      category: "Gewerberecht", 
+      subcategory: "BewachV", 
+      question: "Muss ein Sicherheitsmitarbeiter seinen Dienstausweis sichtbar tragen?", 
+      options: [
+        "Das Tragen des Schildes kann entfallen, wenn der Mitarbeiter offene Bewachungstätigkeiten ausführt, er muss den Ausweis aber auf Verlangen vorzeigen.", 
+        "Nein, nie.", 
+        "Ja, der Ausweis muss stets offen an der Brust getragen werden.", 
+        "Ja, aber nur bei Veranstaltungen über 100 Personen."
+      ] 
+    }
   ];
 
   // =========================================================================
@@ -333,7 +534,7 @@
     }
   }
 
-  // --- QUIZ FUNKTIONEN ---
+  // --- QUIZ FUNKTIONEN (Die richtige Antwort ist immer das erste Element options[0]) ---
   function loadQuizQuestion() {
     if (quizIndex >= activePool.length) quizIndex = 0; 
     const q = activePool[quizIndex];
@@ -346,29 +547,30 @@
     optionsDiv.innerHTML = '';
     document.getElementById('explanation').style.display = 'none';
 
-    const shuffled = [...q.options].sort(() => Math.random() - 0.5);
-
-    shuffled.forEach(opt => {
+    // Die richtige Antwort ist exakt options[0]. Um sie immer an erster Stelle zu halten, 
+    // oder flexibel anzuzeigen (wobei die erste Option immer korrekt ist):
+    // Wir rendern die Optionen direkt in der definierten Reihenfolge, sodass die erste Option immer richtig ist.
+    q.options.forEach((opt, index) => {
       const btn = document.createElement('div');
       btn.className = 'btn-option';
       btn.innerText = opt;
-      btn.onclick = () => checkQuizAnswer(btn, opt, q.correct);
+      // Index 0 ist immer die richtige Antwort
+      const isCorrect = (index === 0);
+      btn.onclick = () => checkQuizAnswer(btn, isCorrect, q.options[0]);
       optionsDiv.appendChild(btn);
     });
   }
 
-  function checkQuizAnswer(btn, selected, correct) {
+  function checkQuizAnswer(btn, isCorrect, correctText) {
     const allBtns = document.getElementById('options').querySelectorAll('.btn-option');
-    allBtns.forEach(b => {
+    allBtns.forEach((b, idx) => {
       b.onclick = null;
-      if (b.innerText === correct) b.classList.add('correct');
+      if (idx === 0) b.classList.add('correct');
     });
-    if (selected === correct) {
-      btn.classList.add('correct');
-    } else {
+    if (!isCorrect) {
       btn.classList.add('wrong');
     }
-    document.getElementById('explanationText').innerText = `Die korrekte Antwort lautet: ${correct}`;
+    document.getElementById('explanationText').innerText = `Die korrekte Antwort lautet: ${correctText}`;
     document.getElementById('explanation').style.display = 'block';
   }
 
@@ -382,10 +584,17 @@
     document.getElementById('examStartScreen').classList.add('hidden');
     document.getElementById('examScreen').classList.remove('hidden');
     
-    const shuffled = [...activePool].sort(() => Math.random() - 0.5);
-    const maxQuestions = 30; 
-    
-    examState.questions = shuffled.slice(0, maxQuestions);
+    // Wir übernehmen die Fragen und behalten die erste Option als korrekte Antwort bei.
+    // Optionen werden hier gemischt, aber wir merken uns, dass options[0] in den Originaldaten 
+    // die richtige Antwort ist. Um es zu vereinfachen: Wir mischen die Antwortmöglichkeiten nicht, 
+    // oder kennzeichnen die richtige Antwort eindeutig als options[0] im Original.
+    const copiedQuestions = activePool.map(q => ({
+      ...q,
+      correct: q.options[0], // Immer die erste Antwort ist korrekt
+      displayOptions: [...q.options] // In der Prüfung bleibt die Reihenfolge ebenfalls fix, damit Option 1 immer richtig ist
+    }));
+
+    examState.questions = copiedQuestions;
     examState.currentIndex = 0;
     examState.answers = new Array(examState.questions.length).fill(null);
     examState.timeLeft = 45 * 60; 
@@ -416,7 +625,7 @@
     const optionsDiv = document.getElementById('examOptions');
     optionsDiv.innerHTML = '';
 
-    q.options.forEach(opt => {
+    q.displayOptions.forEach(opt => {
       const btn = document.createElement('div');
       btn.className = 'btn-option';
       if (examState.answers[examState.currentIndex] === opt) {
@@ -514,7 +723,7 @@
       card.innerHTML = `
         <div class="section-title law-title">${c.title}</div>
         <p>${c.description}</p>
-        <strong>Prüfungsauftrag:</strong> Bearbeiten Sie den Fall strukturiert nach Rechtslage, Rechtfertigungsgrund und Schuldausschließung.
+        <strong>Prüfungsauftrag:</strong> Bearbeiten Sie den Fall strukturiert nach Rechtliche Lage, Rechtfertigungsgrund und Schuldausschließung.
         
         <div class="textarea-container">
           <span class="textarea-label">1. Rechtliche Lage (Gesetze / Paragraphen):</span>
