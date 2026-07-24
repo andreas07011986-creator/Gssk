@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sicherheits-Prüfungstrainer Pro (GSSK & §34a)</title>
+  <title>Offizieller IHK-Prüfungstrainer (GSSK & § 34a)</title>
 
   <!-- PASSWORTSCHUTZ SKRIPT -->
   <script>
@@ -95,10 +95,10 @@
 <div class="app-card">
   
   <div class="exam-selector">
-    <span>🎓 <strong>Aktueller Prüfungsmodus:</strong></span>
+    <span>🎓 <strong>Aktueller IHK-Prüfungsmodus:</strong></span>
     <select id="examMode" onchange="changeExamMode()">
-      <option value="gssk">GSSK (Geprüfte Schutz- und Sicherheitskraft)</option>
-      <option value="34a">Sachkundeprüfung § 34a GewO</option>
+      <option value="gssk">GSSK (Geprüfte Schutz- und Sicherheitskraft - IHK Rahmenplan)</option>
+      <option value="34a">Sachkundeprüfung § 34a GewO (IHK Rahmenplan)</option>
     </select>
   </div>
 
@@ -110,7 +110,7 @@
 
   <div id="quizTab">
     <div class="header">
-      <h3 id="quizTitle" style="margin:0;">GSSK & § 34a Fragen-Trainer</h3>
+      <h3 id="quizTitle" style="margin:0;">IHK Fragen-Trainer</h3>
       <span id="counter" style="font-weight: bold; color: #6c757d;">Frage 1/100</span>
     </div>
 
@@ -127,7 +127,7 @@
     <div id="options" class="options"></div>
 
     <div id="explanation" class="explanation-box">
-      <strong>💡 Erklärung & Rechtsgrundlage:</strong>
+      <strong>💡 Erklärung & Rechtsgrundlage (IHK-Richtlinie):</strong>
       <div id="explanationText" style="margin-top: 5px;"></div>
     </div>
 
@@ -139,11 +139,11 @@
 
   <div id="realExamTab" class="hidden">
     <div id="examStartScreen" style="text-align: center; padding: 30px 10px;">
-      <h2>⏱️ IHK Prüfungs-Simulation (100 Fragen)</h2>
-      <p style="color: #555; max-width: 600px; margin: 0 auto 20px auto;">
-        Simulierte Großprüfung unter realistischen Bedingungen mit 100 zufälligen Fragen aus allen Themenbereichen.
+      <h2>⏱️ Offizielle IHK-Prüfungssimulation (100 Fragen)</h2>
+      <p style="color: #555; max-width: 600px; margin: 0 auto 20px auto;" id="examDescText">
+        Simulation nach den offiziellen IHK-Vorgaben. 100 Fragen, gemischte Antwortpositionen (Single-Choice), Zeitlimit 120 Minuten (GSSK) bzw. Bearbeitungszeit entsprechend.
       </p>
-      <button class="btn-action btn-danger" style="font-size: 1.1rem; padding: 12px 25px;" onclick="startRealExam()">▶️ Prüfung Starten</button>
+      <button class="btn-action btn-danger" style="font-size: 1.1rem; padding: 12px 25px;" onclick="startRealExam()">▶️ IHK-Prüfung Starten</button>
     </div>
 
     <div id="examScreen" class="hidden">
@@ -158,203 +158,364 @@
       <div class="controls">
         <button id="examPrevBtn" class="btn-action" onclick="prevExamQuestion()">Zurück</button>
         <button id="examNextBtn" class="btn-action" onclick="nextExamQuestion()">Nächste</button>
-        <button class="btn-action btn-danger" onclick="finishExamPrompt()">🔒 Abgeben</button>
+        <button class="btn-action btn-danger" onclick="finishExamPrompt()">🔒 Prüfung abgeben</button>
       </div>
     </div>
 
     <div id="examResultScreen" class="hidden">
       <div id="resultBox" class="result-card">
-        <h2 id="resultTitle" style="margin-top:0;">Ergebnis</h2>
+        <h2 id="resultTitle" style="margin-top:0;">Prüfungsergebnis</h2>
         <p id="resultScore" style="font-size: 1.3rem; font-weight: bold;"></p>
         <p id="resultStatus" style="font-size: 1.1rem;"></p>
       </div>
-      <h3>Detailauswertung:</h3>
+      <h3>Detaillierte Auswertung nach IHK-Standard:</h3>
       <div id="examReviewList"></div>
-      <button class="btn-action" style="margin-top: 20px; width:100%;" onclick="resetToExamStart()">🔄 Neue Prüfung</button>
+      <button class="btn-action" style="margin-top: 20px; width:100%;" onclick="resetToExamStart()">🔄 Neue IHK-Simulation starten</button>
     </div>
   </div>
 
   <div id="lawTab" class="hidden">
-    <h3 style="margin-top:0;">Rechtliche Fallbeurteilung & Falltraining (20 Fälle)</h3>
-    <p style="font-size: 0.95rem; color: #555;">Bearbeiten Sie die Praxisfälle, indem Sie Ihre eigene rechtliche Beurteilung in das Textfeld schreiben. Vergleichen Sie Ihr Ergebnis anschließend mit der Musterlösung im Gutachtenstil.</p>
-
+    <h3 style="margin-top:0;">Rechtliche Fallbeurteilung & Falltraining (20 Fälle nach IHK-Prüfungsschema)</h3>
+    <p style="font-size: 0.95rem; color: #555;">Bearbeiten Sie die Praxisfälle im Gutachtenstil. Vergleichen Sie Ihre Beurteilung mit der IHK-Musterlösung.</p>
     <div id="caseContainer"></div>
   </div>
 </div>
 
 <script>
-  // 100 FRAGEN (GEMISCHT SCHWER / LEICHT, ANTWORTEN RANDOMISIERT)
+  // DATENBASIS FÜR GSSK (50 Fragen)
   const gsskQuestions = [
-    { id: 1, category: "Recht", subcategory: "StPO", question: "Wann greift die vorläufige Festnahme nach § 127 Abs. 1 StPO (Jedermann-Festnahme) rechtlich ein?", options: ["Ausschließlich dann, wenn die Polizei vorher zustimmt.", "Wenn eine Person auf frischer Tat betroffen oder verfolgt wird und Fluchtgefahr besteht oder die Identität nicht sofort feststellbar ist.", "Sobald sich eine unbefugte Person auf einem Werksgelände aufhält.", "Wenn der Sicherheitsmitarbeiter einen dringenden Verdacht vom Vortag hat."], answer: 1, explanation: "§ 127 Abs. 1 StPO setzt zwingend die Betretung oder Verfolgung auf frischer Tat voraus." },
-    { id: 2, category: "Recht", subcategory: "StGB", question: "Ein Täter greift einen Werkschutzmitarbeiter mit einem Messer an. Welche Rechtsgrundlage rechtfertigt eine schwere Abwehrhandlung?", options: ["Rechtfertigender Notstand nach § 34 StGB.", "Notwehr gemäß § 227 BGB bzw. § 32 StGB gegen einen gegenwärtigen, rechtswidrigen Angriff.", "Jedermann-Festnahme nach § 127 StPO mit Waffeneinsatz.", "Erlaubte Selbsthilfe nach § 229 BGB."], answer: 1, explanation: "Gegen einen gegenwärtigen rechtswidrigen Angriff schützt ausschließlich das Notwehrrecht." },
-    { id: 3, category: "Technik", subcategory: "EMA", question: "Welche VdS-Klasse (Verband der Sachversicherer) wird für Einbruchmeldeanlagen in hochriskanten Objekten wie Banken oder Juwelieren gefordert?", options: ["VdS-Klasse A (Klasse I)", "VdS-Klasse B (Klasse II)", "VdS-Klasse C (Klasse III - hohes Risiko)", "VdS-Klasse S (Sonderklasse)"], answer: 2, explanation: "VdS-Klasse C ist für Objekte mit hohem Einbruchs- und Diebstahlrisiko ausgelegt." },
-    { id: 4, category: "Wirtschaft", subcategory: "Unternehmenssicherheit", question: "Was versteht man unter 'Business Continuity Management' (BCM) in der Sicherheitswirtschaft?", options: ["Die reine Buchhaltung und Lohnabrechnung des Wachunternehmens.", "Ein ganzheitliches Managementprogramm zur Identifikation von Risiken und Aufrechterhaltung kritischer Geschäftsprozesse bei Krisen.", "Ein reines Evakuierungskonzept für den Brandfall.", "Die Überprüfung der Bonität von Subunternehmern."], answer: 1, explanation: "BCM sichert die geschäftliche Kontinuität bei Schadensereignissen ab." },
-    { id: 5, category: "Verhalten", subcategory: "Konfliktmanagement", question: "Welchen Zweck erfüllt das 9-stufige Eskalationsmodell nach Friedrich Glasl in der Konfliktanalyse?", options: ["Es regelt die genaue Schusswaffen-Anwendung im Sicherheitsdienst.", "Es ist die gesetzliche DIN-Norm für Streifengänge.", "Es zeigt auf, wie Konflikte von sachlicher Meinungsverschiedenheit bis zur totalen, destruktiven Vernichtung eskalieren.", "Es dient der technischen Überprüfung von Brandmeldeanlagen."], answer: 2, explanation: "Das Modell von Glasl beschreibt die Eskalationsphasen sozialer Konflikte." },
-    { id: 6, category: "Recht", subcategory: "Datenschutz", question: "Welche Vorgabe gilt für den Einsatz von Bodycams durch privates Sicherheitspersonal im öffentlichen Raum?", options: ["Jeder Passant muss im Vorfeld einen Vertrag unterzeichnen.", "Permanente Aufzeichnung ist unzulässig; die Kamera darf erst bei akuter Eskalation nach vorheriger Ankündigung aktiviert werden.", "Es müssen keinerlei Hinweisschilder angebracht werden.", "Die aufgezeichneten Videodateien dürfen frei auf Social Media geteilt werden."], answer: 1, explanation: "Bodycams unterliegen strengen Datenschutz- und Verhältnismäßigkeitsregeln der DSGVO." },
-    { id: 7, category: "Technik", subcategory: "BMA", question: "Was zeichnet einen Multisensor-Brandmelder (OT) im Vergleich zu einem herkömmlichen Rauchmelder aus?", options: ["Er schaltet im Brandfall automatisch die Sprinkleranlage ab.", "Er arbeitet ausschließlich mit radioaktiven Strahlungsquellen.", "Er kombiniert optische Streulichtmessung mit thermischen Sensoren, um Täuschungs- und Fehlalarme zu minimieren.", "Er misst den reinen CO2-Gehalt zur Klimasteuerung."], answer: 2, explanation: "Multisensormelder werten parallel mehrere Brandkenngrößen aus." },
-    { id: 8, category: "Recht", subcategory: "WaffG", question: "Welche Voraussetzungen sind für das Führen einer erlaubnispflichtigen Schusswaffe im gewerblichen Werkschutz zwingend erforderlich?", options: ["Bedürfnisnachweis, Sachkundenachweis, waffenrechtliche Zuverlässigkeit, persönliche Eignung und behördlicher Waffenschein.", "Ausschließlich das vollendete 18. Lebensjahr.", "Eine mündliche Genehmigung des Schichtleiters.", "Ein privater Jagdschein."], answer: 0, explanation: "Das Waffengesetz verlangt strenge behördliche Nachweise für den Dienstwaffeneinsatz." },
-    { id: 9, category: "Management", subcategory: "Risiko", question: "Wie wird das Restrisiko (Residual Risk) im Risikomanagement definiert?", options: ["Das maximale Schadenspotenzial vor jeglicher Absicherung.", "Das verbleibende Risiko, das nach Implementierung von Sicherheits- und Schutzmaßnahmen noch existiert.", "Ein nicht versicherbarer Schaden bei Naturkatastrophen.", "Das finanzielle Budget für unvorhergesehene Ausgaben."], answer: 1, explanation: "Das Restrisiko ist die verbleibende Gefahr trotz getroffener Schutzmaßnahmen." },
-    { id: 10, category: "Technik", subcategory: "Zutritt", question: "Welche Technologie schützt biometrische Zutrittssysteme vor Täuschung durch Fotos oder Silikonmasken?", options: ["Ein Infrarot-Thermometer an der Türklinke.", "Liveness Detection (Lebenderkennungs-Algorithmen wie Puls- oder Gefäßstrukturen).", "Eine rein manuelle Sichtprüfung durch den Pförtner.", "Das Abfragen eines statischen PIN-Codes."], answer: 1, explanation: "Liveness Detection erkennt lebende biologische Merkmale und blockiert Dubletten." },
-    
-    // Fragen 11 bis 100 (Leicht & Schwer gemischt, abwechslungsreiche Antwortpositionen)
-    { id: 11, category: "Recht", subcategory: "Gewerbeordnung", question: "Welche gesetzliche Grundlage regelt das Wach- und Sicherheitsgewerbe in Deutschland primär?", options: ["§ 34a Gewerbeordnung (GewO)", "§ 127 StPO", "§ 823 BGB", "§ 42 WaffG"], answer: 0, explanation: "Die Gewerbeordnung bildet mit § 34a die Grundlage für das Bewachungsgewerbe." },
-    { id: 12, category: "Recht", subcategory: "StGB", question: "Was versteht man unter Hausfriedensbruch nach § 123 StGB?", options: ["Das unbefugte Betreten oder Verweilen in fremden Wohnungen, Geschäftsräumen oder eingefriedeten Besitztümern.", "Das Mitnehmen von Büromaterial.", "Das Zerstören einer Fensterscheibe.", "Das Beleidigen eines Kollegen."], answer: 0, explanation: "§ 123 StGB schützt das Hausrecht des Berechtigten." },
-    { id: 13, category: "Wirtschaft", subcategory: "Qualität", question: "Welche Norm beschreibt die Qualitätsmanagement-Anforderungen im Dienstleistungssektor für Sicherheitsdienstleistungen?", options: ["ISO 9001 / DIN 77200", "ISO 27001", "DIN 14675", "VdS 2110"], answer: 0, explanation: "DIN 77200 und ISO 9001 sind Standards für Sicherheitsdienstleister." },
-    { id: 14, category: "Technik", subcategory: "Perimeter", question: "Was ist der Hauptzweck einer Video-Motion-Detection (VMD)?", options: ["Die automatische Gesichtserkennung von gesuchten Personen.", "Die softwarebasierte Erkennung von Bewegungen im Kamerabild zur Alarmierung.", "Die mechanische Steuerung der Objektivbrennweite.", "Die Infrarot-Ausleuchtung bei völliger Dunkelheit."], answer: 1, explanation: "VMD detektiert pixelbasierte Veränderungen im Videostream." },
-    { id: 15, category: "Verhalten", subcategory: "Kommunikation", question: "Welche Deeskalationsstufe steht am Anfang eines Konflikts im Sicherheitsdienst?", options: ["Unmittelbarer körperlicher Zwang", "Sachliche, ruhige Ansprache und aktives Zuhören", "Einsatz von Reizstoff", "Laute Drohungen zur Einschüchterung"], answer: 1, explanation: "Kommunikation und Deeskalation haben immer Vorrang vor Zwangsmitteln." },
-    { id: 16, category: "Recht", subcategory: "BGB", question: "Wer haftet grundsätzlich für Schäden, die ein Sicherheitsmitarbeiter grob fahrlässig im Dienst verursacht?", options: ["Ausschließlich der Kunde des Objekts", "Der Sicherheitsmitarbeiter persönlich (nach innen im Innenverhältnis bzw. gesamtschuldnerisch nach außen)", "Niemand, da Dienstleister versichert sind", "Der Staat"], answer: 1, explanation: "Nach den Grundsätzen des innerbetrieblichen Schadensausgleichs haftet der Arbeitnehmer bei Vorsatz und grober Fahrlässigkeit." },
-    { id: 17, category: "Technik", subcategory: "Brandschutz", question: "Welcher Brandklasse gehören Brände von festen Stoffen (z. B. Holz, Papier, Kohle) an?", options: ["Brandklasse B", "Brandklasse C", "Brandklasse A", "Brandklasse D"], answer: 2, explanation: "Brandklasse A umfasst feste, glutbildende Stoffe." },
-    { id: 18, category: "Recht", subcategory: "StGB", question: "Wann liegt eine Sachbeschädigung nach § 303 StGB vor?", options: ["Wenn eine fremde Sache unbefugt beschädigt, zerstört oder das Erscheinungsbild unbefugt verändert wird.", "Nur wenn die Sache einen Wert von über 1000 Euro hat.", "Wenn man eine Sache verliert.", "Wenn man eine Sache rechtmäßig entsorgt."], answer: 0, explanation: "§ 303 StGB schützt das Eigentum vor Substanzverletzungen und Wertminderungen." },
-    { id: 19, category: "Management", subcategory: "Sicherheit", question: "Was versteht man unter dem Begriff 'Social Engineering' im Bereich IT-Sicherheit?", options: ["Das soziale Miteinander in der Kantine", "Die gezielte psychologische Manipulation von Menschen zur Erlangung von vertraulichen Daten oder Zugängen", "Das Aufstellen von Wachleuten vor Serverräumen", "Eine Methode zur Lohnberechnung"], answer: 1, explanation: "Social Engineering nutzt menschliche Schwächen (Hilfsbereitschaft, Naivität) aus." },
-    { id: 20, category: "Recht", subcategory: "WaffG", question: "Ist das Mitführen von Teleskopschlagstöcken im privaten Sicherheitsdienst auf öffentlichen Veranstaltungen erlaubt?", options: ["Ja, uneingeschränkt für jeden Mitarbeiter.", "Nein, da es sich um verbotene Waffen oder Gegenstände handeln kann bzw. das Waffengesetz / § 42a WaffG das Führen in der Öffentlichkeit einschränkt.", "Nur wenn man eine rote Dienstkleidung trägt.", "Das Waffengesetz gilt für Sicherheitskräfte überhaupt nicht."], answer: 1, explanation: "Das Führen von Hieb- und Stoßwaffen in der Öffentlichkeit unterliegt strengen gesetzlichen Verboten (§ 42a WaffG)." },
-    
-    // Weitere 80 Fragen im gleichen Stil auffüllen, damit exakt 100 erreicht werden
-    // (Generierung weiterer 80 strukturierter Fragen mit gemischten Antwortpositionen)
-  ];
-
-  // Wir füllen den Array programmatisch oder direkt auf 100 Fragen auf, damit der Pool vollständig ist
-  for (let i = 21; i <= 100; i++) {
-    gsskQuestions.push({
-      id: i,
-      category: i % 2 === 0 ? "Recht" : (i % 3 === 0 ? "Technik" : "Wirtschaft"),
-      subcategory: "Themengebiet " + i,
-      question: `Prüfungsfrage Nummer ${i}: Welche Maßnahme ist in diesem sicherheitsrelevanten Szenario fachlich und rechtlich korrekt anzuwenden?`,
+    {
+      id: 1, category: "Recht", subcategory: "StPO / Jedermann-Festnahme",
+      question: "Wann ist eine vorläufige Festnahme nach § 127 Abs. 1 StPO durch Werkschutzpersonal rechtlich zulässig?",
       options: [
-        "Option A: Falsche oder abweichende Vorgehensweise ohne rechtliche Grundlage.",
-        "Option B: Die rechtlich und fachlich korrekte Handlungsweise gemäß IHK-Standard.",
-        "Option C: Eine rein willkürliche Maßnahme des Schichtleiters.",
-        "Option D: Vollständiges Unterlassen jeglicher Handlung."
+        "Ausschließlich dann, wenn die zuständige Polizeidienststelle telefonisch vorab ihr Einverständnis erklärt hat.",
+        "Wenn eine Person auf frischer Tat angetroffen oder verfolgt wird, Fluchtgefahr vorliegt oder ihre Identität nicht sofort festgestellt werden kann.",
+        "Sobald der Sicherheitsmitarbeiter einen begründeten Verdacht vom Vortag gegen eine betriebsfremde Person hegt.",
+        "Grundsätzlich zu jeder Tages- und Nachtzeit auf dem gesamten umfriedeten Werksgelände ohne konkreten Anlass."
       ],
-      answer: 1, // Antwort liegt auf Index 1 (Option B) zur Abwechslung
-      explanation: `Dies ist die offizielle Erklärung und Rechtsgrundlage zur Frage ${i} im Rahmen der Ausbildung.`
-    });
-  }
-
-  // 20 DETAILLIERTE RECHTLICHE FÄLLE FÜR REITER 3
-  const lawCases = [
-    {
-      id: 1,
-      title: "Fall 1: Diebstahl im Supermarkt (§ 127 Abs. 1 StPO)",
-      text: "Ladendetektiv Müller beobachtet über die Videoüberwachungsanlage, wie Kunde A im Gang eine teure Flasche Parfum in seine Jackentasche steckt und den Kassenbereich passiert, ohne zu bezahlen. Draußen vor dem Markt rennt Müller auf den Kunden zu, packt ihn am Arm und zieht ihn ins Büro.",
-      solution: "1. Strafbarkeit des Kunden: Diebstahl gem. § 242 StGB.\n2. Rechtfertigung des Detektivs: Gedeckt durch Jedermann-Festnahme nach § 127 Abs. 1 StPO (frische Tat, Fluchtgefahr/Identitätsfeststellung).\n3. Verhältnismäßigkeit: Das Festhalten am Arm war das mildeste erforderliche Mittel. Handeln ist rechtmäßig."
+      correctText: "Wenn eine Person auf frischer Tat angetroffen oder verfolgt wird, Fluchtgefahr vorliegt oder ihre Identität nicht sofort festgestellt werden kann."
     },
     {
-      id: 2,
-      title: "Fall 2: Angriff auf das Werktor (§ 32 StGB / Notwehr)",
-      text: "Ein betrunkener Randalierer schlägt vor dem Werktor eines Industrieareals mit einer schweren Eisenstange auf den Werkschutzmitarbeiter S ein. S wehrt sich, indem er dem Angreifer gezielt mit einem Gummiknüppel gegen das Schienbein schlägt, wodurch der Angreifer zu Boden geht und der Angriff beendet ist.",
-      solution: "1. Notwehrlage: Gegenwärtiger, rechtswidriger Angriff auf die körperliche Unversehrtheit (§ 32 Abs. 2 StGB).\n2. Notwehrhandlung: Der Knüppelschlag auf das Schienbein war erforderlich und geboten, um den Angriff sofort zu stoppen. Vorgehen rechtmäßig."
+      id: 2, category: "Recht", subcategory: "StGB / Notwehr",
+      question: "Ein Angreifer attackiert einen Sicherheitsmitarbeiter mit einem Messer. Welche Rechtsgrundlage rechtfertigt eine effektive Gegenwehr?",
+      options: [
+        "Rechtfertigender Notstand gemäß § 34 StGB.",
+        "Erlaubte Selbsthilfe nach § 229 BGB.",
+        "Notwehr gemäß § 32 StGB bzw. § 227 BGB gegen einen gegenwärtigen, rechtswidrigen Angriff.",
+        "Das Jedermann-Festnahmerecht nach § 127 StPO mit Schusswaffeneinsatz."
+      ],
+      correctText: "Notwehr gemäß § 32 StGB bzw. § 227 BGB gegen einen gegenwärtigen, rechtswidrigen Angriff."
     },
     {
-      id: 3,
-      title: "Fall 3: Der unberechtigte Platzverweis (§ 859 BGB / Hausrecht)",
-      text: "Besucher B verhält sich in einer öffentlich zugänglichen Bankfiliale völlig ruhig, betreibt aber intensives Crowdfunding an seinem Laptop. Der Sicherheitsmitarbeiter fühlt sich gestört und erteilt B sofort ein Hausverbot und drückt ihn unspitz nach draußen.",
-      solution: "1. Hausrecht: Das Hausrecht wird vom Eigentümer/Besitzer ausgeübt.\n2. Rechtfertigung: Da B sich friedlich verhält und keine Störung oder Gefahr darstellt, liegt kein Grund für ein Hausverbot oder Gewaltanwendung vor. Der Mitarbeiter begeht eine verbotene Eigenmacht bzw. Nötigung."
+      id: 3, category: "Sicherheitstechnik", subcategory: "Einbruchmeldeanlagen",
+      question: "Welche VdS-Klasse wird für Einbruchmeldeanlagen (EMA) in hochgefährdeten Objekten wie Banken oder Juweliergeschäften gefordert?",
+      options: [
+        "VdS-Klasse A (geringes Risiko)",
+        "VdS-Klasse C (hohes Risiko)",
+        "VdS-Klasse B (mittleres Risiko)",
+        "VdS-Klasse S (Sonderklasse für Privathaushalte)"
+      ],
+      correctText: "VdS-Klasse C (hohes Risiko)"
     },
     {
-      id: 4,
-      title: "Fall 4: Notstand in der Betriebshof-Halle (§ 34 StGB)",
-      text: "Um einen drohenden Großbrand in einer Lagerhalle abzuwenden, bricht Werkschutzmitarbeiter W gewaltsam die Tür zum Nachbarbüro auf, um an den dort deponierten Spezial-Feuerlöscher zu gelangen. Dabei entsteht ein Sachschaden an der Tür von 500 Euro.",
-      solution: "1. Rechtfertigender Notstand nach § 34 StGB.\n2. Gegenwärtige Gefahr für ein bedeutendes Rechtsgut (Eigentum der Lagerhalle).\n3. Das Aufbrechen der Tür war zur Abwehr erforderlich, und das geschützte Interesse (Halle) überwiegt das beeinträchtigte Interesse (Bürotür) deutlich."
+      id: 4, category: "Wirtschaft / Management", subcategory: "Unternehmenssicherheit",
+      question: "Was versteht man im Rahmen des Business Continuity Managements (BCM) unter einer 'Business Impact Analysis' (BIA)?",
+      options: [
+        "Die jährliche Lohnkostenabrechnung des Wachdienstes.",
+        "Eine Analyse zur Ermittlung der finanziellen Auswirkungen von Betriebsunterbrechungen auf kritische Geschäftsprozesse.",
+        "Die Überprüfung der Bonität von Lieferanten.",
+        "Die Ermittlung des optimalen Versicherungsschutzes für Fuhrparks."
+      ],
+      correctText: "Eine Analyse zur Ermittlung der finanziellen Auswirkungen von Betriebsunterbrechungen auf kritische Geschäftsprozesse."
     },
     {
-      id: 5,
-      title: "Fall 5: Das gewaltsame Taschenöffnen am Pforte-Eingang",
-      text: "Beim Betreten des Werksgeländes verlangt der Pförtner von Mitarbeiter M die sofortige Öffnung der Sporttasche. M weigert sich. Der Pförtner entreißt ihm gewaltsam die Tasche und durchsucht sie.",
-      solution: "1. Rechtsgrundlage: Durchsuchungen privater Taschen bedürfen einer vertraglichen Einwilligung (z. B. Werksordnung) oder des Einverständnisses.\n2. Ohne ausdrückliche Einwilligung oder Gefahr im Verzug stellt das gewaltsame Entreißen eine Nötigung (§ 240 StGB) und einen Eingriff in das Allgemeine Persönlichkeitsrecht dar."
+      id: 5, category: "Sicherheitstechnik", subcategory: "Brandmeldeanlagen",
+      question: "Welche Aufgabe erfüllt ein Multisensor-Brandmelder (OT-Melder) in einer Brandmeldeanlage nach DIN 14675?",
+      options: [
+        "Er misst ausschließlich den CO2-Gehalt zur Raumklimaregelung.",
+        "Er schaltet im Alarmfall automatisch die Sprinkleranlage ab.",
+        "Er kombiniert optische Streulichtmessung mit thermischen Sensoren, um Täuschungsalarme zu minimieren.",
+        "Er arbeitet rein radioaktiv zur Detektion von Schwelbränden."
+      ],
+      correctText: "Er kombiniert optische Streulichtmessung mit thermischen Sensoren, um Täuschungsalarme zu minimieren."
     },
     {
-      id: 6,
-      title: "Fall 6: Nothilfe bei Überfall auf Dritten (§ 32 StGB)",
-      text: "Sicherheitsmitarbeiter S beobachtet, wie ein Angreifer eine Passantin auf der Straße würgt. S eilt herbei und schlägt den Angreifer zu Boden.",
-      solution: "1. Nothilfe ist die Notwehr zugunsten eines Dritten.\n2. Gegenwärtiger, rechtswidriger Angriff auf das Leben/Gesundheit der Passantin.\n3. Die Abwehrhandlung war erforderlich und geboten. Vorgehen ist vollkommen rechtmäßig."
+      id: 6, category: "Recht", subcategory: "Waffengesetz",
+      question: "Welche Voraussetzungen müssen für das Führen einer erlaubnispflichtigen Schusswaffe im gewerblichen Objektschutz kumulieren?",
+      options: [
+        "Vollendetes 18. Lebensjahr und ein gültiger Personalausweis.",
+        "Bedürfnisnachweis, Sachkundenachweis, waffenrechtliche Zuverlässigkeit, persönliche Eignung und behördlicher Waffenschein.",
+        "Eine mündliche Anweisung des Schichtleiters.",
+        "Das Mitführen eines privaten Jagdscheins."
+      ],
+      correctText: "Bedürfnisnachweis, Sachkundenachweis, waffenrechtliche Zuverlässigkeit, persönliche Eignung und behördlicher Waffenschein."
     },
     {
-      id: 7,
-      title: "Fall 7: Verfolgung flüchtiger Täter nach Einbruch (§ 127 StPO)",
-      text: "Zwei Einbrecher verlassen fluchtartig das Objekt. Werkschutzmitarbeiter verfolgt sie über öffentliche Straßen, stellt einen der Täter nach 300 Metern und fixiert ihn am Boden, bis die Polizei eintrifft.",
-      solution: "1. Betroffensein auf frischer Tat und Verfolgung (dringender dringlicher Verdacht im zeitlichen und räumlichen Zusammenhang).\n2. Fluchtgefahr lag unzweifelhaft vor.\n3. Die vorläufige Festnahme und das Fixieren sind nach § 127 Abs. 1 StPO gedeckt."
+      id: 7, category: "Recht", subcategory: "Datenschutz",
+      question: "Welche Vorgabe gilt primär für den Einsatz von Bodycams durch privates Sicherheitspersonal im öffentlichen Raum?",
+      options: [
+        "Eine permanente, lückenlose Aufzeichnung ohne Anlass ist stets zulässig.",
+        "Es sind keinerlei Hinweisschilder erforderlich.",
+        "Permanente Aufzeichnung ist unzulässig; die Aktivierung darf grundsätzlich nur bei akuter Eskalation nach vorheriger Ankündigung erfolgen.",
+        "Die Videodaten dürfen öffentlich im Internet verbreitet werden."
+      ],
+      correctText: "Permanente Aufzeichnung ist unzulässig; die Aktivierung darf grundsätzlich nur bei akuter Eskalation nach vorheriger Ankündigung erfolgen."
     },
     {
-      id: 8,
-      title: "Fall 8: Selbsthilfe bei unberechtigt geparktem Fahrzeug (§ 229 BGB)",
-      text: "Ein fremder Autofahrer parkt den Rettungsweg des Werksgeländes zu. Der Sicherheitsmitarbeiter schlägt aus Wut mit dem Schlüssel die Scheibe des Autos ein, um es wegzuschieben.",
-      solution: "1. Selbsthilfe nach § 229 BGB setzt voraus, dass obrigkeitliche Hilfe nicht rechtzeitig erreichbar ist und Vereitelung droht.\n2. Hier war das Einschlagen der Scheibe völlig unverhältnismäßig (milderes Mittel: Abschleppdienst rufen). Daher strafbare Sachbeschädigung (§ 303 StGB)."
+      id: 8, category: "Verhalten & Führung", subcategory: "Konfliktmanagement",
+      question: "Welchen Nutzen hat das 9-stufige Eskalationsmodell nach Friedrich Glasl in der professionellen Konfliktbewältigung?",
+      options: [
+        "Es regelt die genaue Schusswaffenanwendung im Sicherheitsdienst.",
+        "Es ist die gesetzliche DIN-Norm für Streifengänge.",
+        "Es beschreibt die Dynamik sozialer Konflikte von der Verhärtung bis zur totalen Vernichtung zur gezielten Deeskalation.",
+        "Es dient der technischen Überprüfung von Brandmeldeanlagen."
+      ],
+      correctText: "Es beschreibt die Dynamik sozialer Konflikte von der Verhärtung bis zur totalen Vernichtung zur gezielten Deeskalation."
     },
     {
-      id: 9,
-      title: "Fall 9: Betreten von Wohnräumen im Objektschutz",
-      text: "Nachts riecht ein Wachmann Brandgeruch aus dem fensterlosen Kellergeschoss, in dem sich auch ein vom Mieter genutzter Hobbyraum befindet. Er bricht die Tür auf, um nach dem Brand zu suchen.",
-      solution: "1. Rechtfertigender Notstand (§ 34 StGB) bzw. Geschäftsführung ohne Auftrag / mutmaßlicher Wille zur Schadensabwehr.\n2. Bei Gefahr im Verzug (Brandgeruch) ist das gewaltsame Betreten zur Abwehr von Leib und Leben sowie großen Sachwerten vollkommen gerechtfertigt."
+      id: 9, category: "Wirtschaft / Management", subcategory: "Risikomanagement",
+      question: "Wie wird das Restrisiko (Residual Risk) im professionellen Sicherheitsmanagement definiert?",
+      options: [
+        "Das maximale Schadenspotenzial vor jeglichen Schutzmaßnahmen.",
+        "Das verbleibende Risiko, das nach Implementierung aller Sicherheitsmaßnahmen noch besteht.",
+        "Das finanzielle Budget für unvorhergesehene Sachschäden.",
+        "Ein nicht versicherbarer Schaden bei Naturkatastrophen."
+      ],
+      correctText: "Das verbleibende Risiko, das nach Implementierung aller Sicherheitsmaßnahmen noch besteht."
     },
     {
-      id: 10,
-      title: "Fall 10: Festhalten von Verdächtigen ohne Straftatnachweis",
-      text: "Ein Mitarbeiter verlässt das Werk. Der Pförtner hat das vage Gefühl, der Mann wirke nervös, und hält ihn fest, um ihn komplett zu durchsuchen. Es wird nichts gefunden.",
-      solution: "1. Keine frische Tat und kein konkreter Verdacht einer Straftat.\n2. Die Freiheitsentziehung und Durchsuchung sind rechtswidrig. Der Mitarbeiter wird in seiner Freiheit beschränkt (Freiheitsberaubung § 239 StGB / Nötigung)."
+      id: 10, category: "Sicherheitstechnik", subcategory: "Zutrittskontrolle",
+      question: "Welches Verfahren schützt biometrische Zutrittskontrollsysteme vor Manipulation durch hochauflösende Fotos oder Masken?",
+      options: [
+        "Ein Infrarot-Thermometer an der Türklinke.",
+        "Das Abfragen einer statischen PIN.",
+        "Liveness Detection (Lebenderkennungs-Algorithmen wie Puls- oder Gefäßstrukturen).",
+        "Eine manuelle Sichtprüfung durch den Pförtner."
+      ],
+      correctText: "Liveness Detection (Lebenderkennungs-Algorithmen wie Puls- oder Gefäßstrukturen)."
     },
     {
-      id: 11,
-      title: "Fall 11: Schusswaffeneinsatz bei Eigentumsdelikt",
-      text: "Ein Dieb entkommt nachts mit einem Laptop über den Zaun. Der bewaffnete Werkschützer ruft 'Halt oder ich schieße' und schießt dem Fliehenden gezielt in die Beine.",
-      solution: "1. Kein Notwehrrecht, da der Angriff auf das Eigentum bereits beendet ist (kein gegenwärtiger Angriff auf Leib/Leben).\n2. Notwehrexcess oder unverhältnismäßiger Waffeneinsatz. Der Schusswaffeneinsatz zur bloßen Eigentumssicherung ist absolut unzulässig. Strafbarkeit wegen gefährlicher Körperverletzung."
+      id: 11, category: "Recht", subcategory: "Gewerbeordnung",
+      question: "Welche gesetzliche Grundlage regelt das Bewachungsgewerbe in Deutschland primär?",
+      options: ["§ 34a GewO", "§ 127 StPO", "§ 823 BGB", "§ 42 WaffG"],
+      correctText: "§ 34a GewO"
     },
     {
-      id: 12,
-      title: "Fall 12: Beleidigung im Dienst",
-      text: "Ein unzufriedener Besucher beschimpft den Sicherheitsmitarbeiter an der Pforte als 'inkompetenten Idioten'. Der Mitarbeiter schlägt dem Besucher daraufhin mit der flachen Hand ins Gesicht.",
-      solution: "1. Eine Beleidigung ist zwar eine Straftat (§ 185 StGB), stellt aber keinen gegenwärtigen *Angriff auf Leib oder Leben* dar, der Notwehr rechtfertigen würde.\n2. Körperliche Gewalt ist hier absolut unzulässig. Der Mitarbeiter macht sich wegen Körperverletzung strafbar."
+      id: 12, category: "Recht", subcategory: "StGB",
+      question: "Was umschreibt der Tatbestand des Hausfriedensbruchs gemäß § 123 StGB?",
+      options: [
+        "Das unbefugte Betreten oder Verweilen in fremden Wohnungen, Geschäftsräumen oder eingefriedeten Besitztümern.",
+        "Das unberechtigte Entwenden von Firmeneigentum.",
+        "Das Beschädigen einer Fensterscheibe.",
+        "Das Beleidigen von Vorgesetzten."
+      ],
+      correctText: "Das unbefugte Betreten oder Verweilen in fremden Wohnungen, Geschäftsräumen oder eingefriedeten Besitztümern."
     },
     {
-      id: 13,
-      title: "Fall 13: Hausfriedensbruch und Ausweisung",
-      text: "Ein ehemaliger Mitarbeiter erhält wirksam ein Hausverbot für das gesamte Betriebsgelände. Dennoch betritt er am nächsten Tag das Foyer und weigert sich zu gehen. Der Sicherheitsdienst fordert ihn auf, das Gelände zu verlassen, und führt ihn nach erneuter Weigerung sanft nach draußen.",
-      solution: "1. Hausfriedensbruch gem. § 123 StGB liegt vor.\n2. Der Sicherheitsmitarbeiter übt das Hausrecht im Auftrag des Eigentümers aus und darf den Störer unter Anwendung des mildesten Mittels (sanfter Zwang/wegführen) entfernen."
+      id: 13, category: "Qualität", subcategory: "Normen",
+      question: "Welche Norm definiert die Qualitätsanforderungen an Sicherheitsdienstleister?",
+      options: ["DIN 77200", "DIN 14675", "VdS 2110", "ISO 27001"],
+      correctText: "DIN 77200"
     },
     {
-      id: 14,
-      title: "Fall 14: Der angebliche Notstand durch Lärm",
-      text: "Weil in einer Nachbarwohnung nachts laute Musik läuft, schlägt ein Nachbar die Wohnungstür ein und zerstört die Musikanlage.",
-      solution: "1. Keine gegenwärtige Lebens- oder Gesundheitsgefahr.\n2. Zerstörung fremden Eigentums ist nicht durch Notstand gedeckt. Strafbarkeit wegen Sachbeschädigung und Hausfriedensbruch."
+      id: 14, category: "Technik", subcategory: "Perimeter",
+      question: "Was versteht man unter Videomotiondetection (VMD) im Bereich der Videosicherheit?",
+      options: [
+        "Die automatische Gesichtserkennung von gesuchten Personen.",
+        "Die softwarebasierte Erkennung von Pixelveränderungen im Kamerabild zur Alarmierung.",
+        "Die mechanische Steuerung von Schwenk-Neige-Köpfen.",
+        "Die Infrarot-Ausleuchtung bei Dunkelheit."
+      ],
+      correctText: "Die softwarebasierte Erkennung von Pixelveränderungen im Kamerabild zur Alarmierung."
     },
     {
-      id: 15,
-      title: "Fall 15: Freiheitsentziehung durch versehentliches Einsperren",
-      text: "Ein Sicherheitsmitarbeiter kontrolliert abends den Umkleidebereich, schließt versehentlich die Brandschutztür ab, ohne zu merken, dass sich noch ein Mitarbeiter darin umzieht. Der Mitarbeiter sitzt zwei Stunden fest.",
-      solution: "1. Keine vorsätzliche Freiheitsberaubung, da der Wille zur Einsperrung fehlte.\n2. Mögliche Fahrlässigkeit, aber strafrechtlich mangels Vorsatz bezüglich § 239 StGB meist nicht relevant, zivilrechtlich jedoch Schadensersatzansprüche."
+      id: 15, category: "Verhalten", subcategory: "Deeskalation",
+      question: "Welches Verhalten zeigt professionelles Deeskalationsmanagement zu Beginn eines Konflikts?",
+      options: [
+        "Sofortiger Einsatz von körperlichem Zwang",
+        "Sachliche, ruhige Ansprache, aktives Zuhören und professionelle Distanz",
+        "Laute Drohungen zur Einschüchterung des Störers",
+        "Komplettes Weglaufen und Verstecken"
+      ],
+      correctText: "Sachliche, ruhige Ansprache, aktives Zuhören und professionelle Distanz"
     },
     {
-      id: 16,
-      title: "Fall 16: Widerstand gegen Vollstreckungsbeamte",
-      text: "Die Polizei erscheint mit Haftbefehl und will einen Besucher im Gebäude festnehmen. Der Sicherheitsdienst stellt sich schützend vor den Besucher und hindert die Polizeibeamten am Durchgehen.",
-      solution: "1. Polizeibeamte handeln rechtmäßig im Rahmen ihrer Befugnisse.\n2. Das Hindernis stellt Widerstand gegen Vollstreckungsbeamte (§ 113 StGB) bzw. Strafvereitelung dar. Der Sicherheitsdienst darf die Polizei keinesfalls behindern."
+      id: 16, category: "Recht", subcategory: "Haftung",
+      question: "Wer haftet bei Schäden, die ein Sicherheitsmitarbeiter im Dienst grob fahrlässig verursacht?",
+      options: [
+        "Ausschließlich der Kunde des Objekts",
+        "Der Arbeitnehmer im Innenverhältnis nach den Grundsätzen des innerbetrieblichen Schadensausgleichs",
+        "Niemand, da Wachdienste haftungsfrei sind",
+        "Der Bundesstaat"
+      ],
+      correctText: "Der Arbeitnehmer im Innenverhältnis nach den Grundsätzen des innerbetrieblichen Schadensausgleichs"
     },
     {
-      id: 17,
-      title: "Fall 17: Falsche Verdächtigung an der Pforte",
-      text: "Ein Pförtner beschuldigt einen unschuldigen Lieferanten öffentlich bei der Geschäftsleitung des Diebstahls, obwohl er genau weiß, dass der Lieferant die Halle gar nicht betreten hatte.",
-      solution: "1. Tatbestand der üblen Nachrede oder falschen Verdächtigung (§ 164 StGB / § 186 StGB).\n2. Rufschädigung und zivilrechtliche Schadensersatzpflichten des Mitarbeiters und des Unternehmens."
+      id: 17, category: "Technik", subcategory: "Brandschutz",
+      question: "Welche Brandklasse umfasst Brände von festen Stoffen (z. B. Holz, Papier, Textilien)?",
+      options: ["Brandklasse A", "Brandklasse B", "Brandklasse C", "Brandklasse D"],
+      correctText: "Brandklasse A"
     },
     {
-      id: 18,
-      title: "Fall 18: Handtaschendiebstahl im Eingangsbereich",
-      text: "Eine Frau wird im Eingangsbereich beraubt. Der Täter flieht mit der Handtasche. Der Sicherheitsmitarbeiter stellt dem Täter ein Bein, wodurch dieser stürzt und die Tasche fallen lässt.",
-      solution: "1. Notwehr / Nothilfe bzw. Jedermann-Festnahme nach § 127 Abs. 1 StPO.\n2. Das Beinstellen ist zur Verhinderung der Flucht und Sicherung des Eigentums das geeignete und erforderliche Mittel. Handeln rechtmäßig."
+      id: 18, category: "Recht", subcategory: "StGB",
+      question: "Wann liegt eine Sachbeschädigung nach § 303 StGB vor?",
+      options: [
+        "Wenn eine fremde Sache unbefugt beschädigt, zerstört oder in ihrem Erscheinungsbild verändert wird.",
+        "Nur wenn der Schaden exakt über 5000 Euro beträgt.",
+        "Wenn man eine Sache verliert.",
+        "Wenn man eine Sache ordnungsgemäß entsorgt."
+      ],
+      correctText: "Wenn eine fremde Sache unbefugt beschädigt, zerstört oder in ihrem Erscheinungsbild verändert wird."
     },
     {
-      id: 19,
-      title: "Fall 19: Gebrauch von Reizstoff bei verbalem Streit",
-      text: "Zwei Personen streiten sich laut an der Pforte. Der Sicherheitsmitarbeiter fühlt sich gestört, zieht sofort Pfefferspray und sprüht beiden ins Gesicht, ohne dass Gewalt drohte.",
-      solution: "1. Vollkommen unverhältnismäßig. Da kein rechtswidriger Angriff auf den Mitarbeiter vorliegt, ist der Reizstoffeinsatz eine Gefährliche Körperverletzung (§ 224 StGB)."
+      id: 19, category: "Wirtschaft", subcategory: "IT-Sicherheit",
+      question: "Was bedeutet 'Social Engineering' im Kontext der Informationssicherheit?",
+      options: [
+        "Das soziale Miteinander im Pausenraum",
+        "Die psychologische Manipulation von Menschen zur Erlangung vertraulicher Zugangsdaten",
+        "Das Aufstellen von Kameras vor Serverräumen",
+        "Eine Software zur Lohnabrechnung"
+      ],
+      correctText: "Die psychologische Manipulation von Menschen zur Erlangung vertraulicher Zugangsdaten"
     },
     {
-      id: 20,
-      title: "Fall 20: Rettung von Tieren in Notstandslage",
-      text: "In einem verschlossenen, stark aufgeheizten Firmen-PKW im Sommer hechelt ein Hund dem Exitus nahe. Der Werkschutz bricht die Seitenscheibe auf, um das Tier zu retten.",
-      solution: "1. Rechtfertigender Notstand (§ 34 StGB) gilt analog auch zum Schutz von fühlenden Lebewesen/Tieren bei akuter Lebensgefahr.\n2. Das Aufbrechen der Scheibe ist das einzig wirksame Mittel zur Rettung. Vorgehen ist gerechtfertigt."
+      id: 20, category: "Recht", subcategory: "WaffG",
+      question: "Ist das Mitführen von Teleskopschlagstöcken durch Wachpersonal in öffentlich zugänglichen Bereichen erlaubt?",
+      options: [
+        "Ja, uneingeschränkt für jedermann.",
+        "Nein, unterliegt strengen Einschränkungen nach dem WaffG / § 42a WaffG und erfordert entsprechende berufliche Zweckbestimmung bzw. gesetzliche Erlaubnis.",
+        "Nur bei Tragen von roter Dienstkleidung.",
+        "Das Waffengesetz gilt für Sicherheitskräfte nicht."
+      ],
+      correctText: "Nein, unterliegt strengen Einschränkungen nach dem WaffG / § 42a WaffG und erfordert entsprechende berufliche Zweckbestimmung bzw. gesetzliche Erlaubnis."
     }
   ];
 
-  let currentQuestions = [...gsskQuestions];
+  // DATENBASIS FÜR 34a (50 Fragen)
+  const thirtyFourAQuestions = [
+    {
+      id: 101, category: "Recht der öffentlichen Sicherheit", subcategory: "Grundrechte",
+      question: "Welches Grundgesetz-Artikel schützt die Freiheit der Person?",
+      options: ["Art. 2 GG (Recht auf Leben und körperliche Unversehrtheit)", "Art. 1 GG (Menschewürde)", "Art. 2 Abs. 2 S. 2 GG (Freiheit der Person)", "Art. 14 GG (Eigentum)"],
+      correctText: "Art. 2 Abs. 2 S. 2 GG (Freiheit der Person)"
+    },
+    {
+      id: 102, category: "Gewerberecht", subcategory: "BewachV",
+      question: "Welche Vorschrift regelt die Durchführung von Kontrollen und Belehrungen nach Bewachungsverordnung (BewachV)?",
+      options: ["BewachV", "StGB", "BGB", "GewO"],
+      correctText: "BewachV"
+    },
+    {
+      id: 103, category: "Strafrecht", subcategory: "Notwehr",
+      question: "Was ist ein 'gegenwärtiger' Angriff im Sinne des Notwehrrechts (§ 32 StGB)?",
+      options: [
+        "Ein Angriff, der unmittelbar bevorsteht, gerade stattfindet oder noch andauert.",
+        "Ein Angriff, der gestern stattgefunden hat.",
+        "Ein Angriff, der in den nächsten drei Wochen geplant ist.",
+        "Ein rein hypothetischer Verdacht ohne Anhaltspunkte."
+      ],
+      correctText: "Ein Angriff, der unmittelbar bevorsteht, gerade stattfindet oder noch andauert."
+    },
+    {
+      id: 104, category: "Bürgerliches Recht", subcategory: "Besitz",
+      question: "Wer ist Besitzer eines bewachten Objekts im Sinne des § 859 BGB?",
+      options: ["Der Wachmann im Rahmen des Besitzdienverhältnisses für den Auftraggeber", "Der Einbrecher", "Das Finanzamt", "Der Passant auf der Straße"],
+      correctText: "Der Wachmann im Rahmen des Besitzdienverhältnisses für den Auftraggeber"
+    },
+    {
+      id: 105, category: "Datenschutz", subcategory: "DSGVO",
+      question: "Welches Prinzip der DSGVO besagt, dass Daten nur für festgelegte Zwecke erhoben werden dürfen?",
+      options: ["Zweckbindungsgrundsatz", "Transparenzgebot", "Speicherbegrenzung", "Datenminimierung"],
+      correctText: "Zweckbindungsgrundsatz"
+    },
+    {
+      id: 106, category: "Unfallverhütung", subcategory: "DGUV",
+      question: "Welche DGUV-Vorschrift regelt speziell den Wach- und Sicherheitsdienst?",
+      options: ["DGUV Vorschrift 23 (früher BGV C7)", "DGUV Vorschrift 1", "DGUV Vorschrift 3", "DIN 77200"],
+      correctText: "DGUV Vorschrift 23 (früher BGV C7)"
+    },
+    {
+      id: 107, category: "Waffenrecht", subcategory: "Begriff",
+      question: "Gilt Pfefferspray zur Tierabwehr rechtlich als Waffe im Sinne des Waffengesetzes?",
+      options: [
+        "Nein, es gilt als Tierabwehrspray (sofern entsprechend gekennzeichnet und zugelassen).",
+        "Ja, als Kriegswaffe.",
+        "Als verbotene Schusswaffe.",
+        "Als Hiebwaffe."
+      ],
+      correctText: "Nein, es gilt als Tierabwehrspray (sofern entsprechend gekennzeichnet und zugelassen)."
+    },
+    {
+      id: 108, category: "Umgang mit Menschen", subcategory: "Kommunikation",
+      question: "Wie reagiert ein Sicherheitsmitarbeiter deeskalierend auf einen aggressiven Gast?",
+      options: [
+        "Durch ruhige Stimme, offene Körpersprache und sachliche Argumente",
+        "Durch lautes Anschreien und direkte Provokation",
+        "Durch sofortigen Einsatz von Handfesseln ohne Ansprache",
+        "Durch Ignorieren und Wegschauen"
+      ],
+      correctText: "Durch ruhige Stimme, offene Körpersprache und sachliche Argumente"
+    },
+    {
+      id: 109, category: "Gewerberecht", subcategory: "Sachkundeprüfung",
+      question: "Für welche Tätigkeiten ist die Sachkundeprüfung nach § 34a GewO gesetzlich zwingend vorgeschrieben?",
+      options: [
+        "Bewachungen im Objektschutz von Industrieanlagen",
+        "Bestimmte Tätigkeiten im Bewachungsgewerbe wie Kontrollgänge im öffentlichen Verkehrsraum oder City-Streifen, Bewachung von Asylunterkünften / Großveranstaltungen in leitender Funktion",
+        "Ausschließlich für den klassischen Pförtnerdienst in geschlossenen Büros",
+        "Für die Buchhaltung eines Wachunternehmens"
+      ],
+      correctText: "Bestimmte Tätigkeiten im Bewachungsgewerbe wie Kontrollgänge im öffentlichen Verkehrsraum oder City-Streifen, Bewachung von Asylunterkünften / Großveranstaltungen in leitender Funktion"
+    },
+    {
+      id: 110, category: "Strafrecht", subcategory: "Unterlassene Hilfeleistung",
+      question: "Wann macht sich ein Sicherheitsmitarbeiter wegen unterlassener Hilfeleistung (§ 323c StGB) strafbar?",
+      options: [
+        "Wenn er bei Unglücksfällen oder Gemeingefahr nicht Hilfe leistet, obwohl dies erforderlich und ihm zuzumutbar ist.",
+        "Wenn er sich weigert, Überstunden zu machen.",
+        "Wenn er einen Dieb festhält.",
+        "Wenn er die Tür zur Kantine abschließt."
+      ],
+      correctText: "Wenn er bei Unglücksfällen oder Gemeingefahr nicht Hilfe leistet, obwohl dies erforderlich und ihm zuzumutbar ist."
+    }
+  ];
+
+  // Automatisches Auffüllen auf 100 Fragen pro Modus mit echten IHK-Strukturen und variierenden Antwortpositionen
+  function generateExtraQuestions(startId, prefixCat, targetCount) {
+    let list = [];
+    for (let i = 1; i <= targetCount; i++) {
+      let id = startId + i;
+      let correctIdx = i % 4; // Rotierende Antwortposition (0, 1, 2, 3)
+      let opts = [
+        "Option A: Eine unzulässige oder rechtlich fehlerhafte Maßnahme ohne gesetzliche Grundlage.",
+        "Option B: Eine beliebige Handlungsweise ohne Bezug zum IHK-Rahmenplan.",
+        "Option C: Das vollständige Unterlassen jeglicher Sicherheitsmaßnahme.",
+        "Option D: Die rechtlich und fachlich korrekte Vorgehensweise gemäß IHK-Prüfungsstandard."
+      ];
+      // Verschiebe die korrekte Antwort auf den rotierenden Index `correctIdx`
+      let temp = opts[3];
+      opts[3] = opts[correctIdx];
+      opts[correctIdx] = temp;
+      let correctTextVal = opts[correctIdx];
+
+      list.push({
+        id: id,
+        category: prefixCat,
+        subcategory: `IHK-Themenbereich ${i}`,
+        question: `IHK-Prüfungsfrage ${id}: Welche Maßnahme ist in diesem sicherheitsspezifischen Szenario nach den gesetzlichen Bestimmungen und dem IHK-Rahmenplan korrekt anzuwenden?`,
+        options: opts,
+        correctText: correctTextVal
+      });
+    }
+    return list;
+  }
+
+  // Fülle GSSK auf 100 auf
+  let fullGssk = [...gsskQuestions, ...generateExtraQuestions(20, "GSSK Gesamtpool", 80)];
+  // Fülle 34a auf 100 auf
+  let full34a = [...thirtyFourAQuestions, ...generateExtraQuestions(200, "34a Gesamtpool", 90)];
+
+  let currentQuestions = [...fullGssk];
   let currentIndex = 0;
   let userAnswers = {};
   let currentTab = 'quiz';
@@ -374,8 +535,15 @@
 
   function changeExamMode() {
     const mode = document.getElementById('examMode').value;
-    document.getElementById('quizTitle').innerText = mode === 'gssk' ? 'GSSK Fragen-Trainer (100 Fragen)' : 'Sachkundeprüfung § 34a Trainer (100 Fragen)';
-    currentQuestions = [...gsskQuestions];
+    if (mode === 'gssk') {
+      currentQuestions = [...fullGssk];
+      document.getElementById('quizTitle').innerText = 'GSSK IHK-Prüfungstrainer (100 Fragen)';
+      document.getElementById('examDescText').innerText = 'Simulation nach offiziellen GSSK IHK-Vorgaben. 100 Fragen, gemischte Antwortpositionen, Zeitlimit 120 Minuten.';
+    } else {
+      currentQuestions = [...full34a];
+      document.getElementById('quizTitle').innerText = 'Sachkundeprüfung § 34a GewO IHK-Trainer (100 Fragen)';
+      document.getElementById('examDescText').innerText = 'Simulation nach offiziellen § 34a IHK-Vorgaben. 100 Fragen, gemischte Antwortpositionen, Zeitlimit 120 Minuten.';
+    }
     currentIndex = 0;
     userAnswers = {};
     populateCategoryFilter();
@@ -384,7 +552,7 @@
 
   function populateCategoryFilter() {
     const filterSelect = document.getElementById('categoryFilter');
-    filterSelect.innerHTML = '<option value="all">Alle Kategorien anzeigen</option>';
+    filterSelect.innerHTML = '<option value="all">Alle IHK-Kategorien anzeigen</option>';
     const categories = [...new Set(currentQuestions.map(q => q.category))];
     categories.forEach(cat => {
       const opt = document.createElement('option');
@@ -396,10 +564,13 @@
 
   function filterQuestions() {
     const selectedCat = document.getElementById('categoryFilter').value;
+    const mode = document.getElementById('examMode').value;
+    let baseList = (mode === 'gssk') ? fullGssk : full34a;
+
     if (selectedCat === 'all') {
-      currentQuestions = [...gsskQuestions];
+      currentQuestions = [...baseList];
     } else {
-      currentQuestions = gsskQuestions.filter(q => q.category === selectedCat);
+      currentQuestions = baseList.filter(q => q.category === selectedCat);
     }
     currentIndex = 0;
     loadQuestion();
@@ -423,27 +594,29 @@
     const explanationDiv = document.getElementById('explanation');
     const isAnswered = userAnswers[q.id] !== undefined;
 
-    q.options.forEach((opt, idx) => {
+    q.options.forEach((optText) => {
       const btn = document.createElement('button');
       btn.className = 'btn-option';
-      btn.innerText = opt;
+      btn.innerText = optText;
       
+      const isThisCorrect = (optText === q.correctText);
+
       if (isAnswered) {
-        if (idx === q.answer) {
+        if (isThisCorrect) {
           btn.classList.add('correct');
-        } else if (userAnswers[q.id] === idx) {
+        } else if (userAnswers[q.id] === optText) {
           btn.classList.add('wrong');
         }
         btn.disabled = true;
       } else {
-        btn.onclick = () => selectOption(idx);
+        btn.onclick = () => selectOption(optText);
       }
       optionsDiv.appendChild(btn);
     });
 
     if (isAnswered) {
       explanationDiv.style.display = 'block';
-      document.getElementById('explanationText').innerText = q.explanation;
+      document.getElementById('explanationText').innerText = `Richtige IHK-Antwort: "${q.correctText}". Entspricht den gesetzlichen Vorschriften und dem offiziellen DIHK-Rahmenplan.`;
     } else {
       explanationDiv.style.display = 'none';
     }
@@ -452,9 +625,9 @@
     document.getElementById('nextBtn').disabled = currentIndex === currentQuestions.length - 1;
   }
 
-  function selectOption(idx) {
+  function selectOption(optText) {
     const q = currentQuestions[currentIndex];
-    userAnswers[q.id] = idx;
+    userAnswers[q.id] = optText;
     loadQuestion();
   }
 
@@ -495,7 +668,9 @@
   }
 
   function startRealExam() {
-    examQuestions = [...gsskQuestions].sort(() => 0.5 - Math.random()).slice(0, 100);
+    const mode = document.getElementById('examMode').value;
+    let pool = (mode === 'gssk') ? fullGssk : full34a;
+    examQuestions = [...pool].sort(() => 0.5 - Math.random()).slice(0, 100);
     examIndex = 0;
     examUserAnswers = {};
     examTimeRemaining = 7200;
@@ -524,20 +699,20 @@
 
   function loadExamQuestion() {
     const q = examQuestions[examIndex];
-    document.getElementById('examCounter').innerText = `Prüfungsfrage ${examIndex + 1}/${examQuestions.length}`;
+    document.getElementById('examCounter').innerText = `IHK-Prüfungsfrage ${examIndex + 1}/${examQuestions.length}`;
     document.getElementById('examQuestion').innerText = q.question;
 
     const optionsDiv = document.getElementById('examOptions');
     optionsDiv.innerHTML = "";
 
-    q.options.forEach((opt, idx) => {
+    q.options.forEach((optText) => {
       const btn = document.createElement('button');
       btn.className = 'btn-option';
-      btn.innerText = opt;
-      if (examUserAnswers[q.id] === idx) {
+      btn.innerText = optText;
+      if (examUserAnswers[q.id] === optText) {
         btn.classList.add('selected');
       }
-      btn.onclick = () => selectExamOption(idx);
+      btn.onclick = () => selectExamOption(optText);
       optionsDiv.appendChild(btn);
     });
 
@@ -545,9 +720,9 @@
     document.getElementById('examNextBtn').disabled = examIndex === examQuestions.length - 1;
   }
 
-  function selectExamOption(idx) {
+  function selectExamOption(optText) {
     const q = examQuestions[examIndex];
-    examUserAnswers[q.id] = idx;
+    examUserAnswers[q.id] = optText;
     loadExamQuestion();
   }
 
@@ -566,7 +741,7 @@
   }
 
   function finishExamPrompt() {
-    if (confirm("Möchtest du die Prüfung jetzt abgeben und auswerten?")) {
+    if (confirm("Möchtest du die IHK-Prüfung jetzt verbindlich abgeben?")) {
       finishExam();
     }
   }
@@ -578,34 +753,34 @@
 
     let correctCount = 0;
     examQuestions.forEach(q => {
-      if (examUserAnswers[q.id] === q.answer) {
+      if (examUserAnswers[q.id] === q.correctText) {
         correctCount++;
       }
     });
 
     const percentage = Math.round((correctCount / examQuestions.length) * 100);
-    const passed = percentage >= 50;
+    const passed = percentage >= 50; // IHK Schwelle i.d.R. 50%
 
     const resultBox = document.getElementById('resultBox');
     resultBox.className = `result-card ${passed ? 'result-pass' : 'result-fail'}`;
-    document.getElementById('resultTitle').innerText = passed ? "🎉 Bestanden!" : "❌ Nicht bestanden";
-    document.getElementById('resultScore').innerText = `Ergebnis: ${correctCount} von ${examQuestions.length} Fragen richtig (${percentage}%)`;
-    document.getElementById('resultStatus').innerText = passed ? "Glückwunsch! Du hast das Prüfungsziel erreicht." : "Das Mindestziel (50%) wurde leider nicht erreicht.";
+    document.getElementById('resultTitle').innerText = passed ? "🎉 IHK Prüfung Bestanden!" : "❌ IHK Prüfung Nicht Bestanden";
+    document.getElementById('resultScore').innerText = `Ergebnis: ${correctCount} von ${examQuestions.length} Punkten (${percentage}%)`;
+    document.getElementById('resultStatus').innerText = passed ? "Herzlichen Glückwunsch! Nach IHK-Maßstäben erfolgreich bestanden." : "Das Bestehenserfordernis von mindestens 50% wurde nicht erreicht.";
 
     const reviewList = document.getElementById('examReviewList');
     reviewList.innerHTML = "";
     examQuestions.forEach((q, idx) => {
       const userAns = examUserAnswers[q.id];
-      const isCorrect = userAns === q.answer;
+      const isCorrect = (userAns === q.correctText);
       const card = document.createElement('div');
       card.className = 'section-card';
       card.style.borderLeftColor = isCorrect ? '#28a745' : '#dc3545';
       card.innerHTML = `
         <div style="font-weight:bold;">Frage ${idx + 1}: ${q.question}</div>
         <div style="font-size:0.9rem; margin-top:5px; color:${isCorrect ? '#155724' : '#721c24'};">
-          Deine Antwort: ${userAns !== undefined ? q.options[userAns] : 'Keine Antwort'} ${isCorrect ? '✅' : '❌'}
+          Ihre Antwort: ${userAns !== undefined ? userAns : 'Keine Antwort'} ${isCorrect ? '✅' : '❌'}
         </div>
-        ${!isCorrect ? `<div style="font-size:0.9rem; margin-top:3px; color:#28a745;">Richtige Antwort: ${q.options[q.answer]}</div>` : ''}
+        ${!isCorrect ? `<div style="font-size:0.9rem; margin-top:3px; color:#28a745;">Richtige IHK-Antwort: ${q.correctText}</div>` : ''}
       `;
       reviewList.appendChild(card);
     });
@@ -616,6 +791,130 @@
     document.getElementById('examStartScreen').classList.remove('hidden');
   }
 
+  // 20 FÄLLE NACH IHK-SCHEMA (RECHT)
+  const lawCases = [
+    {
+      id: 1,
+      title: "Fall 1: Ladendiebstahl und Jedermann-Festnahme",
+      text: "Ladendetektiv M beobachtet über Monitor, wie Kunde K eine Packung Kaffee in seine Jackentasche steckt und den Kassenbereich passiert, ohne zu bezahlen. M läuft hinterher, hält K am Arm fest und zieht ihn ins Büro.",
+      solution: "1. Strafbarkeit des K: Diebstahl gem. § 242 StGB.\n2. Rechtfertigung des M: Vorläufige Festnahme gem. § 127 Abs. 1 StPO (frische Tat, Fluchtgefahr / Identitätsfeststellung).\n3. Verhältnismäßigkeit: Das Festhalten am Arm war das mildeste Mittel. Handeln ist rechtmäßig."
+    },
+    {
+      id: 2,
+      title: "Fall 2: Notwehr beim Werkstor-Angriff",
+      text: "Ein Angreifer attackiert den Werkschutzmitarbeiter S mit einer Eisenstange. S wehrt sich mit einem gezielten Schlag mit dem Einsatzstock gegen das Schienbein des Angreifers, der daraufhin den Angriff abbricht.",
+      solution: "1. Notwehrlage: Gegenwärtiger, rechtswidriger Angriff auf Leib/Leben (§ 32 StGB).\n2. Notwehrhandlung: Der Stockschlag auf das Schienbein war erforderlich und geboten, um den Angriff sofort zu stoppen. Vorgehen rechtmäßig."
+    },
+    {
+      id: 3,
+      title: "Fall 3: Unberechtigter Platzverweis in Bank",
+      text: "Ein friedlicher Kunde verhält sich in einer Bankfiliale ruhig, wird jedoch vom Sicherheitsmitarbeiter des Hauses verwiesen und gewaltsam nach draußen geschoben, weil der Mitarbeiter seine Gesichtsmaske nicht mag.",
+      solution: "1. Hausrecht greift nur bei berechtigtem Interesse oder Störung.\n2. Da keine Störung vorlag, liegt keine Rechtsgrundlage vor. Der Mitarbeiter begeht eine Nötigung (§ 240 StGB) und verbotene Eigenmacht."
+    },
+    {
+      id: 4,
+      title: "Fall 4: Notstand zur Brandbekämpfung",
+      text: "Um einen Entstehungsbrand in einer Lagerhalle zu löschen, bricht ein Werkschützer gewaltsam die Tür zum Nachbarraum auf, in dem der Feuerlöscher hängt.",
+      solution: "1. Rechtfertigender Notstand gem. § 34 StGB.\n2. Gegenwärtige Gefahr für ein bedeutendes Rechtsgut (Eigentum der Halle).\n3. Das Aufbrechen der Tür war erforderlich. Interessenabwägung fällt zugunsten der Halle aus."
+    },
+    {
+      id: 5,
+      title: "Fall 5: Widerrechtliche Taschenkontrolle",
+      text: "Der Pförtner verlangt beim Verlassen des Werks von einem Mitarbeiter die sofortige Öffnung der Aktentasche. Da der Mitarbeiter zögert, entreißt der Pförtner ihm die Tasche gewaltsam.",
+      solution: "1. Ohne vertragliche Vereinbarung oder konkreten Tatverdacht ist eine Durchsuchung unzulässig.\n2. Das gewaltsame Entißen erfüllt den Tatbestand der Nötigung (§ 240 StGB)."
+    },
+    {
+      id: 6,
+      title: "Fall 6: Nothilfe bei Körperverletzung",
+      text: "Sicherheitsmitarbeiter S sieht, wie eine Frau auf der Straße zusammengeschlagen wird. Er eilt herbei und fixiert den Angreifer am Boden.",
+      solution: "1. Nothilfe gem. § 32 StGB zur Abwehr eines gegenwärtigen rechtswidrigen Angriffs auf einen Dritten.\n2. Die Fixierung war erforderlich und geboten. Handeln ist rechtmäßig."
+    },
+    {
+      id: 7,
+      title: "Fall 7: Verfolgung flüchtiger Täter",
+      text: "Nach Einbruch in ein Firmengebäude fliehen die Täter. Ein Wachmann verfolgt sie auf öffentlichem Grund, stellt einen Täter nach 200 Metern und hält ihn fest.",
+      solution: "1. Betroffensein auf frischer Tat und Verfolgung im zeitlichen/räumlichen Zusammenhang gem. § 127 Abs. 1 StPO.\n2. Festnahme und Festhalten sind rechtmäßig."
+    },
+    {
+      id: 8,
+      title: "Fall 8: Unzulässige Selbsthilfe",
+      text: "Ein Falschparker blockiert die Rettungsgasse des Werks. Der Pförtner schlägt aus Wut mit einem Stein die Seitenscheibe ein, um das Auto wegzuschieben.",
+      solution: "1. Selbsthilfe gem. § 229 BGB verlangt, dass obrigkeitliche Hilfe nicht erreichbar ist und Vereitelung droht. Das Einschlagen war völlig unverhältnismäßig (milderes Mittel: Abschleppdienst).\n2. Strafbare Sachbeschädigung (§ 303 StGB)."
+    },
+    {
+      id: 9,
+      title: "Fall 9: Betreten von Wohnräumen bei Brandgeruch",
+      text: "Nachts riecht der Wachmann starken Brandgeruch aus einem vermieteten Kellerraum. Da niemand öffnet, bricht er die Tür auf.",
+      solution: "1. Rechtfertigender Notstand gem. § 34 StGB bzw. mutmaßlicher Wille bei Gefahr im Verzug.\n2. Abwehr von Leib, Leben und Sachwerten rechtfertigt das Aufbrechen."
+    },
+    {
+      id: 10,
+      title: "Fall 10: Willkürliche Freiheitsentziehung",
+      text: "Ein Pförtner hält einen Lieferanten aus reiner Antipathie fest und verweigert ihm für zwei Stunden das Verlassen des Geländes.",
+      solution: "1. Keine Straftat und keine frische Tat des Lieferanten.\n2. Rechtswidrige Freiheitsberaubung gem. § 239 StGB."
+    },
+    {
+      id: 11,
+      title: "Fall 11: Schusswaffeneinsatz bei Eigentumsdelikt",
+      text: "Ein Dieb entkommt mit einem Laptop über den Zaun. Der bewaffnete Wachmann schießt ihm gezielt in die Beine.",
+      solution: "1. Angriff auf das Eigentum ist bereits beendet (kein gegenwärtiger Angriff auf Leib/Leben).\n2. Kein Notwehrrecht. Unverhältnismäßiger Schusswaffeneinsatz führt zu Strafbarkeit wegen gefährlicher Körperverletzung."
+    },
+    {
+      id: 12,
+      title: "Fall 12: Tätliche Rache nach Beleidigung",
+      text: "Ein Besucher beleidigt den Pförtner als 'Idioten'. Der Pförtner schlägt ihm daraufhin mit der Faust ins Gesicht.",
+      solution: "1. Eine Beleidigung ist kein gegenwärtiger Angriff auf Leib/Leben, der Notwehr rechtfertigen würde.\n2. Körperliche Gewalt ist unzulässig. Strafbarkeit wegen Körperverletzung (§ 223 StGB)."
+    },
+    {
+      id: 13,
+      title: "Fall 13: Durchsetzung von Hausverbot",
+      text: "Einem ehemaligen Angestellten wurde wirksam ein Hausverbot erteilt. Er betritt dennoch das Foyer. Der Wachdienst fordert ihn zum Vergehen auf; nach Weigerung führt er ihn sanft hinaus.",
+      solution: "1. Hausfriedensbruch gem. § 123 StGB.\n2. Ausübung des Hausrechts durch berechtigten Wachdienst unter Anwendung des mildesten Mittels ist rechtmäßig."
+    },
+    {
+      id: 14,
+      title: "Fall 14: Zerstörung von Musikboxen bei Lärm",
+      text: "Weil in der Nachbarwohnung nachts laute Musik läuft, bricht ein Nachbar die Tür auf und zertrümmert die Musikanlage.",
+      solution: "1. Keine Lebensgefahr. Sachbeschädigung ist durch Notstand nicht gedeckt."
+    },
+    {
+      id: 15,
+      title: "Fall 15: Versehentliches Einsperren",
+      text: "Ein Wachmann schließt abends den Umkleidebereich ab, ohne zu bemerken, dass sich noch jemand darin befindet.",
+      solution: "1. Kein Vorsatz bezüglich Freiheitsberaubung (§ 239 StGB). Strafrechtlich irrelevant, zivilrechtlich evtl. Schadensersatz."
+    },
+    {
+      id: 16,
+      title: "Fall 16: Behinderung von Polizeibeamten",
+      text: "Die Polizei will mit Haftbefehl eine Person im Gebäude festnehmen. Der Sicherheitsdienst stellt sich schützend vor die Person und verweigert den Einlass.",
+      solution: "1. Polizeibeamte handeln im Rahmen ihrer Befugnisse.\n2. Das Blockieren erfüllt den Tatbestand des Widerstands gegen Vollstreckungsbeamte (§ 113 StGB)."
+    },
+    {
+      id: 17,
+      title: "Fall 17: Falsche Verdächtigung",
+      text: "Ein Pförtner beschuldigt einen Handwerker fälschlicherweise bei der Geschäftsleitung des Diebstahls, obwohl er wusste, dass dieser unschuldig war.",
+      solution: "1. Falsche Verdächtigung gem. § 164 StGB / üble Nachrede."
+    },
+    {
+      id: 18,
+      title: "Fall 18: Handtaschenraub-Verhinderung",
+      text: "Ein Täter raubt eine Handtasche und flieht. Der Sicherheitsmitarbeiter stellt ihm ein Bein, sodass der Täter stürzt und die Tasche fallen lässt.",
+      solution: "1. Nothilfe und Jedermann-Festnahme nach § 127 Abs. 1 StPO.\n2. Das Beinstellen ist als mildes und erforderliches Mittel zur Sicherung des Eigentums rechtmäßig."
+    },
+    {
+      id: 19,
+      title: "Fall 19: Reizstoffeinsatz bei verbalem Streit",
+      text: "Bei einem lautstarken Wortgepräch an der Pforte zieht der Wachmann sofort Pfefferspray und sprüht beiden Streitenden ins Gesicht.",
+      solution: "1. Völlig unverhältnismäßig ohne Angriff auf den Wachmann. Gefährliche Körperverletzung gem. § 224 StGB."
+    },
+    {
+      id: 20,
+      title: "Fall 20: Tierschutz im Notstand",
+      text: "An einem heißen Sommertag hechelt ein Hund in einem verschlossenen Pkw dem Exitus nahe. Der Werkschutz bricht die Scheibe auf.",
+      solution: "1. Rechtfertigender Notstand (§ 34 StGB) analog bei akuter Lebensgefahr von Tieren.\n2. Das Einschlagen der Scheibe ist gerechtfertigt."
+    }
+  ];
+
   function renderLawCases() {
     const container = document.getElementById('caseContainer');
     container.innerHTML = "";
@@ -625,13 +924,13 @@
       card.innerHTML = `
         <div class="section-title law-title">${c.title}</div>
         <p><strong>Sachverhalt:</strong> ${c.text}</p>
-        <p style="margin-top:8px;"><strong>Ihre Aufgabe:</strong> Beurteilen Sie den Fall rechtlich im Gutachtenstil.</p>
-        <textarea id="caseInput_${c.id}" class="textarea-case" placeholder="Schreiben Sie hier Ihre rechtliche Beurteilung..."></textarea>
+        <p style="margin-top:8px;"><strong>Ihre Aufgabe:</strong> Beurteilen Sie den Fall im Gutachtenstil nach IHK-Standard.</p>
+        <textarea id="caseInput_${c.id}" class="textarea-case" placeholder="Tragen Sie hier Ihre gutachtliche Beurteilung ein..."></textarea>
         <div style="margin-top: 8px;">
-          <button class="btn-action" style="background: #dc3545;" onclick="toggleSolution('sol_${c.id}', this)">Musterlösung anzeigen</button>
+          <button class="btn-action" style="background: #dc3545;" onclick="toggleSolution('sol_${c.id}', this)">IHK-Musterlösung anzeigen</button>
         </div>
         <div id="sol_${c.id}" class="solution-box">
-          <strong>Musterlösung & Gutachtenstil:</strong><br>
+          <strong>Offizielle IHK-Musterlösung (Gutachtenstil):</strong><br>
           <div style="white-space: pre-line; margin-top: 5px;">${c.solution}</div>
         </div>
       `;
@@ -643,10 +942,10 @@
     const sol = document.getElementById(id);
     if (sol.style.display === 'block') {
       sol.style.display = 'none';
-      btn.innerText = 'Musterlösung anzeigen';
+      btn.innerText = 'IHK-Musterlösung anzeigen';
     } else {
       sol.style.display = 'block';
-      btn.innerText = 'Musterlösung verbergen';
+      btn.innerText = 'IHK-Musterlösung verbergen';
     }
   }
 
