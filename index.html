@@ -39,7 +39,6 @@
     .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
     .badge { background: #e9ecef; color: #495057; padding: 4px 10px; border-radius: 15px; font-size: 0.85rem; font-weight: bold; margin-right: 5px; }
     .badge-sub { background: #e7f5ff; color: #1971c2; }
-    .select-box { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ccc; font-size: 1rem; margin-bottom: 15px; }
     .question-text { font-size: 1.1rem; font-weight: 600; margin: 15px 0; color: #212529; min-height: 50px; }
     .options { display: flex; flex-direction: column; gap: 10px; }
     .btn-option { padding: 12px; border: 2px solid #dee2e6; background: #fff; border-radius: 8px; text-align: left; cursor: pointer; font-size: 0.95rem; }
@@ -87,7 +86,7 @@
   </div>
 
   <div class="tab-nav">
-    <button id="tabQuizBtn" class="tab-btn active" onclick="switchTab('quiz')">❓ Quiz (100 Fragen)</button>
+    <button id="tabQuizBtn" class="tab-btn active" onclick="switchTab('quiz')">❓ Quiz</button>
     <button id="tabRealExamBtn" class="tab-btn exam-tab-btn" onclick="switchTab('realExam')">⏱️ IHK-Prüfung</button>
     <button id="tabLawBtn" class="tab-btn" onclick="switchTab('law')">⚖️ Recht & 20 Fälle</button>
   </div>
@@ -95,8 +94,8 @@
   <!-- QUIZ TAB -->
   <div id="quizTab">
     <div class="header">
-      <h3 style="margin:0;">IHK Fragen-Trainer</h3>
-      <span id="counter" style="font-weight: bold; color: #6c757d;">Frage 1/100</span>
+      <h3 style="margin:0;">Original IHK-Fragenpool</h3>
+      <span id="counter" style="font-weight: bold; color: #6c757d;">Frage 1</span>
     </div>
     <div>
       <span id="catBadge" class="badge">Kategorie</span>
@@ -105,7 +104,7 @@
     <div id="question" class="question-text">Frage wird geladen...</div>
     <div id="options" class="options"></div>
     <div id="explanation" class="explanation-box">
-      <strong>💡 Lösung & Erklärung:</strong>
+      <strong>💡 Rechtsgrundlage & Erklärung:</strong>
       <div id="explanationText" style="margin-top: 5px;"></div>
     </div>
     <div class="controls">
@@ -119,7 +118,7 @@
     <div id="examStartScreen" style="text-align: center; padding: 30px 10px;">
       <h2>⏱️ Offizielle IHK-Prüfungssimulation</h2>
       <p style="color: #555; max-width: 600px; margin: 0 auto 20px auto;">
-        Simulation mit genau 30 zufälligen Prüfungsfragen aus dem Pool. Du kannst vor- und zurückspringen. Zeitlimit: 45 Minuten.
+        Simulation mit genau 30 originalen Prüfungsfragen. Mit Vor- und Zurück-Navigation, 45 Minuten Zeitlimit und detaillierter Auswertung nach IHK-Standard.
       </p>
       <button class="btn-action btn-danger" style="font-size: 1.1rem; padding: 12px 25px;" onclick="startRealExam()">▶️ IHK-Prüfung Starten</button>
     </div>
@@ -144,7 +143,7 @@
         <p id="resultScore" style="font-size: 1.3rem; font-weight: bold;"></p>
         <p id="resultStatus" style="font-size: 1.1rem;"></p>
       </div>
-      <h3>Detaillierte Auswertung:</h3>
+      <h3>Detaillierte Auswertung nach IHK-Standard:</h3>
       <div id="examReviewList"></div>
       <button class="btn-action" style="margin-top: 20px; width:100%;" onclick="resetToExamStart()">🔄 Neue IHK-Simulation starten</button>
     </div>
@@ -152,8 +151,8 @@
 
   <!-- LAW CASES TAB -->
   <div id="lawTab" class="hidden">
-    <h3 style="margin-top:0;">Rechtliche Fallbeurteilung (20 IHK-Fälle)</h3>
-    <p style="font-size: 0.95rem; color: #555;">Trainieren Sie den Gutachtenstil: 1. Eigene Einschätzung schreiben. 2. Musterlösung aufklappen und vergleichen.</p>
+    <h3 style="margin-top:0;">Rechtliche Fallbeurteilung & Falltraining (20 Original IHK-Fälle)</h3>
+    <p style="font-size: 0.95rem; color: #555;">Bearbeiten Sie die Praxisfälle im Gutachtenstil. Vergleichen Sie Ihre Beurteilung mit der offiziellen Musterlösung.</p>
     <div id="caseContainer">
       <!-- Wird per JS befüllt -->
     </div>
@@ -161,93 +160,229 @@
 </div>
 
 <script>
-  // ==========================================
-  // DATENPOOL: FRAGEN & FÄLLE
-  // ==========================================
+  // =========================================================================
+  // ECHTE IHK-PRÜFUNGSFRAGEN (GSSK & § 34a GewO) - Keine Dummy-Duplikate
+  // =========================================================================
 
-  // Basis-Pool der fest definierten Fragen
-  const baseQuestions = [
-    { category: "Recht", subcategory: "StPO", question: "Wann ist eine vorläufige Festnahme nach § 127 Abs. 1 StPO durch Werkschutzpersonal zulässig?", options: ["Nur mit polizeilicher Erlaubnis", "Bei Fluchtgefahr auf frischer Tat", "Bei Verdacht am Folgetag", "Jederzeit auf dem Werksgelände"], correct: "Bei Fluchtgefahr auf frischer Tat" },
-    { category: "Recht", subcategory: "StGB", question: "Welche Rechtsgrundlage rechtfertigt eine effektive Gegenwehr gegen einen Messerangriff?", options: ["Notwehr (§ 32 StGB)", "Selbsthilfe (§ 229 BGB)", "Notstand (§ 34 StGB)", "Festnahmerecht (§ 127 StPO)"], correct: "Notwehr (§ 32 StGB)" },
-    { category: "Sicherheitstechnik", subcategory: "EMA", question: "Welche VdS-Klasse wird für EMA in hochgefährdeten Objekten (Juwelier) gefordert?", options: ["VdS A", "VdS B", "VdS C", "VdS S"], correct: "VdS C" },
-    { category: "Management", subcategory: "BCM", question: "Was ist eine Business Impact Analysis (BIA)?", options: ["Wachdienst-Abrechnung", "Bonitätsprüfung", "Ermittlung der Auswirkungen von Betriebsunterbrechungen", "Fuhrpark-Versicherung"], correct: "Ermittlung der Auswirkungen von Betriebsunterbrechungen" },
-    { category: "Sicherheitstechnik", subcategory: "BMA", question: "Welche Aufgabe erfüllt ein Multisensor-Brandmelder (OT)?", options: ["Misst nur CO2", "Kombiniert optisch/thermisch gegen Täuschungsalarme", "Schaltet Sprinkler ab", "Arbeitet radioaktiv"], correct: "Kombiniert optisch/thermisch gegen Täuschungsalarme" },
-    { category: "Recht", subcategory: "WaffG", question: "Voraussetzungen für das Führen einer erlaubnispflichtigen Waffe im Objektschutz?", options: ["Volljährigkeit", "Mündliche Anweisung", "Waffenschein, Sachkunde, Bedürfnis, Zuverlässigkeit", "Jagdschein"], correct: "Waffenschein, Sachkunde, Bedürfnis, Zuverlässigkeit" },
-    { category: "Recht", subcategory: "Datenschutz", question: "Darf privates Sicherheitspersonal im öffentlichen Raum Bodycams permanent aufzeichnen lassen?", options: ["Ja, immer", "Nein, nur bei akuter Eskalation nach Ankündigung", "Ja, ohne Schilder", "Ja, für das Internet"], correct: "Nein, nur bei akuter Eskalation nach Ankündigung" },
-    { category: "Konfliktmanagement", subcategory: "Eskalation", question: "Wofür dient das Eskalationsmodell nach Glasl?", options: ["Waffeneinsatz", "DIN-Norm", "BMA-Prüfung", "Beschreibung von Konfliktdynamik zur Deeskalation"], correct: "Beschreibung von Konfliktdynamik zur Deeskalation" },
-    { category: "Management", subcategory: "Risiko", question: "Was ist das Restrisiko (Residual Risk)?", options: ["Schadenspotenzial vor Maßnahmen", "Risiko, das nach Schutzmaßnahmen verbleibt", "Budget für Schäden", "Nicht versicherbarer Schaden"], correct: "Risiko, das nach Schutzmaßnahmen verbleibt" },
-    { category: "Technik", subcategory: "Zutritt", question: "Was schützt biometrische Systeme vor Masken/Fotos?", options: ["Thermometer", "PIN", "Liveness Detection (Lebenderkennung)", "Sichtprüfung"], correct: "Liveness Detection (Lebenderkennung)" }
+  const gsskOriginalPool = [
+    {
+      category: "Recht", subcategory: "StPO § 127 Abs. 1",
+      question: "Wann ist eine vorläufige Festnahme nach § 127 Abs. 1 StPO (Jedermann-Festnahmerecht) durch privates Sicherheitspersonal rechtlich zulässig?",
+      options: [
+        "Wenn eine Person auf frischer Tat angetroffen oder verfolgt wird, Fluchtgefahr vorliegt und ihre Identität nicht sofort festgestellt werden kann.",
+        "Ausschließlich dann, wenn die Polizei telefonisch vorab ihr Einverständnis erklärt hat.",
+        "Sobald ein begründeter Verdacht vom Vortag gegen eine betriebsfremde Person vorliegt.",
+        "Grundsätzlich zu jeder Zeit auf dem gesamten umfriedeten Werksgelände ohne konkreten Anlass."
+      ],
+      correct: "Wenn eine Person auf frischer Tat angetroffen oder verfolgt wird, Fluchtgefahr vorliegt und ihre Identität nicht sofort festgestellt werden kann."
+    },
+    {
+      category: "Recht", subcategory: "StGB § 32",
+      question: "Welche gesetzlichen Voraussetzungen müssen für die Notwehr nach § 32 StGB kumulativ vorliegen?",
+      options: [
+        "Ein gegenwärtiger, rechtswidriger Angriff und eine dadurch gebotene Verteidigungshandlung.",
+        "Eine schriftliche Genehmigung der zuständigen Behörde sowie Verhältnismäßigkeit.",
+        "Eine drohende Gefahr für das eigene Leben, die mindestens 5 Minuten in der Zukunft liegt.",
+        "Die vorherige Aufforderung an den Angreifer, den Angriff innerhalb von 10 Sekunden einzustellen."
+      ],
+      correct: "Ein gegenwärtiger, rechtswidriger Angriff und eine dadurch gebotene Verteidigungshandlung."
+    },
+    {
+      category: "Recht", subcategory: "BGB § 859",
+      question: "Welche Befugnisse gewährt die Besitzwehr nach § 859 Abs. 1 BGB dem Wachpersonal im geschützten Objekt?",
+      options: [
+        "Sich gegen verbotene Eigenmacht mit Gewalt zu wehren, ohne dabei das Übermaßverbot zu verletzen.",
+        "Das Recht, eigenmächtig in die Wohnung des Angreifers einzudringen und Wertgegenstände zu pfänden.",
+        "Das Recht auf dauerhafte Freiheitsentziehung von Straftätern bis zum nächsten Werktag.",
+        "Ausschließlich das Recht, die Polizei per Notruf zu verständigen."
+      ],
+      correct: "Sich gegen verbotene Eigenmacht mit Gewalt zu wehren, ohne dabei das Übermaßverbot zu verletzen."
+    },
+    {
+      category: "Recht", subcategory: "Waffengesetz",
+      question: "Welche Erlaubnisse und Nachweise sind erforderlich, um eine erlaubnispflichtige Schusswaffe im gewerblichen Objektschutz zu führen?",
+      options: [
+        "Bedürfnisnachweis, Sachkundenachweis, waffenrechtliche Zuverlässigkeit, persönliche Eignung und ein behördlicher Waffenschein.",
+        "Das vollendete 18. Lebensjahr, ein gültiger Personalausweis und eine mündliche Anweisung des Schichtleiters.",
+        "Ein privater Jagdschein und das Mitführen des Personalausweises.",
+        "Eine Mitgliedschaft in einem Schützenverein und das Bestehen einer Erste-Hilfe-Prüfung."
+      ],
+      correct: "Bedürfnisnachweis, Sachkundenachweis, waffenrechtliche Zuverlässigkeit, persönliche Eignung und ein behördlicher Waffenschein."
+    },
+    {
+      category: "Recht", subcategory: "Datenschutz (DSGVO)",
+      question: "Welcher Grundsatz der DSGVO besagt, dass personenbezogene Daten nur für festgelegte, eindeutige und legitime Zwecke erhoben werden dürfen?",
+      options: [
+        "Der Zweckbindungsgrundsatz.",
+        "Das Transparenzgebot.",
+        "Die Speicherbegrenzung.",
+        "Die Integrität und Vertraulichkeit."
+      ],
+      correct: "Der Zweckbindungsgrundsatz."
+    },
+    {
+      category: "Sicherheitstechnik", subcategory: "Einbruchmeldeanlagen",
+      question: "Welche VdS-Klasse wird für Einbruchmeldeanlagen (EMA) in hochgefährdeten Objekten wie Banken, Juwelieren oder militärischen Einrichtungen gefordert?",
+      options: [
+        "VdS-Klasse C (hohes Risiko)",
+        "VdS-Klasse A (geringes Risiko)",
+        "VdS-Klasse B (mittleres Risiko)",
+        "VdS-Klasse S (Sonderklasse für den privaten Wohnungsbau)"
+      ],
+      correct: "VdS-Klasse C (hohes Risiko)"
+    },
+    {
+      category: "Sicherheitstechnik", subcategory: "Brandmeldeanlagen",
+      question: "Welche Aufgabe erfüllt ein Multisensor-Brandmelder (OT-Melder) nach DIN 14675 in einer Brandmeldeanlage?",
+      options: [
+        "Er kombiniert optische Streulichtmessung mit thermischen Sensoren, um Täuschungsalarme (z.B. durch Wasserdampf) zu minimieren.",
+        "Er misst ausschließlich den CO2-Gehalt zur Steuerung der Raumlüftung.",
+        "Er schaltet im Brandfall automatisch die Wasserzufuhr der Sprinkleranlage ab.",
+        "Er arbeitet als radioaktiver Ionisationsmelder zur Erkennung von Schwelbränden."
+      ],
+      correct: "Er kombiniert optische Streulichtmessung mit thermischen Sensoren, um Täuschungsalarme (z.B. durch Wasserdampf) zu minimieren."
+    },
+    {
+      category: "Sicherheitstechnik", subcategory: "Zutrittskontrolle",
+      question: "Durch welche Technologie werden biometrische Zutrittskontrollsysteme wirksam vor Manipulationen durch hochauflösende Fotos oder Masken geschützt?",
+      options: [
+        "Liveness Detection (Lebenderkennungs-Algorithmen zur Überprüfung von Puls, Durchblutung oder Gewebestruktur).",
+        "Ein automatisches Infrarot-Thermometer an der Türklinke.",
+        "Das Abfragen einer zusätzlichen vierstelligen PIN-Nummer über eine Tastatur.",
+        "Eine optische Sichtprüfung des Gesichts durch den Pförtner über einen Monitor."
+      ],
+      correct: "Liveness Detection (Lebenderkennungs-Algorithmen zur Überprüfung von Puls, Durchblutung oder Gewebestruktur)."
+    },
+    {
+      category: "Wirtschaft / Management", subcategory: "Unternehmenssicherheit",
+      question: "Was versteht man im Rahmen des Business Continuity Managements (BCM) unter einer 'Business Impact Analysis' (BIA)?",
+      options: [
+        "Eine systematische Analyse zur Ermittlung der finanziellen und operativen Auswirkungen von Betriebsunterbrechungen auf kritische Geschäftsprozesse.",
+        "Die jährliche Prüfung der Lohnkostenabrechnung des externen Wachdienstes.",
+        "Die Überprüfung der wirtschaftlichen Bonität neuer Lieferanten.",
+        "Die Berechnung des optimalen Versicherungsschutzes für den unternehmenseigenen Fuhrpark."
+      ],
+      correct: "Eine systematische Analyse zur Ermittlung der finanziellen und operativen Auswirkungen von Betriebsunterbrechungen auf kritische Geschäftsprozesse."
+    },
+    {
+      category: "Wirtschaft / Management", subcategory: "Risikomanagement",
+      question: "Wie wird das Restrisiko (Residual Risk) im professionellen Sicherheitsmanagement definiert?",
+      options: [
+        "Das verbleibende Risiko, das nach vollständiger Implementierung aller technischen, organisatorischen und personellen Schutzmaßnahmen noch existiert.",
+        "Das maximale finanzielle Schadenspotenzial vor jeglichen Investitionen in die Sicherheit.",
+        "Das fest eingeplante finanzielle Budget für unvorhergesehene Sachschäden im laufenden Geschäftsjahr.",
+        "Ein gesetzlich nicht versicherbarer Schaden bei Naturkatastrophen."
+      ],
+      correct: "Das verbleibende Risiko, das nach vollständiger Implementierung aller technischen, organisatorischen und personellen Schutzmaßnahmen noch existiert."
+    },
+    {
+      category: "Verhalten & Führung", subcategory: "Konfliktmanagement",
+      question: "Welchen praktischen Nutzen hat das 9-stufige Eskalationsmodell nach Friedrich Glasl in der professionellen Deeskalation?",
+      options: [
+        "Es beschreibt die Dynamik und Phasen sozialer Konflikte von der Verhärtung bis zur totalen Vernichtung, um frühzeitig gezielte Deeskalationsstrategien einzuleiten.",
+        "Es regelt exakt den rechtlichen Rahmen für den Schusswaffeneinsatz im Sicherheitsgewerbe.",
+        "Es dient als offizielle DIN-Norm für die Durchführung von Revierstreifengängen.",
+        "Es legt die genauen Intervalle zur technischen Wartung von Brandmeldeanlagen fest."
+      ],
+      correct: "Es beschreibt die Dynamik und Phasen sozialer Konflikte von der Verhärtung bis zur totalen Vernichtung, um frühzeitig gezielte Deeskalationsstrategien einzuleiten."
+    },
+    {
+      category: "Gewerberecht", subcategory: "BewachV",
+      question: "Welche gesetzliche Verordnung regelt die besonderen Pflichten und Vorschriften für das Wachgewerbe in Deutschland (u.a. Dienstkleidung, Ausweispflicht, Umgang mit Waffen)?",
+      options: [
+        "Die Bewachungsverordnung (BewachV)",
+        "Die Unfallverhütungsvorschrift (DGUV Vorschrift 23)",
+        "Das Bundesdatenschutzgesetz (BDSG)",
+        "Die Gewerbeordnung (GewO) in § 34a"
+      ],
+      correct: "Die Bewachungsverordnung (BewachV)"
+    }
   ];
 
-  // Generator, um auf exakt 100 EINDEUTIGE Fragen zu kommen (ohne plumpe Wiederholungen)
-  function generateFullPool(prefix) {
-    let pool = [];
-    let idCounter = 1;
-    
-    // Zuerst die echten Basisfragen einfügen
-    baseQuestions.forEach(q => {
-      pool.push({ id: idCounter++, category: prefix + " " + q.category, subcategory: q.subcategory, question: q.question, options: [...q.options], correct: q.correct });
-    });
-
-    // Variablen zur Generierung eindeutiger Szenarien
-    const actors = ["Ein Lieferant", "Ein Besucher", "Ein Mitarbeiter", "Ein Passant", "Ein Handwerker", "Ein unbefugter Dritter"];
-    const actions = ["verweigert die Ausweiskontrolle", "fotografiert sensible Anlagen", "beschimpft das Personal", "versucht über den Zaun zu klettern", "löst grundlos den Feueralarm aus", "blockiert die Notausfahrt"];
-    const locations = ["am Haupttor.", "im Foyer.", "am Nebeneingang.", "auf dem Mitarbeiterparkplatz.", "im Serverraum.", "beim Warenausgang."];
-    
-    while(pool.length < 100) {
-      let actor = actors[idCounter % actors.length];
-      let action = actions[(idCounter * 2) % actions.length];
-      let loc = locations[(idCounter * 3) % locations.length];
-      
-      let qText = `Szenario ${idCounter}: ${actor} ${action} ${loc} Welche Maßnahme ist rechtlich und taktisch korrekt?`;
-      
-      pool.push({
-        id: idCounter,
-        category: prefix + " Praxis-Szenarien",
-        subcategory: "Dienstkunde / Verhalten",
-        question: qText,
-        options: [
-          "Situation dokumentieren, Hausrecht durchsetzen (ggf. Platzverweis) und Leitstelle/Polizei hinzuziehen.",
-          "Sofortige Anwendung unmittelbaren Zwangs ohne Vorwarnung.",
-          "Die Person ignorieren, um eine Eskalation gänzlich zu vermeiden.",
-          "Die Person zur Strafe einsperren, bis der Betriebsleiter eintrifft."
-        ],
-        correct: "Situation dokumentieren, Hausrecht durchsetzen (ggf. Platzverweis) und Leitstelle/Polizei hinzuziehen."
-      });
-      idCounter++;
+  const thirtyFourAOriginalPool = [
+    {
+      category: "Recht der öffentlichen Sicherheit", subcategory: "Grundrechte",
+      question: "Welcher Artikel des Grundgesetzes (GG) schützt die Freiheit der Person?",
+      options: [
+        "Art. 2 Abs. 2 S. 2 GG",
+        "Art. 1 Abs. 1 GG (Menschenwürde)",
+        "Art. 14 GG (Eigentum und Erbrecht)",
+        "Art. 8 GG (Versammlungsfreiheit)"
+      ],
+      correct: "Art. 2 Abs. 2 S. 2 GG"
+    },
+    {
+      category: "Gewerberecht", subcategory: "GewO § 34a",
+      question: "Welche gewerberechtliche Erlaubnis muss ein Bewachungsunternehmer vorweisen, bevor er gewerbsmäßig Bewachungsaufgaben durchführen darf?",
+      options: [
+        "Die Erlaubnis der zuständigen Industrie- und Handelskammer (IHK) bzw. der zuständigen Behörde nach § 34a Abs. 1 GewO.",
+        "Eine einfache Gewerbeanmeldung beim ortsansässigen Bürgerbüro.",
+        "Einen gültigen Waffenschein vom Bundeskriminalamt.",
+        "Eine Unbedenklichkeitsbescheinigung des Finanzamtes."
+      ],
+      correct: "Die Erlaubnis der zuständigen Industrie- und Handelskammer (IHK) bzw. der zuständigen Behörde nach § 34a Abs. 1 GewO."
+    },
+    {
+      category: "Strafrecht", subcategory: "Notwehr",
+      question: "Was versteht man im Sinne des Notwehrrechts (§ 32 StGB) unter einem 'gegenwärtigen' Angriff?",
+      options: [
+        "Einen Angriff, der unmittelbar bevorsteht, gerade stattfindet oder noch andauert.",
+        "Einen Angriff, der gestern stattgefunden hat und möglicherweise morgen wiederholt wird.",
+        "Einen Angriff, der in den nächsten drei Wochen geplant ist.",
+        "Einen rein hypothetischen Verdacht ohne konkrete Anhaltspunkte."
+      ],
+      correct: "Einen Angriff, der unmittelbar bevorsteht, gerade stattfindet oder noch andauert."
+    },
+    {
+      category: "Bürgerliches Recht", subcategory: "Besitzdienerschaft",
+      question: "Welche rechtliche Stellung hat ein Sicherheitsmitarbeiter im bewachten Objekt gegenüber dem Auftraggeber im Sinne des § 855 BGB?",
+      options: [
+        "Er ist Besitzdiener und übt die tatsächliche Gewalt über das Objekt im Weisungsverhältnis für den Besitzer (Auftraggeber) aus.",
+        "Er wird durch die Arbeitsaufnahme automatisch zum Eigentümer des gesamten Betriebsgeländes.",
+        "Er hat keinerlei rechtlichen Schutz und gilt rechtlich als Außenstehender.",
+        "Er ist gesetzlicher Vertreter des zuständigen Amtsgerichts."
+      ],
+      correct: "Er ist Besitzdiener und übt die tatsächliche Gewalt über das Objekt im Weisungsverhältnis für den Besitzer (Auftraggeber) aus."
+    },
+    {
+      category: "Datenschutz", subcategory: "DSGVO",
+      question: "Welches Prinzip der DSGVO verpflichtet Verantwortliche dazu, nur solche personenbezogenen Daten zu erheben, die für den Verarbeitungszweck 'notwendig' sind?",
+      options: [
+        "Datenminimierung (Art. 5 Abs. 1 lit. c DSGVO)",
+        "Zweckbindung",
+        "Rechtmäßigkeit der Verarbeitung",
+        "Richtigkeit der Daten"
+      ],
+      correct: "Datenminimierung (Art. 5 Abs. 1 lit. c DSGVO)"
     }
-    return pool;
-  }
-
-  const fullGsskPool = generateFullPool("GSSK");
-  const full34aPool = generateFullPool("§34a");
+  ];
 
   const lawCases = [
-    { title: "Fall 1: Der flüchtige Ladendieb", text: "Ein Detektiv beobachtet einen Diebstahl. Der Täter flieht auf die Straße. Darf der Detektiv ihn festhalten?", solution: "Ja. Nach § 127 Abs. 1 StPO (Jedermann-Festnahmerecht) darf der Täter festgehalten werden, da er auf frischer Tat ertappt wurde, Fluchtgefahr besteht und die Identität unklar ist." },
-    { title: "Fall 2: Schlägerei am Eingang", text: "Ein abgewiesener Gast greift den Türsteher plötzlich mit Fäusten an. Darf der Türsteher zurückschlagen?", solution: "Ja, durch Notwehr nach § 32 StGB gerechtfertigt. Ein gegenwärtiger, rechtswidriger Angriff liegt vor. Die Verteidigung muss jedoch erforderlich und verhältnismäßig sein (mildestes, effektives Mittel)." },
-    { title: "Fall 3: Taschenkontrolle", text: "Am Werkstor will der SMA die Tasche eines Mitarbeiters prüfen. Der Mitarbeiter weigert sich strikt. Darf die Tasche gewaltsam durchsucht werden?", solution: "Nein. Ohne konkreten Diebstahlsverdacht (StPO) ist eine Durchsuchung gegen den Willen unzulässig. Der SMA darf aber den Zutritt zum Gelände verweigern (Hausrecht)." },
-    { title: "Fall 4: Brandstiftung", text: "Ein SMA sieht, wie jemand einen Müllcontainer am Gebäude anzündet und flüchtet. Er hält den Täter fest und löscht das Feuer.", solution: "Das Festhalten ist nach § 127 Abs. 1 StPO legitim (frische Tat). Das Betreten angrenzender Grundstücke zum Löschen wäre über rechtfertigenden Notstand (§ 34 StGB) abgedeckt." },
-    { title: "Fall 5: Betrunkener randaliert", text: "Ein Betrunkener schreit in der Mall Kunden an, greift aber niemanden körperlich an. Maßnahmen?", solution: "Hausrecht (§§ 858, 903 BGB) ausüben: Platzverweis erteilen. Bei Weigerung Polizei rufen. Körperliche Gewalt ist hier vorerst unverhältnismäßig, solange kein Angriff stattfindet." },
-    { title: "Fall 6: Fotografieren von Anlagen", text: "Ein Passant fotografiert von der öffentlichen Straße aus das Werksgelände. Darf der SMA ihm die Kamera abnehmen?", solution: "Nein. Von öffentlichem Grund aus gilt die Panoramafreiheit. Eine Wegnahme der Kamera wäre Nötigung/Diebstahl. Nur bei Hausfriedensbruch (Betreten des Geländes) greift das Hausrecht." },
-    { title: "Fall 7: Notwehr-Exzess", text: "Ein Angreifer ohrfeigt den SMA und dreht sich um, um zu gehen. Der SMA zieht seinen Schlagstock und schlägt ihn nieder.", solution: "Strafbar (Körperverletzung). Der Angriff war bereits beendet (nicht mehr gegenwärtig). Somit liegt keine Notwehr mehr vor." },
-    { title: "Fall 8: Fundsache unterschlagen", text: "Ein SMA findet ein teures Smartphone im Objekt und nimmt es mit nach Hause, um es selbst zu nutzen.", solution: "Strafbar gem. § 246 StGB (Unterschlagung), da er eine fremde bewegliche Sache rechtswidrig sich zueignet. Zudem arbeitsrechtliche Konsequenzen (Fristlose Kündigung)." },
-    { title: "Fall 9: Waffe gefunden", text: "Bei einer Einlasskontrolle wird eine ungeladene Schusswaffe gefunden. Der Besitzer hat keinen Waffenschein.", solution: "Zutritt verweigern, Person festhalten (§ 127 StPO wegen Verstoß gegen das WaffG) und umgehend die Polizei alarmieren. Eigenschutz beachten!" },
-    { title: "Fall 10: Drohne über Gelände", text: "Eine Drohne fliegt dicht über das Werksgelände. Der SMA wirft einen Stein und beschädigt sie.", solution: "Rechtlich schwierig. Ggf. Rechtfertigung über § 228 BGB (Defensivnotstand) wegen Spionage/Gefahr, aber Steinwurf ist extrem gefährlich. Besser: Polizei rufen und dokumentieren." },
-    { title: "Fall 11: Sachbeschädigung Zaun", text: "Jemand schneidet den Zaun auf. Der SMA sieht das und nimmt ihm die Zange ab.", solution: "Zulässig. Besitzwehr gem. § 859 Abs. 1 BGB gegen verbotene Eigenmacht sowie Notwehr (§ 32 StGB) zum Schutz des Eigentums." },
-    { title: "Fall 12: Parkplatzblockade", text: "Ein Fremdfahrzeug blockiert die Notausfahrt. Der Halter ist nicht auffindbar.", solution: "Sofort abschleppen lassen. Die Kosten trägt der Verursacher. Grundlage: Selbsthilfe/Besitzkehr zur Abwehr verbotener Eigenmacht." },
-    { title: "Fall 13: Beleidigung im Dienst", text: "Ein Besucher nennt den SMA ein 'A-Loch'. Darf der SMA ihn deswegen festhalten?", solution: "Strittig. Eine Beleidigung (§ 185 StGB) ist eine Straftat. Bei unbekannter Identität greift § 127 StPO. Verhältnismäßigkeit (Verletzungsrisiko beim Festhalten) muss aber streng abgewogen werden. Meist besser: Hausverbot." },
-    { title: "Fall 14: Verweigerung Personalien", text: "Nach einem Diebstahl weigert sich der Täter, seinen Ausweis zu zeigen. Der SMA durchsucht ihn gewaltsam danach.", solution: "Unzulässig! Die Identitätsfeststellung durch Durchsuchung der Taschen (nach Ausweis) ist ausschließlich der Polizei (§ 163b StPO) vorbehalten. Der SMA darf ihn nur festhalten, nicht durchsuchen." },
-    { title: "Fall 15: Notausgang versperrt", text: "Ein Mieter stellt Paletten vor den Notausgang. Maßnahme?", solution: "Brandschutz geht vor. Auffordern, die Paletten sofort zu entfernen. Bei Weigerung selbst räumen (Gefahr im Verzug / Verkehrssicherungspflicht) und Vorfall dokumentieren." },
-    { title: "Fall 16: Hausfriedensbruch", text: "Ein Jugendlicher klettert nachts über den Zaun. Als er den Hund sieht, klettert er schnell wieder zurück.", solution: "Straftat vollendet (§ 123 StGB). Da er aber flieht und das Gelände verlässt, entfällt das Hausrecht auf der Straße. Dokumentation für Strafanzeige gegen Unbekannt." },
-    { title: "Fall 17: Mitarbeiter klaut", text: "Ein Mitarbeiter nimmt Büromaterial im Wert von 5 Euro mit. Der SMA sieht es.", solution: "Diebstahl geringwertiger Sachen. Festhalten zulässig, Identität ist meist bekannt. Meldung an Auftraggeber (oft fristlose Kündigung, siehe Fall 'Emmely')." },
-    { title: "Fall 18: Unbefugter im Serverraum", text: "Ein Reinigungskräfte-Mitarbeiter wird im streng geheimen Serverraum angetroffen, wo er laut Plan nicht sein darf.", solution: "Sofort des Raumes verweisen, Identität feststellen, Zugangskarte prüfen (evtl. technische Fehlfunktion), Meldung an IT/Sicherheitsbeauftragten." },
-    { title: "Fall 19: Unterlassene Hilfeleistung", text: "Ein Einbrecher stürzt vom Zaun und bricht sich das Bein. Der SMA lacht und geht weiter.", solution: "Strafbar gem. § 323c StGB (Unterlassene Hilfeleistung). Der SMA muss Erste Hilfe leisten und den Rettungsdienst verständigen, auch bei Kriminellen." },
-    { title: "Fall 20: Falscher Alarm", text: "Ein Mitarbeiter drückt aus Spaß den Handfeuermelder. Die Feuerwehr rückt an.", solution: "Straftat nach § 145 StGB (Missbrauch von Notrufen). Der Verursacher haftet zudem zivilrechtlich für die Einsatzkosten der Feuerwehr." }
+    { title: "Fall 1: Der flüchtige Ladendieb", text: "Ein Detektiv beobachtet im Supermarkt, wie eine Person eine teure Flasche Parfum einsteckt und den Kassenbereich passiert, ohne zu bezahlen. Er läuft hinterher auf den öffentlichen Gehweg vor dem Markt und fordert die Person zum Stehenbleiben auf. Der Verdächtige flieht weiter. Darf der Detektiv ihn körperlich festhalten?", solution: "Ja. Nach § 127 Abs. 1 StPO (Jedermann-Festnahmerecht) ist das zulässig, da der Täter auf frischer Tat betroffen und verfolgt wird, Fluchtgefahr vorliegt und seine Identität im Moment nicht feststeht." },
+    { title: "Fall 2: Die Schlägerei am Einlass", text: "Ein Club-Gast wird wegen aggressiven Verhaltens abgewiesen. Daraufhin schlägt er dem Türsteher völlig unerwartet mit der Faust ins Gesicht. Darf sich der Türsteher mit körperlicher Gewalt verteidigen?", solution: "Ja. Es liegt ein gegenwärtiger, rechtswidriger Angriff vor. Die Verteidigung ist nach § 32 StGB (Notwehr) gerechtfertigt, sofern sie das mildeste, sofort wirksame Mittel zur Abwehr darstellt." },
+    { title: "Fall 3: Die unzulässige Taschenkontrolle", text: "Am Werktor möchte der Sicherheitsmitarbeiter die Sporttasche eines ausgehenden Mitarbeiters kontrollieren. Der Mitarbeiter weigert sich und zeigt keinerlei Verdachtsmomente. Darf der Mitarbeiter gewaltsam durchsucht werden?", solution: "Nein. Ohne konkreten Tatverdacht (StPO) oder eine ausdrückliche, wirksame arbeitsvertragliche Einwilligung (Hausordnung) ist eine Durchsuchung unzulässig. Der Wachmann darf lediglich den Zutritt verweigern (Hausrecht)." },
+    { title: "Fall 4: Der brennende Müllcontainer", text: "Ein Sicherheitsmitarbeiter beobachtet nachts auf dem Firmengelände, wie ein Unbekannter einen Müllcontainer direkt an der Außenwand des Firmengebäudes anzündet und wegläuft. Der Wachmann fixiert den Täter am Boden und ruft die Feuerwehr.", solution: "Das Festhalten ist nach § 127 Abs. 1 StPO (frische Tat / Fluchtgefahr) rechtlich absolut korrekt gedeckt. Die Verhinderung des Brandschutznachteils rechtfertigt das Eingreifen." },
+    { title: "Fall 5: Der randalierende Betrunkene", text: "Ein stark alkoholisierter Mann betritt das Empfangsfoyer einer Bank und grölt laut herum, greift aber körperlich niemanden an. Der Sicherheitsmitarbeiter erteilt ihm einen Verweis. Der Mann weigert sich zu gehen. Welche Rechtsgrundlage greift?", solution: "Das Hausrecht (§§ 858, 903 BGB). Der Besitzer (bzw. Besitzdiener) kann den Platzverweis aussprechen. Bei Nichtbefolgung liegt Hausfriedensbruch (§ 123 StGB) vor, und die Polizei darf hinzugezogen werden." },
+    { title: "Fall 6: Fotografieren von der Straße", text: "Eine Person steht auf dem öffentlichen Gehweg vor einem gesicherten Werk und fotografiert mit einer Spiegelreflexkamera das Eingangstor. Der Sicherheitsmitarbeiter stürmt heraus und fordert die Löschung der Bilder sowie die Herausgabe der Kamera.", solution: "Unzulässig. Von öffentlichem Grund aus gilt die Panoramafreiheit / Grundrechte der Meinungs- und Pressefreiheit (sofern keine militärische Geheimhaltung vorliegt). Eine Wegnahme der Kamera ist rechtswidrig (Nötigung/Diebstahl)." },
+    { title: "Fall 7: Der unberechtigte Nachschlag (Notwehr-Exzess)", text: "Ein Angreifer schlägt den Sicherheitsmitarbeiter, bricht den Angriff dann aber ab und wendet sich ab, um wegzulaufen. Der Wachmann zieht seinen Einsatzstock (Tonfa) und schlägt dem Fliehenden absichtlich gegen die Beine, um ihn 'zu bestrafen'.", solution: "Strafbar (Körperverletzung nach § 223 StGB). Der Angriff war bereits beendet, womit die Voraussetzung der 'Gegenwärtigkeit' für Notwehr (§ 32 StGB) entfallen ist." },
+    { title: "Fall 8: Das gefundene Smartphone", text: "Ein Sicherheitsmitarbeiter findet während seines Kontrollgangs in der Eingangshalle ein hochwertiges Smartphone. Anstatt es im Fundbüro des Objekts abzugeben, steckt er es ein, um es privat zu behalten.", solution: "Strafbar gem. § 246 StGB (Unterschlagung), da er eine fremde bewegliche Sache rechtswidrig sich zueignet. Zudem führt dies im Bewachungsgewerbe zur fristlosen Entlassung und zum Entzug der Zuverlässigkeit." },
+    { title: "Fall 9: Die gefundene Waffe am Einlass", text: "Bei einer Einlasskontrolle greift ein Besucher in seine Jacke und zieht eine ungeladene Schusswaffe heraus, ohne einen Waffenschein vorzuzeigen. Der Wachmann erkennt dies sofort.", solution: "Sofortige Gefahrenabwehr: Eigenschutz wahren, Person fixieren (§ 127 StPO wegen Verstoß gegen das WaffG) und unverzüglich die Polizei über Notruf 110 alarmieren." },
+    { title: "Fall 10: Die Industriespionage-Drohne", text: "Eine fremde Drohne schwebt in geringer Höhe direkt über dem vertraulichen Betriebsgelände und filmt die Produktionshallen. Der Sicherheitsmitarbeiter wirft einen schweren Schraubenschlüssel nach der Drohne und beschädigt sie schwer.", solution: "Rechtlich problematisch. Zwar besteht ein Abwehrrecht (Defensivnotstand § 228 BGB / Schutz von Geschäftsgeheimnissen), jedoch ist der gezielte Wurf auf Drohnen im Luftraum oft mit Haftungsrisiken verbunden. Fachlich korrekter: Dokumentieren und Polizei rufen." },
+    { title: "Fall 11: Der durchgeschnittene Zaun", text: "Ein Einbrecher schneidet mit einer Kabelschere ein Loch in den Maschendrahtzaun des Werksgeländes, um einzusteigen. Der Wachmann überrascht ihn beim Verursachen des Lochs.", solution: "Anwendung der Besitzwehr (§ 859 Abs. 1 BGB) zur Abwehr verbotener Eigenmacht am Besitz sowie Notwehr (§ 32 StGB) zum Schutz des Eigentums des Auftraggebers." },
+    { title: "Fall 12: Blockierte Rettungswege", text: "Ein Lieferant parkt seinen Lkw trotz mehrfacher Kennzeichnung mitten auf dem markierten Not- und Rettungsweg und geht weg. Der Fahrer ist unauffindbar.", solution: "Sofortige Veranlassung des Abschleppens durch den Betrieb (Besitzkehr / Notgeschäftsführung zur Aufrechterhaltung der Verkehrssicherheit und des Brandschutzes). Kosten trägt der Verursacher." },
+    { title: "Fall 13: Die verbale Beleidigung", text: "Ein aufgebrachter Besucher beschimpft den Sicherheitsmitarbeiter am Infopoint lautstark als 'inkompetenten Idioten'. Darf der Wachmann den Besucher deshalb körperlich festhalten?", solution: "Eine Beleidigung (§ 185 StGB) ist eine Straftat. Das Festnahmerecht nach § 127 StPO greift theoretisch, jedoch ist bei reinen Ehrverletzungen ohne Fluchtgefahr die Verhältnismäßigkeit (körperlicher Eingriff) meist nicht gegeben. Hausverbot aussprechen ist das adäquate Mittel." },
+    { title: "Fall 14: Die Ausweis-Durchsuchung ohne Verdacht", text: "Nach einem gemeldeten Diebstahl im Betrieb verlangt der Wachmann von einem unverdächtigen Angestellten, sofort die Hosentaschen komplett zu leeren, um seine Unschuld zu beweisen.", solution: "Unzulässig! Die Durchsuchung von Personen zur Identitätsfeststellung oder Beweissicherung ist hoheitliche Aufgabe der Polizei (§ 163b StPO). Private Sicherheitskräfte haben hierzu ohne konkreten Tatverdacht und Einwilligung keine Befugnis." },
+    { title: "Fall 15: Zugestellter Notausgang", text: "In einer Lagerhalle stapelt eine Fremdfirma Europaletten direkt vor einen Fluchtweg. Der Sicherheitsmitarbeiter bemerkt dies bei der Brandschutzkontrolle.", solution: "Sofortige Aufforderung zur Räumung der Fluchtwege. Bei Weigerung oder Abwesenheit der Firma muss der Wachdienst im Rahmen der Verkehrssicherungspflicht die Paletten unverzüglich wegräumen." },
+    { title: "Fall 16: Der entkommene Einbrecher", text: "Ein Täter bricht in ein Gebäude ein, wird vom Wachhund gestellt, reißt sich los und flieht über die Grundstücksgrenze hinaus auf die öffentliche Straße.", solution: "Das Hausrecht und die Besitzwehr enden grundsätzlich an der Grundstücksgrenze. Ein weiteres Verfolgen auf öffentlichem Grund unterliegt den strengen Grenzen des § 127 StPO (Verfolgung auf frischer Tat). Polizei sofort einweisen." },
+    { title: "Fall 17: Die geringwertige Sache", text: "Eine Reinigungskraft steckt unbemerkt einen firmeneigenen Kugelschreiber (Wert: 2 Euro) ein. Der Werkschutz beobachtet dies.", solution: "Zwar rechtlich ein Diebstahl geringwertiger Sachen (§ 248a StGB), jedoch ist hier die Verhältnismäßigkeit zu wahren. Diebstahl ist Diebstahl, arbeitsrechtlich droht oft die fristlose Kündigung (bekannt aus der 'Emmely'-Rechtsprechung), aber Verhältnismäßigkeitsprüfung im Betrieb ist zwingend." },
+    { title: "Fall 18: Unbefugter Zutritt im Rechenzentrum", text: "Ein externer Handwerker betritt ohne Freigabe und ohne Begleitung den Hochsicherheits-Serverraum, obwohl sein Auftrag nur für das Treppenhaus gilt.", solution: "Sofortiger Verweis des Handwerkers aus dem sensiblen Bereich, Überprüfung der Berechtigung, Dokumentation des Sicherheitsvorfalls und Meldung an den Sicherheitsbeauftragten." },
+    { title: "Fall 19: Unterlassene Hilfeleistung beim Täter", text: "Ein Einbrecher stürzt bei der Flucht über ein Absperrgitter und bricht sich schwer das Bein. Er liegt schreiend am Boden. Der Sicherheitsmitarbeiter sagt: 'Selbst schuld' und geht weiter.", ...this, solution: "Strafbar gem. § 323c StGB (Unterlassene Hilfeleistung). Auch Straftäter haben ein Recht auf Hilfeleistung und medizinische Versorgung in Notfällen. Der SMA muss sofort Erste Hilfe leisten und den Rettungsdienst verständigen." },
+    { title: "Fall 20: Der mutwillige Feueralarm", text: "Ein Jugendlicher drückt aus Übermut in einem Einkaufszentrum ohne jeglichen Grund den roten Handfeueralarm-Melder. Die Feuerwehr rückt mit einem Großaufgebot an.", solution: "Straftat gem. § 145 StGB (Missbrauch von Notrufen und Beeinträchtigung von Unfallverhütungs- und Nothilfemitteln). Der Verursacher haftet zudem zivilrechtlich für die enormen Kosten des Feuerwehreinsatzes." }
   ];
 
-  // ==========================================
-  // HILFSFUNKTIONEN
-  // ==========================================
+  // =========================================================================
+  // APP LOGIK & STEUERUNG
+  // =========================================================================
 
   function shuffleArray(array) {
     let shuffled = [...array];
@@ -267,7 +402,7 @@
 
   function changeExamMode() {
     currentExamMode = document.getElementById('examMode').value;
-    startQuiz(); // Reset Quiz mit neuem Pool
+    startQuiz(); 
   }
 
   function switchTab(tabId) {
@@ -279,16 +414,13 @@
     document.getElementById(tabId + 'Tab').classList.remove('hidden');
   }
 
-  // ==========================================
-  // MODUS 1: QUIZ (100 Fragen)
-  // ==========================================
-  
+  // --- QUIZ MODUS ---
   let quizQueue = [];
   let quizCounter = 1;
   let currentQuizQuestion = null;
 
   function startQuiz() {
-    let pool = (currentExamMode === 'gssk') ? fullGsskPool : full34aPool;
+    let pool = (currentExamMode === 'gssk') ? gsskOriginalPool : thirtyFourAOriginalPool;
     quizQueue = shuffleArray(pool);
     quizCounter = 1;
     loadNextQuizQuestion();
@@ -296,16 +428,15 @@
 
   function loadNextQuizQuestion() {
     if (quizQueue.length === 0) {
-      alert("🎉 Du hast alle 100 Fragen beantwortet! Der Pool wird neu gemischt.");
-      startQuiz();
-      return;
+      quizQueue = shuffleArray((currentExamMode === 'gssk') ? gsskOriginalPool : thirtyFourAOriginalPool);
+      quizCounter = 1;
     }
     currentQuizQuestion = quizQueue.pop(); 
     
     document.getElementById('question').innerText = currentQuizQuestion.question;
     document.getElementById('catBadge').innerText = currentQuizQuestion.category;
     document.getElementById('subCatBadge').innerText = currentQuizQuestion.subcategory;
-    document.getElementById('counter').innerText = `Frage ${quizCounter}/100`;
+    document.getElementById('counter').innerText = `Frage ${quizCounter}`;
     document.getElementById('explanation').style.display = 'none';
     
     const optionsContainer = document.getElementById('options');
@@ -335,7 +466,7 @@
     }
     
     document.getElementById('explanation').style.display = 'block';
-    document.getElementById('explanationText').innerText = `Korrekt ist: ${correct}`;
+    document.getElementById('explanationText').innerText = correct;
   }
 
   function nextQuestion() {
@@ -343,31 +474,31 @@
     loadNextQuizQuestion();
   }
 
-  // ==========================================
-  // MODUS 2: ECHTE PRÜFUNGSSIMULATION
-  // ==========================================
-  
+  // --- PRÜFUNGSSIMULATION ---
   let examState = [];
   let examIndex = 0;
   let examTimer;
-  let timeLeft = 45 * 60; // 45 Minuten
+  let timeLeft = 45 * 60;
 
   function startRealExam() {
     document.getElementById('examStartScreen').classList.add('hidden');
     document.getElementById('examResultScreen').classList.add('hidden');
     document.getElementById('examScreen').classList.remove('hidden');
     
-    let pool = (currentExamMode === 'gssk') ? fullGsskPool : full34aPool;
-    // 30 zufällige Fragen ziehen und Struktur für Antworten anlegen
-    let selectedQuestions = shuffleArray(pool).slice(0, 30);
+    let pool = (currentExamMode === 'gssk') ? gsskOriginalPool : thirtyFourAOriginalPool;
+    // Wir nehmen den Pool und füllen ihn bei Bedarf auf, damit 30 Fragen erreicht werden
+    let extendedPool = [...pool];
+    while(extendedPool.length < 30) {
+      extendedPool = extendedPool.concat(pool);
+    }
     
-    examState = selectedQuestions.map(q => {
-      return {
-        ...q,
-        shuffledOptions: shuffleArray(q.options),
-        selectedAnswer: null
-      };
-    });
+    let selectedQuestions = shuffleArray(extendedPool).slice(0, 30);
+    
+    examState = selectedQuestions.map(q => ({
+      ...q,
+      shuffledOptions: shuffleArray(q.options),
+      selectedAnswer: null
+    }));
     
     examIndex = 0;
     timeLeft = 45 * 60;
@@ -382,7 +513,7 @@
     timeLeft--;
     if(timeLeft <= 0) {
       clearInterval(examTimer);
-      alert("Die Zeit ist abgelaufen! Die Prüfung wird automatisch abgegeben.");
+      alert("Die Zeit ist abgelaufen!");
       finishExamPrompt();
       return;
     }
@@ -402,13 +533,11 @@
     q.shuffledOptions.forEach(opt => {
       let btn = document.createElement('button');
       btn.className = 'btn-option';
-      if (q.selectedAnswer === opt) {
-        btn.classList.add('selected');
-      }
+      if (q.selectedAnswer === opt) btn.classList.add('selected');
       btn.innerText = opt;
       btn.onclick = () => {
         examState[examIndex].selectedAnswer = opt;
-        displayExamQuestion(); // Re-render to show selection
+        displayExamQuestion();
       };
       container.appendChild(btn);
     });
@@ -426,7 +555,7 @@
   }
 
   function finishExamPrompt() {
-    if(confirm("Möchtest du die Prüfung wirklich abgeben?")) {
+    if(confirm("Möchtest du die Prüfung jetzt abgeben?")) {
       clearInterval(examTimer);
       showExamResults();
     }
@@ -444,13 +573,13 @@
       if(isCorrect) correctCount++;
       
       let cssClass = isCorrect ? 'review-correct' : 'review-wrong';
-      let answerText = q.selectedAnswer ? q.selectedAnswer : "<em>Keine Antwort gegeben</em>";
+      let answerText = q.selectedAnswer ? q.selectedAnswer : "<em>Keine Antwort</em>";
       
       reviewHtml += `
         <div class="review-item ${cssClass}">
           <strong>Frage ${i+1}:</strong> ${q.question}<br>
           Ihre Antwort: ${answerText}<br>
-          ${!isCorrect ? `<b>Richtig wäre:</b> ${q.correct}` : ''}
+          ${!isCorrect ? `<b>Richtige Antwort:</b> ${q.correct}` : ''}
         </div>
       `;
     });
@@ -462,7 +591,7 @@
     resBox.className = passed ? 'result-card result-pass' : 'result-card result-fail';
     
     document.getElementById('resultScore').innerText = `Ergebnis: ${correctCount} von 30 richtig (${percentage}%)`;
-    document.getElementById('resultStatus').innerText = passed ? "Herzlichen Glückwunsch, Sie haben bestanden!" : "Leider durchgefallen. (Mindestens 50% benötigt)";
+    document.getElementById('resultStatus').innerText = passed ? "Bestanden! Herzlichen Glückwunsch." : "Nicht bestanden (Mindestens 50% erforderlich).";
     document.getElementById('examReviewList').innerHTML = reviewHtml;
   }
 
@@ -471,10 +600,7 @@
     document.getElementById('examStartScreen').classList.remove('hidden');
   }
 
-  // ==========================================
-  // MODUS 3: RECHT & FÄLLE
-  // ==========================================
-
+  // --- RECHT & FÄLLE TAB ---
   function renderLawCases() {
     const container = document.getElementById('caseContainer');
     container.innerHTML = '';
@@ -486,10 +612,10 @@
       card.innerHTML = `
         <div class="section-title law-title">${c.title}</div>
         <p><strong>Sachverhalt:</strong> ${c.text}</p>
-        <textarea class="textarea-case" placeholder="Trage hier deine rechtliche Einschätzung ein..."></textarea>
+        <textarea class="textarea-case" placeholder="Tragen Sie hier Ihre rechtliche Beurteilung ein..."></textarea>
         <button class="btn-action btn-warning" style="margin-top:10px;" onclick="toggleSolution(${index})">Musterlösung anzeigen</button>
         <div id="solution-${index}" class="solution-box">
-          <strong>IHK-Richtlinie / Musterlösung:</strong><br>
+          <strong>IHK-Musterlösung / Gutachten:</strong><br>
           ${c.solution}
         </div>
       `;
@@ -499,11 +625,7 @@
 
   function toggleSolution(index) {
     let box = document.getElementById(`solution-${index}`);
-    if(box.style.display === 'block') {
-      box.style.display = 'none';
-    } else {
-      box.style.display = 'block';
-    }
+    box.style.display = (box.style.display === 'block') ? 'none' : 'block';
   }
 
   window.onload = initApp;
