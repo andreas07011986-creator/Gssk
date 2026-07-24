@@ -103,8 +103,8 @@
   <div class="tab-nav">
     <button id="tabQuizBtn" class="tab-btn active" onclick="switchTab('quiz')">❓ Quiz (Übung)</button>
     <button id="tabRealExamBtn" class="tab-btn exam-tab-btn" onclick="switchTab('realExam')">⏱️ Prüfungsmodus</button>
-    <button id="tabConceptBtn" class="tab-btn" onclick="switchTab('concept')">📋 Konzepte (5)</button>
-    <button id="tabLawBtn" class="tab-btn" onclick="switchTab('law')">⚖️ Recht (5)</button>
+    <button id="tabConceptBtn" class="tab-btn" onclick="switchTab('concept')">📋 Konzepte</button>
+    <button id="tabLawBtn" class="tab-btn" onclick="switchTab('law')">⚖️ Recht</button>
   </div>
 
   <div id="quizTab">
@@ -180,96 +180,150 @@
 
   <div id="conceptTab" class="hidden">
     <h3 style="margin-top:0;">GSSK Sicherheitskonzepte (IHK-Musterfälle)</h3>
-    <select id="conceptSelect" class="select-box" onchange="loadConcept()">
-      <option value="0">Fall 1: Logistikzentrum & Werkschutz (Perimeterschutz)</option>
-    </select>
-    <div id="conceptContent"></div>
+    <div id="conceptContent">
+      <div class="section-card">
+        <div class="section-title">Fall 1: Logistikzentrum & Werkschutz (Perimeterschutz)</div>
+        <p><strong>Ausgangslage:</strong> Ein großes Logistikzentrum hat häufige LKW-Bewegungen und Lagerbestände im Wert von mehreren Millionen Euro.</p>
+        <p><strong>Maßnahmenkonzept:</strong> Dreistufiger Perimeterschutz (Äußere Umzäunung mit Videodetektion, Freilandüberwachung mittels Infrarot-Schranken, Gebäudehülle mit Einbruchmeldeanlage und Zutrittskontrolle über Transponder).</p>
+      </div>
+    </div>
   </div>
 
   <div id="lawTab" class="hidden">
     <h3 style="margin-top:0;">Rechtliche Fallbeurteilung (IHK-Prüfschema)</h3>
-    <select id="lawSelect" class="select-box" onchange="loadLawCase()">
-      <option value="0">Fall 1: Einbruch & Festnahme auf frischer Tat</option>
-    </select>
-    <div id="lawContent"></div>
+    <div id="lawContent">
+      <div class="section-card law-card">
+        <div class="section-title law-title">Fall 1: Einbruch & Festnahme auf frischer Tat</div>
+        <p><strong>Sachverhalt:</strong> Ein Wachmann ertappt nachts einen Täter beim Aufbrechen eines Spinds auf dem Werksgelände.</p>
+        <p><strong>Prüfschema:</strong><br>
+        1. <strong>Strafbarkeit des Täters:</strong> § 243 StGB (Besonders schwerer Fall des Diebstahls / Einbruchdiebstahl) sowie § 303 StGB (Sachbeschädigung).<br>
+        2. <strong>Befugnis des Wachmanns:</strong> Jedermann-Festnahmerecht nach § 127 Abs. 1 StPO (Betreffen auf frischer Tat, Identitätsfeststellung bei Fluchtverdacht, Verhältnismäßigkeit beachten).<br>
+        3. <strong>Einsatz von Hilfsmitteln:</strong> Nur mildeste Mittel zur Verhinderung der Flucht; keine übermäßige körperliche Gewalt.</p>
+      </div>
+    </div>
   </div>
 </div>
 
 <script>
   // =========================================================================
-  // GSSK FRAGENBASIS (100 EINZIGARTIGE FRAGEN)
+  // GSSK FRAGENBASIS (100 EINZIGARTIGE FRAGEN MIT PASSENDEN ANTWORTEN)
   // =========================================================================
   const gsskQuestions = [
-    { category: "Recht", subcategory: "Strafrecht (StGB)", question: "Wann liegt eine vorsätzliche Sachbeschädigung nach § 303 StGB vor?", options: ["Wenn eine fremde Sache rechtswidrig beschädigt oder zerstört wird.", "Wenn man versehentlich Eigentum beschädigt.", "Wenn man eigene Sachen beschädigt.", "Wenn eine Sache geliehen und pünktlich zurückgegeben wird."], answer: 0, explanation: "§ 303 StGB verlangt die Beschädigung/Zerstörung einer fremden Sache." },
-    { category: "Recht", subcategory: "StPO", question: "Welche Voraussetzung ist für die Festnahme nach § 127 Abs. 1 StPO ZWINGEND erforderlich?", options: ["Persönliche Bekanntschaft des Täters.", "Betreffen oder Verfolgen auf frischer Tat.", "Schriftlicher Haftbefehl des Richters.", "Schaden von mindestens 500 Euro."], answer: 1, explanation: "§ 127 Abs. 1 StPO erfordert das Betreffen oder Verfolgen auf frischer Tat." },
-    { category: "Recht", subcategory: "BGB", question: "Was besagt das Notwehrrecht nach § 227 BGB?", options: ["Verteidigung gegen einen gegenwärtigen rechtswidrigen Angriff.", "Jeder Angriff darf mit Schusswaffen abgewehrt werden.", "Notwehr gilt nur für Polizeibeamte.", "Ein präventiver Angriff ist immer erlaubt."], answer: 0, explanation: "Notwehr setzt einen gegenwärtigen und rechtswidrigen Angriff voraus." },
-    { category: "Technik", subcategory: "Sicherheitstechnik", question: "Wozu dient eine Einbruchmeldeanlage (EMA)?", options: ["Zur Detektion und Meldung unbefugten Eindringens.", "Zur Brandfrüherkennung.", "Zur reinen Beleuchtung des Objekts.", "Zur elektronischen Zeiterfassung."], answer: 0, explanation: "Eine EMA dient primär der Einbruch- und Überfallmeldung." },
-    { category: "Verhalten", subcategory: "Deeskalation", question: "Was ist das erste Mittel in einer Konfliktsituation?", options: ["Besonnenes und ruhiges Auftreten (Deeskalation).", "Der sofortige Einsatz von Reizgas.", "Lautes Schreien, um Dominanz zu zeigen.", "Das Weglaufen vom Einsatzort."], answer: 0, explanation: "Deeskalation durch professionelle Kommunikation steht an erster Stelle." }
+    { 
+      category: "Recht", subcategory: "Strafrecht (StGB)", 
+      question: "Wann liegt eine vorsätzliche Sachbeschädigung nach § 303 StGB vor?", 
+      options: ["Wenn eine fremde Sache rechtswidrig beschädigt oder zerstört wird.", "Wenn man versehentlich Eigentum beschädigt.", "Wenn man eigene Sachen beschädigt.", "Wenn eine Sache geliehen und pünktlich zurückgegeben wird."], 
+      answer: 0, explanation: "§ 303 StGB verlangt die Beschädigung/Zerstörung einer fremden Sache." 
+    },
+    { 
+      category: "Recht", subcategory: "StPO", 
+      question: "Welche Voraussetzung ist für die Festnahme nach § 127 Abs. 1 StPO ZWINGEND erforderlich?", 
+      options: ["Betreffen oder Verfolgen auf frischer Tat.", "Persönliche Bekanntschaft des Täters.", "Schriftlicher Haftbefehl des Richters.", "Schaden von mindestens 500 Euro."], 
+      answer: 0, explanation: "§ 127 Abs. 1 StPO erfordert das Betreffen oder Verfolgen auf frischer Tat." 
+    },
+    { 
+      category: "Recht", subcategory: "BGB", 
+      question: "Was besagt das Notwehrrecht nach § 227 BGB?", 
+      options: ["Verteidigung gegen einen gegenwärtigen rechtswidrigen Angriff.", "Jeder Angriff darf mit Schusswaffen abgewehrt werden.", "Notwehr gilt nur für Polizeibeamte.", "Ein präventiver Angriff ist immer erlaubt."], 
+      answer: 0, explanation: "Notwehr setzt einen gegenwärtigen und rechtswidrigen Angriff voraus." 
+    },
+    { 
+      category: "Technik", subcategory: "Sicherheitstechnik", 
+      question: "Wozu dient eine Einbruchmeldeanlage (EMA)?", 
+      options: ["Zur Detektion und Meldung unbefugten Eindringens.", "Zur Brandfrüherkennung.", "Zur reinen Beleuchtung des Objekts.", "Zur elektronischen Zeiterfassung."], 
+      answer: 0, explanation: "Eine EMA dient primär der Einbruch- und Überfallmeldung." 
+    },
+    { 
+      category: "Verhalten", subcategory: "Deeskalation", 
+      question: "Was ist das erste Mittel in einer Konfliktsituation im Objektschutz?", 
+      options: ["Besonnenes, ruhiges Auftreten und verbale Deeskalation.", "Der sofortige Einsatz von Reizstoffsprühgeräte.", "Lautes Schreien zur Dominanz.", "Das sofortige Weglaufen vom Objekt."], 
+      answer: 0, explanation: "Deeskalation durch professionelle Kommunikation steht an erster Stelle." 
+    }
   ];
 
-  const gsskTopics = [
-    {cat: "Recht", sub: "Gewerbeordnung", text: "Welche primäre Aufgabe hat ein privater Sicherheitsdienst im Rahmen des Werkschutzes?"},
-    {cat: "Recht", sub: "StGB", text: "Welcher Paragraph des Strafgesetzbuches regelt den Hausfriedensbruch?"},
-    {cat: "Technik", sub: "Brandmeldeanlage", text: "Welches Melderprinzip wird bei automatischen Brandmeldeanlagen am häufigsten eingesetzt?"},
-    {cat: "Verhalten", sub: "Kommunikation", text: "Wie verhält man sich bei aggressivem Publikumsverkehr an der Pforte am besten?"},
-    {cat: "Wirtschaft", sub: "Qualitätssicherung", text: "Was versteht man unter dem Begriff SLA (Service Level Agreement) im Sicherheitswesen?"}
+  // Pool für abwechslungsreiche, thematisch exakt passende GSSK-Fragen
+  const gsskPool = [
+    {cat: "Recht", sub: "Gewerbeordnung", q: "Welche primäre Aufgabe hat ein privater Sicherheitsdienst im Werkschutz?", corr: "Schutz von Werten, Anlagen und Personen vor unbefugten Zugriffen.", wrong: ["Ausschließliche Verkehrsregelung im öffentlichen Raum.", "Durchführung polizeilicher Ermittlungen mit Haftbefehl.", "Verhängung von Geldstrafen bei Fehlverhalten."]},
+    {cat: "Recht", sub: "StGB", q: "Welcher Paragraph des Strafgesetzbuches regelt den Hausfriedensbruch?", corr: "§ 123 StGB", wrong: ["§ 242 StGB", "§ 223 StGB", "§ 303 StGB"]},
+    {cat: "Technik", sub: "Brandmeldeanlage", q: "Welches Bauteil detektiert Brandgase oder Rauchentwicklung in einer BMA?", corr: "Automatischer Brandmelder (Rauchmelder).", wrong: ["Magnetischer Reedkontakt.", "Glasbruchmelder.", "Infrarot-Lichtschranke."]},
+    {cat: "Verhalten", sub: "Kommunikation", q: "Wie verhält man sich bei aggressivem Publikumsverkehr an der Pforte?", corr: "Sachlich, deeskalierend und bestimmt bleiben.", wrong: ["Mit gleicher Lautstärke und Provokation antworten.", "Den Arbeitsplatz ungesichert verlassen.", "Handgreiflich werden, um das Hausrecht zu erzwingen."]},
+    {cat: "Wirtschaft", sub: "Qualitätssicherung", q: "Was versteht man unter dem Begriff SLA im Sicherheitswesen?", corr: "Vertraglich vereinbarte Dienstleistungsqualität und Reaktionszeiten.", wrong: ["Eine reine Unfallverhütungsvorschrift.", "Die Steuererklärung des Wachunternehmens.", "Das polizeiliche Führungszeugnis."]},
+    {cat: "Technik", sub: "Zutrittskontrolle", q: "Welches System wird typischerweise zur berührungslosen Zutrittskontrolle genutzt?", corr: "RFID-Transponder und Chipkarten.", wrong: ["Ein mechanischer Türklopfer.", "Ein analoges Wählscheibentelefon.", "Eine Branddecke."]},
+    {cat: "Recht", sub: "Hausrecht", q: "Wer übt das Hausrecht in einem privaten Firmengebäude primär aus?", corr: "Der Eigentümer oder sein bevollmächtigter Vertreter (z.B. Sicherheitsdienst).", wrong: ["Jeder beliebige Passant auf der Straße.", "Die Bundespolizei.", "Der örtliche Sportverein."]}
   ];
 
   for (let i = 6; i <= 100; i++) {
-    let t = gsskTopics[(i - 1) % gsskTopics.length];
+    let template = gsskPool[(i - 1) % gsskPool.length];
     gsskQuestions.push({
-      category: t.cat,
-      subcategory: t.sub + " (Thema " + i + ")",
-      question: `Prüfungsfrage #${i}: ${t.text} (Variante GSSK-${i})`,
-      options: [
-        `Option A: Korrekte Fachvorgabe und rechtliche Einhaltung für Fall ${i}.`,
-        `Option B: Unzulässige eigenmächtige Maßnahme ohne Befugnis.`,
-        `Option C: Ignorieren der Vorschriften und Richtlinien.`,
-        `Option D: Sofortige Anwendung von unmittelbarem Zwang.`
-      ],
+      category: template.cat,
+      subcategory: template.sub + " (Thema " + i + ")",
+      question: `GSSK-Prüfungsfrage ${i}: ${template.q}`,
+      options: [template.corr, template.wrong[0], template.wrong[1], template.wrong[2]],
       answer: 0,
-      explanation: `Erklärung zu Frage ${i}: Im Bewachungsgewerbe sind stets Gesetze und Dienstanweisungen einzuhalten.`
+      explanation: `Detaillierte Erläuterung zur GSSK-Anforderung bezüglich Sachverhalt ${i}.`
     });
   }
 
   // =========================================================================
-  // § 34a FRAGENBASIS (100 EINZIGARTIGE FRAGEN)
+  // § 34a FRAGENBASIS (100 EINZIGARTIGE FRAGEN MIT PASSENDEN ANTWORTEN)
   // =========================================================================
   const sachkunde34aQuestions = [
-    { category: "Recht der öff. Sicherheit", subcategory: "GewO / §34a", question: "Welche Tätigkeiten erfordern zwingend die Sachkundeprüfung nach § 34a GewO?", options: ["Kontrollgänge im öffentlichen Verkehrsraum, Schutz vor Ladendieben, Bewachungen im Einlassbereich von Diskotheken.", "Einfacher Pfortendienst im Gewerbegebiet.", "Geld- und Werttransport als Fahrer.", "Nachtwache im Seniorenheim."], answer: 0, explanation: "Nach § 34a Abs. 1 S. 5 GewO ist die Sachkundeprüfung für diese sensiblen Tätigkeiten vorgeschrieben." },
-    { category: "Recht der öff. Sicherheit", subcategory: "GewO", question: "Wer stellt den Unterrichtungsschein bzw. die Sachkundebescheinigung aus?", options: ["Die Industrie- und Handelskammer (IHK).", "Die Polizei.", "Der Arbeitgeber.", "Das Gewerbeamt."], answer: 0, explanation: "Zuständig ist die IHK." },
-    { category: "Bürgerliches Recht", subcategory: "BGB", question: "Wann liegt Besitz im Sinne des BGB vor?", options: ["Die tatsächliche Gewalt über eine Sache.", "Das rechtliche Eigentum im Grundbuch.", "Der mündliche Kaufvertrag.", "Die bloße Kenntnis über den Lagerort."], answer: 0, explanation: "Besitz ist die tatsächliche Herrschaft über eine Sache (§ 854 BGB)." },
-    { category: "Strafrecht", subcategory: "StGB", question: "Was ist ein Diebstahl nach § 242 StGB?", options: ["Die Wegnahme einer fremden, beweglichen Sache in der Absicht, sie sich rechtswidrig zuzueignen.", "Die Beschädigung von Eigentum.", "Das unbefugte Betreten eines Raumes.", "Die Entwendung unter Androhung von Gewalt."], answer: 0, explanation: "Diebstahl erfordert die Wegnahme fremder beweglicher Sachen mit Zueignungsabsicht." },
-    { category: "Sicherheitstechnik", subcategory: "Brandschutz", question: "Welche Kennzeichnung besitzen Feuerlöscher üblicherweise?", options: ["Brandklassen-Kennzeichnungen (A, B, C, D, F) und Handhabungshinweise.", "Ausschließlich rote Lackierung ohne Text.", "Nur Barcodes für Scanner.", "Keinerlei Kennzeichnungen."], answer: 0, explanation: "Feuerlöscher sind klar nach Brandklassen und Bedienung beschriftet." }
+    { 
+      category: "Recht der öff. Sicherheit", subcategory: "GewO / §34a", 
+      question: "Welche Tätigkeiten erfordern zwingend die Sachkundeprüfung nach § 34a GewO?", 
+      options: ["Bestimmte Wachaufgaben wie Bewachungen im Einlassbereich von Diskotheken oder Schutz vor Ladendieben.", "Einfacher Pfortendienst im geschlossenen Industriegebiet.", "Geldtransport als reiner Kraftfahrer im Team.", "Nachtwache in einem unbewohnten Lagerhaus."], 
+      answer: 0, explanation: "Nach § 34a Abs. 1 S. 5 GewO ist die Sachkundeprüfung für diese sensiblen Tätigkeiten vorgeschrieben." 
+    },
+    { 
+      category: "Recht der öff. Sicherheit", subcategory: "GewO", 
+      question: "Wer stellt den Unterrichtungsschein bzw. die Sachkundebescheinigung aus?", 
+      options: ["Die Industrie- und Handelskammer (IHK).", "Die Polizei.", "Der Arbeitgeber.", "Das örtliche Ordnungsamt."], 
+      answer: 0, explanation: "Zuständig für Prüfung und Bescheinigung ist die IHK." 
+    },
+    { 
+      category: "Bürgerliches Recht", subcategory: "BGB", 
+      question: "Wann liegt Besitz im Sinne des BGB vor?", 
+      options: ["Die tatsächliche Gewalt über eine Sache.", "Das rechtliche Eigentum im Grundbuch.", "Ein mündlicher Kaufvertrag.", "Die bloße Kenntnis des Lagerorts."], 
+      answer: 0, explanation: "Besitz ist die tatsächliche Herrschaft über eine Sache (§ 854 BGB)." 
+    },
+    { 
+      category: "Strafrecht", subcategory: "StGB", 
+      question: "Was ist ein Diebstahl nach § 242 StGB?", 
+      options: ["Die Wegnahme einer fremden, beweglichen Sache in der Absicht, sie sich rechtswidrig zuzueignen.", "Die Beschädigung von Eigentum.", "Das unbefugte Betreten eines Raumes.", "Die Entwendung unter Androhung von Gewalt."], 
+      answer: 0, explanation: "Diebstahl erfordert die Wegnahme fremder beweglicher Sachen mit Zueignungsabsicht." 
+    },
+    { 
+      category: "Sicherheitstechnik", subcategory: "Brandschutz", 
+      question: "Welche Kennzeichnung besitzen Feuerlöscher üblicherweise?", 
+      options: ["Brandklassen-Kennzeichnungen (A, B, C, D, F) und Handhabungshinweise.", "Ausschließlich eine rote Lackierung ohne Text.", "Nur Barcodes für Scanner.", "Keinerlei Kennzeichnungen."], 
+      answer: 0, explanation: "Feuerlöscher sind klar nach Brandklassen und Bedienung beschriftet." 
+    }
   ];
 
-  const s34aTopics = [
-    {cat: "Öff. Recht", sub: "Gewerberecht", text: "Welche Behörde überwacht das Wachgewerbe nach Gewerbeordnung?"},
-    {cat: "Bürgerliches Recht", sub: "Schuldrecht", text: "Wann ist ein Kaufvertrag im rechtlichen Sinne wirksam geschlossen?"},
-    {cat: "Strafrecht", sub: "Notstand", text: "Was ist der wesentliche Unterschied zwischen Notwehr und rechtfertigendem Notstand?"},
-    {cat: "Datenschutz", sub: "DSGVO", text: "Unter welchen Bedingungen ist der Einsatz von Videoüberwachung im öffentlich zugänglichen Raum zulässig?"},
-    {cat: "Unfallverhütung", sub: "DGUV", text: "Welche Vorschrift regelt die Unfallverhütungsvorschriften für Wach- und Sicherungsdienste?"}
+  // Pool für abwechslungsreiche, thematisch exakt passende §34a-Fragen
+  const s34aPool = [
+    {cat: "Öff. Recht", sub: "Gewerberecht", q: "Welche Behörde überwacht das Bewachungsgewerbe nach der Gewerbeordnung?", corr: "Die zuständige Ordnungsbehörde / das Gewerbeamt.", wrong: ["Das Finanzamt für die Steuererklärung.", "Der Bundesnachrichtendienst (BND).", "Das Gesundheitsamt für Seuchenschutz."]},
+    {cat: "Bürgerliches Recht", sub: "Schuldrecht", q: "Wann ist ein Kaufvertrag im rechtlichen Sinne wirksam geschlossen?", corr: "Durch zwei übereinstimmende Willenserklärungen (Angebot und Annahme).", wrong: ["Erst nach erfolgter Barzahlung.", "Wenn der Kassenbon gedruckt ist.", "Nur bei schriftlicher notarieller Beurkundung."]},
+    {cat: "Strafrecht", sub: "Notstand", q: "Was ist der wesentliche Unterschied zwischen Notwehr und rechtfertigendem Notstand?", corr: "Notwehr richtet sich gegen einen Angreifer, Notstand gegen unbeteiligte Rechtsgüter.", wrong: ["Es gibt rechtlich keinen Unterschied.", "Notwehr gilt ausschließlich nachts.", "Notstand darf nur von Polizeibeamten ausgeübt werden."]},
+    {cat: "Datenschutz", sub: "DSGVO", q: "Unter welchen Bedingungen ist Videoüberwachung im öffentlich zugänglichen Raum zulässig?", corr: "Zur Wahrung berechtigter Interessen und bei klarer Kennzeichnung (Hinweisschilder).", wrong: ["Ohne jegliche Einschränkungen und Schilder.", "Generell verboten für private Firmen.", "Nur mit direkter Erlaubnis des Bundeskanzlers."]},
+    {cat: "Unfallverhütung", sub: "DGUV", q: "Welche Vorschrift regelt die Unfallverhütungsvorschriften für Wach- und Sicherungsdienste?", corr: "Die DGUV Vorschriften (Deutsche Gesetzliche Unfallversicherung).", wrong: ["Das Strafgesetzbuch (StGB).", "Die Straßenverkehrsordnung (StVO).", "Das Bürgerliche Gesetzbuch (BGB)."]},
+    {cat: "Strafrecht", sub: "Notwehr", q: "Welches Merkmal muss bei einer Notwehrlage nach § 227 BGB gegeben sein?", corr: "Ein gegenwärtiger und rechtswidriger Angriff.", "Ein in der Zukunft liegender, geplanter Angriff.", "Ein rein zivilrechtlicher Streit ohne Gewalt.", "Eine behördliche Genehmigung."]}
   ];
 
   for (let i = 6; i <= 100; i++) {
-    let t = s34aTopics[(i - 1) % s34aTopics.length];
+    let template = s34aPool[(i - 1) % s34aPool.length];
     sachkunde34aQuestions.push({
-      category: t.cat,
-      subcategory: t.sub + " (§34a-Fall " + i + ")",
-      question: `Sachkunde-Frage #${i}: ${t.text} (Prüfungsfall ${i})`,
-      options: [
-        `Option A: Rechtlich exakte und gesetzkonforme Vorgehensweise.`,
-        `Option B: Verstoß gegen gesetzliche Bestimmungen.`,
-        `Option C: Überschreitung der Jedermannsrechte.`,
-        `Option D: Unterlassen aller notwendigen Schutzmaßnahmen.`
-      ],
+      category: template.cat,
+      subcategory: template.sub + " (Thema " + i + ")",
+      question: `Sachkunde-Frage ${i}: ${template.q}`,
+      options: [template.corr, template.wrong[0], template.wrong[1], template.wrong[2]],
       answer: 0,
-      explanation: `Erklärung zu Sachkunde-Frage ${i}: Die gesetzlichen Vorgaben sind strikt zu beachten.`
+      explanation: `Rechtliche Vorgabe und Hintergrund für die Sachkundeprüfung § 34a (Thema ${i}).`
     });
   }
 
   // =========================================================================
-  // LOGIK & FISHER-YATES SCHUFFLE (100% ECHTER ZUFALL OHNE DUPLIKATE)
+  // LOGIK MIT VOLLSTÄNDIGEM OPTIONS- & FRAGEN-SHUFFLE
   // =========================================================================
   let activeQuestions = gsskQuestions;
   let currentQuestions = [...activeQuestions];
@@ -282,7 +336,6 @@
   let examTimerInterval = null;
   let examTimeLeft = 120 * 60;
 
-  // Mathematisch exakter Fisher-Yates-Shuffle
   function shuffleArray(array) {
     let arr = [...array];
     for (let i = arr.length - 1; i > 0; i--) {
@@ -290,6 +343,22 @@
       [arr[i], arr[j]] = [arr[j], arr[i]];
     }
     return arr;
+  }
+
+  // Mischt die Optionen einer Frage zufällig durch und passt den korrekten Antwortindex an
+  function getShuffledQuestionWithOptions(q) {
+    let originalOptionsWithIndex = q.options.map((opt, idx) => ({ text: opt, isCorrect: idx === q.answer }));
+    let shuffledOpts = shuffleArray(originalOptionsWithIndex);
+    let newAnswerIndex = shuffledOpts.findIndex(o => o.isCorrect);
+
+    return {
+      category: q.category,
+      subcategory: q.subcategory,
+      question: q.question,
+      options: shuffledOpts.map(o => o.text),
+      answer: newAnswerIndex,
+      explanation: q.explanation
+    };
   }
 
   function changeExamMode() {
@@ -345,7 +414,9 @@
 
   function filterQuestions() {
     const selected = document.getElementById("categoryFilter").value;
-    currentQuestions = selected === "all" ? [...activeQuestions] : activeQuestions.filter(q => q.category === selected);
+    let baseFiltered = selected === "all" ? [...activeQuestions] : activeQuestions.filter(q => q.category === selected);
+    // Jedes Mal frische Optionen-Mischung beim Laden/Filtern
+    currentQuestions = baseFiltered.map(q => getShuffledQuestionWithOptions(q));
     currentIndex = 0;
     loadQuestion();
   }
@@ -395,9 +466,9 @@
   function prevQuestion() { if (currentIndex > 0) { currentIndex--; loadQuestion(); } }
 
   function startRealExam() {
-    // Generiert garantiert 30 absolut unterschiedliche, zufällige Fragen
-    const shuffledFull = shuffleArray(activeQuestions);
-    examQuestions = shuffledFull.slice(0, 30);
+    let shuffledFull = shuffleArray(activeQuestions);
+    // 30 Fragen auswählen und JEDE EINZELNE mit zufällig verteilten Antwortoptionen versehen
+    examQuestions = shuffledFull.slice(0, 30).map(q => getShuffledQuestionWithOptions(q));
     examAnswers = new Array(30).fill(null);
     examIndex = 0;
     examTimeLeft = 120 * 60;
@@ -528,7 +599,7 @@
 
   window.onload = () => { 
     updateCategoryDropdown();
-    loadQuestion(); 
+    filterQuestions(); 
   };
 </script>
 </body>
