@@ -240,7 +240,7 @@
     { category: "Recht", subcategory: "Grundgesetz", question: "Welches Grundrecht schützt die freie Meinungsäußerung in Deutschland?", options: [ "Artikel 5 GG", "Artikel 1 GG", "Artikel 12 GG", "Artikel 9 GG" ] },
     { category: "Recht", subcategory: "StGB", question: "Was ist unter Unterlassen nach § 13 StGB zu verstehen?", options: [ "Wer es unterlässt, einen Erfolg abzuwenden, der zum Tatbestand eines Strafgesetzes gehört, ist strafbar, wenn er rechtlich dafür einzustehen hat (Garantenstellung).", "Jedes Zuspätkommen zur Schicht.", "Das Nichtabnehmen des Telefons.", "Das Auslassen einer Kontrollrunde ohne Konsequenz." ] },
     { category: "Recht", subcategory: "BGB", question: "Was ist eine Willenserklärung?", options: [ "Die Äußerung eines auf die Herbeiführung eines rechtlichen Erfolgs gerichteten Willens.", "Eine Absichtserklärung im Sportverein.", "Ein mündlicher Befehl des Vorgesetzten.", "Ein polizeilicher Platzverweis." ] },
-    { category: "Recht", subcategory: "StPO", question: "Wer ist im Ermittlungsverfahren Herr des Verfahrens?", options: [ "Die Staatsanwaltschaft", "Die Polizei", "Der Beschuldigete", "Das private Sicherheitsunternehmen" ] },
+    { category: "Recht", subcategory: "StPO", question: "Wer ist im Ermittlungsverfahren Herr des Verfahrens?", options: [ "Die Staatsanwaltschaft", "Die Polizei", "Der Beschuldigte", "Das private Sicherheitsunternehmen" ] },
     { category: "Recht", subcategory: "OWiG", question: "Welches Organ verfolgt Ordnungswidrigkeiten primär?", options: [ "Die Verwaltungsbehörde (und im Rahmen des fließenden Verkehrs/Aufgabe auch die Polizei).", "Ausschließlich das Landgericht.", "Der Bundesgerichtshof.", "Das Arbeitsamt." ] },
     { category: "Recht", subcategory: "Handelsrecht", question: "Was ist ein Prokurist?", options: [ "Ein Bevollmächtigter, der eine Handelsgesellschaft gerichtlich und außergerichtlich umfassend vertreten darf (mit gesetzlich festgelegten Ausnahmen).", "Ein einfacher Sachbearbeiter in der Poststelle.", "Der Inhaber des Sicherheitsdienstes.", "Ein externer Wirtschaftsprüfer." ] },
     { category: "Sicherheitstechnik", subcategory: "Einbruchmeldeanlagen", question: "Was ist ein Passiv-Infrarot-Melder (PIR)?", options: [ "Ein Bewegungsmelder, der auf die Infrarot-Wärmestrahlung von sich bewegenden Körpern reagiert.", "Ein Melder, der aktiv Infrarotstrahlen aussendet und misst.", "Ein Melder für Glasbruch.", "Ein Feuermelder für offene Flammen." ] },
@@ -266,14 +266,12 @@
   ];
 
   // =========================================================================
-  // FIX: AUTOMATISCHES MISCHEN DER ANTWORTEN BEIM LADEN
+  // AUTOMATISCHES MISCHEN DER ANTWORTEN BEIM LADEN
   // =========================================================================
   let gssk100Pool = rawGsskPool.map(item => {
-    // Kopiere Optionen und merke dir, welcher Text die korrekte Antwort war (Index 0)
     let optionsCopy = [...item.options];
     let correctText = optionsCopy[0];
     
-    // Mische das Array per Fisher-Yates Algorithmus
     for (let i = optionsCopy.length - 1; i > 0; i--) {
       let j = Math.floor(Math.random() * (i + 1));
       [optionsCopy[i], optionsCopy[j]] = [optionsCopy[j], optionsCopy[i]];
@@ -284,7 +282,7 @@
       subcategory: item.subcategory,
       question: item.question,
       options: optionsCopy,
-      correct: correctText // Speichert den exakten Text als korrekte Lösung unabhängig vom Index
+      correct: correctText
     };
   });
 
@@ -304,7 +302,6 @@
 
   // Quiz State
   let currentQuizIndex = 0;
-  let quizAnswers = {};
 
   // Real Exam State
   let examQuestions = [];
@@ -350,7 +347,7 @@
     
     document.getElementById('explanation').style.display = 'none';
 
-    q.optionsforEach((opt, idx) => {
+    q.options.forEach((opt) => {
       const btn = document.createElement('button');
       btn.className = 'btn-option';
       btn.innerText = opt;
@@ -382,7 +379,6 @@
 
   // --- IHK REAL EXAM SIMULATION LOGIC ---
   function startRealExam() {
-    // Shuffle pool and take 30
     let shuffledPool = [...gssk100Pool].sort(() => 0.5 - Math.random());
     examQuestions = shuffledPool.slice(0, 30);
     currentExamIndex = 0;
@@ -428,7 +424,7 @@
       btn.innerText = opt;
       btn.onclick = () => {
         examAnswers[currentExamIndex] = opt;
-        loadExamQuestion(); // Refresh selection view
+        loadExamQuestion();
       };
       container.appendChild(btn);
     });
@@ -501,7 +497,7 @@
   // --- LAW CASES RENDERER ---
   function renderLawCases() {
     const container = document.getElementById('caseContainer');
-    if (container.children.length > 0) return; // already rendered
+    if (container.children.length > 0) return;
 
     lawCases.forEach((c, idx) => {
       const card = document.createElement('div');
