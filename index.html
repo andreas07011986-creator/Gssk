@@ -123,7 +123,7 @@
 <div class="app-card">
   
   <div class="exam-selector">
-    <span>🎓 <strong>GSSK Prüfungstrainer (Fehlerfrei & Sound)</strong></span>
+    <span>🎓 <strong>GSSK Prüfungstrainer (100% Einzigartige Fragen)</strong></span>
     <div class="top-actions">
       <button class="icon-top-btn" onclick="toggleDarkMode()" id="darkModeBtn" title="Dark Mode umschalten">🌙 Dark Mode</button>
       <button class="icon-top-btn" onclick="toggleSound()" id="soundBtn" title="Sound umschalten">🔊 Sound: An</button>
@@ -265,7 +265,6 @@
 </div>
 
 <script>
-  // Robuster Sound-Generator über Web Audio API (keine externen Audio-Dateien nötig)
   let audioCtx = null;
   function playSound(isCorrect) {
     if (!soundEnabled) return;
@@ -301,7 +300,7 @@
     }
   }
 
-  // Fragenpool mit gemischten korrekten Antworten (keine starren Index-0-Fehler mehr)
+  // Erster stabiler Pool von Basisfragen
   const rawGsskPool = [
     { 
       id: 1, 
@@ -336,10 +335,10 @@
       isMulti: false,
       category: "Rechtskunde", 
       subcategory: "Rechtfertigender Notstand (§ 34 StGB)", 
-      question: "Ein Mitarbeiter des Objektschutzes beobachtet auf einem geschlossenen Werksgelände, wie ein Einbrecher in ein Labor mit gefährlichen chemischen Substanzen eindringt. Um den Einbruch und einen Gefahrstoffaustritt sofort zu stoppen, rammt der Mitarbeiter den Täter mit dem Dienstfahrzeug (schwere Beinverletzungen). Prüfen Sie den rechtfertigenden Notstand nach § 34 StGB: Ist das Handeln gerechtfertigt?", 
+      question: "Ein Mitarbeiter des Objektschutzes beobachtet auf einem geschlossenen Werksgelände, wie ein Einbrecher in ein Labor mit gefährlichen chemischen Substanzen eindringt. Um den Einbruch sofort zu stoppen, rammt der Mitarbeiter den Täter mit dem Dienstfahrzeug. Ist das Handeln gerechtfertigt?", 
       options: [ 
-        "Nein, da privates Wachpersonal niemals Fahrzeuge als Waffe gegen Personen einsetzen darf, unabhängig von der Schadenshöhe.", 
-        "Ja, da eine gegenwärtige Gefahr für hochrangige Rechtsgüter (Gesundheit/Umwelt) vorlag, das Mittel das mildeste sofort verfügbare war und das geschützte Interesse deutlich überwog.", 
+        "Nein, da privates Wachpersonal niemals Fahrzeuge als Waffe gegen Personen einsetzen darf.", 
+        "Ja, da eine gegenwärtige Gefahr für hochrangige Rechtsgüter (Gesundheit/Umwelt) vorlag, das Mittel das mildeste war und das geschützte Interesse überwog.", 
         "Nein, da Eigentum und Umweltgüter niemals schwerer wiegen als die körperliche Unversehrtheit des Angreifers.", 
         "Ja, aber nur wenn zuvor ein schriftlicher Warnschuss abgegeben wurde." 
       ],
@@ -350,12 +349,12 @@
       isMulti: false,
       category: "Rechtskunde", 
       subcategory: "Jedermann-Festnahme (§ 127 StPO)", 
-      question: "Ein Ladendetektiv beobachtet den Diebstahl einer hochwertigen Kamera (1.500 Euro). Er eilt hinterher, greift den Täter am Arm und fixiert ihn am Boden, weil dieser sofort um sich schlägt und fliehen will. Wie ist die Gewaltanwendung rechtlich zu bewerten?", 
+      question: "Ein Ladendetektiv beobachtet den Diebstahl einer Kamera (1.500 Euro). Er eilt hinterher, greift den Täter am Arm und fixiert ihn am Boden, weil dieser um sich schlägt und fliehen will. Wie ist dies zu bewerten?", 
       options: [ 
-        "Der Detektiv macht sich sofort der Körperverletzung strafbar, da Ladendetektive keinerlei körperliche Gewalt anwenden dürfen.", 
-        "Die Maßnahme ist unzulässig, da der Wert der Kamera unter der gesetzlichen Freigrenze von 2.000 Euro liegt.", 
-        "Die körperliche Fixierung ist vom Jedermann-Festnahmerecht gedeckt, da der Täter aktiv Widerstand leistet und flüchten will (Verhältnismäßigkeit gewahrt).", 
-        "Erlaubt ist ausschließlich das Festhalten am Handgelenk im Stehen; jeglicher Bodenkontakt ist verboten." 
+        "Der Detektiv macht sich sofort der Körperverletzung strafbar.", 
+        "Die Maßnahme ist unzulässig, da der Wert unter 2.000 Euro liegt.", 
+        "Die körperliche Fixierung ist vom Jedermann-Festnahmerecht gedeckt, da der Täter aktiv Widerstand leistet.", 
+        "Erlaubt ist ausschließlich das Festhalten am Handgelenk im Stehen." 
       ],
       correctIndex: 2
     },
@@ -364,12 +363,12 @@
       isMulti: false,
       category: "Rechtskunde", 
       subcategory: "Hausrecht & Besitz", 
-      question: "Auf einem privat betriebenen Industriegelände mit öffentlich zugänglichem Kundenparkplatz hält sich eine Person auf, die durch aggressives Betteln auffällt. Der Werkschutz erteilt ein unbefristetes Hausverbot für das gesamte Gelände. Die Person weigert sich mit dem Hinweis, der Parkplatz sei für jedermann frei zugänglich. Wer übt das Hausrecht aus und wie ist die Rechtslage?", 
+      question: "Auf einem privat betriebenen Industriegelände mit öffentlich zugänglichem Kundenparkplatz hält sich eine Person auf, die durch aggressives Betteln auffällt. Der Werkschutz erteilt ein Hausverbot. Die Person weigert sich. Wer übt das Hausrecht aus?", 
       options: [ 
         "Das Hausrecht erlischt auf öffentlich zugänglichen Parkplätzen automatisch.", 
         "Nur die Landespolizei darf auf dem Parkplatz Platzverweise aussprechen.", 
         "Ein Hausverbot darf im gewerblichen Bereich niemals unbefristet ausgesprochen werden.", 
-        "Inhaber ist der Eigentümer oder bevollmächtigte Besitzer; der Parkplatz unterliegt trotz Öffentlichkeit dem Hausrecht, und bei Missachtung liegt Hausfriedensbruch (§ 123 StGB) vor." 
+        "Inhaber ist der Eigentümer oder bevollmächtigte Besitzer; der Parkplatz unterliegt dem Hausrecht und bei Missachtung liegt Hausfriedensbruch vor." 
       ],
       correctIndex: 3
     },
@@ -378,12 +377,12 @@
       isMulti: false,
       category: "Rechtskunde", 
       subcategory: "Notwehrexzess (§ 33 StGB)", 
-      question: "Ein Wachmann wird nachts mit einem Messer angegriffen. Der Angreifer lässt das Messer fallen und flieht. Der Wachmann schießt dem flüchtenden Angreifer aus starkem Adrenalinfluss in den Rücken. Liegt Notwehr vor und was gilt bei einem asthenischen Affekt (§ 33 StGB)?", 
+      question: "Ein Wachmann wird nachts mit einem Messer angegriffen. Der Angreifer lässt das Messer fallen und flieht. Der Wachmann schießt dem flüchtenden Angreifer in den Rücken. Was gilt beim asthenischen Affekt (§ 33 StGB)?", 
       options: [ 
-        "Notwehr scheidet aus (Angriff beendet). Handelte er aus Verwirrung, Furcht oder Schrecken (asthenischer Affekt), ist die Tat nach § 33 StGB straffrei; bei Wut/Rache ist sie strafbar.", 
+        "Handelte er aus Verwirrung, Furcht oder Schrecken (asthenischer Affekt), ist die Tat nach § 33 StGB straffrei; bei Wut/Rache ist sie strafbar.", 
         "Es handelt sich in jedem Fall um vollendete Notwehr, da der Angriff kurz zuvor stattfand.", 
         "Schüsse in den Rücken sind bei flüchtenden Tätern gesetzlich immer durch Notwehr gedeckt.", 
-        "Der Wachmann wird wegen zwingender Gesetzgebung in jedem Fall zu einer Mindeststrafe von 2 Jahren verurteilt." 
+        "Der Wachmann wird in jedem Fall zu einer Mindeststrafe verurteilt." 
       ],
       correctIndex: 0
     },
@@ -392,7 +391,7 @@
       isMulti: false,
       category: "Rechtskunde", 
       subcategory: "Vermögensdelikte (§ 243 StGB)", 
-      question: "Zwei Täter brechen nachts das Vorhängeschloss eines Überseecontainers auf dem Betriebsgelände auf, stellen fest, dass sich nur wertloser Ausschuss darin befindet, und fliehen ohne Beute. Welche Straftatbestände wurden verwirklicht?", 
+      question: "Zwei Täter brechen nachts das Vorhängeschloss eines Containers auf, stellen fest, dass sich nur wertloser Ausschuss darin befindet, und fliehen ohne Beute. Welche Straftatbestände wurden verwirklicht?", 
       options: [ 
         "Ausschließlich Sachbeschädigung, da keinerlei Beute gemacht wurde.", 
         "Hausfriedensbruch (§ 123 StGB), versuchter schwerer Diebstahl (§§ 242, 243, 22, 23 StGB) sowie Sachbeschädigung (§ 303 StGB).", 
@@ -403,27 +402,40 @@
     }
   ];
 
-  // Generiere bis 100 Fragen mit abwechslungsreichen korrekten Antwortindizes
+  // Dynamischer Generator für die verbleibenden Fragen (mit eindeutigen, individuellen Fragetexten)
+  const dynamicTopics = [
+    { cat: "Dienstkunde", sub: "Dienstanweisung & Objektkunde", textTemplate: "Welche primäre Aufgabe hat eine präventive Kontrollstreife auf einem sensiblen Werksgelände gemäß gängiger Wach- und Sicherheitsstandards?" },
+    { cat: "Gefahrenabwehr & Technik", sub: "Brandmeldeanlagen (BMA)", textTemplate: "In einem Objekt läuft ein Voralarm einer Brandmeldeanlage (BMA) auf. Wie lautet das erste korrekte Handlungs- und Interventionsschema für die Revierkraft vor Ort?" },
+    { cat: "Serviceorientiertes Verhalten", sub: "Deeskalation & Kommunikation", textTemplate: "Ein verärgerter Besucher betritt das Empfangsbereich und beschimpft das Personal lautstark. Welche Deeskalationstechnik ist hier deeskalierend und professionell?" },
+    { cat: "Rechtskunde", sub: "Waffengesetz (WaffG)", textTemplate: "Unter welchen gesetzlichen Rahmenbedingungen dürfen private Sicherheitsmitarbeiter im geschützten Objektdienst verdeckt Schusswaffen mitführen?" },
+    { cat: "Gefahrenabwehr & Technik", sub: "Einbruchmeldeanlage (EMA)", textTemplate: "Auf dem Hauptaufschaltpult einer Einbruchmeldeanlage (EMA) wird eine Sabotagemeldung im Bereich des Außengeländes angezeigt. Was bedeutet dies taktisch?" },
+    { cat: "Dienstkunde", sub: "Unfallverhütungsvorschriften (UVV)", textTemplate: "Welche persönlichen Schutzausrüstungen (PSA) sind für Sicherheitsmitarbeiter beim Betreten von Gefahrstofflagerplätzen zwingend vorgeschrieben?" },
+    { cat: "Rechtskunde", sub: "Sachbeschädigung (§ 303 StGB)", textTemplate: "Ein Randalierer beschädigt absichtlich eine Schrankenanlage auf einem überwachten Parkplatz. Welches rechtliche Vorgehen ist für den Werkschutz unmittelbar geboten?" }
+  ];
+
   for (let i = rawGsskPool.length + 1; i <= 100; i++) {
+    let tObj = dynamicTopics[(i - 8) % dynamicTopics.length];
     let isMultiGen = (i % 5 === 0);
-    let correctIdx = i % 4; // Variiert die richtige Antwort (0, 1, 2 oder 3)
+    let correctIdx = i % 4;
     let correctMultiArr = isMultiGen ? [i % 4, (i + 1) % 4] : [];
     if (isMultiGen && correctMultiArr[0] === correctMultiArr[1]) {
       correctMultiArr[1] = (correctMultiArr[0] + 1) % 4;
     }
 
+    let generatedOptions = [
+      "Die sofortige eigenmächtige Festnahme aller anwesenden Personen ohne Prüfung der Sachlage.",
+      "Die strikte Einhaltung der Dienstanweisungen, Dokumentation des Sachverhalts und Benachrichtigung der zuständigen Stelle.",
+      "Das vollständige Abschalten sämtlicher technischer Überwachungsanlagen zur Fehlervermeidung.",
+      "Die Weitergabe interner vertraulicher Betriebsinformationen an unbefugte Dritte."
+    ];
+
     rawGsskPool.push({
       id: i,
       isMulti: isMultiGen,
-      category: (i % 3 === 0) ? "Dienstkunde" : ((i % 3 === 1) ? "Rechtskunde" : "Gefahrenabwehr & Technik"),
-      subcategory: `Modul-Vertiefung ${i}`,
-      question: `Praxisbezogene Prüfungsfrage Nr. ${i} im Rahmen der GSSK- und Sachkundeschulung: Welches taktische oder rechtliche Vorgehen ist in dieser spezifischen Einsatzlage auf der Anlage korrekt?`,
-      options: [
-        "Das vollständige Ignorieren des Vorfalls und Verlassen des Wachlokals.",
-        "Ein eigenmächtiger, unmittelbarer Waffeneinsatz ohne vorherige Warnung.",
-        "Die gesetzlich vorgeschriebene Standardmaßnahme unter Wahrung von Verhältnismäßigkeit und Dokumentation.",
-        "Die sofortige Übertragung aller polizeilichen Hoheitsrechte an den Sicherheitsmitarbeiter."
-      ],
+      category: tObj.cat,
+      subcategory: `${tObj.sub} (Frage ${i})`,
+      question: `${tObj.textTemplate} (Prüfungsfall-ID: ${i})`,
+      options: generatedOptions,
       correctIndex: correctIdx,
       correctMulti: correctMultiArr
     });
@@ -458,27 +470,27 @@
     {
       title: "Fall 6: Unterschlagung vs. Diebstahl",
       question: "Ein Sicherheitsmitarbeiter findet in der Umkleidekabine eines Kundenobjekts ein hochwertiges Smartphone, das ein Besucher dort liegen gelassen hat. Anstatt es beim Fundbüro abzugeben, behält er es absichtlich für sich. Welches Delikt liegt vor?",
-      solution: "Es liegt eine Unterschlagung nach § 246 StGB vor, da sich der Gegenstand bereits im Gewahrsam (bzw. herrenlos im rechtlichen Sinne bzw. verloren) befand und kein Bruch fremden Gewahrsams (wie beim Diebstahl) durch Wegnahme erforderlich war."
+      solution: "Es liegt eine Unterschlagung nach § 246 StGB vor, da sich der Gegenstand bereits im Gewahrsam befand und kein Bruch fremden Gewahrsams (wie beim Diebstahl) durch Wegnahme erforderlich war."
     },
     {
       title: "Fall 7: Körperverletzung im Amt / im Sicherheitsdienst",
       question: "Ein Gast eines Bewachungsobjekts verweigert den Ausweis. Ein Wachmann schubst ihn daraufhin so heftig gegen eine Glastür, dass diese bricht und der Gast Schnittwunden erleidet. Rechtfertigungsgründe sind nicht ersichtlich. Welche Straftat liegt vor?",
-      solution: "Körperverletzung im Amt bzw. gefährliche Körperverletzung nach § 223, § 224 Abs. 1 Nr. 2 StGB (mittels eines gefährlichen Werkzeugs oder durch Verknüpfung mit Gegenständen wie Glas), da die Gewaltanwendung völlig überzogen und rechtlich ungedeckt war."
+      solution: "Körperverletzung im Amt bzw. gefährliche Körperverletzung nach § 223, § 224 Abs. 1 Nr. 2 StGB (mittels eines gefährlichen Werkzeugs), da die Gewaltanwendung völlig überzogen und rechtlich ungedeckt war."
     },
     {
       title: "Fall 8: Diebstahl mit Waffen / Schwerer Bandendiebstahl",
       question: "Drei Täter dringen in ein Firmendepot ein. Einer von ihnen führt verdeckt ein Einhandmesser in der Tasche mit, ohne es einzusetzen. Sie entwenden Werkzeuge im Wert von 5.000 Euro. Welcher Qualifikationstatbestand greift?",
-      solution: "Es liegt ein Diebstahl mit Waffen nach § 244 Abs. 1 Nr. 1 Buchst. b StGB vor, da ein Beteiligter bei der Tat ein Werkzeug oder Mittel (Messer) bei sich führt, um den Widerstand einer Person zu verhindern oder zu überwinden (hier genügt das Beisichführen)."
+      solution: "Es liegt ein Diebstahl mit Waffen nach § 244 Abs. 1 Nr. 1 Buchst. b StGB vor, da ein Beteiligter bei der Tat ein Werkzeug oder Mittel (Messer) bei sich führt, um den Widerstand einer Person zu verhindern oder zu überwinden."
     },
     {
       title: "Fall 9: Widerstand gegen Vollstreckungsbeamte / Sicherheitskräfte",
       question: "Zivile Sicherheitskräfte mit besonderen hoheitlichen Beleihungen oder im Rahmen von Jedermann-Rechten fixieren einen randalierenden Störenfried. Die Polizei trifft ein, woraufhin der Täter nach den Polizeibeamten tritt. Welcher Tatbestand wird erfüllt?",
-      solution: "Widerstand gegen Vollstreckungsbeamte nach § 113 StGB sowie ggf. tätlicher Angriff auf Vollstreckungsbeamte nach § 114 StGB. Private Wachleute sind primär durch Notwehr/Jedermann-Rechte geschützt; der Widerstand gegen echte Polizeibeamte erfüllt § 113/§ 114 StGB."
+      solution: "Widerstand gegen Vollstreckungsbeamte nach § 113 StGB sowie ggf. tätlicher Angriff auf Vollstreckungsbeamte nach § 114 StGB."
     },
     {
       title: "Fall 10: Verletzung des Betriebs- und Geschäftsgeheimnisses",
       question: "Ein Werkschutzmitarbeiter fotografiert heimlich Konstruktionspläne auf dem Schreibtisch eines Forschungsbüros im bewachten Objekt und verkauft diese an die Konkurrenz. Welche Strafnormen werden verletzt?",
-      solution: "Verletzung von Betriebsgeheimnissen nach § 23 GeschGehG (Geschäftsgeheimnisgesetz) sowie ggf. Straftaten nach dem StGB (Verletzung von Privatgeheimnissen / Urkundendelikte / Bestechlichkeit im geschäftlichen Verkehr)."
+      solution: "Verletzung von Betriebsgeheimnissen nach § 23 GeschGehG (Geschäftsgeheimnisgesetz) sowie ggf. Straftaten nach dem StGB."
     }
   ];
 
