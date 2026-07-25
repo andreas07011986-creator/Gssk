@@ -72,6 +72,12 @@
 
     .review-item { padding: 10px; margin-bottom: 10px; border-radius: 6px; border-left: 4px solid; }
     .review-correct { background: #e6f4ea; border-color: #34a853; }
+
+    /* Statistik-Dashboard Styles */
+    .stat-container { display: flex; flex-direction: column; gap: 12px; margin: 20px 0; text-align: left; }
+    .stat-bar-wrapper { background: #e9ecef; border-radius: 6px; overflow: hidden; height: 22px; position: relative; display: flex; align-items: center; }
+    .stat-bar-fill { background: #28a745; height: 100%; transition: width 0.4s ease; }
+    .stat-bar-text { position: absolute; width: 100%; text-align: center; font-size: 0.8rem; font-weight: bold; color: #333; }
   </style>
 </head>
 <body>
@@ -113,12 +119,16 @@
     </div>
 
     <!-- QUIZ FINISH SCREEN -->
-    <div id="quizFinishedScreen" class="hidden" style="text-align: center; padding: 30px 10px;">
+    <div id="quizFinishedScreen" class="hidden" style="text-align: center; padding: 20px 10px;">
       <h2>🏆 Geschafft!</h2>
-      <p style="color: #555; font-size: 1.1rem; margin-bottom: 20px;">
-        Sie haben alle 100 Fragen des Quiz-Modus durchgearbeitet.
+      <p style="color: #555; font-size: 1.1rem; margin-bottom: 10px;">
+        Sie haben alle Fragen des Quiz-Modus durchgearbeitet. Hier ist Ihre detaillierte Defizit-Analyse nach Themengebieten:
       </p>
-      <button class="btn-action" style="font-size: 1.1rem; padding: 12px 25px;" onclick="restartQuiz()">🔄 Quiz von vorne beginnen</button>
+      
+      <!-- STATISTIK BEREICH -->
+      <div id="statDashboard" class="stat-container"></div>
+
+      <button class="btn-action" style="font-size: 1.1rem; padding: 12px 25px; margin-top: 15px;" onclick="restartQuiz()">🔄 Quiz von vorne beginnen</button>
     </div>
   </div>
 
@@ -274,9 +284,10 @@
     { category: "Wirtschaft", subcategory: "Unternehmen", question: "Was ist ein Asset Protection Plan?", options: [ "Ein systematischer Plan zum Schutz von materiellen und immateriellen Werten (Assets) eines Unternehmens.", "Ein Finanzplan für Steuern.", "Ein Urlaubsplan für Mitarbeiter.", "Ein Einkaufsplan für Büromaterial." ] }
   ];
 
-  // Dynamischer Pool mit gemischten Antworten
+  // Dynamischer Pool mit gemischten Antworten und Statistik-Tracking
   let gssk100Pool = [];
   let currentQuizIndex = 0;
+  let categoryStats = {}; // Speichert { Kategorie: { total: 0, correct: 0 } }
 
   function initQuizPool() {
     gssk100Pool = rawGsskPool.map(item => {
@@ -295,6 +306,15 @@
         options: optionsCopy,
         correct: correctText
       };
+    });
+
+    // Statistiken zurücksetzen
+    categoryStats = {};
+    gssk100Pool.forEach(q => {
+      if (!categoryStats[q.category]) {
+        categoryStats[q.category] = { total: 0, correct: 0 };
+      }
+      categoryStats[q.category].total++;
     });
   }
 
@@ -359,12 +379,12 @@
       const btn = document.createElement('button');
       btn.className = 'btn-option';
       btn.innerText = opt;
-      btn.onclick = () => checkQuizAnswer(opt, q.correct, btn, optionsContainer);
+      btn.onclick = () => checkQuizAnswer(opt, q.correct, btn, optionsContainer, q.category);
       optionsContainer.appendChild(btn);
     });
   }
 
-  function checkQuizAnswer(selectedOpt, correctOpt, btnElement, container) {
+  function checkQuizAnswer(selectedOpt, correctOpt, btnElement, container, category) {
     const buttons = container.getElementsByClassName('btn-option');
     for (let b of buttons) {
       b.disabled = true;
@@ -372,7 +392,10 @@
         b.classList.add('correct');
       }
     }
-    if (selectedOpt !== correctOpt) {
+    
+    if (selectedOpt === correctOpt) {
+      categoryStats[category].correct++;
+    } else {
       btnElement.classList.add('wrong');
     }
     
@@ -384,9 +407,42 @@
     currentQuizIndex++;
     if (currentQuizIndex >= gssk100Pool.length) {
       document.getElementById('quizContentArea').classList.add('hidden');
+      renderStatDashboard();
       document.getElementById('quizFinishedScreen').classList.remove('hidden');
     } else {
       loadQuizQuestion();
+    }
+  }
+
+  function renderStatDashboard() {
+    const dashboard = document.getElementById('statDashboard');
+    dashboard.innerHTML = '';
+
+    for (let cat in categoryStats) {
+      const stats = categoryStats[cat];
+      const percentage = stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0;
+      
+      let barColor = '#28a745'; // Grün bei gutem Ergebnis
+      let statusText = 'Gut';
+      if (percentage < 50) {
+        barColor = '#dc3545'; // Rot bei starkem Defizit
+        statusText = 'Hohes Defizit';
+      } else if (percentage < 75) {
+        barColor = '#ffc107'; // Gelb bei mittlerem Stand
+        statusText = 'Ausbaufähig';
+      }
+
+      const item = document.createElement('div');
+      item.innerHTML = `
+        <div style="display: flex; justify-content: space-between; font-size: 0.9rem; font-weight: bold; margin-bottom: 3px;">
+          <span>${cat}</span>
+          <span>${stats.correct} von ${stats.total} richtig (${percentage}%) – <span style="color: ${barColor}">${statusText}</span></span>
+        </div>
+        <div class="stat-bar-wrapper">
+          <div class="stat-bar-fill" style="width: ${percentage}%; background-color: ${barColor};"></div>
+        </div>
+      `;
+      dashboard.appendChild(item);
     }
   }
 
