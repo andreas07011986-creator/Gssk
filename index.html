@@ -81,7 +81,7 @@
   
   <div class="exam-selector">
     <span>🎓 <strong>Aktueller Prüfungsmodus:</strong> GSSK (Geprüfte Schutz- und Sicherheitskraft)</span>
-    <span>📊 <strong>Fragenpool:</strong> 100 Original-Fragen</span>
+    <span>📊 <strong>Fragenpool:</strong> 100 Original-Fragen (Antworten zufällig gemischt)</span>
   </div>
 
   <div class="tab-nav">
@@ -158,9 +158,10 @@
 
 <script>
   // =========================================================================
-  // 100 GSSK IHK-PRÜFUNGSFRAGEN (Index 0 in "options" ist IMMER die richtige Antwort)
+  // DATENBANK: 100 GSSK IHK-PRÜFUNGSFRAGEN
+  // (Im Rohdaten-Array ist index [0] immer die korrekte Antwort)
   // =========================================================================
-  const gssk100Pool = [
+  const rawGsskPool = [
     { category: "Recht", subcategory: "StPO § 127 Abs. 1", question: "Wann ist eine vorläufige Festnahme nach § 127 Abs. 1 StPO durch privates Sicherheitspersonal zulässig?", options: [ "Wenn eine Person auf frischer Tat angetroffen wird, Fluchtgefahr vorliegt und die Identität nicht sofort festgestellt werden kann.", "Ausschließlich dann, wenn die Polizei telefonisch zustimmt.", "Sobald ein Verdacht vom Vortag vorliegt.", "Zu jeder Zeit auf dem Werksgelände." ] },
     { category: "Recht", subcategory: "StGB § 32", question: "Welche Voraussetzungen müssen für die Notwehr nach § 32 StGB vorliegen?", options: [ "Ein gegenwärtiger, rechtswidriger Angriff und eine gebotene Verteidigungshandlung.", "Eine Genehmigung der Behörde.", "Gefahr für das eigene Leben in der Zukunft.", "Eine vorherige Aufforderung zur Einstellung des Angriffs." ] },
     { category: "Recht", subcategory: "BGB § 859", question: "Welche Befugnisse gewährt die Besitzwehr nach § 859 Abs. 1 BGB dem Wachpersonal?", options: [ "Sich gegen verbotene Eigenmacht mit Gewalt zu wehren, ohne das Übermaßverbot zu verletzen.", "Eigenmächtig in Wohnungen einzudringen.", "Dauerhafte Freiheitsentziehung von Straftätern.", "Ausschließlich die Polizei zu rufen." ] },
@@ -191,429 +192,345 @@
     { category: "Sicherheitstechnik", subcategory: "EMA", question: "Was bedeutet die Abkürzung VdS im Bereich der Sicherheitstechnik?", options: [ "Schadenverhütung GmbH (früher Verband der Sachversicherer).", "Verband deutscher Sicherheitsunternehmer.", "Vereinigung digitaler Schutzsysteme.", "Verordnung deutscher Sicherheitsstandards." ] },
     { category: "Sicherheitstechnik", subcategory: "Schließtechnik", question: "Was ist ein gleichschließender Zylinder?", options: [ "Ein Zylinder, bei dem mehrere Schlösser mit genau demselben Schlüssel bedient werden können.", "Ein Schloss ohne mechanischen Schlüssel.", "Ein digitaler Panikverschluss.", "Ein Zylinder mit integrierter Alarmanlage." ] },
     { category: "Sicherheitstechnik", subcategory: "Notstrom", question: "Warum ist eine Notstromversorgung (USV/Netzteil) für Sicherheitssysteme vorgeschrieben?", options: [ "Um bei einem Stromausfall die Funktion von EMA, BMA und Zutrittskontrolle sicherzustellen.", "Damit Lampen nachts heller leuchten.", "Um Stromkosten zu sparen.", "Zur Kühlung von Servern." ] },
-    { category: "Wirtschaft", subcategory: "Unternehmenssicherheit", question: "Was versteht man unter Corporate Security?", options: [ "Die ganzheitliche Sicherheitsstrategie eines Unternehmens zum Schutz von Personen, Werten, Know-how und Reputation.", "Der Werkschutz am Werkstor.", "Die IT-Firewall des Unternehmens.", "Die Versicherungspolice gegen Einbruch." ] },
-    { category: "Wirtschaft", subcategory: "Wirtschaftskriminalität", question: "Was ist Industriespionage?", options: [ "Das gezielte, meist illegale Ausspähen von Betriebsgeheimnissen und Know-how durch Konkurrenten oder ausländische Dienste.", "Der Diebstahl von Büromaterial durch Mitarbeiter.", "Das illegale Kopieren von Musik-CDs.", "Das Hacken von Social-Media-Accounts." ] },
-    { category: "Wirtschaft", subcategory: "Qualität", question: "Welche DIN-Norm ist für Sicherheitsdienstleister international am bekanntesten für Qualitätsmanagement?", options: [ "DIN EN ISO 9001", "DIN 14001", "DIN 77200", "DIN 50005" ] },
-    { category: "Wirtschaft", subcategory: "Normung", question: "Welche deutsche Norm regelt speziell die Qualitätsanforderungen an Sicherheitsdienstleistungen?", options: [ "DIN 77200", "DIN ISO 9001", "DIN VDE 0833", "DIN 14675" ] },
-    { category: "Wirtschaft", subcategory: "Kostenrechnung", question: "Was sind fixe Kosten im Sicherheitsunternehmen?", options: [ "Kosten, die unabhängig von der Auslastung oder Schichtanzahl konstant anfallen (z.B. Miete, Grundgehälter).", "Kosten für Sonderstreifen.", "Verbrauchsmaterial für Taschenlampen.", "Überstundenzuschläge." ] },
-    { category: "Wirtschaft", subcategory: "Kalkulation", question: "Was versteht man im Bewachungsgewerbe unter dem Stundensatz?", options: [ "Der Betrag, den der Kunde pro eingesetzte Wachperson und Stunde in Rechnung gestellt bekommt.", "Der reine Bruttolohn des Mitarbeiters.", "Die Steuerabgabe an die Gemeinde.", "Die Versicherungsgebühr." ] },
-    { category: "Wirtschaft", subcategory: "Controlling", question: "Was ist eine Soll-Ist-Analyse?", options: [ "Der Vergleich zwischen geplanten Vorgaben (Soll) und tatsächlichen Ergebnissen (Ist).", "Die Zählung von Streifengängen.", "Die Überprüfung der Waffenschränke.", "Die Kontrolle der Urlaubsanträge." ] },
-    { category: "Wirtschaft", subcategory: "Arbeitssicherheit", question: "Wer ist im Unternehmen für den Arbeitsschutz und die Unfallverhütung primär verantwortlich?", options: [ "Der Arbeitgeber (unter Mitwirkung von Fachkräften für Arbeitssicherheit und Betriebsärzten).", "Ausschließlich die Berufsgenossenschaft.", "Jeder Mitarbeiter nur für sich.", "Der Sicherheitsdienstleister vor Ort." ] },
-    { category: "Wirtschaft", subcategory: "Compliance", question: "Was bedeutet Compliance im unternehmerischen Kontext?", options: [ "Die Einhaltung von Gesetzen, Richtlinien und freiwilligen Kodizes im Unternehmen.", "Das Einhalten von Pausenzeiten.", "Die Bezahlung nach Tarif.", "Das Tragen der Dienstkleidung." ] },
-    { category: "Wirtschaft", subcategory: "Krisenmanagement", question: "Was ist der Zweck eines Krisenstabes?", options: [ "Die koordinierte Bewältigung von außergewöhnlichen Schadenslagen oder Krisen, die den Geschäftsbetrieb bedrohen.", "Die Planung von Betriebsfeiern.", "Die Schichtplanung für das Wochenende.", "Die Überprüfung der Lohnabrechnung." ] },
-    { category: "Organisation", subcategory: "Objektschutz", question: "Welche Aufgabe hat der Kontrolldienst (Revierdienst)?", options: [ "Das regelmäßige Abfahren und Kontrollieren verschiedener Objekte und Sicherungspunkte.", "Die dauerhafte Überwachung eines Einzeltors.", "Die Bearbeitung der Buchhaltung.", "Die Durchführung von Personenkontrollen am Flughafen." ] },
-    { category: "Organisation", subcategory: "Dienstkunde", question: "Was ist ein Wachbuch?", options: [ "Ein offizielles Dokumentationsbuch, in dem alle sicherheitsrelevanten Vorkommnisse, Schichtwechsel und Besonderheiten lückenlos protokolliert werden.", "Ein Notizblock für private Telefonnummern.", "Das Fahrtenbuch des Dienstautos.", "Eine Liste der Telefonnummern der Polizei." ] },
-    { category: "Organisation", subcategory: "Kommunikation", question: "Welche Grundregeln gelten im Sprechfunkverkehr (BOS/Betriebsfunk)?", options: [ "Kurz, präzise, diszipliniert sprechen; offizielle Rufnamen verwenden; vor dem Sprechen die Sendetaste kurz drücken.", "Lange Unterhaltungen über Privates führen.", "Laut und schnell sprechen.", "Funkgeräte niemals ausschalten." ] },
-    { category: "Organisation", subcategory: "Evakuierung", question: "Was ist die Hauptaufgabe des Sicherheitsdienstes bei einer Evakuierung?", options: [ "Die geordnete Räumung des Gebäudes leiten, Fluchtwege freihalten, Personen zu Sammelplätzen lenken und Vollständigkeit prüfen.", "Feuer selbst löschen.", "Das Gebäude verriegeln, damit niemand flüchtet.", "Die Polizei rufen und das Gebäude verlassen." ] },
-    { category: "Organisation", subcategory: "Brandschutz", question: "Welche Aufgaben hat ein Brandschutzhelfer?", options: [ "Im Entstehungsbrandfall sichere Löschmaßnahmen mit tragbaren Feuerlöschern einleiten, ohne sich selbst zu gefährden.", "Die komplette Sprinkleranlage reparieren.", "Die Feuerwehrzentrale programmieren.", "Feuerlöscher jährlich selbst prüfen." ] },
-    { category: "Organisation", subcategory: "Brandschutz", question: "Was versteht man unter baulichem Brandschutz?", options: [ "Feuerbeständige Wände, Brandschutztüren, Brandabschnitte und Fluchtwegskorridore.", "Handfeuerlöscher und Rauchmelder.", "Die Ausbildung der Mitarbeiter.", "Der Alarmplan der Feuerwehr." ] },
-    { category: "Organisation", subcategory: "Brandschutz", question: "Was versteht man unter anlagentabefindlichem (technischem) Brandschutz?", options: [ "Automatische Löschanlagen, Brandmeldeanlagen (BMA), Rauch- und Wärmeabzugsanlagen (RWA).", "Feuerfeste Ziegelsteine.", "Notfallpläne an der Wand.", "Die Feuerwehrzufahrt." ] },
-    { category: "Organisation", subcategory: "Brandschutz", question: "Was versteht man unter organisatorischem Brandschutz?", options: [ "Brandschutzordnung, Unterweisungen, Flucht- und Rettungspläne sowie die Benennung von Brandschutzhelfern.", "Die Installation von Sprinkleranlagen.", "Der Bau von feuerfesten Türen.", "Die Wartung der Feuerlöscher." ] },
-    { category: "Organisation", subcategory: "Intervention", question: "Was ist eine Interventionskraft im Wachgewerbe?", options: [ "Eine speziell ausgebildete Einsatzkraft, die nach Alarmauslösung (z.B. EMA) zum Objekt fährt, um den Sachverhalt zu klären.", "Ein Sicherheitsmitarbeiter am Empfang.", "Ein Detektor in der Alarmanlage.", "Ein Wachhund." ] },
-    { category: "Organisation", subcategory: "Schlüsselverwaltung", question: "Wie müssen Haupt- und Generalschlüssel in einem Sicherheitsunternehmen verwaltet werden?", options: [ "Gegen Diebstahl gesichert, in verschlossenen Schlüsseltresoren, mit dokumentierter Ausgabe und Rücknahme.", "Am Schlüsselbund in der Hosentasche des Wachmanns.", "Offen im Pförtnerraum aufgehängt.", "Im Handschuhfach des Dienstfahrzeugs." ] },
-    { category: "Recht", subcategory: "StGB", question: "Was ist Hausfriedensbruch nach § 123 StGB?", options: [ "Das unbefugte Eindringen in die Wohnung, Geschäftsräume oder das befriedete Besitztum eines anderen oder das Verweilen trotz Aufforderung zum Verlassen.", "Jeder Diebstahl im Supermarkt.", "Das laute Rufen vor einem Gebäude.", "Beschädigung einer Fensterscheibe." ] },
-    { category: "Recht", subcategory: "StGB", question: "Was versteht man unter Sachbeschädigung nach § 303 StGB?", options: [ "Wer rechtswidrig eine fremde Sache beschädigt oder zerstört.", "Das Mitnehmen von Büromaterial.", "Das unbefugte Betreten von Rasenflächen.", "Das Verschieben von Parkbänken." ] },
-    { category: "Recht", subcategory: "StGB", question: "Wann ist ein Diebstahl nach § 242 StGB vollendet?", options: [ "Sobald der Täter die fremde bewegliche Sache in seinen Alleingewahrsam bringt (Gewahrsamsbruch und -begründung).", "Erst wenn der Täter das Grundstück komplett verlassen hat.", "Wenn die Polizei den Täter erwischt.", "Wenn die Sache einen Wert von über 50 Euro hat." ] },
-    { category: "Recht", subcategory: "StGB", question: "Was ist Raub nach § 249 StGB?", options: [ "Diebstahl, bei dem gegen eine Person Gewalt angewendet oder mit gegenwärtiger Gefahr für Leib oder Leben gedroht wird.", "Diebstahl in der Nacht.", "Einbruch in ein leeres Haus.", "Autodiebstahl ohne Zeugen." ] },
-    { category: "Recht", subcategory: "StGB", question: "Was unterscheidet räuberische Erpressung (§ 255 StGB) von Raub?", options: [ "Das Opfer wird durch Gewalt oder Drohung zu einer Handlungs-, Duldungs- oder Unterlassungsleistung (z.B. Herausgabe) genötigt.", "Es gibt keinen Unterschied.", "Räuberische Erpressung findet nur virtuell statt.", "Raub ist immer schwerer bestraft." ] },
-    { category: "Recht", subcategory: "StGB", question: "Was ist Nötigung nach § 240 StGB?", options: [ "Einen Menschen rechtswidrig mit Gewalt oder durch Drohung mit einem empfindlichen Übel zu einer Handlung, Duldung oder Unterlassung zu zwingen.", "Beleidigung im Straßenverkehr.", "Unbefugtes Betreten eines Raumes.", "Diebstahl von Kleidung." ] },
-    { category: "Recht", subcategory: "Rechtsprechung", question: "Was ist der Grundsatz der Verhältnismäßigkeit?", options: [ "Staatliche und private Eingriffsmaßnahmen müssen geeignet, erforderlich und angemessen (zumutbar) sein.", "Immer die härteste Strafe zu wählen.", "Gleiches Recht für alle.", "Polizeieinsätze müssen vorher angemeldet werden." ] },
-    { category: "Recht", subcategory: "BGB", question: "Was ist verbotene Eigenmacht nach § 858 BGB?", options: [ "Die Besitzentnahme oder -störung ohne den Willen des Besitzers, sofern sie nicht gesetzlich gestattet ist.", "Das Ausleihen eines Autos.", "Das Betreten eines öffentlichen Parks.", "Das Parken auf dem eigenen Parkplatz." ] },
-    { category: "Recht", subcategory: "BGB", question: "Welche Rechte hat der Besitzer bei verbotener Eigenmacht an Grundstücken?", options: [ "Besitzwehr (§ 859 BGB) und Besitzkehr (§ 869 BGB).", "Sofortige Erschießung des Eindringlings.", "Das Recht auf Enteignung.", "Keinerlei Abwehrrechte." ] },
-    { category: "Recht", subcategory: "Datenschutz", question: "Wie lange dürfen personenbezogene Daten nach DSGVO gespeichert werden?", options: [ "Nur so lange, wie es für den Zweck, für den sie erhoben wurden, erforderlich ist.", "Grundsätzlich immer lebenslang.", "Genau 30 Tage, dann automatische Löschung.", "Solange das Unternehmen existiert." ] },
-    { category: "Sicherheitstechnik", subcategory: "Zutrittskontrolle", question: "Was ist ein Transponder bei elektronischen Schließsystemen?", options: [ "Ein elektronisches Identifikationsmedium (Schlüsselersatz), das berührungslos Daten an den Leser überträgt.", "Ein Funksender für Polizeifahrzeuge.", "Ein Bewegungsmelder für Gänge.", "Ein Fingerabdruckscanner." ] },
-    { category: "Sicherheitstechnik", subcategory: "Brandmeldeanlage", question: "Was ist ein Druckknopfmelder (Handfeuermelder) bei einer BMA?", options: [ "Ein manuell zu betätigender Melder an Fluchtwegen, um im Brandfall sofort Alarm auszulösen.", "Ein Schalter für die Beleuchtung im Treppenhaus.", "Ein Notausschalter für den Aufzug.", "Ein Ventil für die Sprinkleranlage." ] },
-    { category: "Sicherheitstechnik", subcategory: "Perimeter", question: "Welche Funktion hat ein Infrarot-Lichtgitter im Perimeterschutz?", options: [ "Es erzeugt eine unsichtbare Lichtschrankenwand, die beim Durchschreiten einen Alarm auslöst.", "Es beleuchtet den Zaun bei Nacht.", "Es misst die Temperatur am Zaun.", "Es dient als Gegensprechanlage." ] },
-    { category: "Sicherheitstechnik", subcategory: "Video", question: "Was versteht man unter PTZ-Kameras?", options: [ "Pan-Tilt-Zoom-Kameras (schwenk-, neig- und zoombar).", "Kameras mit Infrarot-Nachtsicht.", "Feste Kameras ohne Objektiv.", "Webcams für Konferenzen." ] },
-    { category: "Sicherheitstechnik", subcategory: "Sicherheitsklasse", question: "Welchen Zweck haben zertifizierte Tresore (z.B. nach Widerstandsgraden)?", options: [ "Sie gewährleisten definierten Einbruchschutz gegen Angriffe mit Werkzeugen über bestimmte Zeiträume.", "Sie sind absolut unzerstörbar.", "Sie sind feuerfest, aber nicht einbruchsicher.", "Sie schützen nur vor Wasserschäden." ] },
-    { category: "Wirtschaft", subcategory: "Risiko", question: "Was sind die vier Grundstrategien im Risikomanagement?", options: [ "Risikovermeidung, Risikoverminderung, Risikoübernahme (Selbst tragen), Risikotransfer (Versicherung).", "Ignorieren, Weglaufen, Bezahlen, Anzeigen.", "Verkaufen, Kaufen, Mieten, Leasen.", "Polizei rufen, Feuerwehr rufen, Arzt rufen, Fliehen." ] },
-    { category: "Wirtschaft", subcategory: "Versicherung", question: "Was ist eine Betriebshaftpflichtversicherung für Sicherheitsunternehmen?", options: [ "Sie schützt das Unternehmen vor Schadensersatzansprüchen Dritter bei schuldhaft verursachten Personen- oder Sachschäden durch Mitarbeiter.", "Sie zahlt die Gehälter bei Krankheit.", "Sie ersetzt gestohlene Autos.", "Sie sichert Privatkredite ab." ] },
-    { category: "Wirtschaft", subcategory: "Qualität", question: "Was ist ein Audit im Qualitätsmanagement?", options: [ "Eine systematische, unabhängige Überprüfung von Prozessen und Ergebnissen auf Normkonformität.", "Eine Lohnprüfung durch das Finanzamt.", "Ein Verkaufsgespräch mit Kunden.", "Eine Polizeikontrolle." ] },
-    { category: "Wirtschaft", subcategory: "Logistik", question: "Was ist die Zufahrtskontrolle im Werkschutz?", options: [ "Die Überprüfung von Fahrzeugen und Personen beim Einfahren auf das Werksgelände zur Abwehr unbefugter Gegenstände oder Personen.", "Das Waschen von Dienstwagen.", "Die Parkplatzvergabe für Gäste.", "Die Mauterhebung." ] },
-    { category: "Wirtschaft", subcategory: "Arbeitsschutz", question: "Was ist persönliche Schutzausrüstung (PSA) im Sicherheitsdienst?", options: [ "Ausrüstung, die Mitarbeiter vor Gefahren für Sicherheit und Gesundheit schützt (z.B. Sicherheitsschuhe, Warnweste, Schutzhelm).", "Die Dienstwaffe und der Schlagstock.", "Das Smartphone und das Funkgerät.", "Der Notizblock und Kugelschreiber." ] },
-    { category: "Organisation", subcategory: "Dienst", question: "Was ist eine Dienstanweisung?", options: [ "Eine verbindliche Anweisung des Arbeitgebers an den Arbeitnehmer zur Durchführung der arbeitsvertraglichen Pflichten.", "Ein Vorschlag zur Schichtgestaltung.", "Ein privater Brief vom Chef.", "Ein Gesetzbuch." ] },
-    { category: "Organisation", subcategory: "Revier", question: "Worauf muss der Revierfahrer bei Kontrollgängen in Gebäuden besonders achten?", options: [ "Auf Verschlusszustand von Türen und Fenstern, Feuerschutztüren, Leckagen, unbefugte Personen und technische Störungen.", "Ob Kaffeemaschinen ausgeschaltet sind.", "Ob Bilder gerade hängen.", "Ob Teppiche sauber sind." ] },
-    { category: "Organisation", subcategory: "Meldung", question: "Was gehört in einen vollständigen schriftlichen Wachbericht?", options: [ "Wer, was, wann, wo, wie und welche Maßnahmen ergriffen wurden (W-Fragen).", "Private Meinungen über Kollegen.", "Gedichte und Zeichnungen.", "Nur das Datum." ] },
-    { category: "Organisation", subcategory: "Deeskalation", question: "Was ist das primäre Ziel deeskalierender Kommunikation in Konfliktsituationen?", options: [ "Die emotionale Spannung senken, die Situation zu beruhigen und gewaltsame Auseinandersetzungen zu verhindern.", "Den Gegenüber lautstark zu überzeugen.", "Sofort körperliche Gewalt anzuwenden.", "Die Flucht ergreifen." ] },
-    { category: "Organisation", subcategory: "Notfall", question: "Wie verhält man sich bei einer Bombendrohung am Telefon?", options: [ "Ruhe bewahren, Anrufer ausreden lassen, genaue Wortwahl notieren, Hintergrundgeräusche beachten, Fangschaltung aktivieren / Notruf wählen.", "Sofort auflegen.", "Den Anrufer beschimpfen.", "Das Gebäude allein durchsuchen." ] },
-    { category: "Organisation", subcategory: "Erste Hilfe", question: "Welche Sofortmaßnahme ist bei einer bewusstlosen Person mit normaler Atmung zu ergreifen?", options: [ "Stabile Seitenlage herstellen, Atemwege freihalten, Notruf (112) absetzen, Betroffenen zudecken.", "Dem Betroffenen Wasser zu trinken geben.", "Sofort mit Herzdruckmassage beginnen.", "Die Person aufsetzen." ] },
-    { category: "Recht", subcategory: "StPO", question: "Was ist nach einer vorläufigen Festnahme durch den Wachmann sofort zu tun?", options: [ "Die Polizei unverzüglich hinzuziehen und den Festgenommenen übergeben.", "Den Täter verhörähnlich befragen und Handschellen für Stunden anlegen.", "Den Täter auf dem Gelände einsperren und Feierabend machen.", "Den Vorfall erst am nächsten Tag melden." ] },
-    { category: "Recht", subcategory: "StGB", question: "Was ist Unterlassene Hilfeleistung nach § 323c StGB?", options: [ "Wer bei Unglücksfällen oder gemeiner Gefahr oder Not nicht Hilfe leistet, obwohl dies erforderlich und ihm zuzumuten ist.", "Wenn man die Polizei nach 10 Minuten ruft.", "Wenn man die falsche Waffe trägt.", "Wenn man den Chef nicht informiert." ] },
-    { category: "Recht", subcategory: "StGB", question: "Wann handelt ein Täter in Notwehr nach § 32 StGB?", options: [ "Wenn die Verteidigung erforderlich ist, um einen gegenwärtigen, rechtswidrigen Angriff von sich oder einem anderen abzuwenden.", "Wenn er den Angreifer präventiv niederschlägt.", "Wenn die Polizei telefonisch zustimmt.", "Wenn es sich um reines Eigentum ohne Angriff handelt." ] },
-    { category: "Recht", subcategory: "BGB", question: "Was ist eine Besitzstörung?", options: [ "Eine Beeinträchtigung des Besitzes ohne Entziehung desselben (z.B. Verstellen einer Einfahrt).", "Der Diebstahl eines Autos.", "Das Zerstören eines Hauses.", "Die Kündigung des Mietvertrags." ] },
-    { category: "Sicherheitstechnik", subcategory: "Brand", question: "Welche Brandklassen unterscheidet man in Europa?", options: [ "Brandklassen A, B, C, D, F", "Brandklassen 1 bis 5", "Nur Holz und Benzin", "Brandklassen X, Y, Z" ] },
-    { category: "Sicherheitstechnik", subcategory: "Brandklasse A", question: "Wofür steht Brandklasse A?", options: [ "Brände von festen Stoffen, hauptsächlich organischer Natur, die normalerweise unter Glutbildung verbrennen (z.B. Holz, Papier, Textilien).", "Flüssige Stoffe.", "Gase.", "Metalle." ] },
-    { category: "Sicherheitstechnik", subcategory: "Brandklasse B", question: "Wofür steht Brandklasse B?", options: [ "Brände von flüssigen oder schmelzenden Stoffen (z.B. Benzin, Öle, Lacke, Alkohol).", "Feste Stoffe.", "Metalle.", "Speiseöle." ] },
-    { category: "Sicherheitstechnik", subcategory: "Brandklasse C", question: "Wofür steht Brandklasse C?", options: [ "Brände von Gasen (z.B. Propan, Erdgas, Acetylen).", "Feste Stoffe.", "Fette.", "Metalle." ] },
-    { category: "Sicherheitstechnik", subcategory: "Brandklasse D", question: "Wofür steht Brandklasse D?", options: [ "Brände von Metallen (z.B. Aluminium, Magnesium, Natrium).", "Flüssigkeiten.", "Holz und Papier.", "Speisefette." ] },
-    { category: "Sicherheitstechnik", subcategory: "Brandklasse F", question: "Wofür steht Brandklasse F?", options: [ "Brände von Speiseölen und Speisefetten in Frittier- und Fettbackgeräten.", "Feste Stoffe.", "Gase.", "Metalle." ] },
-    { category: "Wirtschaft", subcategory: "Kalkulation", question: "Welche Faktoren fließen in die Preiskalkulation einer Bewachungsdienstleistung ein?", options: [ "Lohnkosten, Lohnnebenkosten, Sozialleistungen, Gemeinkosten, Wagnis und Gewinn.", "Nur der Mindestlohn.", "Der Mietpreis des Objekts.", "Die Anzahl der Fenster." ] },
-    { category: "Wirtschaft", subcategory: "Betriebsrat", question: "Welche Rolle hat der Betriebsrat nach dem Betriebsverfassungsgesetz (BetrVG)?", options: [ "Er vertritt die Interessen der Arbeitnehmer gegenüber dem Arbeitgeber und überwacht die Einhaltung von Gesetzen und Tarifverträgen.", "Er leitet das Sicherheitsunternehmen.", "Er bestimmt den Verkaufspreis.", "Er stellt Kunden ein." ] },
-    { category: "Wirtschaft", subcategory: "Tarif", question: "Was regelt ein Manteltarifvertrag im Sicherheitsgewerbe?", options: [ "Rahmenbedingungen wie Arbeitszeit, Urlaub, Kündigungsfristen und Zuschläge.", "Den konkreten Stundenlohn für jede Lohngruppe.", "Die Steuern des Unternehmens.", "Die Ausrüstung der Polizei." ] },
-    { category: "Organisation", subcategory: "Qualität", question: "Was bedeutet Qualitätskontrolle im operativen Sicherheitsdienst?", options: [ "Die regelmäßige Überprüfung der Arbeitsausführung der Mitarbeiter durch Objektleiter oder Inspektoren (z.B. durch verdeckte Testkäufe oder Revierkontrollen).", "Das Zählen von Kaffeetassen.", "Die Überprüfung der Steuererklärung.", "Das Testen von Alarmanlagen." ] },
-    { category: "Organisation", subcategory: "Waffendienst", question: "Welche besonderen Vorschriften gelten für den Waffendienst im Objektschutz?", options: [ "Besondere Sachkundeprüfung, behördlicher Waffenschein, regelmäßiges Schießtraining, strikte Aufbewahrungsvorschriften.", "Jeder Mitarbeiter darf Waffen tragen.", "Waffen müssen zu Hause gereinigt werden.", "Waffeneinsatz ist ohne Warnschuss immer erlaubt." ] },
-    { category: "Organisation", subcategory: "Sprengstoff", question: "Wie verhält man sich beim Fund eines verdächtigen Gegenstands (z.B. verdächtiger Koffer)?", options: [ "Bereich sofort räumen und absperren, nicht berühren, Vorgesetzte und Polizei informieren, keine Funkgeräte in unmittelbarer Nähe nutzen.", "Den Koffer öffnen und nachsehen.", "Den Koffer fundbüroreif wegräumen.", "Den Koffer schütteln." ] },
-    { category: "Organisation", subcategory: "Datenschutz", question: "Warum dürfen Wachleute keine privaten Notizen über Besucher außerhalb dienstlicher Zwecke anfertigen?", options: [ "Wegen des Datenschutzes und der Zweckbindung nach DSGVO / BDSG.", "Weil Kugelschreiber teuer sind.", "Weil Notizen verboten sind.", "Weil Computer schneller sind." ] },
-    { category: "Organisation", subcategory: "Schlüssel", question: "Was ist ein Schlüsselverlustprotokoll?", options: [ "Ein Dokument, in dem der Verlust eines Schlüssels sofort gemeldet, dokumentiert und die Schadensanalyse (ggf. Schließanlagentausch) eingeleitet wird.", "Eine Liste aller gekauften Schlüssel.", "Ein Schlüsselanhänger.", "Ein Werkzeug zum Schlüsselfeilen." ] },
-    { category: "Organisation", subcategory: "Wachdienst", question: "Was ist eine Kontrolluhr / Streifenkontrollsystem (DKS)?", options: [ "Ein technisches System (elektronisch oder mechanisch), das nachweist, dass ein Wachmann zu bestimmten Zeiten definierte Kontrollpunkte abgelaufen ist.", "Eine Armbanduhr mit Stoppuhr.", "Die Uhr an der Pforte.", "Ein Wecker für die Nachtschicht." ] },
-    { category: "Recht", subcategory: "StPO", question: "Darf privates Sicherheitspersonal Durchsuchungen von Personen oder Taschen ohne deren Einwilligung durchführen?", options: [ "Nein, eine Durchsuchung ist hoheitlichen Organen (Polizei) vorbehalten. Freiwillige Kontrollen (z.B. Taschenkontrolle am Werkstor) basieren auf vertraglicher Vereinbarung und Einwilligung.", "Ja, Wachpersonal hat polizeiliche Durchsuchungsrechte.", "Immer bei Verdacht.", "Nur nachts." ] },
-    { category: "Recht", subcategory: "StGB", question: "Was ist Hausfriedensbruch bei unberechtigtem Verbleib?", options: [ "Wer sich auf einem umfriedeten Grundbesitz oder in Räumen unbefugt aufhält und auf die Aufforderung des Berechtigten nicht sich entfernt.", "Jeder Einkauf ohne Geld.", "Das laute Sprechen.", "Das Betreten von Gehwegen." ] },
-    { category: "Recht", subcategory: "BGB", question: "Was ist Besitz im rechtlichen Sinne nach § 854 BGB?", options: [ "Die tatsächliche Gewalt über eine Sache.", "Das juristische Eigentum und der Kaufbeleg.", "Das Recht, eine Sache zu verkaufen.", "Die Anmietung eines Raumes." ] },
-    { category: "Sicherheitstechnik", subcategory: "Brand", question: "Was bewirkt ein CO2-Feuerlöscher (Kohlendioxidlöscher)?", options: [ "Er erstickt den Brand durch Verdrängung des Sauerstoffs, ohne Rückstände zu hinterlassen.", "Er kühlt das Feuer mit Wasser.", "Er schäumt das Material ein.", "Er bindet den Rauch." ] },
-    { category: "Sicherheitstechnik", subcategory: "Brand", question: "Welche Gefahr besteht beim Einsatz von CO2-Löschern in geschlossenen, kleinen Räumen?", options: [ "Erstickungsgefahr für Menschen durch Sauerstoffverdrängung.", "Explosionsgefahr durch Druck.", "Giftige Rauchgasbildung.", "Zerstörung der Wände." ] },
-    { category: "Wirtschaft", subcategory: "Datenschutz", question: "Wer ist der betriebliche Datenschutzbeauftragte?", options: [ "Eine vom Unternehmen benannte Person, die die Einhaltung des Datenschutzes überwacht und berät.", "Der Chef der Polizei.", "Der IT-Admin allein.", "Ein externer Kunde." ] },
-    { category: "Organisation", subcategory: "Einsatz", question: "Was ist eine Alarmaufschaltung?", options: [ "Die automatische Weiterleitung von Signalen (z.B. Einbruch- oder Brandalarm) von der Anlage an eine Notruf- und Service-Leitstelle (NSL).", "Das Einschalten des Radios im Pförtnerraum.", "Das Rufen über Megafon.", "Die automatische Lichtschaltung." ] },
-    { category: "Organisation", subcategory: "NSL", question: "Was ist eine Notruf- und Service-Leitstelle (NSL)?", options: [ "Eine permanent besetzte, zertifizierte Zentrale, die Alarme entgegennimmt, auswertet und Interventionen koordiniert.", "Ein Polizeirevier.", "Die Pforte einer Fabrik.", "Ein Callcenter für Kundenfragen." ] },
-    { category: "Organisation", subcategory: "Streife", question: "Welche Ausrüstung gehört zur Grundausstattung eines Objektschützers im Streifendienst?", options: [ "Dienstkleidung, Ausweis, Taschenlampe, Funkgerät, Mobiltelefon, Notizmaterial und ggf. Schlüssel.", "Schusswaffe und Handgranaten.", "Computer und Drucker.", "Civilkleidung." ] }
+    { category: "Wirtschaft", subcategory: "Unternehmenssicherheit", question: "Was versteht man unter Corporate Security?", options: [ "Die ganzheitliche Sicherheitsstrategie zum Schutz aller Werte eines Unternehmens (Mitarbeiter, Assets, Reputation).", "Ausschließlich den Werkenschutz an Toren.", "Die IT-Firewall eines Unternehmens.", "Die Bewachung durch externe Polizeikräfte." ] },
+    { category: "Wirtschaft", subcategory: "Qualitätsmanagement", question: "Welche Norm beschreibt allgemeine Anforderungen an Qualitätsmanagementsysteme?", options: [ "ISO 9001", "ISO 27001", "DIN 77200", "ISO 14001" ] },
+    { category: "Wirtschaft", subcategory: "Sicherheitsdienstleistung", question: "Was regelt die DIN 77200 speziell?", options: [ "Qualitätsanforderungen an Sicherheitsdienstleister.", "Den Brandschutz in öffentlichen Gebäuden.", "Die Prüfung von Alarmanlagen.", "Arbeitssicherheit auf Baustellen." ] },
+    { category: "Wirtschaft", subcategory: "Kommunikation", question: "Welches Modell beschreibt das 4-Ohren-Modell der Kommunikation nach Friedemann Schulz von Thun?", options: [ "Sachebene, Selbstkundgebung, Beziehungshinweis, Appell.", "Sender, Kanal, Code, Empfänger.", "Informieren, Überzeugen, Anweisen, Kontrollieren.", "Verbal, Paraverbal, Nonverbal, Digital." ] },
+    { category: "Wirtschaft", subcategory: "Deeskalation", question: "Wie verhält man sich in einer potenziell eskalierenden Konfliktsituation richtig?", options: [ "Ruhige und bestimmte Stimmlage, Deeskalierende Körpersprache, Wahrung des Sicherheitsabstands.", "Lautes Anschreien, um Dominanz zu zeigen.", "Sofortiger Einsatz von körperlichem Zwang.", "Vollständiges Ignorieren der Person." ] },
+    { category: "Wirtschaft", subcategory: "Brandschutz", question: "Welche Brandklassen umfasst feste, glutbildende Stoffe wie Holz oder Papier?", options: [ "Brandklasse A", "Brandklasse B", "Brandklasse C", "Brandklasse D" ] },
+    { category: "Wirtschaft", subcategory: "Brandschutz", question: "Wann wird die Brandklasse B eingesetzt?", options: [ "Für flüssige oder schmelzbare flüssige Stoffe (z.B. Benzin, Öle).", "Für Gase.", "Für Metalle.", "Für Brände an elektrischen Anlagen." ] },
+    { category: "Wirtschaft", subcategory: "Arbeitsschutz", question: "Wer ist im Betrieb primär für die Unfallverhütung und Arbeitssicherheit verantwortlich?", options: [ "Der Unternehmer / Arbeitgeber (unter Mitwirkung von Sifa und Betriebsrat).", "Ausschließlich die Berufsgenossenschaft.", "Jeder Mitarbeiter für sich allein.", "Der Sicherheitsdienst vor Ort." ] },
+    { category: "Wirtschaft", subcategory: "Umweltschutz", question: "Was ist ein Sicherheitsdatenblatt (SDB) nach REACH-Verordnung?", options: [ "Ein Dokument mit Informationen zu Gefahren chemischer Stoffe und Schutzmaßnahmen.", "Ein Bericht über Einbrüche im Werk.", "Eine Dienstanweisung für den Pförtner.", "Ein TÜV-Bericht für Fahrzeuge." ] },
+    { category: "Wirtschaft", subcategory: "Wirtschaftsdetektei", question: "Welche Befugnisse hat eine private Wirtschaftsdetektei im Rahmen von Ermittlungen?", options: [ "Keine Sonderrechte; es gelten die gleichen Jedermann- und Eigentümerrechte wie für Privatpersonen.", "Das Recht auf Hausdurchsuchung.", "Das Recht auf Abhören von Telefonen.", "Das Recht auf Vorladung von Verdächtigen." ] },
+    { category: "Recht", subcategory: "StGB § 123", question: "Wann ist der Tatbestand des Hausfriedensbruchs (§ 123 StGB) erfüllt?", options: [ "Wer in die Wohnung, in die Geschäftsräume oder das befriedene Besitztum eines anderen widerrechtlich eindringt.", "Nur wenn Gegenstände gestohlen werden.", "Sobald jemand das Firmengelände betritt.", "Wenn ein Schild übersehen wird." ] },
+    { category: "Recht", subcategory: "StGB § 229", question: "Was ist eine fahrlässige Körperverletzung (§ 229 StGB)?", options: [ "Wenn jemand durch Fahrlässigkeit die Körperverletzung einer anderen Person verursacht.", "Absktrakte Gefährdung ohne Schaden.", "Vorsätzlicher Angriff im Dienst.", "Notwehrexzess." ] },
+    { category: "Recht", subcategory: "StGB § 242", question: "Wann liegt ein einfacher Diebstahl (§ 242 StGB) vor?", options: [ "Wer eine fremde bewegliche Sache einem anderen in der Absicht wegnimmt, die Sache rechtswidrig zuzueignen.", "Jede Beschädigung von Firmeneigentum.", "Die unbefugte Nutzung von Daten.", "Fahrzeugdiebstahl mit Gewalt." ] },
+    { category: "Recht", subcategory: "StGB § 243", question: "Was ist ein besonders schwerer Fall des Diebstahls?", options: [ "Einbruch in ein umschlossener Raum, Diebstahl von Sachen aus verschlossenen Behältnissen oder Kirchendiebstahl.", "Ladendiebstahl unter 50 Euro.", "Diebstahl durch Ersttäter.", "Diebstahl am helllichten Tag." ] },
+    { category: "Recht", subcategory: "StGB § 249", question: "Was unterscheidet Raub (§ 249 StGB) von Diebstahl?", options: [ "Die Wegnahme erfolgt unter Anwendung von Gewalt gegen eine Person oder unter Androhung gegenwärtiger Gefahr für Leib oder Leben.", "Es wird ausschließlich Bargeld entwendet.", "Es sind mindestens drei Täter beteiligt.", "Es passiert nachts." ] },
+    { category: "Recht", subcategory: "StGB § 303", question: "Wann ist eine Sachbeschädigung (§ 303 StGB) gegeben?", options: [ "Wer rechtswidrig eine fremde Sache beschädigt oder zerstört oder unbefugt das Erscheinungsbild verändert.", "Nur bei Totalschaden.", "Wenn Arbeitsmittel normal verschleißen.", "Bei reinem Datenverlust." ] },
+    { category: "Recht", subcategory: "Ordnungswidrigkeiten", question: "Was ist der Hauptunterschied zwischen einer Straftat und einer Ordnungswidrigkeit (OWi)?", options: [ "Eine Straftat wird mit Freiheits- oder Geldstrafe nach StGB/Nebengesetzen bestraft; eine OWi mit Bußgeld nach OWiG.", "Ordnungswidrigkeiten sind schwerer als Straftaten.", "OWis werden vom Richter verhandelt, Straftaten von der Polizei.", "Es gibt keinen rechtlichen Unterschied." ] },
+    { category: "Recht", subcategory: "Verwaltungsrecht", question: "Was bedeutet das Verhältnismäßigkeitsprinzip im behördlichen und sicherheitlichen Handeln?", options: [ "Maßnahmen müssen geeignet, erforderlich und angemessen (proportional) sein.", "Man darf immer die maximal mögliche Härte anwenden.", "Es gilt nur für Polizeibeamte.", "Der wirtschaftliche Gewinn muss im Vordergrund stehen." ] },
+    { category: "Recht", subcategory: "Zivilrecht", question: "Was ist der Zweck des Schadenersatzes nach § 823 BGB?", options: [ "Wiederherstellung des Zustands, der bestehen würde, wenn der zum Ersatz verpflichtende Umstand nicht eingetreten wäre.", "Bestrafung des Schäters durch das Zivilgericht.", "Erzielung von Gewinn für den Geschädigten.", "Staatliche Einnahmenerzielung." ] },
+    { category: "Recht", subcategory: "BGB", question: "Was versteht man unter 'Verbotener Eigenmacht' nach § 858 BGB?", options: [ "Die Besitzentörung oder -störung ohne den Willen des Besitzers, sofern sie nicht durch das Gesetz gestattet ist.", "Das Fahren ohne Führerschein.", "Unberechtigtes Betreten einer öffentlichen Straße.", "Das Einfordern offener Rechnungen." ] },
+    // Fragen 51 bis 100
+    { category: "Sicherheitstechnik", subcategory: "Zutritt", question: "Welche Technologie nutzen moderne kontaktlose Zutrittskontrollkarten primär?", options: [ "RFID- oder NFC-Technologie", "Magnetstreifen", "Lochkarten", "Infrarot-Dioden" ] },
+    { category: "Sicherheitstechnik", subcategory: "Brandmeldeanlage", question: "Was ist ein Handfeuermelder (HFM)?", options: [ "Ein manuell zu bedienender Druckknopfmelder zur Auslösung eines Brandalarms im Gebäude.", "Ein tragbarer Feuerlöscher.", "Ein Funkgerät für den Brandschutzbeauftragten.", "Ein automatischer Wärmemelder." ] },
+    { category: "Sicherheitstechnik", subcategory: "Perimeter", question: "Welche Sensoren werden bei der elektronischen Freilandüberwachung oft eingesetzt?", options: [ "Erdkabel (Induktionsschleifen), Lichtschranken, Mikrowellenbarrieren oder Zaun-Sensorkabel", "Nur einfache Webcams", "Normale Bewegungsmelder für den Innenbereich", "Rauchmelder im Freien" ] },
+    { category: "Sicherheitstechnik", subcategory: "Schließanlagen", question: "Was ist eine Generalhauptschlüsselanlage (GHSL)?", options: [ "Eine Schließanlage, bei der ein Schlüssel (Generalhauptschlüssel) alle Zylinder der gesamten Anlage schließt.", "Eine Anlage ohne mechanische Schlüssel.", "Ein reines Vorhängeschloss-System.", "Ein Tresorschloss mit zwei Bärten." ] },
+    { category: "Sicherheitstechnik", subcategory: "Video", question: "Was bedeutet PTZ bei Überwachungskameras?", options: [ "Pan, Tilt, Zoom (Schwenken, Neigen, Zoomen)", "Pixel, Transponder, Zone", "Power, Transmission, Zero", "Private Television Zone" ] },
+    { category: "Sicherheitstechnik", subcategory: "Notruf", question: "Wofür steht die Abkürzung NSL im Sicherheitsgewerbe?", options: [ "Notruf- und Serviceleitstelle", "Nationale Sicherheitsleitung", "Normprüfung für Sicherheitssysteme", "Netzwerksicherheit und Logistik" ] },
+    { category: "Sicherheitstechnik", subcategory: "Sicherheitsbeleuchtung", question: "Welche Funktion hat die Sicherheitsbeleuchtung (Notbeleuchtung) in Gebäuden?", options: [ "Bei Ausfall der Allgemeinbeleuchtung das sichere Verlassen des Gebäudes (Fluchtwege) zu garantieren.", "Den Stromverbrauch nachts zu senken.", "Einbrecher durch helles Flutlicht abzuschrecken.", "Die Arbeitsleistung in der Nachtschicht zu erhöhen." ] },
+    { category: "Sicherheitstechnik", subcategory: "Tore/Schranken", question: "Wozu dient eine Durchfahrtssperre (Hydraulischer Poller / Crash-Barrier)?", options: [ "Zum Schutz vor unberechtigter Zufahrt durch Fahrzeuge (Rammschutz/Attentatsschutz).", "Zur Erhebung von Parkgebühren.", "Als Fahrradständer.", "Zur automatischen LKW-Wiegung." ] },
+    { category: "Sicherheitstechnik", subcategory: "Wächterkontrolle", question: "Was ist ein Wächterkontrollsystem?", options: [ "Ein technisches System (z.B. RFID-Punkte), mit dem die Kontrollgänge des Wachpersonals protokolliert werden.", "Eine Videokamera zur Beobachtung des Wachmanns.", "Ein GPS-Sender im Firmenwagen.", "Ein automatisches Zeiterfassungsgerät." ] },
+    { category: "Sicherheitstechnik", subcategory: "IT-Sicherheit", question: "Was ist eine Firewall im Bereich der Netzwerksicherheit?", options: [ "Ein Hard- oder Softwaresystem, das den Netzwerkverkehr nach bestimmten Regeln filtert und vor unbefugten Zugriffen schützt.", "Ein physischer Brandschutzzaun um den Serverraum.", "Ein Backup-System für Festplatten.", "Ein Antivirenprogramm für Smartphones." ] },
+    { category: "Wirtschaft", subcategory: "Kommunikation", question: "Welche Kommunikationsform gilt als nonverbal?", options: [ "Körpersprache, Mimik, Gestik und Haltung", "Gesprochenes Wort am Telefon", "E-Mail-Verkehr", "Geschriebene Dienstanweisungen" ] },
+    { category: "Wirtschaft", subcategory: "Krisenmanagement", question: "Was ist eine Krise im Sinne des Krisenmanagements?", options: [ "Eine plötzliche, unvorhergesehene Situation, die den normalen Geschäftsbetrieb massiv bedroht und sofortiges Handeln erfordert.", "Ein geplanter Betriebsausflug.", "Eine normale Lohnabrechnung", "Ein kleiner technischer Defekt an einer Bürolampe." ] },
+    { category: "Wirtschaft", subcategory: "Logistik", question: "Welche Aufgabe hat die Warenkontrolle (Warenausgang/Wareneingang) im Werkschutz?", options: [ "Überprüfung von Lieferspapieren, Identität der Fahrer und stichprobenartige Ladungskontrollen zur Diebstahlprävention.", "Verkauf von Produkten an Endkunden.", "Montage von Ersatzteilen.", "Programmierung von Industrierobotern." ] },
+    { category: "Wirtschaft", subcategory: "Betriebswirtschaft", question: "Was versteht man unter Fixkosten in einem Unternehmen?", options: [ "Kosten, die unabhängig von der Auslastung oder Produktionsmenge konstant anfallen (z.B. Miete, Grundgebühren).", "Kosten für Rohstoffe, die direkt vom Umsatz abhängen.", "Variable Lohnkosten für Aushilfen.", "Reparaturkosten nach Unfall." ] },
+    { category: "Wirtschaft", subcategory: "Versicherung", question: "Welche Versicherung schützt ein Unternehmen vor den finanziellen Folgen von Betriebsunterbrechungen nach Schadenfällen?", options: [ "Betriebsunterbrechungsversicherung", "Haftpflichtversicherung", "Privathaftpflichtversicherung", "Krankentagegeldversicherung" ] },
+    { category: "Wirtschaft", subcategory: "Datenschutz", question: "Wer ist im Unternehmen für die Einhaltung des Datenschutzes verantwortlich?", options: [ "Der Verantwortliche (Geschäftsführung) – oft unterstützt durch einen Datenschutzbeauftragten (DSB).", "Jeder Praktikant.", "Der Hausmeister.", "Die lokale Polizeidienststelle." ] },
+    { category: "Wirtschaft", subcategory: "Brandschutz", question: "Welche Brandklasse ist für Metallbrände (z.B. Magnesium, Aluminium) zuständig?", options: [ "Brandklasse D", "Brandklasse A", "Brandklasse C", "Brandklasse F" ] },
+    { category: "Wirtschaft", subcategory: "Brandschutz", question: "Wofür steht die Abkürzung RWA im vorbeugenden Brandschutz?", options: [ "Rauch- und Wärmeabzugsanlage", "Regulierte Wasser-Aufbereitung", "Reis- und Weizen-Anbau", "Radioaktive Warn-Anlage" ] },
+    { category: "Wirtschaft", subcategory: "Arbeitsschutz", question: "Was ist die Hauptaufgabe einer Fachkraft für Arbeitssicherheit (Sifa)?", options: [ "Den Arbeitgeber beim Arbeitsschutz und bei der Unfallverhütung zu beraten.", "Die Wachleute bei Straftaten zu unterstützen.", "Die Lohnbuchhaltung zu führen.", "Die Kantine zu leiten." ] },
+    { category: "Wirtschaft", subcategory: "Qualität", question: "Was bedeutet KVP im Qualitätsmanagement?", options: [ "Kontinuierlicher Verbesserungsprozess", "Kurzfristiger Vertriebsplan", "Kosten-Verteilungs-Prinzip", "Kontrolle von Personal" ] },
+    { category: "Recht", subcategory: "StGB", question: "Wann liegt Notwehrexzess nach § 33 StGB vor?", options: [ "Wenn der Angegriffene die Grenzen der Notwehr aus Verwirrung, Furcht oder Schrecken überschreitet.", "Wenn der Angriff absichtlich provoziert wurde.", "Wenn keine Waffe im Spiel war.", "Wenn die Polizei zu spät kommt." ] },
+    { category: "Recht", subcategory: "StPO", question: "Was muss nach einer vorläufigen Festnahme durch den Wachdienst als Nächstes geschehen?", options: [ "Unverzügliche Übergabe an die Polizei oder Herbeiführung der Polizeikräfte.", "Einvernehmliche Verfolgung auf dem Gelände für mehrere Stunden.", "Durchsuchung der Privatwohnung des Verdächtigen.", "Einziehen des Personalausweises als Pfand." ] },
+    { category: "Recht", subcategory: "Gewerberecht", question: "Welche Ausbildungsverpflichtung besteht nach BewachV für das Standard-Wachpersonal im Bewachungsgewerbe?", options: [ "Mindestens die Unterrichtung nach § 34a GewO (bzw. für bestimmte Tätigkeiten die Sachkundeprüfung).", "Ein abgeschlossenes Jurastudium.", "Eine Ausbildung zum Polizeivollzugsbeamten.", "Keinerlei Schulung erforderlich." ] },
+    { category: "Recht", subcategory: "BGB", question: "Was bedeutet Geschäftsfähigkeit im Zivilrecht?", options: [ "Die Fähigkeit, Willenserklärungen wirksam abzugeben und entgegenzunehmen.", "Die Fähigkeit, Auto zu fahren.", "Das Recht, ein Gewerbe anzumelden.", "Die Mitgliedschaft in einem Verein." ] },
+    { category: "Recht", subcategory: "Grundgesetz", question: "Welches Grundrecht schützt die freie Meinungsäußerung in Deutschland?", options: [ "Artikel 5 GG", "Artikel 1 GG", "Artikel 12 GG", "Artikel 9 GG" ] },
+    { category: "Recht", subcategory: "StGB", question: "Was ist unter Unterlassen nach § 13 StGB zu verstehen?", options: [ "Wer es unterlässt, einen Erfolg abzuwenden, der zum Tatbestand eines Strafgesetzes gehört, ist strafbar, wenn er rechtlich dafür einzustehen hat (Garantenstellung).", "Jedes Zuspätkommen zur Schicht.", "Das Nichtabnehmen des Telefons.", "Das Auslassen einer Kontrollrunde ohne Konsequenz." ] },
+    { category: "Recht", subcategory: "BGB", question: "Was ist eine Willenserklärung?", options: [ "Die Äußerung eines auf die Herbeiführung eines rechtlichen Erfolgs gerichteten Willens.", "Eine Absichtserklärung im Sportverein.", "Ein mündlicher Befehl des Vorgesetzten.", "Ein polizeilicher Platzverweis." ] },
+    { category: "Recht", subcategory: "StPO", question: "Wer ist im Ermittlungsverfahren Herr des Verfahrens?", options: [ "Die Staatsanwaltschaft", "Die Polizei", "Der Beschuldigete", "Das private Sicherheitsunternehmen" ] },
+    { category: "Recht", subcategory: "OWiG", question: "Welches Organ verfolgt Ordnungswidrigkeiten primär?", options: [ "Die Verwaltungsbehörde (und im Rahmen des fließenden Verkehrs/Aufgabe auch die Polizei).", "Ausschließlich das Landgericht.", "Der Bundesgerichtshof.", "Das Arbeitsamt." ] },
+    { category: "Recht", subcategory: "Handelsrecht", question: "Was ist ein Prokurist?", options: [ "Ein Bevollmächtigter, der eine Handelsgesellschaft gerichtlich und außergerichtlich umfassend vertreten darf (mit gesetzlich festgelegten Ausnahmen).", "Ein einfacher Sachbearbeiter in der Poststelle.", "Der Inhaber des Sicherheitsdienstes.", "Ein externer Wirtschaftsprüfer." ] },
+    { category: "Sicherheitstechnik", subcategory: "Einbruchmeldeanlagen", question: "Was ist ein Passiv-Infrarot-Melder (PIR)?", options: [ "Ein Bewegungsmelder, der auf die Infrarot-Wärmestrahlung von sich bewegenden Körpern reagiert.", "Ein Melder, der aktiv Infrarotstrahlen aussendet und misst.", "Ein Melder für Glasbruch.", "Ein Feuermelder für offene Flammen." ] },
+    { category: "Sicherheitstechnik", subcategory: "Brandmeldeanlagen", question: "Was ist ein Thermodifferenzialmelder?", options: [ "Ein Brandmelder, der bei einem schnellen Temperaturanstieg innerhalb kurzer Zeit auslöst.", "Ein Thermometer für den Außenbereich.", "Ein Sensor für Frostschutz in Rohren.", "Ein Heizungsregler." ] },
+    { category: "Sicherheitstechnik", subcategory: "Zutritt", question: "Was versteht man unter 'Maid-Schleuse' oder 'Tailgating' im Kontext Zutrittskontrolle?", options: [ "Das unbefugte Einzuschleusen oder Nachdrücken einer zweiten Person direkt hinter einer berechtigten Person.", "Die Reinigung der Eingangstür.", "Ein automatisches Schließsystem für Türen.", "Ein Notausgang." ] },
+    { category: "Sicherheitstechnik", subcategory: "Sicherheits-Check", question: "Welches Prüfzeichen kennzeichnet geprüfte und zugelassene Sicherheitstechnik in Deutschland?", options: [ "VdS-Prüfzeichen / TÜV / CE", "GS-Zeichen allein reicht immer aus", "Das Blaue Engel Siegel", "Das ISO-Zertifikat für Software" ] },
+    { category: "Sicherheitstechnik", subcategory: "Video", question: "Was ist der Vorteil von IP-Kameras gegenüber analogen Kameras?", options: [ "Digitale Übertragung über Netzwerke, höhere Auflösungen und flexible Fernzugriffsmöglichkeiten.", "Sie benötigen keinen Strom.", "Sie sind absolut unsichtbar.", "Sie können nicht gehackt werden." ] },
+    { category: "Sicherheitstechnik", subcategory: "Perimeter", question: "Welchen Zweck erfüllt eine Infrarot-Lichtschranke im Aussenbereich?", options: [ "Erkennung von Personen, die einen unsichtbaren Lichtstrahl unterbrechen (Perimetersicherung).", "Messung der Sonneneinstrahlung.", "Beleuchtung des Weges bei Nacht.", "Öffnen des Tores für LKW." ] },
+    { category: "Sicherheitstechnik", subcategory: "Schließanlagen", question: "Was ist ein Wendeschlüssel?", options: [ "Ein moderner Flachschlüssel, der unabhängig von der Einsteckrichtung (oben/unten) in das Schloss passt.", "Ein Schlüssel, der sich beim Drehen verbiegt.", "Ein Generalschlüssel für Drehtüren.", "Ein digitaler Transponder." ] },
+    { category: "Sicherheitstechnik", subcategory: "Brandschutz", question: "Welche Farbe hat ein CO2-Feuerlöscher bzw. dessen Kennzeichnung in der Regel?", options: [ "Schwarzer Aufdruck / Kennzeichnung (Kohlendioxidlöscher)", "Rot-weiße Streifen für Schaum", "Ganz in Gelb", "Blau für Wasser" ] },
+    { category: "Sicherheitstechnik", subcategory: "Sicherheit", question: "Was versteht man unter Security Governance?", options: [ "Die strategische Führung, Richtlinienkompetenz und Überwachung der Sicherheitsorganisation im Unternehmen.", "Das tägliche Kontrollieren von Türen.", "Die Bezahlung von Rechnungen.", "Die Reinigung von Fenstern." ] },
+    { category: "Wirtschaft", subcategory: "Unternehmensschutz", question: "Was ist industri Spionage / Sabotage?", options: [ "Das gezielte Ausspähen von Betriebsgeheimnissen oder Beschädigen von Produktionsanlagen durch Konkurrenten oder fremde Mächte.", "Ein normaler Arbeitsunfall.", "Die Kontrolle von Arbeitszeiten.", "Ein Fehlverhalten im Lager." ] },
+    { category: "Recht", subcategory: "StGB", question: "Wann liegt ein Hausfriedensbruch nach § 123 StGB im schärferen Fall (z.B. mit Waffen) vor?", options: [ "Wenn der Täter eine Waffe oder ein gefährliches Werkzeug mit sich führt oder während einer Nachtzeit einbricht (siehe auch § 244 StGB).", "Ausschließlich am Wochenende.", "Nur wenn die Polizei gerufen wird.", "Bei Sachbeschädigung unter 50 Euro." ] },
+    { category: "Recht", subcategory: "BGB", question: "Was besagt das Selbsthilferecht nach § 229 BGB?", options: [ "Die Wegnahme, Beschädigung oder Zerstörung einer Sache oder Festnahme des Pflichtigen, um einen Anspruch zu sichern, wenn obrigkeitliche Hilfe nicht rechtzeitig zu erlangen ist.", "Das Recht auf Selbstjustiz ohne Bedingungen.", "Das Recht, Streitigkeiten mit Fäusten zu klären.", "Die Pflicht zur Polizei zu gehen." ] },
+    { category: "Recht", subcategory: "Gewerberecht", question: "Welche Konsequenzen drohen bei Ausübung von Wachdiensten ohne gültige Bewachungserlaubnis nach GewO?", options: [ "Bußgelder, Untersagung des Gewerbes und mögliche strafrechtliche Konsequenzen.", "Eine mündliche Verwarnung.", "Automatische Verbeamtung.", "Zuschüsse vom Arbeitsamt." ] },
+    { category: "Recht", subcategory: "Arbeitsrecht", question: "Was ist ein Tarifvertrag?", options: [ "Ein schriftlicher Vertrag zwischen Arbeitgeberverbänden oder einzelnen Arbeitgebern und Gewerkschaften über Arbeitsbedingungen.", "Ein Vertrag zwischen zwei Mitarbeitern.", "Eine Anweisung des Werksleiters.", "Ein Gesetz vom Bundestag." ] },
+    { category: "Recht", subcategory: "Datenschutz", question: "Was ist eine Einwilligung nach DSGVO?", options: [ "Jede freiwillige, für den bestimmten Fall, in informierter Weise und unmissverständlich abgegebene Willensbekundung.", "Ein Arbeitsvertrag.", "Eine polizeiliche Vorladung.", "Ein schriftlicher Kaufvertrag." ] },
+    { category: "Recht", subcategory: "StPO", question: "Darf privates Wachpersonal Zeugen vernehmen?", options: [ "Nein, Zeugenvernehmungen sind hoheitliche Aufgaben der Polizei und Justiz.", "Ja, zu jeder Zeit auf dem Werksgelände.", "Nur wenn der Geschäftsführer zustimmt.", "Ja, bei allen Verkehrsdelikten." ] },
+    { category: "Sicherheitstechnik", subcategory: "EMA", question: "Was ist ein Dual-Melder bei Einbruchmeldeanlagen?", options: [ "Ein Melder, der zwei unterschiedliche Sensortechnologien (z.B. PIR und Mikrowelle) kombiniert.", "Ein Melder mit zwei Batterien.", "Ein Melder für zwei Räume.", "Ein Melder mit integrierter Kamera." ] },
+    { category: "Sicherheitstechnik", subcategory: "BMA", question: "Was ist eine Brandmeldezentrale (BMZ)?", options: [ "Die zentrale Steuer- und Auswerteeinheit aller Brandmelder und Alarmierungseinrichtungen eines Objekts.", "Ein tragbarer Feuerlöscher.", "Das Büro des Brandschutzbeauftragten.", "Ein Hauptschalter für Strom." ] },
+    { category: "Wirtschaft", subcategory: "Notfall", question: "Welche Phasen hat das klassische Krisenmanagement-Modell?", options: [ "Prävention (Vorsorge), Preparedness (Vorbereitung), Response (Bewältigung), Recovery (Nachbereitung/Wiederherstellung).", "Nur die Evakuierung.", "Schadenmeldung und Abrechnung.", "Planung und Beendigung." ] },
+    { category: "Wirtschaft", subcategory: "Unternehmen", question: "Was ist ein Asset Protection Plan?", options: [ "Ein systematischer Plan zum Schutz von materiellen und immateriellen Werten (Assets) eines Unternehmens.", "Ein Finanzplan für Steuern.", "Ein Urlaubsplan für Mitarbeiter.", "Ein Einkaufsplan für Büromaterial." ] }
   ];
 
   // =========================================================================
-  // DATEN DER 10 RECHTSFÄLLE
+  // FIX: AUTOMATISCHES MISCHEN DER ANTWORTEN BEIM LADEN
   // =========================================================================
-  const lawCasesData = [
-    {
-      title: "Fall 1: Diebstahl auf dem Werksgelände",
-      description: "Während Ihres Dienstes als Werkschutzmitarbeiter beobachten Sie über die Videoanlage, wie ein betriebsfremder Handwerker eine teure Bohrmaschine in seinen Rucksack steckt und in Richtung Haupttor flieht. Sie eilen hinaus und stellen ihn am Tor.",
-      legalBasis: "StPO § 127 Abs. 1 (Jedermann-Festnahmerecht)",
-      justification: "Auf frischer Tat betroffen, Fluchtgefahr vorhanden, Identität des Handwerkers nicht sofort feststellbar.",
-      guiltExclusion: "Nicht einschlägig / voll schuldfähig.",
-      solutionText: "Es greift das Jedermann-Festnahmerecht gem. § 127 Abs. 1 StPO. Der Handwerker wurde auf frischer Tat betroffen und flüchtete. Da er betriebsfremd ist, durfte er vorläufig festgehalten werden."
-    },
-    {
-      title: "Fall 2: Körperlicher Angriff an der Tür",
-      description: "Ein abgewiesener, aggressiver Gast schlägt am Einlass plötzlich mit der Faust nach dem Türsteher. Der Türsteher weicht aus und schlägt den Angreifer mit einem gezielten Schlag nieder, um weitere Schläge abzuwehren. Der Gast wird dabei leicht verletzt.",
-      legalBasis: "StGB § 32 (Notwehr)",
-      justification: "Gegenwärtiger, rechtswidriger Angriff durch Faustschlag. Verteidigungsschlag war erforderlich und geboten.",
-      guiltExclusion: "Nicht erforderlich, da die Tat bereits durch Notwehr voll gerechtfertigt ist.",
-      solutionText: "Das Handeln ist durch Notwehr gem. § 32 StGB gerechtfertigt. Es lag ein gegenwärtiger, rechtswidriger Angriff vor und der Abwehrschlag war das erforderliche Mittel."
-    },
-    {
-      title: "Fall 3: Hund im heißen Auto",
-      description: "Auf seinem Revierstreifengang bemerkt ein Sicherheitsmitarbeiter an einem heißen Hochsommertag einen Hund in einem verschlossenen PKW. Der Hund hechelt stark und droht zu kollabieren. Der Besitzer ist nicht auffindbar. Der Mitarbeiter schlägt eine Seitenscheibe ein.",
-      legalBasis: "StGB § 34 (Rechtfertigender Notstand) / BGB § 228",
-      justification: "Gegenwärtige erhebliche Gefahr für das Leben des Tieres. Keine andere Abwendungsmöglichkeit (Besitzer weg), Interessenabwägung fällt zugunsten des Lebens aus.",
-      guiltExclusion: "Nicht einschlägig.",
-      solutionText: "Die Sachbeschädigung ist durch den rechtfertigenden Notstand gem. § 34 StGB gerechtfertigt, da das Leben des Tieres akut bedroht war und keine milderen Mittel zur schnellen Rettung zur Verfügung standen."
-    },
-    {
-      title: "Fall 4: Notwehrexzess aus Todesangst",
-      description: "Ein Wachmann wird nachts von einem Täter mit einem Messer angegriffen. In massiver Todesangst wehrt er sich und schlägt den Täter nieder. Obwohl der Täter kampfunfähig am Boden liegt und das Messer fallen gelassen hat, tritt der Wachmann aus reiner Panik und Verwirrung noch einmal kräftig zu.",
-      legalBasis: "StGB § 32 (Notwehr) - hier jedoch überschritten, da Angriff beendet.",
-      justification: "Keine Rechtfertigung mehr, da der Angriff nicht mehr gegenwärtig war (extensiver Notwehrexzess).",
-      guiltExclusion: "StGB § 33 (Überschreitung der Notwehr aus Verwirrung, Furcht oder Schrecken / asthenischer Affekt).",
-      solutionText: "Die Körperverletzung durch das Nachtreten war zwar objektiv rechtswidrig (Notwehr war beendet), jedoch greift hier § 33 StGB als Schuldausschließungsgrund wegen asthenischer Affekte (Panik/Furcht)."
-    },
-    {
-      title: "Fall 5: Verfolgung eines Fahrraddiebs",
-      description: "Ein Wachmann beobachtet, wie ein Täter ein angeschlossenes Fahrrad auf dem Firmenparkplatz knackt und wegfährt. Der Wachmann springt in seinen Dienst-PKW, holt den Dieb nach 200 Metern ein und drängt ihn absichtlich mit dem Auto zur Seite, um das Fahrrad zu sichern.",
-      legalBasis: "StPO § 127 Abs. 1 i.V.m. Verhältnismäßigkeitsgrundsatz",
-      justification: "Festnahmerecht prinzipiell gegeben, aber der Einsatz eines Autos als Rammbock zur Verfolgung von Sachwerten ist unverhältnismäßig.",
-      guiltExclusion: "Nicht gegeben.",
-      solutionText: "Das absichtliche Abdrängen mit einem PKW ist zur Durchsetzung eines bloßen Jedermann-Festnahmerechts bei Eigentumsdelikten (Fahrraddiebstahl) unverhältnismäßig. Die Gefährdung von Leib und Leben steht in keinem Verhältnis."
-    },
-    {
-      title: "Fall 6: Unberechtigter Platzverweis",
-      description: "Ein friedlicher Passant betritt versehentlich einen unbeschilderten Privatweg auf einem Firmengelände. Der Wachmann rast herbei, beschimpft den Passanten wüst, packt ihn am Kragen und wirft ihn grob zu Boden.",
-      legalBasis: "Hausrecht / BGB § 859 (Besitzwehr) / StGB § 223 (Körperverletzung)",
-      justification: "Kein rechtmäßiges Handeln, da der Passant keine verbotene Eigenmacht mit Aggression ausübte und die Gewaltanwendung völlig überzogen war.",
-      guiltExclusion: "Keine Schuldausschließungsgründe ersichtlich.",
-      solutionText: "Der Wachmann handelte rechtswidrig. Ein einfaches, höfliches Verweisen des Platzes wäre ausreichend gewesen (Übermaßverbot). Das Anpacken und zu Boden werfen erfüllt den Tatbestand der Körperverletzung im Amt bzw. im Bewachungsdienst."
-    },
-    {
-      title: "Fall 7: Notwehrüberschreitung bei Sachbeschädigung",
-      description: "Ein Einbrecher wirft nachts einen Stein gegen die Fensterscheibe des zu bewachenden Bürogebäudes. Um den Sachschaden sofort zu stoppen, schießt der bewaffnete Wachmann dem flüchtenden Steinwerfer gezielt in die Beine, obwohl keine Personengefahr drohte.",
-      legalBasis: "StGB § 32 (Notwehr) - Prüfung der Erforderlichkeit",
-      justification: "Verteidigung war gegenwärtig, aber ein Schusswaffeneinsatz gegen bloßes Eigentum (Sachbeschädigung) ohne Lebensgefahr ist absolut unverhältnismäßig.",
-      guiltExclusion: "Keine Entschuldigung; es liegt ein Erlaubnisüberschreitungsirrtum oder disproportionale Notwehr vor.",
-      solutionText: "Der Schusswaffeneinsatz war nicht geboten. Das Notwehrrecht erlaubt zwar die Verteidigung von Eigentum, schließt aber den lebensgefährlichen Einsatz von Schusswaffen gegen reine Sachbeschädigung aus."
-    },
-    {
-      title: "Fall 8: Festnahme eines Verwirrten",
-      description: "Ein psychisch schwer verwirrter, delirierender Mensch läuft schreiend über das Werksgelände und schlägt wild um sich. Ein Wachmann fixiert ihn rabiat am Boden, obwohl der Mann offenkundig nicht herr seiner Sinne ist und die Realität verkennt.",
-      legalBasis: "StPO § 127 Abs. 1 / Strafrechtliche Schuld",
-      justification: "Schutz der Anlage berechtigt zum Stoppen, aber Fixierung muss verhältnismäßig sein.",
-      guiltExclusion: "StGB § 20 (Schuldunfähigkeit wegen psychischer Störung beim Täter – hier handelt allerdings der Angreifer schuldunfähig; der Wachmann darf sich im Rahmen der Notwehr dennoch verteidigen, muss aber mildste Mittel wählen).",
-      solutionText: "Gegenüber schuldunfähigen Personen (z.B. schwer psychisch Kranken) ist das Notwehrrecht insofern eingeschränkt, als dass man ihnen nach Möglichkeit ausweichen muss, bevor man schwer verletzende Gewalt anwendet."
-    },
-    {
-      title: "Fall 9: Diebstahl im Supermarkt (Ladendetektiv)",
-      description: "Ein Ladendetektiv beobachtet in einem Supermarkt einen Kunden, der eine teure Schokoladetafel in seine Jackentasche steckt und den Kassenbereich passieren will, ohne zu bezahlen. Der Detektiv packt ihn am Ausgang am Arm und zieht ihn ins Büro.",
-      legalBasis: "StPO § 127 Abs. 1 (Vorläufige Festnahme auf frischer Tat)",
-      justification: "Auf frischer Tat betroffen (Diebstahl vollendet beim Passieren der Kasse / Gewahrsamsbruch), Fluchtgefahr und Identität ungeklärt.",
-      guiltExclusion: "Nicht einschlägig.",
-      solutionText: "Das Festhalten ist rechtlich vollkommen korrekt. Der Diebstahl ist auf frischer Tat betroffen, der Tatverdächtige wollte den Kassenbereich ohne Bezahlung passieren. Das Festhalten bis zum Eintreffen der Polizei ist gedeckt."
-    },
-    {
-      title: "Fall 10: Irrtümliche Notwehr (Putative Notwehr)",
-      description: "Ein Wachmann geht nachts durch einen dunklen Flur. Plötzlich springt hinter einer Ecke ein Kollege im Karnevalskostüm (Zombie) hervor und macht eine bedrohliche Geste. Der Wachmann glaubt felsenfest, er werde von einem echten Attentäter angegriffen, und schlägt sofort zu.",
-      legalBasis: "StGB § 32 (Notwehrlage liegt objektiv NICHT vor, da kein echter Angriff)",
-      justification: "Objektiv keine Notwehrlage, da der Angriff nur eingebildet war.",
-      guiltExclusion: "Erlaubnisirrtum / Putativnotwehr (führt zum Ausschluss des Vorsatzes gem. § 16 StGB, fahrlässige Körperverletzung bleibt prüfbar).",
-      solutionText: "Objektiv liegt keine Notwehr vor, da kein rechtswidriger Angriff stattfand. Subjektiv unterlag der Wachmann jedoch einem Erlaubnistatbestandsirrtum (Putativnotwehr), weshalb sein Vorsatz entfällt."
+  let gssk100Pool = rawGsskPool.map(item => {
+    // Kopiere Optionen und merke dir, welcher Text die korrekte Antwort war (Index 0)
+    let optionsCopy = [...item.options];
+    let correctText = optionsCopy[0];
+    
+    // Mische das Array per Fisher-Yates Algorithmus
+    for (let i = optionsCopy.length - 1; i > 0; i--) {
+      let j = Math.floor(Math.random() * (i + 1));
+      [optionsCopy[i], optionsCopy[j]] = [optionsCopy[j], optionsCopy[i]];
     }
+    
+    return {
+      category: item.category,
+      subcategory: item.subcategory,
+      question: item.question,
+      options: optionsCopy,
+      correct: correctText // Speichert den exakten Text als korrekte Lösung unabhängig vom Index
+    };
+  });
+
+  // 10 Rechtliche Praxisfälle im Gutachtenstil
+  const lawCases = [
+    { title: "Fall 1: Der Ladendieb im Supermarkt", desc: "Kunde M steckt unauffällig eine teure Spirituose in seine Jackentasche und passiert den Kassenbereich ohne zu bezahlen. Detektiv D beobachtet dies über Monitore, eilt her, packt M am Arm und zieht ihn in das Büro.", task: "Beurteilen Sie das Handeln des Detektivs D strafrechtlich und zivilrechtlich.", solution: "<strong>1. Strafrechtliche Prüfung (D):</strong> D hat gem. § 127 Abs. 1 StPO (Vorläufige Festnahme) rechtmäßig gehandelt. Tat auf frischer Tat betroffen, Fluchtgefahr, Identität unbekannt. Körperliche Einwirkung ist durch Festnahmerecht gedeckt (keine rechtswidrige Körperverletzung § 223 StGB, da Rechtfertigungsgrund vorliegt).<br><strong>2. Zivilrechtliche Prüfung:</strong> Keine verbotene Eigenmacht, da rechtmäßige Selbsthilfe/Besitzwehr greift." },
+    { title: "Fall 2: Notwehr am Werktor", desc: "Ein Werkschützer W wird von einem entlassenen Mitarbeiter E mit einem Messer angegriffen. W wehrt sich, schlägt E nieder und bricht ihm dabei das Nasenbein.", task: "Prüfen Sie die Rechtmäßigkeit des Handelns von W nach § 32 StGB.", solution: "<strong>1. Angriff:</strong> Gegenwärtig und rechtswidrig durch E mit Messer.<br><strong>2. Verteidigung:</strong> Erforderlich und geboten, um den Angriff abzuwenden. Das Brechen des Nasenbeins ist bei einem Messerangriff als mildestes sofort verfügbares Mittel von der Notwehr gedeckt (§ 32 StGB). Keine Bestrafung wegen Körperverletzung." },
+    { title: "Fall 3: Der herrenlose Hund auf dem Werksgelände", desc: "Ein aggressiver Hund dringt auf das umzäunte Betriebsgelände ein und bedroht Wachmann W. W erschläft den Hund mit einem schweren Eisenrohr, um sich zu schützen.", task: "Beurteilen Sie den Sachverhalt unter dem Aspekt des Notstands.", solution: "<strong>Prüfung nach § 228 BGB (Defensiver Notstand):</strong> Da die Gefahr von einer Sache (Tiere sind rechtlich wie Sachen behandelt, § 90a BGB) ausgeht, durfte W auf die Sache einwirken, da der drohende Schaden (Gesundheitsverletzung) nicht außer Verhältnis zum Wert des Hundes steht. Handeln ist gerechtfertigt." },
+    { title: "Fall 4: Betreten des Werks ohne Ausweis", desc: "Besucher V will trotz mehrfacher Aufforderung durch den Pförtner P, seinen Ausweis vorzuzeigen, rabiat das Werk betreten. P drückt V unsanft nach draußen vor das Tor.", task: "Welche Befugnisse nach BGB hat P hier ausgeübt?", solution: "<strong>Prüfung nach § 859 BGB (Besitzwehr):</strong> Der Betreiber des Werks hat Hausrecht und Besitzrecht. P handelt als Besitzdiener und darf verbotene Eigenmacht mit verhältnismäßiger Gewalt abwehren, um den Hausfrieden zu wahren und das Eindringen zu verhindern." },
+    { title: "Fall 5: Datenverarbeitung am Empfang", desc: "Pförtner P kopiert die Personalausweise aller Besucher und speichert diese in einer privaten Excel-Liste auf seinem privaten USB-Stick zur späteren Kontaktaufnahme.", task: "Bewerten Sie diesen Vorgang nach DSGVO.", solution: "<strong>Verstoß gegen DSGVO:</strong> Es liegt ein klarer Verstoß gegen den Zweckbindungsgrundsatz und Art. 5, 6 DSGVO vor. Private Speicherung von Ausweisdaten auf privaten Medien ist unzulässig und stellt einen Datenschutzverstoß dar." },
+    { title: "Fall 6: Die Schrankenblockade", desc: "Ein LKW-Fahrer blockiert absichtlich stundenlang die Zufahrt, weil seine Ladepapiere fehlen. Wachmann W schiebt den PKW des Fahrers mit einem Stapler zur Seite, wobei ein Kratzer entsteht.", task: "Prüfen Sie den Rechtfertigungsgrund (Aggressiver Notstand / Selbsthilfe).", solution: "<strong>Prüfung nach § 904 BGB (Aggressiver Notstand):</strong> Einwirkung auf eine fremde Sache (PKW), von der keine direkte Gefahr ausgeht, zur Abwendung einer drohenden Gefahr (massive Betriebsstörung). Schaden muss ersetzt werden, aber die Handlung selbst ist gerechtfertigt." },
+    { title: "Fall 7: Nachtschicht ohne Pause", desc: "Ein Sicherheitsmitarbeiter muss in einer 12-Stunden-Nachtschicht allein im Objekt arbeiten und darf den Platz laut Anweisung nicht verlassen. Er erhält keine Pausen.", task: "Welche gesetzlichen Bestimmungen wurden hier verletzt?", solution: "<strong>Verstoß gegen das Arbeitszeitgesetz (ArbZG):</strong> Nach § 4 ArbZG sind bei einer Arbeitszeit von mehr als 9 Stunden insgesamt 45 Minuten Ruhepause vorgeschrieben. Das Verbot des Verlassens des Arbeitsplatzes während der Bereitschaft widerspricht oft den Pausenvorgaben." },
+    { title: "Fall 8: Das unverschlossene Firmengelände", desc: "Werkschützer W verlässt während seiner Schicht das Tor unverschlossen und schläft im Pförtnerraum ein. Ein Dieb entwendet Maschinen im Wert von 50.000 €.", task: "Welche haftungs- und arbeitsrechtlichen Konsequenzen drohen W?", solution: "<strong>Konsequenzen für W:</strong> Grobe Fahrlässigkeit (Schlaf im Dienst und Offenlassen des Tores). Arbeitsrechtlich droht die fristlose Kündigung (§ 626 BGB). Zivilrechtlich haftet der Arbeitnehmer bei grober Fahrlässigkeit im Rahmen des innerbetrieblichen Schadensausgleichs." },
+    { title: "Fall 9: Vorläufige Festnahme ohne Fluchtgefahr", desc: "Ein bekannter Mitarbeiter T verlässt das Werk. Wachmann W vermutet Diebstahl, hält T fest, obwohl T seinen Ausweis zeigt und fest im Unternehmen verwurzelt ist.", task: "War die Festnahme nach § 127 StPO rechtmäßig?", solution: "<strong>Unrechtmäßig:</strong> Eine Voraussetzung des § 127 Abs. 1 StPO fehlt: Die Identität stand sofort fest und es lag keine Fluchtgefahr vor. Somit ist die Freiheitsentziehung rechtswidrig (Freiheitsberaubung § 239 StGB)." },
+    { title: "Fall 10: Einsatz einer nicht zugelassenen Waffe", desc: "Ein Sicherheitsmitarbeiter führt im Objektschutz eigenmächtig eine verbotene Schusswaffe (Kurzwaffe ohne behördlichen Waffenschein und Waffentrageerlaubnis) mit sich.", task: "Welche Gesetze wurden hier verletzt?", solution: "<strong>Verstöße:</strong> Verstoß gegen das Waffengesetz (WaffG) – Führen einer Schusswaffe ohne Waffenschein sowie Verstoß gegen die Bewachungsverordnung (§ 34a GewO / waffenrechtliche Zuverlässigkeit und behördliche Erlaubnisse)." }
   ];
 
-  // =========================================================================
-  // APP LOGIK
-  // =========================================================================
-  let quizIndex = 0;
-  let examState = {
-    questions: [],
-    currentIndex: 0,
-    answers: [],
-    timerInterval: null,
-    timeLeft: 45 * 60
-  };
+  // Quiz State
+  let currentQuizIndex = 0;
+  let quizAnswers = {};
 
-  window.onload = () => {
-    loadQuizQuestion();
-    loadLawCases();
-  };
+  // Real Exam State
+  let examQuestions = [];
+  let currentExamIndex = 0;
+  let examAnswers = {};
+  let examTimerInterval = null;
+  let timeLeft = 45 * 60; // 45 minutes
 
-  function switchTab(tabId) {
+  // --- TAB NAVIGATION ---
+  function switchTab(tabName) {
     document.getElementById('quizTab').classList.add('hidden');
     document.getElementById('realExamTab').classList.add('hidden');
     document.getElementById('lawTab').classList.add('hidden');
     
-    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.getElementById('tabQuizBtn').classList.remove('active');
+    document.getElementById('tabRealExamBtn').classList.remove('active');
+    document.getElementById('tabLawBtn').classList.remove('active');
 
-    if (tabId === 'quiz') {
+    if (tabName === 'quiz') {
       document.getElementById('quizTab').classList.remove('hidden');
       document.getElementById('tabQuizBtn').classList.add('active');
       loadQuizQuestion();
-    } else if (tabId === 'realExam') {
+    } else if (tabName === 'realExam') {
       document.getElementById('realExamTab').classList.remove('hidden');
       document.getElementById('tabRealExamBtn').classList.add('active');
-      resetToExamStart();
-    } else if (tabId === 'law') {
+    } else if (tabName === 'law') {
       document.getElementById('lawTab').classList.remove('hidden');
       document.getElementById('tabLawBtn').classList.add('active');
+      renderLawCases();
     }
   }
 
-  // --- QUIZ LOGIK (Index 0 wird IMMER als erste Option angezeigt und ist immer richtig) ---
+  // --- QUIZ LOGIC ---
   function loadQuizQuestion() {
-    if (quizIndex >= gssk100Pool.length) quizIndex = 0; 
-    const q = gssk100Pool[quizIndex];
-    document.getElementById('counter').innerText = `Frage ${quizIndex + 1} von ${gssk100Pool.length}`;
+    const q = gssk100Pool[currentQuizIndex];
+    document.getElementById('counter').innerText = `Frage ${currentQuizIndex + 1} von ${gssk100Pool.length}`;
     document.getElementById('catBadge').innerText = q.category;
     document.getElementById('subCatBadge').innerText = q.subcategory;
     document.getElementById('question').innerText = q.question;
     
-    const optionsDiv = document.getElementById('options');
-    optionsDiv.innerHTML = '';
+    const optionsContainer = document.getElementById('options');
+    optionsContainer.innerHTML = '';
+    
     document.getElementById('explanation').style.display = 'none';
 
-    // Wir rendern die Optionen exakt in der definierten Reihenfolge. 
-    // Da Index 0 in jedem Array-Objekt die korrekte Antwort ist, ist Antwort 1 immer korrekt!
-    q.options.forEach((opt, index) => {
-      const btn = document.createElement('div');
+    q.optionsforEach((opt, idx) => {
+      const btn = document.createElement('button');
       btn.className = 'btn-option';
       btn.innerText = opt;
-      const isCorrect = (index === 0);
-      btn.onclick = () => checkQuizAnswer(btn, isCorrect, q.options[0]);
-      optionsDiv.appendChild(btn);
+      btn.onclick = () => checkQuizAnswer(opt, q.correct, btn, optionsContainer);
+      optionsContainer.appendChild(btn);
     });
   }
 
-  function checkQuizAnswer(btn, isCorrect, correctText) {
-    const allBtns = document.getElementById('options').querySelectorAll('.btn-option');
-    allBtns.forEach((b, idx) => {
-      b.onclick = null;
-      if (idx === 0) b.classList.add('correct');
-    });
-    if (!isCorrect) {
-      btn.classList.add('wrong');
+  function checkQuizAnswer(selectedOpt, correctOpt, btnElement, container) {
+    const buttons = container.getElementsByClassName('btn-option');
+    for (let b of buttons) {
+      b.disabled = true;
+      if (b.innerText === correctOpt) {
+        b.classList.add('correct');
+      }
     }
-    document.getElementById('explanationText').innerText = `Die korrekte Antwort lautet: ${correctText}`;
+    if (selectedOpt !== correctOpt) {
+      btnElement.classList.add('wrong');
+    }
+    
+    document.getElementById('explanationText').innerText = correctOpt;
     document.getElementById('explanation').style.display = 'block';
   }
 
   function nextQuestion() {
-    quizIndex++;
+    currentQuizIndex = (currentQuizIndex + 1) % gssk100Pool.length;
     loadQuizQuestion();
   }
 
-  // --- EXAM LOGIK (Zufällige Auswahl von 30 Fragen aus den 100, wobei Antwort 0 korrekt bleibt) ---
+  // --- IHK REAL EXAM SIMULATION LOGIC ---
   function startRealExam() {
+    // Shuffle pool and take 30
+    let shuffledPool = [...gssk100Pool].sort(() => 0.5 - Math.random());
+    examQuestions = shuffledPool.slice(0, 30);
+    currentExamIndex = 0;
+    examAnswers = {};
+    timeLeft = 45 * 60;
+
     document.getElementById('examStartScreen').classList.add('hidden');
+    document.getElementById('examResultScreen').classList.add('hidden');
     document.getElementById('examScreen').classList.remove('hidden');
-    
-    // Wir mischen das 100er-Array durch und nehmen die ersten 30
-    const shuffled = [...gssk100Pool].sort(() => 0.5 - Math.random());
-    const selected30 = shuffled.slice(0, 30);
 
-    const copiedQuestions = selected30.map(q => ({
-      ...q,
-      correct: q.options[0], // Immer die erste Option ist korrekt
-      displayOptions: [...q.options] // Reihenfolge beibehalten, damit Option 1 immer richtig ist
-    }));
-
-    examState.questions = copiedQuestions;
-    examState.currentIndex = 0;
-    examState.answers = new Array(examState.questions.length).fill(null);
-    examState.timeLeft = 45 * 60; 
-    
-    clearInterval(examState.timerInterval);
-    examState.timerInterval = setInterval(updateTimer, 1000);
-    
+    startTimer();
     loadExamQuestion();
   }
 
-  function updateTimer() {
-    examState.timeLeft--;
-    if (examState.timeLeft <= 0) {
-      clearInterval(examState.timerInterval);
-      finishExamPrompt(true);
-      return;
-    }
-    const minutes = Math.floor(examState.timeLeft / 60).toString().padStart(2, '0');
-    const seconds = (examState.timeLeft % 60).toString().padStart(2, '0');
-    document.getElementById('examTimer').innerText = `${minutes}:${seconds}`;
+  function startTimer() {
+    if (examTimerInterval) clearInterval(examTimerInterval);
+    examTimerInterval = setInterval(() => {
+      let minutes = Math.floor(timeLeft / 60);
+      let seconds = timeLeft % 60;
+      document.getElementById('examTimer').innerText = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+      if (timeLeft <= 0) {
+        clearInterval(examTimerInterval);
+        finishExam();
+      }
+      timeLeft--;
+    }, 1000);
   }
 
   function loadExamQuestion() {
-    const q = examState.questions[examState.currentIndex];
-    document.getElementById('examCounter').innerText = `Frage ${examState.currentIndex + 1} von ${examState.questions.length}`;
+    const q = examQuestions[currentExamIndex];
+    document.getElementById('examCounter').innerText = `Frage ${currentExamIndex + 1} von 30`;
     document.getElementById('examQuestion').innerText = q.question;
     
-    const optionsDiv = document.getElementById('examOptions');
-    optionsDiv.innerHTML = '';
+    const container = document.getElementById('examOptions');
+    container.innerHTML = '';
 
-    q.displayOptions.forEach(opt => {
-      const btn = document.createElement('div');
+    q.options.forEach((opt) => {
+      const btn = document.createElement('button');
       btn.className = 'btn-option';
-      if (examState.answers[examState.currentIndex] === opt) {
+      if (examAnswers[currentExamIndex] === opt) {
         btn.classList.add('selected');
       }
       btn.innerText = opt;
-      btn.onclick = () => selectExamAnswer(opt);
-      optionsDiv.appendChild(btn);
+      btn.onclick = () => {
+        examAnswers[currentExamIndex] = opt;
+        loadExamQuestion(); // Refresh selection view
+      };
+      container.appendChild(btn);
     });
 
-    document.getElementById('examPrevBtn').disabled = (examState.currentIndex === 0);
-    document.getElementById('examNextBtn').disabled = (examState.currentIndex === examState.questions.length - 1);
-  }
-
-  function selectExamAnswer(selectedOption) {
-    examState.answers[examState.currentIndex] = selectedOption;
-    loadExamQuestion(); 
-  }
-
-  function prevExamQuestion() {
-    if (examState.currentIndex > 0) {
-      examState.currentIndex--;
-      loadExamQuestion();
-    }
+    document.getElementById('examPrevBtn').style.visibility = currentExamIndex === 0 ? 'hidden' : 'visible';
+    document.getElementById('examNextBtn').innerText = currentExamIndex === 29 ? 'Letzte Frage' : 'Nächste';
   }
 
   function nextExamQuestion() {
-    if (examState.currentIndex < examState.questions.length - 1) {
-      examState.currentIndex++;
+    if (currentExamIndex < 29) {
+      currentExamIndex++;
+      loadExamQuestion();
+    } else {
+      finishExamPrompt();
+    }
+  }
+
+  function prevExamQuestion() {
+    if (currentExamIndex > 0) {
+      currentExamIndex--;
       loadExamQuestion();
     }
   }
 
-  function finishExamPrompt(forceSubmit = false) {
-    if (!forceSubmit) {
-      const unanswered = examState.answers.filter(a => a === null).length;
-      let msg = "Möchten Sie die Prüfung wirklich abgeben?";
-      if (unanswered > 0) msg += `\nACHTUNG: Sie haben noch ${unanswered} unbeantwortete Fragen!`;
-      if (!confirm(msg)) return;
+  function finishExamPrompt() {
+    if (confirm("Möchten Sie die IHK-Prüfung jetzt wirklich abgeben?")) {
+      finishExam();
     }
-    
-    clearInterval(examState.timerInterval);
-    document.getElementById('examScreen').classList.add('hidden');
-    document.getElementById('examResultScreen').classList.remove('hidden');
-    
-    evaluateExam();
   }
 
-  function evaluateExam() {
-    let correctPoints = 0;
-    const reviewList = document.getElementById('examReviewList');
-    reviewList.innerHTML = '';
+  function finishExam() {
+    clearInterval(examTimerInterval);
+    document.getElementById('examScreen').classList.add('hidden');
+    document.getElementById('examResultScreen').classList.remove('hidden');
 
-    examState.questions.forEach((q, i) => {
-      const userAnswer = examState.answers[i];
-      const isCorrect = (userAnswer === q.correct);
-      if (isCorrect) correctPoints++;
+    let correctCount = 0;
+    let reviewHtml = '';
 
-      const reviewItem = document.createElement('div');
-      reviewItem.className = `review-item ${isCorrect ? 'review-correct' : 'review-wrong'}`;
-      reviewItem.innerHTML = `
-        <strong>Frage ${i + 1}: ${q.question}</strong><br>
-        <span style="color: #555;">Ihre Antwort: ${userAnswer || '<i>Keine Antwort gegeben</i>'}</span><br>
-        ${!isCorrect ? `<span style="color: #28a745; font-weight: bold;">Richtige Lösung: ${q.correct}</span>` : ''}
+    examQuestions.forEach((q, idx) => {
+      let userAns = examAnswers[idx];
+      let isCorrect = (userAns === q.correct);
+      if (isCorrect) correctCount++;
+
+      reviewHtml += `
+        <div class="review-item ${isCorrect ? 'review-correct' : 'review-wrong'}">
+          <strong>Frage ${idx + 1}:</strong> ${q.question}<br>
+          <span style="font-size:0.9rem;">Ihre Antwort: <strong>${userAns || 'Keine Antwort'}</strong></span><br>
+          <span style="font-size:0.9rem;">Richtige Antwort: <strong>${q.correct}</strong></span>
+        </div>
       `;
-      reviewList.appendChild(reviewItem);
     });
 
-    const maxPoints = examState.questions.length;
-    const prozent = Math.round((correctPoints / maxPoints) * 100);
-    const passed = prozent >= 50;
+    let percentage = Math.round((correctCount / 30) * 100);
+    let passed = correctCount >= 15;
 
-    document.getElementById('resultScore').innerText = `${correctPoints} von ${maxPoints} Punkten (${prozent}%)`;
-    document.getElementById('resultStatus').innerText = passed ? '🎉 Bestanden (IHK-Richtlinie erfüllt)' : '❌ Nicht bestanden (Mindestens 50% erforderlich)';
-    
     const resultBox = document.getElementById('resultBox');
     resultBox.className = `result-card ${passed ? 'result-pass' : 'result-fail'}`;
+    document.getElementById('resultTitle').innerText = passed ? '🎉 Prüfung Bestanden!' : '❌ Prüfung Nicht Bestanden';
+    document.getElementById('resultScore').innerText = `${correctCount} von 30 Fragen richtig (${percentage}%)`;
+    document.getElementById('resultStatus').innerText = passed ? 'Sie haben das IHK-Bestehenslimit von 50% erreicht.' : 'Sie benötigen mindestens 15 richtige Antworten zum Bestehen.';
+    
+    document.getElementById('examReviewList').innerHTML = reviewHtml;
   }
 
   function resetToExamStart() {
-    clearInterval(examState.timerInterval);
-    document.getElementById('examStartScreen').classList.remove('hidden');
-    document.getElementById('examScreen').classList.add('hidden');
     document.getElementById('examResultScreen').classList.add('hidden');
+    document.getElementById('examStartScreen').classList.remove('hidden');
   }
 
-  // --- RECHTSFÄLLE (10 FÄLLE) ---
-  function loadLawCases() {
+  // --- LAW CASES RENDERER ---
+  function renderLawCases() {
     const container = document.getElementById('caseContainer');
-    container.innerHTML = '';
+    if (container.children.length > 0) return; // already rendered
 
-    lawCasesData.forEach((c) => {
+    lawCases.forEach((c, idx) => {
       const card = document.createElement('div');
       card.className = 'section-card law-card';
       card.innerHTML = `
         <div class="section-title law-title">${c.title}</div>
-        <p>${c.description}</p>
-        <strong>Prüfungsauftrag:</strong> Bearbeiten Sie den Fall strukturiert nach Rechtliche Lage, Rechtfertigungsgrund und Schuldausschließung.
-        
+        <p style="font-size: 0.95rem; color: #333;">${c.desc}</p>
+        <p><strong>Aufgabe:</strong> ${c.task}</p>
         <div class="textarea-container">
-          <span class="textarea-label">1. Rechtliche Lage (Gesetze / Paragraphen):</span>
-          <textarea class="textarea-case" placeholder="Tragen Sie hier die relevanten Paragraphen (z.B. StPO § 127) und den Sachverhalt ein..."></textarea>
-          
-          <span class="textarea-label">2. Rechtfertigungsgrund (Voraussetzungen & Prüfung):</span>
-          <textarea class="textarea-case" placeholder="Prüfen Sie hier das Vorliegen von Rechtfertigungsgründen (z.B. Notwehrlage, Notstand)..."></textarea>
-          
-          <span class="textarea-label">3. Schuldausschließung (Ggf. Entschuldigungsgründe / Affekte):</span>
-          <textarea class="textarea-case" placeholder="Prüfen Sie hier ob Schuldausschließungsgründe (z.B. § 33 StGB) greifen..."></textarea>
+          <span class="textarea-label">Ihr Gutachten / Ihre Lösung:</span>
+          <textarea class="textarea-case" placeholder="Tragen Sie hier Ihre rechtliche Würdigung ein..."></textarea>
         </div>
-
-        <button class="btn-action" style="margin-top: 12px;" onclick="toggleSolution(this)">Musterlösung anzeigen</button>
-        
-        <div class="solution-box">
-          <div class="solution-section"><strong>Rechtliche Lage:</strong><br>${c.legalBasis}</div>
-          <div class="solution-section"><strong>Rechtfertigungsgrund:</strong><br>${c.justification}</div>
-          <div class="solution-section"><strong>Schuldausschließung:</strong><br>${c.guiltExclusion}</div>
-          <div class="solution-section"><strong>Gesamtfazit / Auswertung:</strong><br>${c.solutionText}</div>
+        <button class="btn-action" style="margin-top:10px; font-size:0.85rem; padding:6px 12px;" onclick="toggleSolution(${idx})">Musterlösung einblenden</button>
+        <div id="sol_${idx}" class="solution-box">
+          <div class="solution-section"><strong>Musterlösung nach IHK-Standard:</strong><br>${c.solution}</div>
         </div>
       `;
       container.appendChild(card);
     });
   }
 
-  function toggleSolution(btn) {
-    const solBox = btn.nextElementSibling;
-    if (solBox.style.display === 'block') {
-      solBox.style.display = 'none';
-      btn.innerText = 'Musterlösung anzeigen';
-    } else {
-      solBox.style.display = 'block';
-      btn.innerText = 'Musterlösung ausblenden';
-    }
+  function toggleSolution(idx) {
+    const box = document.getElementById(`sol_${idx}`);
+    box.style.display = box.style.display === 'block' ? 'none' : 'block';
   }
+
+  // Initialize first view
+  loadQuizQuestion();
 </script>
+
 </body>
 </html>
