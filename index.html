@@ -78,7 +78,6 @@
     .btn-action:disabled { background: #ccc; cursor: not-allowed; }
     .btn-danger { background: #dc3545; }
     .btn-secondary { background: #6c757d; }
-    .btn-warning { background: #ffc107; color: #000; font-weight: bold; }
     
     .section-card { background: var(--option-bg); border: 1px solid var(--border-color); border-left: 5px solid #0d6efd; padding: 15px; margin-bottom: 15px; border-radius: 6px; }
     .section-title { font-weight: bold; color: #0d6efd; margin-bottom: 8px; font-size: 1.05rem; }
@@ -107,6 +106,13 @@
     
     .top-actions { display: flex; gap: 8px; align-items: center; }
     .icon-top-btn { background: var(--border-color); border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; color: var(--text-color); font-weight: bold; }
+
+    /* NEU: Grid für die Exam-Fragenübersicht */
+    .exam-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(36px, 1fr)); gap: 6px; margin: 15px 0; }
+    .exam-grid-btn { padding: 8px 4px; border: 1px solid var(--border-color); background: var(--option-bg); color: var(--text-color); border-radius: 4px; cursor: pointer; font-size: 0.85rem; font-weight: bold; text-align: center; }
+    .exam-grid-btn.current { border-color: #0d6efd; background: #e7f5ff; }
+    .exam-grid-btn.answered { background: #d4edda; border-color: #28a745; color: #155724; }
+    .exam-grid-btn.flagged { border-color: #ffc107; background: #fff3cd; color: #856404; }
   </style>
 </head>
 <body data-theme="light">
@@ -133,9 +139,14 @@
       <input type="text" id="quizSearchInput" class="search-input" placeholder="🔍 Frage oder Stichwort suchen..." oninput="filterQuizQuestions()">
       <button id="filterBookmarkBtn" class="filter-btn" onclick="toggleBookmarkFilter()">⭐ Lesezeichen</button>
       <button id="filterWeakBtn" class="filter-btn" onclick="toggleWeakFilter()">⚠️ Schwachstellen</button>
+      <button id="filterMasteredBtn" class="filter-btn" onclick="toggleMasteredFilter()">✅ Meisterhaft</button>
       <label style="font-size: 0.85rem; display: flex; align-items: center; gap: 4px; cursor: pointer;">
         <input type="checkbox" id="timerCheckbox" onchange="toggleTimerMode()"> ⏱️ Timer (45s)
       </label>
+    </div>
+
+    <div style="display: flex; justify-content: flex-end; margin-bottom: 10px;">
+      <button class="filter-btn" style="background: #dc3545; color: white; border: none; font-size: 0.75rem; padding: 4px 8px;" onclick="resetAllStatsPrompt()">Statistik & Fortschritt zurücksetzen</button>
     </div>
 
     <div id="quizContentArea">
@@ -143,6 +154,7 @@
         <h3 style="margin:0;">Fragenpool <span id="counter" style="font-weight: bold; color: var(--text-muted); font-size: 0.95rem;">Frage 1 von 100</span></h3>
         <div style="display: flex; align-items: center; gap: 10px;">
           <span id="quizTimerBox" class="timer-box hidden" style="font-size: 0.9rem; padding: 4px 8px;">45</span>
+          <button class="icon-top-btn" onclick="speakCurrentQuestion()" title="Frage vorlesen">🔊 Vorlesen</button>
           <button id="quizBookmarkBtn" class="bookmark-btn" onclick="toggleCurrentBookmark()" title="Frage merken">☆</button>
         </div>
       </div>
@@ -195,8 +207,15 @@
     <div id="examScreen" class="hidden">
       <div class="header">
         <span id="examCounter" style="font-weight: bold;">Frage 1 von 30</span>
-        <span id="examTimer" class="timer-box">45:00</span>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <button id="examFlagBtn" class="filter-btn" onclick="toggleExamFlag()" style="font-size: 0.8rem; padding: 4px 8px;">🚩 Frage markieren</button>
+          <span id="examTimer" class="timer-box">45:00</span>
+        </div>
       </div>
+
+      <!-- Fragen-Übersichts-Grid -->
+      <div id="examGridContainer" class="exam-grid"></div>
+
       <div id="examQuestion" class="question-text">Prüfungsfrage wird geladen...</div>
       <div id="examOptions" class="options"></div>
       <div class="controls">
@@ -318,7 +337,7 @@
     { id: 81, category: "Serviceorientiertes Verhalten", subcategory: "Kritikfähigkeit", question: "Wie geht eine professionelle Sicherheitskraft mit berechtigter Kritik eines Kunden um?", options: [ "Sachlich annehmen, Verständnis zeigen, lösungsorientiert handeln und Fehler eingestehen.", "Den Kunden sofort der Lüge bezichtigen.", "Die Kritik ignorieren und den Raum verlassen.", "Den Kunden lautstark zurechtweisen." ] },
     { id: 82, category: "Serviceorientiertes Verhalten", subcategory: "Interkulturelle Kompetenz", question: "Warum ist interkulturelle Kompetenz im Sicherheitsgewerbe wichtig?", options: [ "Um Missverständnisse im Umgang mit internationalen Besuchern oder Mitarbeitern zu vermeiden und professionell zu bleiben.", "Um fremde Sprachen perfekt fließend als Dolmetscher zu übersetzen.", "Um Gesetze des Herkunftslandes von Ausländern in Deutschland anzuwenden.", "Um kulturelle Feste auf dem Werksgelände zu organisieren." ] },
     { id: 83, category: "Serviceorientiertes Verhalten", subcategory: "Konfliktmanagement", question: "Was versteht man unter dem Vier-Ohren-Modell von Friedemann Schulz von Thun in der Kommunikation?", options: [ "Jede Nachricht hat vier Ebenen: Sachinhalt, Selbstkundgabe, Beziehung und Appell.", "Man benötigt vier Ohren, um im Funkverkehr alles zu verstehen.", "Kommunikation findet immer über vier Beteiligte statt.", "Man soll dem Kunden niemals zuhören." ] },
-    { id: 84, category: "Serviceorientiertes Verhalten", subcategory: "Teamwork", question: "Welche Bedeutung hat Teamarbeit im Sicherheitsdienst?", options: [ "Hohe Sicherheit durch gegenseitige Unterstützung, Absicherung und klare Aufgabenverteilung im Schichtdienst.", "Vollständige Unabhängigkeit der Mitarbeiter voneinander.", "Wettbewerb untereinander, wer die meisten Kollegen kontrolliert.", "Ausschließliche Alleinarbeit ohne Kommunikation." ] },
+    { id: 84, category: "Serviceorientiertes Verhalten", subcategory: "Teamwork", question: "Welche Bedeutung hat Teamarbeit im Sicherheitsdienst?", options: [ "Hohe Sicherheit durch gegenseitige Unterstützung, Absicherung und klare Aufgabenverteilung im Schichtdienst.", "Vollständige Unabhängigkeit der Mitarbeiter voneinander.", "Wettbewerb untereinander, wer die meisten Kollegen kontrolliert.", "Ausschließlich Alleinarbeit ohne Kommunikation." ] },
     { id: 85, category: "Serviceorientiertes Verhalten", subcategory: "Erscheinungsbild", question: "Welchen Einfluss hat das äußere Erscheinungsbild (Dienstkleidung, Auftreten) einer Sicherheitskraft?", options: [ "Es prägt den ersten Eindruck des Unternehmens, strahlt Kompetenz und Seriosität aus und wirkt präventiv.", "Es hat keinerlei Bedeutung für den Erfolg der Arbeit.", "Es dient ausschließlich dem persönlichen Kälteschutz im Winter.", "Es soll Besucher abschrecken und einschüchtern." ] },
     { id: 86, category: "Serviceorientiertes Verhalten", subcategory: "Telefonkompetenz", question: "Wie nimmt man einen geschäftlichen Telefonanruf in der Sicherheitszentrale professionell entgegen?", options: [ "Firmenname / Abteilung, eigener Name, freundliche Begrüßung ('Guten Tag, Zentrale, Müller am Apparat, was kann ich tun?').", "Mit einem kurzen 'Ja? Wer ist da?'", "Den Anruf klingeln lassen und nicht abheben.", "Mit privater Musik im Hintergrund." ] },
     { id: 87, category: "Serviceorientiertes Verhalten", subcategory: "Stressbewältigung", question: "Welche Methode hilft bei akuter Stressbelastung während eines Notfalleinsatzes?", options: [ "Bewusste tiefe Bauchatmung, kühlen Kopf bewahren, Prioritäten setzen (Erst absichern, dann handeln).", "Panikartig wegrennen und die Kollegen rufen.", "Lautes Schreien, um den Adrenalinspiegel abzubauen.", "Den Einsatz abbrechen." ] },
@@ -361,6 +380,7 @@
 
   let onlyBookmarksActive = false;
   let onlyWeakActive = false;
+  let onlyMasteredActive = false;
   let searchQuery = "";
   let soundEnabled = true;
 
@@ -372,6 +392,7 @@
   let examPool = [];
   let currentExamIndex = 0;
   let userExamAnswers = {};
+  let examFlagged = {};
   let examTimerInterval = null;
   let examTimeRemaining = 2700;
 
@@ -485,7 +506,16 @@
           matchesWeak = false;
         }
       }
-      return matchesSearch && matchesBookmark && matchesWeak;
+
+      let matchesMastered = true;
+      if (onlyMasteredActive) {
+        let stats = userStats[q.id];
+        if (!stats || stats.correct < 3 || (stats.correct / stats.total) < 0.8) {
+          matchesMastered = false;
+        }
+      }
+
+      return matchesSearch && matchesBookmark && matchesWeak && matchesMastered;
     });
 
     currentQuizIndex = 0;
@@ -525,6 +555,12 @@
     initQuiz();
   }
 
+  function toggleMasteredFilter() {
+    onlyMasteredActive = !onlyMasteredActive;
+    document.getElementById('filterMasteredBtn').classList.toggle('active', onlyMasteredActive);
+    initQuiz();
+  }
+
   function toggleTimerMode() {
     timerModeActive = document.getElementById('timerCheckbox').checked;
     const box = document.getElementById('quizTimerBox');
@@ -537,13 +573,24 @@
     searchQuery = "";
     onlyBookmarksActive = false;
     onlyWeakActive = false;
+    onlyMasteredActive = false;
     timerModeActive = false;
     document.getElementById('quizSearchInput').value = "";
     document.getElementById('filterBookmarkBtn').classList.remove('active');
     document.getElementById('filterWeakBtn').classList.remove('active');
+    document.getElementById('filterMasteredBtn').classList.remove('active');
     document.getElementById('timerCheckbox').checked = false;
     document.getElementById('quizTimerBox').classList.add('hidden');
     initQuiz();
+  }
+
+  function resetAllStatsPrompt() {
+    if(confirm("Möchtest du wirklich deinen gesamten Lernfortschritt und alle Statistiken zurücksetzen?")) {
+      userStats = {};
+      localStorage.removeItem('gssk_stats');
+      initQuiz();
+      alert("Statistiken wurden zurückgesetzt.");
+    }
   }
 
   function toggleCurrentBookmark() {
@@ -567,6 +614,22 @@
       bmBtn.innerText = "☆";
       bmBtn.style.color = "var(--text-color)";
     }
+  }
+
+  function speakCurrentQuestion() {
+    if (!('speechSynthesis' in window)) {
+      alert("Dein Browser unterstützt keine Sprachausgabe.");
+      return;
+    }
+    window.speechSynthesis.cancel();
+    const q = quizPool[currentQuizIndex];
+    let textToSpeak = `Frage: ${q.question}. Antwortmöglichkeiten: `;
+    q.options.forEach((opt, idx) => {
+      textToSpeak += `Option ${idx + 1}: ${opt}. `;
+    });
+    const utterance = new SpeechSynthesisUtterance(textToSpeak);
+    utterance.lang = 'de-DE';
+    window.speechSynthesis.speak(utterance);
   }
 
   function loadQuizQuestion() {
@@ -608,7 +671,6 @@
         document.getElementById('quizTimerBox').innerText = questionSecondsLeft;
         if (questionSecondsLeft <= 0) {
           clearInterval(singleQuestionTimer);
-          // Auto fail on timeout
           const allBtns = optionsDiv.getElementsByTagName('button');
           for(let b of allBtns) {
             b.disabled = true;
@@ -716,6 +778,7 @@
     examPool = shuffleArray(tempPool).slice(0, 30);
     currentExamIndex = 0;
     userExamAnswers = {};
+    examFlagged = {};
     examTimeRemaining = 2700;
 
     document.getElementById('examStartScreen').classList.add('hidden');
@@ -726,10 +789,59 @@
     startExamTimer();
   }
 
+  function renderExamGrid() {
+    const gridContainer = document.getElementById('examGridContainer');
+    gridContainer.innerHTML = '';
+
+    examPool.forEach((_, idx) => {
+      const btn = document.createElement('button');
+      btn.className = 'exam-grid-btn';
+      btn.innerText = idx + 1;
+
+      if (idx === currentExamIndex) {
+        btn.classList.add('current');
+      }
+      if (userExamAnswers[idx] !== undefined) {
+        btn.classList.add('answered');
+      }
+      if (examFlagged[idx]) {
+        btn.classList.add('flagged');
+      }
+
+      btn.onclick = () => {
+        currentExamIndex = idx;
+        loadExamQuestion();
+      };
+      gridContainer.appendChild(btn);
+    });
+  }
+
+  function toggleExamFlag() {
+    examFlagged[currentExamIndex] = !examFlagged[currentExamIndex];
+    renderExamGrid();
+    updateExamFlagBtnState();
+  }
+
+  function updateExamFlagBtnState() {
+    const flagBtn = document.getElementById('examFlagBtn');
+    if (examFlagged[currentExamIndex]) {
+      flagBtn.innerText = "🚩 Markierung aufheben";
+      flagBtn.style.background = "#ffc107";
+      flagBtn.style.color = "#000";
+    } else {
+      flagBtn.innerText = "🚩 Frage markieren";
+      flagBtn.style.background = "";
+      flagBtn.style.color = "";
+    }
+  }
+
   function loadExamQuestion() {
     const q = examPool[currentExamIndex];
     document.getElementById('examCounter').innerText = `Frage ${currentExamIndex + 1} von ${examPool.length}`;
     document.getElementById('examQuestion').innerText = q.question;
+
+    renderExamGrid();
+    updateExamFlagBtnState();
 
     const optionsDiv = document.getElementById('examOptions');
     optionsDiv.innerHTML = '';
@@ -838,10 +950,11 @@
         
         <div class="textarea-container">
           <label class="textarea-label">Deine gutachtliche Lösung / Analyse:</label>
-          <textarea class="textarea-case" placeholder="Trage hier deine rechtliche Prüfung ein..."></textarea>
+          <textarea id="caseText_${index}" class="textarea-case" placeholder="Trage hier deine rechtliche Prüfung ein..."></textarea>
+          <div id="keywordFeedback_${index}" style="font-size: 0.8rem; font-weight: bold; color: #17a2b8; margin-top: 2px;"></div>
         </div>
 
-        <button class="btn-action" style="margin-top: 10px; background: #28a745;" onclick="toggleSolution(${index})">💡 Musterlösung anzeigen</button>
+        <button class="btn-action" style="margin-top: 10px; background: #28a745;" onclick="toggleSolution(${index})">💡 Musterlösung anzeigen & Analyse</button>
         
         <div id="solutionBox_${index}" class="solution-box">
           <strong>Musterlösung nach IHK-Standard:</strong><br>
@@ -854,7 +967,22 @@
 
   function toggleSolution(index) {
     const box = document.getElementById(`solutionBox_${index}`);
-    box.style.display = (box.style.display === 'block') ? 'none' : 'block';
+    const isHidden = (box.style.display !== 'block');
+    box.style.display = isHidden ? 'block' : 'none';
+
+    if (isHidden) {
+      // Live Keyword Check
+      const userText = document.getElementById(`caseText_${index}`).value.toLowerCase();
+      let keywords = ["§ 32", "notwehr", "§ 127", "festnahme", "§ 34", "notstand", "hausrecht", "§ 903", "§ 123", "hausfriedensbruch", "sachbeschädigung", "§ 303"];
+      let foundKeywords = keywords.filter(kw => userText.includes(kw));
+      
+      const feedbackDiv = document.getElementById(`keywordFeedback_${index}`);
+      if (foundKeywords.length > 0) {
+        feedbackDiv.innerText = `🔍 Erkannte Fachbegriffe/Paragraphen in deiner Lösung: ${foundKeywords.join(", ").toUpperCase()}`;
+      } else {
+        feedbackDiv.innerText = `💡 Tipp: Versuche in deiner Analyse konkrete Paragraphen (z.B. § 32 StGB, § 127 StPO) zu nennen.`;
+      }
+    }
   }
 </script>
 
