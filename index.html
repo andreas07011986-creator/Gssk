@@ -158,7 +158,6 @@
         <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
           <span id="quizTimerBox" class="timer-box hidden" style="font-size: 0.9rem; padding: 4px 8px;">45</span>
           
-          <!-- TTS Controls (Play / Pause / Stop) -->
           <div class="tts-controls">
             <button class="icon-top-btn" onclick="speakCurrentQuestion()" title="Vorlesen starten">▶️ Vorlesen</button>
             <button class="icon-top-btn" onclick="pauseSpeech()" title="Pause">⏸️</button>
@@ -266,9 +265,7 @@
 </div>
 
 <script>
-  // DATENBANK: 100 GSSK-FRAGEN + Die 5 anspruchsvollen Sachkunde-Fälle integriert
   const rawGsskPool = [
-    // Rechtskunde & Neue Sachkunde-Fälle als hochkomplexe Praxisfälle / Szenarien
     { 
       id: 1, 
       isMulti: true, 
@@ -280,7 +277,8 @@
         "Es besteht entweder Fluchtgefahr oder die Identität kann nicht sofort festgestellt werden.", 
         "Ausschließlich nach vorheriger schriftlicher Anweisung der Polizei.", 
         "Die Tat muss im Beisein eines vereidigten Staatsanwalts begangen worden sein." 
-      ] 
+      ],
+      correctMulti: [0, 1]
     },
     { 
       id: 2, 
@@ -293,10 +291,12 @@
         "Eine gebotene (erforderliche und gebotene) Verteidigungshandlung.", 
         "Das Vorliegen einer polizeilichen Genehmigung im Vorfeld.", 
         "Die vorherige schriftliche Androhung von körperlicher Gewalt." 
-      ] 
+      ],
+      correctMulti: [0, 1]
     },
     { 
       id: 3, 
+      isMulti: false,
       category: "Rechtskunde", 
       subcategory: "Rechtfertigender Notstand (§ 34 StGB)", 
       question: "Ein Mitarbeiter des Objektschutzes beobachtet auf einem geschlossenen Werksgelände, wie ein Einbrecher in ein Labor mit gefährlichen chemischen Substanzen eindringt. Um den Einbruch und einen Gefahrstoffaustritt sofort zu stoppen, rammt der Mitarbeiter den Täter mit dem Dienstfahrzeug (schwere Beinverletzungen). Prüfen Sie den rechtfertigenden Notstand nach § 34 StGB: Ist das Handeln gerechtfertigt?", 
@@ -305,34 +305,40 @@
         "Nein, da privates Wachpersonal niemals Fahrzeuge als Waffe gegen Personen einsetzen darf, unabhängig von der Schadenshöhe.", 
         "Nein, da Eigentum und Umweltgüter niemals schwerer wiegen als die körperliche Unversehrtheit des Angreifers.", 
         "Ja, aber nur wenn zuvor ein schriftlicher Warnschuss abgegeben wurde." 
-      ] 
+      ],
+      correctIndex: 0
     },
     { 
       id: 4, 
+      isMulti: false,
       category: "Rechtskunde", 
       subcategory: "Jedermann-Festnahme (§ 127 StPO)", 
-      question: "Ein Ladendetektiv beobachtet den Diebstahl einer hochwertigen Kamera (1.500 Euro). Er eilt hinterher, greift den Täter am Arm und fixiert ihn am Boden, weil dieser sofort um sich schlägt und fliehen will. Wie ist die Gewaltanwendung rechtlich zu bewerten?", 
+      question: "Ein Ladendetektiv beobachtet den Diebstahl einer hochwertigen Kamera (1.500 Euro). Heilt hinterher, greift den Täter am Arm und fixiert ihn am Boden, weil dieser sofort um sich schlägt und fliehen will. Wie ist die Gewaltanwendung rechtlich zu bewerten?", 
       options: [ 
         "Die körperliche Fixierung ist vom Jedermann-Festnahmerecht gedeckt, da der Täter aktiv Widerstand leistet und flüchten will (Verhältnismäßigkeit gewahrt).", 
         "Der Detektiv macht sich sofort der Körperverletzung strafbar, da Ladendetektive keinerlei körperliche Gewalt anwenden dürfen.", 
         "Die Maßnahme ist unzulässig, da der Wert der Kamera unter der gesetzlichen Freigrenze von 2.000 Euro liegt.", 
         "Erlaubt ist ausschließlich das Festhalten am Handgelenk im Stehen; jeglicher Bodenkontakt ist verboten." 
-      ] 
+      ],
+      correctIndex: 0
     },
     { 
       id: 5, 
+      isMulti: false,
       category: "Rechtskunde", 
       subcategory: "Hausrecht & Besitz", 
-      question: "Auf einem privat betriebenen Industriegelände mit öffentlich zugänglichem Kundenparkplatz hält sich eine Person auf, die durch aggressiven Betteln auffällt. Der Werkschutz erteilt ein unbefristetes Hausverbot für das gesamte Gelände. Die Person weigert sich mit dem Hinweis, der Parkplatz sei für jedermann frei zugänglich. Wer übt das Hausrecht aus und wie ist die Rechtslage?", 
+      question: "Auf einem privat betriebenen Industriegelände mit öffentlich zugänglichem Kundenparkplatz hält sich eine Person auf, die durch aggressives Betteln auffällt. Der Werkschutz erteilt ein unbefristetes Hausverbot für das gesamte Gelände. Die Person weigert sich mit dem Hinweis, der Parkplatz sei für jedermann frei zugänglich. Wer übt das Hausrecht aus und wie ist die Rechtslage?", 
       options: [ 
         "Inhaber ist der Eigentümer oder bevollmächtigte Besitzer; der Parkplatz unterliegt trotz Öffentlichkeit dem Hausrecht, und bei Missachtung liegt Hausfriedensbruch (§ 123 StGB) vor.", 
         "Das Hausrecht erlischt auf öffentlich zugänglichen Parkplätzen automatisch.", 
         "Nur die Landespolizei darf auf dem Parkplatz Platzverweise aussprechen.", 
         "Ein Hausverbot darf im gewerblichen Bereich niemals unbefristet ausgesprochen werden." 
-      ] 
+      ],
+      correctIndex: 0
     },
     { 
       id: 6, 
+      isMulti: false,
       category: "Rechtskunde", 
       subcategory: "Notwehrexzess (§ 33 StGB)", 
       question: "Ein Wachmann wird nachts mit einem Messer angegriffen. Der Angreifer lässt das Messer fallen und flieht. Der Wachmann schießt dem flüchtenden Angreifer aus starkem Adrenalinfluss in den Rücken. Liegt Notwehr vor und was gilt bei einem asthenischen Affekt (§ 33 StGB)?", 
@@ -341,10 +347,12 @@
         "Es handelt sich in jedem Fall um vollendete Notwehr, da der Angriff kurz zuvor stattfand.", 
         "Schüsse in den Rücken sind bei flüchtenden Tätern gesetzlich immer durch Notwehr gedeckt.", 
         "Der Wachmann wird wegen zwingender Gesetzgebung in jedem Fall zu einer Mindeststrafe von 2 Jahren verurteilt." 
-      ] 
+      ],
+      correctIndex: 0
     },
     { 
       id: 7, 
+      isMulti: false,
       category: "Rechtskunde", 
       subcategory: "Vermögensdelikte (§ 243 StGB)", 
       question: "Zwei Täter brechen nachts das Vorhängeschloss eines Überseecontainers auf dem Betriebsgelände auf, stellen fest, dass sich nur wertloser Ausschuss darin befindet, und fliehen ohne Beute. Welche Straftatbestände wurden verwirklicht?", 
@@ -353,15 +361,16 @@
         "Ausschließlich Sachbeschädigung, da keinerlei Beute gemacht wurde.", 
         "Ein vollendeter schwerer Bandendiebstahl, da das Schloss aufgebrochen wurde.", 
         "Keine Straftat, da der Container leer war." 
-      ] 
+      ],
+      correctIndex: 0
     }
   ];
 
-  // Fülle den Pool auf 100 Fragen auf, falls nötig, mit simulierten GSSK/Sachkunde-Fragen
   for (let i = rawGsskPool.length + 1; i <= 100; i++) {
+    let isMultiGen = (i % 5 === 0);
     rawGsskPool.push({
       id: i,
-      isMulti: (i % 5 === 0),
+      isMulti: isMultiGen,
       category: (i % 3 === 0) ? "Dienstkunde" : ((i % 3 === 1) ? "Rechtskunde" : "Gefahrenabwehr & Technik"),
       subcategory: `Modul-Vertiefung ${i}`,
       question: `Praxisbezogene Prüfungsfrage Nr. ${i} im Rahmen der GSSK- und Sachkundeschulung: Welches taktische oder rechtliche Vorgehen ist in dieser spezifischen Einsatzlage auf der Anlage korrekt?`,
@@ -370,11 +379,12 @@
         "Ein eigenmächtiger, unmittelbarer Waffeneinsatz ohne vorherige Warnung.",
         "Das vollständige Ignorieren des Vorfalls und Verlassen des Wachlokals.",
         "Die sofortige Übertragung aller polizeilichen Hoheitsrechte an den Sicherheitsmitarbeiter."
-      ]
+      ],
+      correctIndex: 0,
+      correctMulti: [0, 1]
     });
   }
 
-  // 10 AUSFÜHRLICHE PRÄZISE FÄLLE FÜR RECHT & FÄLLE TAB
   const lawCases = [
     {
       title: "Fall 1: Rechtfertigender Notstand im Objektschutz (§ 34 StGB)",
@@ -428,10 +438,8 @@
     }
   ];
 
-  // App State
   let currentQuestions = [...rawGsskPool];
   let currentIndex = 0;
-  let score = 0;
   let userAnswers = {};
   let bookmarks = JSON.parse(localStorage.getItem('gssk_bookmarks') || '[]');
   let userStats = JSON.parse(localStorage.getItem('gssk_stats') || '{}');
@@ -441,25 +449,21 @@
   let timerInterval = null;
   let timeLeft = 45;
 
-  let filterMode = 'all'; // 'all', 'bookmark', 'weak', 'mastered'
+  let filterMode = 'all'; 
   let searchQuery = '';
 
-  // Exam state
   let examQuestions = [];
   let examCurrentIndex = 0;
   let examUserAnswers = {};
   let examFlags = {};
   let examTimerInterval = null;
-  let examTimeLeft = 45 * 60; // 45 Minuten
+  let examTimeLeft = 45 * 60; 
 
-  // --- INITIALISIERUNG ---
   window.onload = function() {
-    renderQuizQuestion();
+    filterAndLoadQuiz();
     renderLawCases();
-    updateBookmarkButtonUI();
   };
 
-  // --- TAB STEUERUNG ---
   function switchTab(tabName) {
     document.getElementById('quizTab').classList.add('hidden');
     document.getElementById('realExamTab').classList.add('hidden');
@@ -485,11 +489,10 @@
     }
   }
 
-  // --- QUIZ LOGIK ---
   function filterAndLoadQuiz() {
     let pool = [...rawGsskPool];
 
-    if (searchQuery.trim() !== '') {
+    if (searchQuery && searchQuery.trim() !== '') {
       const q = searchQuery.toLowerCase();
       pool = pool.filter(item => item.question.toLowerCase().includes(q) || item.category.toLowerCase().includes(q) || item.subcategory.toLowerCase().includes(q));
     }
@@ -542,30 +545,25 @@
     }
 
     document.getElementById('question').innerText = item.question;
-
     updateBookmarkButtonUI();
 
     const optionsContainer = document.getElementById('options');
     optionsContainer.innerHTML = '';
     
     document.getElementById('explanation').style.display = 'none';
-    document.getElementById('multiSubmitContainer').classList.add('hidden');
+    document.getElementById('multiSubmitContainer').classList.toggle('hidden', !item.isMulti);
 
-    // Shuffle options display while tracking original indices
-    let shuffledIndices = item.options.map((opt, idx) => idx);
-    // Fixed predictable shuffle or keep stable for exam reproducibility
-    
-    shuffledIndices.forEach((origIdx) => {
-      const optText = item.options[origIdx];
+    item.options.forEach((optText, origIdx) => {
       const btn = document.createElement('button');
       btn.className = 'btn-option';
       btn.innerText = optText;
       btn.dataset.origIndex = origIdx;
       
       if (item.isMulti) {
-        btn.onclick = () => toggleMultiOption(btn);
+        btn.onclick = () => btn.classList.toggle('selected');
       } else {
-        btn.onclick = () => selectQuizOption(origIdx, 0);
+        const correctIdx = item.correctIndex !== undefined ? item.correctIndex : 0;
+        btn.onclick = () => selectQuizOption(origIdx, correctIdx);
       }
       optionsContainer.appendChild(btn);
     });
@@ -575,11 +573,6 @@
     }
   }
 
-  function toggleMultiOption(btn) {
-    btn.classList.toggle('selected');
-  }
-
-  let selectedMultiIndices = [];
   function submitMultiAnswer() {
     const item = currentQuestions[currentIndex];
     const optionBtns = document.querySelectorAll('#options .btn-option');
@@ -595,8 +588,7 @@
       return;
     }
 
-    // Für isMulti sind in unserem Schema standardmäßig Index 0 und 1 korrekt
-    const correctIndices = [0, 1];
+    const correctIndices = item.correctMulti || [0, 1];
     let isCorrect = (chosen.length === correctIndices.length && chosen.every(val => correctIndices.includes(val)));
 
     recordStat(item.id, isCorrect, item.category);
@@ -617,7 +609,7 @@
 
   function selectQuizOption(selectedIdx, correctIdx) {
     const item = currentQuestions[currentIndex];
-    if (item.isMulti) return; // Handled by submitMultiAnswer
+    if (item.isMulti) return;
 
     const optionBtns = document.querySelectorAll('#options .btn-option');
     let isCorrect = (selectedIdx === correctIdx);
@@ -660,7 +652,6 @@
     filterAndLoadQuiz();
   }
 
-  // --- TIMER & SOUND ---
   function toggleTimerMode() {
     timerMode = document.getElementById('timerCheckbox').checked;
     renderQuizQuestion();
@@ -677,10 +668,10 @@
       timerBox.innerText = timeLeft;
       if (timeLeft <= 0) {
         clearInterval(timerInterval);
-        // Zeit abgelaufen -> Zeige korrekte Antwort
         const item = currentQuestions[currentIndex];
         if (!item.isMulti) {
-          selectQuizOption(-1, 0);
+          const correctIdx = item.correctIndex !== undefined ? item.correctIndex : 0;
+          selectQuizOption(-1, correctIdx);
         }
       }
     }, 1000);
@@ -699,46 +690,33 @@
     document.getElementById('darkModeBtn').innerText = newTheme === 'dark' ? "☀️ Light Mode" : "🌙 Dark Mode";
   }
 
-  // --- TTS (VORLESEN) ---
   function speakCurrentQuestion() {
     if (!('speechSynthesis' in window)) {
-      alert("Sprachausgabe wird von deinem Browser nicht unterstützt.");
+      alert("Sprachausgabe wird nicht unterstützt.");
       return;
     }
     window.speechSynthesis.cancel();
     const item = currentQuestions[currentIndex];
-    let textToSpeak = item.question + ". Antwortmöglichkeiten: ";
-    item.options.forEach((opt, idx) => {
-      textToSpeak += `Option ${idx + 1}: ${opt}. `;
-    });
-
+    let textToSpeak = item.question + ". Optionen: ";
+    item.options.forEach((opt, idx) => { textToSpeak += `Option ${idx + 1}: ${opt}. `; });
     const utterance = new SpeechSynthesisUtterance(textToSpeak);
     utterance.lang = 'de-DE';
-    utterance.rate = 1.0;
     window.speechSynthesis.speak(utterance);
   }
 
   function pauseSpeech() {
     if ('speechSynthesis' in window) {
-      if (window.speechSynthesis.speaking && !window.speechSynthesis.paused) {
-        window.speechSynthesis.pause();
-      } else if (window.speechSynthesis.paused) {
-        window.speechSynthesis.resume();
-      }
+      if (window.speechSynthesis.speaking && !window.speechSynthesis.paused) window.speechSynthesis.pause();
+      else if (window.speechSynthesis.paused) window.speechSynthesis.resume();
     }
   }
 
   function stopSpeech() {
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-    }
+    if ('speechSynthesis' in window) window.speechSynthesis.cancel();
   }
 
-  // --- STATISTIK & LESEZEICHEN ---
   function recordStat(id, isCorrect, category) {
-    if (!userStats[id]) {
-      userStats[id] = { attempts: 0, correct: 0, category: category };
-    }
+    if (!userStats[id]) userStats[id] = { attempts: 0, correct: 0, category: category };
     userStats[id].attempts++;
     if (isCorrect) userStats[id].correct++;
     localStorage.setItem('gssk_stats', JSON.stringify(userStats));
@@ -748,11 +726,8 @@
     const item = currentQuestions[currentIndex];
     if (!item) return;
     const idx = bookmarks.indexOf(item.id);
-    if (idx > -1) {
-      bookmarks.splice(idx, 1);
-    } else {
-      bookmarks.push(item.id);
-    }
+    if (idx > -1) bookmarks.splice(idx, 1);
+    else bookmarks.push(item.id);
     localStorage.setItem('gssk_bookmarks', JSON.stringify(bookmarks));
     updateBookmarkButtonUI();
   }
@@ -763,10 +738,8 @@
     if (!item || !btn) return;
     if (bookmarks.includes(item.id)) {
       btn.innerText = "⭐";
-      btn.title = "Aus Lesezeichen entfernen";
     } else {
       btn.innerText = "☆";
-      btn.title zu="Zu Lesezeichen hinzufügen";
     }
   }
 
@@ -800,20 +773,18 @@
   }
 
   function resetAllStatsPrompt() {
-    if (confirm("Möchtest du wirklich deine gesamte Lernstatistik und alle Lesezeichen zurücksetzen?")) {
+    if (confirm("Statistik & Lesezeichen zurücksetzen?")) {
       userStats = {};
       bookmarks = [];
       localStorage.removeItem('gssk_stats');
       localStorage.removeItem('gssk_bookmarks');
       filterAndLoadQuiz();
-      alert("Statistik erfolgreich zurückgesetzt.");
     }
   }
 
   function renderStatDashboard() {
     const dash = document.getElementById('statDashboard');
     dash.innerHTML = '';
-    
     let catStats = {};
     Object.values(userStats).forEach(st => {
       if (!catStats[st.category]) catStats[st.category] = { correct: 0, attempts: 0 };
@@ -822,19 +793,18 @@
     });
 
     if (Object.keys(catStats).length === 0) {
-      dash.innerHTML = "<p style='color: var(--text-muted);'>Noch keine Fragen beantwortet.</p>";
+      dash.innerHTML = "<p style='color: var(--text-muted);'>Noch keine Daten vorhanden.</p>";
       return;
     }
 
     for (let cat in catStats) {
       let data = catStats[cat];
       let pct = data.attempts > 0 ? Math.round((data.correct / data.attempts) * 100) : 0;
-      
       let div = document.createElement('div');
       div.innerHTML = `
         <div style="display: flex; justify-content: space-between; font-size: 0.9rem; font-weight: bold; margin-bottom: 4px;">
           <span>${cat}</span>
-          <span>${pct}% korrekt (${data.correct}/${data.attempts})</span>
+          <span>${pct}% (${data.correct}/${data.attempts})</span>
         </div>
         <div class="stat-bar-wrapper">
           <div class="stat-bar-fill" style="width: ${pct}%; background: ${pct >= 70 ? '#28a745' : '#dc3545'};"></div>
@@ -844,14 +814,10 @@
     }
   }
 
-  // --- IHK PRÜFUNGSSIMULATION ---
   function startRealExam() {
     const cat = document.getElementById('examCategorySelect').value;
     let pool = [...rawGsskPool];
-    if (cat !== 'all') {
-      pool = pool.filter(item => item.category === cat);
-    }
-    // Shuffle and pick 30
+    if (cat !== 'all') pool = pool.filter(item => item.category === cat);
     pool.sort(() => Math.random() - 0.5);
     examQuestions = pool.slice(0, 30);
     examCurrentIndex = 0;
@@ -909,13 +875,7 @@
 
     const optionsContainer = document.getElementById('examOptions');
     optionsContainer.innerHTML = '';
-
-    const multiSubmit = document.getElementById('examMultiSubmitContainer');
-    if (q.isMulti) {
-      multiSubmit.classList.remove('hidden');
-    } else {
-      multiSubmit.classList.add('hidden');
-    }
+    document.getElementById('examMultiSubmitContainer').classList.toggle('hidden', !q.isMulti);
 
     q.options.forEach((opt, optIdx) => {
       const btn = document.createElement('button');
@@ -923,16 +883,10 @@
       btn.innerText = opt;
 
       if (q.isMulti) {
-        if (examUserAnswers[examCurrentIndex] && examUserAnswers[examCurrentIndex].includes(optIdx)) {
-          btn.classList.add('selected');
-        }
-        btn.onclick = () => {
-          btn.classList.toggle('selected');
-        };
+        if (examUserAnswers[examCurrentIndex] && examUserAnswers[examCurrentIndex].includes(optIdx)) btn.classList.add('selected');
+        btn.onclick = () => btn.classList.toggle('selected');
       } else {
-        if (examUserAnswers[examCurrentIndex] === optIdx) {
-          btn.classList.add('selected');
-        }
+        if (examUserAnswers[examCurrentIndex] === optIdx) btn.classList.add('selected');
         btn.onclick = () => {
           examUserAnswers[examCurrentIndex] = optIdx;
           renderExamGrid();
@@ -948,12 +902,10 @@
   function submitExamMultiAnswer() {
     const optionBtns = document.querySelectorAll('#examOptions .btn-option');
     let chosen = [];
-    optionBtns.forEach((b, idx) => {
-      if (b.classList.contains('selected')) chosen.push(idx);
-    });
+    optionBtns.forEach((b, idx) => { if (b.classList.contains('selected')) chosen.push(idx); });
     examUserAnswers[examCurrentIndex] = chosen;
     renderExamGrid();
-    alert("Auswahl für diese Frage gespeichert.");
+    alert("Auswahl gespeichert.");
   }
 
   function toggleExamFlag() {
@@ -979,40 +931,39 @@
   }
 
   function finishExamPrompt() {
-    if (confirm("Möchtest du die Prüfung jetzt offiziell abgeben und auswerten lassen?")) {
-      finishExam();
-    }
+    if (confirm("Prüfung jetzt abgeben?")) finishExam();
   }
 
   function finishExam() {
     if (examTimerInterval) clearInterval(examTimerInterval);
-    
     let correctCount = 0;
+    
     examQuestions.forEach((q, idx) => {
       let userAns = examUserAnswers[idx];
       if (q.isMulti) {
-        let correctIndices = [0, 1];
+        let correctIndices = q.correctMulti || [0, 1];
         if (Array.isArray(userAns) && userAns.length === correctIndices.length && userAns.every(v => correctIndices.includes(v))) {
           correctCount++;
         }
       } else {
-        if (userAns === 0) { // In unserem Pool ist Index 0 immer die korrekte Antwort
+        let correctIdx = q.correctIndex !== undefined ? q.correctIndex : 0;
+        if (userAns === correctIdx) {
           correctCount++;
         }
       }
     });
 
     let scorePct = Math.round((correctCount / examQuestions.length) * 100);
-    let passed = scorePct >= 50; // IHK Bestehensgrenze meist 50%
+    let passed = scorePct >= 50;
 
     document.getElementById('examScreen').classList.add('hidden');
     document.getElementById('examResultScreen').classList.remove('hidden');
 
     const resultBox = document.getElementById('resultBox');
     resultBox.style.background = passed ? '#d4edda' : '#f8d7da';
-    document.getElementById('resultTitle').innerText = passed ? "🎉 Prüfung bestanden!" : "⚠️ Prüfung nicht bestanden";
-    document.getElementById('resultScore').innerText = `Du hast ${correctCount} von ${examQuestions.length} Fragen richtig beantwortet (${scorePct}%)`;
-    document.getElementById('resultStatus').innerText = passed ? "Herzlichen Glückwunsch! Du hast das IHK-Bestehenslimit erreicht.".toUpperCase() : "Leider nicht bestanden. Übe nochmals im Quiz-Modus.";
+    document.getElementById('resultTitle').innerText = passed ? "🎉 Bestanden!" : "⚠️ Nicht bestanden";
+    document.getElementById('resultScore').innerText = `${correctCount} von ${examQuestions.length} richtig (${scorePct}%)`;
+    document.getElementById('resultStatus').innerText = passed ? "IHK-Bestehensgrenze erreicht!" : "Nicht bestanden.";
 
     const reviewList = document.getElementById('examReviewList');
     reviewList.innerHTML = '';
@@ -1020,20 +971,16 @@
       let userAns = examUserAnswers[idx];
       let isCorr = false;
       if (q.isMulti) {
-        let correctIndices = [0, 1];
+        let correctIndices = q.correctMulti || [0, 1];
         if (Array.isArray(userAns) && userAns.length === correctIndices.length && userAns.every(v => correctIndices.includes(v))) isCorr = true;
       } else {
-        if (userAns === 0) isCorr = true;
+        let correctIdx = q.correctIndex !== undefined ? q.correctIndex : 0;
+        if (userAns === correctIdx) isCorr = true;
       }
 
       let div = document.createElement('div');
       div.style.cssText = `background: var(--option-bg); border: 1px solid var(--border-color); padding: 12px; margin-bottom: 8px; border-radius: 6px; border-left: 5px solid ${isCorr ? '#28a745' : '#dc3545'};`;
-      div.innerHTML = `
-        <strong>Frage ${idx + 1}:</strong> ${q.question}<br>
-        <span style="font-size: 0.9rem; color: ${isCorr ? '#28a745' : '#dc3545'}; font-weight: bold;">
-          ${isCorr ? 'Richtig beantwortet' : 'Falsch beantwortet / Unbeantwortet'}
-        </span>
-      `;
+      div.innerHTML = `<strong>Frage ${idx + 1}:</strong> ${q.question}<br><span style="font-size:0.9rem; color:${isCorr ? '#28a745' : '#dc3545'}; font-weight:bold;">${isCorr ? 'Richtig' : 'Falsch'}</span>`;
       reviewList.appendChild(div);
     });
   }
@@ -1043,11 +990,9 @@
     document.getElementById('examStartScreen').classList.remove('hidden');
   }
 
-  // --- RECHT & FÄLLE TAB LOGIK ---
   function renderLawCases() {
     const container = document.getElementById('caseContainer');
     container.innerHTML = '';
-
     lawCases.forEach((c, idx) => {
       const card = document.createElement('div');
       card.className = 'section-card law-card';
@@ -1055,12 +1000,12 @@
         <div class="section-title law-title">${c.title}</div>
         <p style="margin: 8px 0; font-size: 0.95rem;">${c.question}</p>
         <div class="textarea-container">
-          <label class="textarea-label">Deine Subsumtion / Notizen im Gutachtenstil:</label>
-          <textarea class="textarea-case" placeholder="Prüfe hier Tatbestand, Rechtswidrigkeit, Schuld oder Erforderlichkeit..."></textarea>
+          <label class="textarea-label">Deine Notizen / Gutachtenstil:</label>
+          <textarea class="textarea-case" placeholder="Subsumtion hier eintragen..."></textarea>
         </div>
-        <button class="btn-action" style="margin-top: 10px; font-size: 0.85rem; padding: 6px 12px;" onclick="toggleSolution(${idx})">💡 Musterlösung einblenden</button>
+        <button class="btn-action" style="margin-top: 10px; font-size: 0.85rem; padding: 6px 12px;" onclick="toggleSolution(${idx})">💡 Musterlösung anzeigen</button>
         <div id="solution_${idx}" class="solution-box">
-          <strong>Musterlösung & Gutachten:</strong><br>${c.solution}
+          <strong>Musterlösung:</strong><br>${c.solution}
         </div>
       `;
       container.appendChild(card);
@@ -1069,11 +1014,7 @@
 
   function toggleSolution(idx) {
     const box = document.getElementById(`solution_${idx}`);
-    if (box.style.display === 'block') {
-      box.style.display = 'none';
-    } else {
-      box.style.display = 'block';
-    }
+    box.style.display = (box.style.display === 'block') ? 'none' : 'block';
   }
 </script>
 
