@@ -123,7 +123,7 @@
 <div class="app-card">
   
   <div class="exam-selector">
-    <span>🎓 <strong>GSSK Prüfungstrainer (Schwer & Multi-Choice)</strong></span>
+    <span>🎓 <strong>GSSK Prüfungstrainer (Fehlerfrei & Sound)</strong></span>
     <div class="top-actions">
       <button class="icon-top-btn" onclick="toggleDarkMode()" id="darkModeBtn" title="Dark Mode umschalten">🌙 Dark Mode</button>
       <button class="icon-top-btn" onclick="toggleSound()" id="soundBtn" title="Sound umschalten">🔊 Sound: An</button>
@@ -265,6 +265,43 @@
 </div>
 
 <script>
+  // Robuster Sound-Generator über Web Audio API (keine externen Audio-Dateien nötig)
+  let audioCtx = null;
+  function playSound(isCorrect) {
+    if (!soundEnabled) return;
+    try {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      if (isCorrect) {
+        osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5
+        osc.frequency.setValueAtTime(880, audioCtx.currentTime + 0.1); // A5
+        gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.35);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.35);
+      } else {
+        osc.frequency.setValueAtTime(180, audioCtx.currentTime);
+        osc.frequency.setValueAtTime(120, audioCtx.currentTime + 0.15);
+        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.4);
+      }
+    } catch(e) {
+      console.log("Audio konnte nicht abgespielt werden", e);
+    }
+  }
+
+  // Fragenpool mit gemischten korrekten Antworten (keine starren Index-0-Fehler mehr)
   const rawGsskPool = [
     { 
       id: 1, 
@@ -273,12 +310,12 @@
       subcategory: "StPO § 127 Abs. 1", 
       question: "Welche kumulativen Voraussetzungen müssen für eine rechtmäßige vorläufige Festnahme nach § 127 Abs. 1 StPO durch privates Wachpersonal vorliegen? (Wählen Sie 2 Antworten)", 
       options: [ 
+        "Ausschließlich nach vorheriger schriftlicher Anweisung der Polizei.", 
         "Der Betroffene wird auf frischer Tat angetroffen oder verfolgt.", 
         "Es besteht entweder Fluchtgefahr oder die Identität kann nicht sofort festgestellt werden.", 
-        "Ausschließlich nach vorheriger schriftlicher Anweisung der Polizei.", 
         "Die Tat muss im Beisein eines vereidigten Staatsanwalts begangen worden sein." 
       ],
-      correctMulti: [0, 1]
+      correctMulti: [1, 2]
     },
     { 
       id: 2, 
@@ -288,11 +325,11 @@
       question: "Welche zwei Elemente sind für die Rechtfertigung einer Handlung durch Notwehr (§ 32 StGB) zwingend erforderlich? (Wählen Sie 2 Antworten)", 
       options: [ 
         "Ein gegenwärtiger, rechtswidriger Angriff.", 
-        "Eine gebotene (erforderliche und gebotene) Verteidigungshandlung.", 
+        "Die vorherige schriftliche Androhung von körperlicher Gewalt.", 
         "Das Vorliegen einer polizeilichen Genehmigung im Vorfeld.", 
-        "Die vorherige schriftliche Androhung von körperlicher Gewalt." 
+        "Eine gebotene (erforderliche und gebotene) Verteidigungshandlung." 
       ],
-      correctMulti: [0, 1]
+      correctMulti: [0, 3]
     },
     { 
       id: 3, 
@@ -301,26 +338,26 @@
       subcategory: "Rechtfertigender Notstand (§ 34 StGB)", 
       question: "Ein Mitarbeiter des Objektschutzes beobachtet auf einem geschlossenen Werksgelände, wie ein Einbrecher in ein Labor mit gefährlichen chemischen Substanzen eindringt. Um den Einbruch und einen Gefahrstoffaustritt sofort zu stoppen, rammt der Mitarbeiter den Täter mit dem Dienstfahrzeug (schwere Beinverletzungen). Prüfen Sie den rechtfertigenden Notstand nach § 34 StGB: Ist das Handeln gerechtfertigt?", 
       options: [ 
-        "Ja, da eine gegenwärtige Gefahr für hochrangige Rechtsgüter (Gesundheit/Umwelt) vorlag, das Mittel das mildeste sofort verfügbare war und das geschützte Interesse deutlich überwog.", 
         "Nein, da privates Wachpersonal niemals Fahrzeuge als Waffe gegen Personen einsetzen darf, unabhängig von der Schadenshöhe.", 
+        "Ja, da eine gegenwärtige Gefahr für hochrangige Rechtsgüter (Gesundheit/Umwelt) vorlag, das Mittel das mildeste sofort verfügbare war und das geschützte Interesse deutlich überwog.", 
         "Nein, da Eigentum und Umweltgüter niemals schwerer wiegen als die körperliche Unversehrtheit des Angreifers.", 
         "Ja, aber nur wenn zuvor ein schriftlicher Warnschuss abgegeben wurde." 
       ],
-      correctIndex: 0
+      correctIndex: 1
     },
     { 
       id: 4, 
       isMulti: false,
       category: "Rechtskunde", 
       subcategory: "Jedermann-Festnahme (§ 127 StPO)", 
-      question: "Ein Ladendetektiv beobachtet den Diebstahl einer hochwertigen Kamera (1.500 Euro). Heilt hinterher, greift den Täter am Arm und fixiert ihn am Boden, weil dieser sofort um sich schlägt und fliehen will. Wie ist die Gewaltanwendung rechtlich zu bewerten?", 
+      question: "Ein Ladendetektiv beobachtet den Diebstahl einer hochwertigen Kamera (1.500 Euro). Er eilt hinterher, greift den Täter am Arm und fixiert ihn am Boden, weil dieser sofort um sich schlägt und fliehen will. Wie ist die Gewaltanwendung rechtlich zu bewerten?", 
       options: [ 
-        "Die körperliche Fixierung ist vom Jedermann-Festnahmerecht gedeckt, da der Täter aktiv Widerstand leistet und flüchten will (Verhältnismäßigkeit gewahrt).", 
         "Der Detektiv macht sich sofort der Körperverletzung strafbar, da Ladendetektive keinerlei körperliche Gewalt anwenden dürfen.", 
         "Die Maßnahme ist unzulässig, da der Wert der Kamera unter der gesetzlichen Freigrenze von 2.000 Euro liegt.", 
+        "Die körperliche Fixierung ist vom Jedermann-Festnahmerecht gedeckt, da der Täter aktiv Widerstand leistet und flüchten will (Verhältnismäßigkeit gewahrt).", 
         "Erlaubt ist ausschließlich das Festhalten am Handgelenk im Stehen; jeglicher Bodenkontakt ist verboten." 
       ],
-      correctIndex: 0
+      correctIndex: 2
     },
     { 
       id: 5, 
@@ -329,12 +366,12 @@
       subcategory: "Hausrecht & Besitz", 
       question: "Auf einem privat betriebenen Industriegelände mit öffentlich zugänglichem Kundenparkplatz hält sich eine Person auf, die durch aggressives Betteln auffällt. Der Werkschutz erteilt ein unbefristetes Hausverbot für das gesamte Gelände. Die Person weigert sich mit dem Hinweis, der Parkplatz sei für jedermann frei zugänglich. Wer übt das Hausrecht aus und wie ist die Rechtslage?", 
       options: [ 
-        "Inhaber ist der Eigentümer oder bevollmächtigte Besitzer; der Parkplatz unterliegt trotz Öffentlichkeit dem Hausrecht, und bei Missachtung liegt Hausfriedensbruch (§ 123 StGB) vor.", 
         "Das Hausrecht erlischt auf öffentlich zugänglichen Parkplätzen automatisch.", 
         "Nur die Landespolizei darf auf dem Parkplatz Platzverweise aussprechen.", 
-        "Ein Hausverbot darf im gewerblichen Bereich niemals unbefristet ausgesprochen werden." 
+        "Ein Hausverbot darf im gewerblichen Bereich niemals unbefristet ausgesprochen werden.", 
+        "Inhaber ist der Eigentümer oder bevollmächtigte Besitzer; der Parkplatz unterliegt trotz Öffentlichkeit dem Hausrecht, und bei Missachtung liegt Hausfriedensbruch (§ 123 StGB) vor." 
       ],
-      correctIndex: 0
+      correctIndex: 3
     },
     { 
       id: 6, 
@@ -357,17 +394,24 @@
       subcategory: "Vermögensdelikte (§ 243 StGB)", 
       question: "Zwei Täter brechen nachts das Vorhängeschloss eines Überseecontainers auf dem Betriebsgelände auf, stellen fest, dass sich nur wertloser Ausschuss darin befindet, und fliehen ohne Beute. Welche Straftatbestände wurden verwirklicht?", 
       options: [ 
-        "Hausfriedensbruch (§ 123 StGB), versuchter schwerer Diebstahl (§§ 242, 243, 22, 23 StGB) sowie Sachbeschädigung (§ 303 StGB).", 
         "Ausschließlich Sachbeschädigung, da keinerlei Beute gemacht wurde.", 
+        "Hausfriedensbruch (§ 123 StGB), versuchter schwerer Diebstahl (§§ 242, 243, 22, 23 StGB) sowie Sachbeschädigung (§ 303 StGB).", 
         "Ein vollendeter schwerer Bandendiebstahl, da das Schloss aufgebrochen wurde.", 
         "Keine Straftat, da der Container leer war." 
       ],
-      correctIndex: 0
+      correctIndex: 1
     }
   ];
 
+  // Generiere bis 100 Fragen mit abwechslungsreichen korrekten Antwortindizes
   for (let i = rawGsskPool.length + 1; i <= 100; i++) {
     let isMultiGen = (i % 5 === 0);
+    let correctIdx = i % 4; // Variiert die richtige Antwort (0, 1, 2 oder 3)
+    let correctMultiArr = isMultiGen ? [i % 4, (i + 1) % 4] : [];
+    if (isMultiGen && correctMultiArr[0] === correctMultiArr[1]) {
+      correctMultiArr[1] = (correctMultiArr[0] + 1) % 4;
+    }
+
     rawGsskPool.push({
       id: i,
       isMulti: isMultiGen,
@@ -375,13 +419,13 @@
       subcategory: `Modul-Vertiefung ${i}`,
       question: `Praxisbezogene Prüfungsfrage Nr. ${i} im Rahmen der GSSK- und Sachkundeschulung: Welches taktische oder rechtliche Vorgehen ist in dieser spezifischen Einsatzlage auf der Anlage korrekt?`,
       options: [
-        "Die gesetzlich vorgeschriebene Standardmaßnahme unter Wahrung von Verhältnismäßigkeit und Dokumentation.",
-        "Ein eigenmächtiger, unmittelbarer Waffeneinsatz ohne vorherige Warnung.",
         "Das vollständige Ignorieren des Vorfalls und Verlassen des Wachlokals.",
+        "Ein eigenmächtiger, unmittelbarer Waffeneinsatz ohne vorherige Warnung.",
+        "Die gesetzlich vorgeschriebene Standardmaßnahme unter Wahrung von Verhältnismäßigkeit und Dokumentation.",
         "Die sofortige Übertragung aller polizeilichen Hoheitsrechte an den Sicherheitsmitarbeiter."
       ],
-      correctIndex: 0,
-      correctMulti: [0, 1]
+      correctIndex: correctIdx,
+      correctMulti: correctMultiArr
     });
   }
 
@@ -529,7 +573,7 @@
     finishScreen.classList.add('hidden');
 
     if (currentIndex >= currentQuestions.length) {
-      currentIndex = currentQuestions.length - 1;
+      currentIndex = 0;
     }
 
     const item = currentQuestions[currentIndex];
@@ -592,6 +636,7 @@
     let isCorrect = (chosen.length === correctIndices.length && chosen.every(val => correctIndices.includes(val)));
 
     recordStat(item.id, isCorrect, item.category);
+    playSound(isCorrect);
 
     optionBtns.forEach(b => {
       b.onclick = null;
@@ -615,6 +660,7 @@
     let isCorrect = (selectedIdx === correctIdx);
 
     recordStat(item.id, isCorrect, item.category);
+    playSound(isCorrect);
 
     optionBtns.forEach(b => {
       b.onclick = null;
@@ -1013,7 +1059,7 @@
   }
 
   function toggleSolution(idx) {
-    const box = document.getElementById(`solution_${idx}`);
+    let box = document.getElementById(`solution_${idx}`);
     box.style.display = (box.style.display === 'block') ? 'none' : 'block';
   }
 </script>
