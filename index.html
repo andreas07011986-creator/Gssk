@@ -23,76 +23,128 @@
   </script>
 
   <style>
-    * { box-sizing: border-box; font-family: Arial, sans-serif; }
-    body { background-color: #f4f6f9; margin: 0; padding: 15px; display: flex; justify-content: center; }
-    .app-card { background: #ffffff; max-width: 900px; width: 100%; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+    :root {
+      --bg-color: #f4f6f9;
+      --card-bg: #ffffff;
+      --text-color: #212529;
+      --text-muted: #6c757d;
+      --border-color: #dee2e6;
+      --header-bg: #1a252f;
+      --btn-bg: #0d6efd;
+      --btn-hover: #0b5ed7;
+      --option-bg: #fff;
+      --option-hover: #e7f5ff;
+    }
+
+    [data-theme="dark"] {
+      --bg-color: #121212;
+      --card-bg: #1e1e1e;
+      --text-color: #e0e0e0;
+      --text-muted: #a0a0a0;
+      --border-color: #333333;
+      --header-bg: #2d2d2d;
+      --btn-bg: #0d6efd;
+      --btn-hover: #1558b0;
+      --option-bg: #2a2a2a;
+      --option-hover: #263859;
+    }
+
+    * { box-sizing: border-box; font-family: Arial, sans-serif; transition: background-color 0.3s, color 0.3s; }
+    body { background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 15px; display: flex; justify-content: center; }
+    .app-card { background: var(--card-bg); max-width: 900px; width: 100%; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
     
-    .exam-selector { background: #1a252f; color: white; padding: 12px; border-radius: 8px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; font-weight: bold; flex-wrap: wrap; gap: 8px; }
+    .exam-selector { background: var(--header-bg); color: white; padding: 12px; border-radius: 8px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; font-weight: bold; flex-wrap: wrap; gap: 8px; }
     
-    .tab-nav { display: flex; gap: 5px; margin-bottom: 20px; border-bottom: 2px solid #dee2e6; padding-bottom: 10px; overflow-x: auto; }
-    .tab-btn { flex: 1; padding: 12px 8px; border: none; background: #e9ecef; color: #495057; font-weight: bold; font-size: 0.85rem; border-radius: 8px; cursor: pointer; white-space: nowrap; }
+    .tab-nav { display: flex; gap: 5px; margin-bottom: 20px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; overflow-x: auto; }
+    .tab-btn { flex: 1; padding: 12px 8px; border: none; background: var(--border-color); color: var(--text-color); font-weight: bold; font-size: 0.85rem; border-radius: 8px; cursor: pointer; white-space: nowrap; }
     .tab-btn.active { background: #0d6efd; color: white; }
     .tab-btn.exam-tab-btn.active { background: #dc3545; color: white; }
     
     .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-    .badge { background: #e9ecef; color: #495057; padding: 4px 10px; border-radius: 15px; font-size: 0.85rem; font-weight: bold; margin-right: 5px; }
+    .badge { background: var(--border-color); color: var(--text-color); padding: 4px 10px; border-radius: 15px; font-size: 0.85rem; font-weight: bold; margin-right: 5px; }
     .badge-sub { background: #e7f5ff; color: #1971c2; }
-    .question-text { font-size: 1.1rem; font-weight: 600; margin: 15px 0; color: #212529; min-height: 50px; }
+    .question-text { font-size: 1.1rem; font-weight: 600; margin: 15px 0; color: var(--text-color); min-height: 50px; }
     .options { display: flex; flex-direction: column; gap: 10px; }
-    .btn-option { padding: 12px; border: 2px solid #dee2e6; background: #fff; border-radius: 8px; text-align: left; cursor: pointer; font-size: 0.95rem; }
-    .btn-option.selected { border-color: #0d6efd; background-color: #e7f5ff; font-weight: bold; }
-    .correct { background-color: #d4edda !important; border-color: #28a745 !important; color: #155724; font-weight: bold; }
-    .wrong { background-color: #f8d7da !important; border-color: #dc3545 !important; color: #721c24; }
+    .btn-option { padding: 12px; border: 2px solid var(--border-color); background: var(--option-bg); color: var(--text-color); border-radius: 8px; text-align: left; cursor: pointer; font-size: 0.95rem; }
+    .btn-option:hover { background: var(--option-hover); }
+    .btn-option.selected { border-color: #0d6efd; background-color: var(--option-hover); font-weight: bold; }
+    .correct { background-color: #d4edda !important; border-color: #28a745 !important; color: #155724 !important; font-weight: bold; }
+    .wrong { background-color: #f8d7da !important; border-color: #dc3545 !important; color: #721c24 !important; }
     
-    .explanation-box { margin-top: 15px; padding: 12px; background: #e8f4f8; border-left: 4px solid #17a2b8; display: none; }
+    .explanation-box { margin-top: 15px; padding: 12px; background: rgba(23, 162, 184, 0.1); border-left: 4px solid #17a2b8; display: none; color: var(--text-color); }
     
-    .controls { display: flex; justify-content: space-between; margin-top: 20px; align-items: center; }
+    .controls { display: flex; justify-content: space-between; margin-top: 20px; align-items: center; flex-wrap: wrap; gap: 10px; }
     .btn-action { padding: 10px 18px; border: none; background: #0d6efd; color: white; border-radius: 6px; cursor: pointer; font-size: 0.95rem; }
     .btn-action:disabled { background: #ccc; cursor: not-allowed; }
     .btn-danger { background: #dc3545; }
     .btn-secondary { background: #6c757d; }
+    .btn-warning { background: #ffc107; color: #000; font-weight: bold; }
     
-    .section-card { background: #f8f9fa; border: 1px solid #e9ecef; border-left: 5px solid #0d6efd; padding: 15px; margin-bottom: 15px; border-radius: 6px; }
+    .section-card { background: var(--option-bg); border: 1px solid var(--border-color); border-left: 5px solid #0d6efd; padding: 15px; margin-bottom: 15px; border-radius: 6px; }
     .section-title { font-weight: bold; color: #0d6efd; margin-bottom: 8px; font-size: 1.05rem; }
     .law-card { border-left-color: #dc3545; }
     .law-title { color: #dc3545; }
     
     .textarea-container { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
-    .textarea-label { font-size: 0.85rem; font-weight: bold; color: #495057; }
-    .textarea-case { width: 100%; height: 75px; padding: 8px; border: 1px solid #ccc; border-radius: 6px; font-size: 0.9rem; resize: vertical; }
+    .textarea-label { font-size: 0.85rem; font-weight: bold; color: var(--text-muted); }
+    .textarea-case { width: 100%; height: 75px; padding: 8px; border: 1px solid var(--border-color); background: var(--option-bg); color: var(--text-color); border-radius: 6px; font-size: 0.9rem; resize: vertical; }
     
-    .solution-box { margin-top: 10px; padding: 15px; background: #d4edda; border-left: 4px solid #28a745; display: none; font-size: 0.95rem; color: #155724; border-radius: 4px; }
+    .solution-box { margin-top: 10px; padding: 15px; background: rgba(40, 167, 69, 0.1); border-left: 4px solid #28a745; display: none; font-size: 0.95rem; color: var(--text-color); border-radius: 4px; }
     
     .timer-box { font-size: 1.1rem; font-weight: bold; color: #dc3545; background: #f8d7da; padding: 6px 12px; border-radius: 6px; border: 1px solid #f5c6cb; }
     .result-card { text-align: center; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
     .hidden { display: none !important; }
 
     .stat-container { display: flex; flex-direction: column; gap: 12px; margin: 20px 0; text-align: left; }
-    .stat-bar-wrapper { background: #e9ecef; border-radius: 6px; overflow: hidden; height: 22px; position: relative; display: flex; align-items: center; }
+    .stat-bar-wrapper { background: var(--border-color); border-radius: 6px; overflow: hidden; height: 22px; position: relative; display: flex; align-items: center; }
     .stat-bar-fill { background: #28a745; height: 100%; transition: width 0.4s ease; }
+    
+    .search-filter-bar { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; align-items: center; }
+    .search-input { flex: 1; min-width: 200px; padding: 8px 12px; border: 1px solid var(--border-color); background: var(--option-bg); color: var(--text-color); border-radius: 6px; font-size: 0.9rem; }
+    .filter-btn { padding: 8px 12px; border: 1px solid var(--border-color); background: var(--option-bg); color: var(--text-color); border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: bold; }
+    .filter-btn.active { background: #343a40; color: white; border-color: #343a40; }
+    .bookmark-btn { background: none; border: none; font-size: 1.2rem; cursor: pointer; padding: 0; margin-left: 10px; vertical-align: middle; }
+    
+    .top-actions { display: flex; gap: 8px; align-items: center; }
+    .icon-top-btn { background: var(--border-color); border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; color: var(--text-color); font-weight: bold; }
   </style>
 </head>
-<body>
+<body data-theme="light">
 
 <div class="app-card">
   
   <div class="exam-selector">
-    <span>🎓 <strong>Aktueller Prüfungsmodus:</strong> GSSK (Geprüfte Schutz- und Sicherheitskraft)</span>
-    <span>📊 <strong>Fragenpool:</strong> 100 offizielle Fragen</span>
+    <span>🎓 <strong>GSSK Prüfungstrainer</strong></span>
+    <div class="top-actions">
+      <button class="icon-top-btn" onclick="toggleDarkMode()" id="darkModeBtn" title="Dark Mode umschalten">🌙 Dark Mode</button>
+      <button class="icon-top-btn" onclick="toggleSound()" id="soundBtn" title="Sound umschalten">🔊 Sound: An</button>
+    </div>
   </div>
 
   <div class="tab-nav">
-    <button id="tabQuizBtn" class="tab-btn active" onclick="switchTab('quiz')">❓ Quiz (100 Fragen)</button>
-    <button id="tabRealExamBtn" class="tab-btn exam-tab-btn" onclick="switchTab('realExam')">⏱️ IHK-Prüfung (30 Fragen)</button>
+    <button id="tabQuizBtn" class="tab-btn active" onclick="switchTab('quiz')">❓ Quiz</button>
+    <button id="tabRealExamBtn" class="tab-btn exam-tab-btn" onclick="switchTab('realExam')">⏱️ IHK-Prüfung</button>
     <button id="tabLawBtn" class="tab-btn" onclick="switchTab('law')">⚖️ Recht & 10 Fälle</button>
   </div>
 
   <!-- QUIZ TAB -->
   <div id="quizTab">
+    <div class="search-filter-bar">
+      <input type="text" id="quizSearchInput" class="search-input" placeholder="🔍 Frage oder Stichwort suchen..." oninput="filterQuizQuestions()">
+      <button id="filterBookmarkBtn" class="filter-btn" onclick="toggleBookmarkFilter()">⭐ Lesezeichen</button>
+      <button id="filterWeakBtn" class="filter-btn" onclick="toggleWeakFilter()">⚠️ Schwachstellen</button>
+      <label style="font-size: 0.85rem; display: flex; align-items: center; gap: 4px; cursor: pointer;">
+        <input type="checkbox" id="timerCheckbox" onchange="toggleTimerMode()"> ⏱️ Timer (45s)
+      </label>
+    </div>
+
     <div id="quizContentArea">
       <div class="header">
-        <h3 style="margin:0;">Vollständiger Fragenpool (100 Fragen)</h3>
-        <span id="counter" style="font-weight: bold; color: #6c757d;">Frage 1 von 100</span>
+        <h3 style="margin:0;">Fragenpool <span id="counter" style="font-weight: bold; color: var(--text-muted); font-size: 0.95rem;">Frage 1 von 100</span></h3>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span id="quizTimerBox" class="timer-box hidden" style="font-size: 0.9rem; padding: 4px 8px;">45</span>
+          <button id="quizBookmarkBtn" class="bookmark-btn" onclick="toggleCurrentBookmark()" title="Frage merken">☆</button>
+        </div>
       </div>
       <div>
         <span id="catBadge" class="badge">Kategorie</span>
@@ -112,9 +164,9 @@
 
     <!-- QUIZ FINISH SCREEN -->
     <div id="quizFinishedScreen" class="hidden" style="text-align: center; padding: 20px 10px;">
-      <h2>🏆 Großartig! Du hast alle 100 Fragen durchgearbeitet.</h2>
-      <p style="color: #555; font-size: 1.1rem; margin-bottom: 10px;">
-        Hier ist deine detaillierte Defizit-Analyse nach Themengebieten:
+      <h2>🏆 Großartig! Du hast den Durchgang beendet.</h2>
+      <p style="color: var(--text-muted); font-size: 1.1rem; margin-bottom: 10px;">
+        Hier ist deine Defizit-Analyse nach Themengebieten:
       </p>
       <div id="statDashboard" class="stat-container"></div>
       <button class="btn-action" style="font-size: 1.1rem; padding: 12px 25px; margin-top: 15px;" onclick="restartQuiz()">🔄 Quiz von vorne beginnen</button>
@@ -125,10 +177,19 @@
   <div id="realExamTab" class="hidden">
     <div id="examStartScreen" style="text-align: center; padding: 30px 10px;">
       <h2>⏱️ Offizielle IHK-Prüfungssimulation</h2>
-      <p style="color: #555; max-width: 600px; margin: 0 auto 20px auto;">
-        Es werden <strong>30 zufällige Fragen</strong> aus dem 100er-Pool generiert. Du hast 45 Minuten Zeit. Zum Bestehen benötigst du mindestens 50% (15 Fragen).
+      <p style="color: var(--text-muted); max-width: 600px; margin: 0 auto 15px auto;">
+        Wähle deinen Prüfungsumfang oder spezifische Fachbereiche:
       </p>
-      <button class="btn-action btn-danger" style="font-size: 1.1rem; padding: 12px 25px;" onclick="startRealExam()">▶️ 30-Fragen-Prüfung Starten</button>
+      <div style="margin-bottom: 20px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
+        <select id="examCategorySelect" class="search-input" style="max-width: 300px;">
+          <option value="all">Gesamte Prüfung (30 zufällige Fragen)</option>
+          <option value="Rechtskunde">Fokus: Rechtskunde</option>
+          <option value="Dienstkunde">Fokus: Dienstkunde</option>
+          <option value="Gefahrenabwehr & Technik">Fokus: Gefahrenabwehr & Technik</option>
+          <option value="Serviceorientiertes Verhalten">Fokus: Serviceorientiertes Verhalten</option>
+        </select>
+      </div>
+      <button class="btn-action btn-danger" style="font-size: 1.1rem; padding: 12px 25px;" onclick="startRealExam()">▶️ Prüfung Starten</button>
     </div>
 
     <div id="examScreen" class="hidden">
@@ -153,159 +214,213 @@
       </div>
       <h3>Detaillierte Auswertung nach IHK-Standard:</h3>
       <div id="examReviewList"></div>
-      <button class="btn-action" style="margin-top: 20px; width:100%;" onclick="resetToExamStart()">🔄 Neue IHK-Simulation starten</button>
+      <button class="btn-action" style="margin-top: 20px; width:100%;" onclick="resetToExamStart()">🔄 Neue Simulation starten</button>
     </div>
   </div>
 
   <!-- LAW CASES TAB -->
   <div id="lawTab" class="hidden">
     <h3 style="margin-top:0;">Rechtliche Fallbeurteilung & 10 Praxisfälle</h3>
-    <p style="font-size: 0.95rem; color: #555;">Bearbeite die 10 Praxisfälle im Gutachtenstil. Trage deine Analyse strukturiert in die Felder ein und gleigne diese mit den Musterlösungen ab.</p>
+    <p style="font-size: 0.95rem; color: var(--text-muted);">Bearbeite die 10 Praxisfälle im Gutachtenstil und gleiche sie mit den Musterlösungen ab.</p>
     <div id="caseContainer"></div>
   </div>
 </div>
 
 <script>
-  // =========================================================================
-  // DATENBANK: EXAKT 100 GSSK-FRAGEN (AUFGETEILT IN DIE 4 KATEGORIEN)
-  // =========================================================================
+  // DATENBANK: 100 GSSK-FRAGEN
   const rawGsskPool = [
-    // --- RECHTSKUNDE (25 Fragen) ---
-    { category: "Rechtskunde", subcategory: "StPO § 127 Abs. 1", question: "Wann ist eine vorläufige Festnahme durch privates Sicherheitspersonal zulässig?", options: [ "Auf frischer Tat angetroffen, Fluchtgefahr und Identität kann nicht sofort geklärt werden.", "Ausschließlich nach telefonischer Rücksprache mit der örtlichen Polizeidienststelle.", "Sobald ein begründeter Verdacht vom Vortag gegen eine bestimmte Person vorliegt.", "Zu jeder Tages- und Nachtzeit auf dem gesamten umzäunten Werksgelände." ] },
-    { category: "Rechtskunde", subcategory: "StGB § 32", question: "Welche Voraussetzungen müssen für den Rechtfertigungsgrund der Notwehr vorliegen?", options: [ "Ein gegenwärtiger, rechtswidriger Angriff und eine gebotene Verteidigungshandlung.", "Eine vorherige schriftliche Genehmigung durch die zuständige Behörde.", "Gefahr für das eigene Leben im Verlauf der nächsten Stunden.", "Eine ausdrückliche mündliche Aufforderung zur Einstellung des Angriffs." ] },
-    { category: "Rechtskunde", subcategory: "BGB § 859", question: "Welche Befugnisse gewährt die Besitzwehr nach § 859 Abs. 1 BGB dem Wachpersonal?", options: [ "Sich gegen verbotene Eigenmacht mit angemessener Gewalt zu wehren.", "Eigenmächtig in fremde Wohnungen einzudringen, um Beweise zu sichern.", "Eine dauerhafte, eigenständige Freiheitsentziehung von Straftätern.", "Ausschließlich die sofortige telefonische Benachrichtigung der Polizei." ] },
-    { category: "Rechtskunde", subcategory: "Umgang mit Waffen", question: "Welche Nachweise sind für das Führen einer Schusswaffe im Objektschutz nötig?", options: [ "Bedürfnis, Sachkunde, Zuverlässigkeit, persönliche Eignung und Waffenschein.", "Vollendetes 18. Lebensjahr und eine einfache Anweisung des Schichtleiters.", "Ein privat ausgestellter Jagdschein ohne behördliche Zusätze.", "Eine Mitgliedschaft in einem regionalen Schützenverein." ] },
-    { category: "Rechtskunde", subcategory: "Datenschutz (DSGVO)", question: "Was besagt der Zweckbindungsgrundsatz der DSGVO im Betrieb?", options: [ "Daten dürfen nur für festgelegte, eindeutige und legitime Zwecke erhoben werden.", "Personenbezogene Daten müssen grundsätzlich 10 Jahre gespeichert werden.", "Erhobene Daten dürfen frei an externe Dienstleister verkauft werden.", "Jeder Mitarbeiter darf uneingeschränkt alle Firmendaten einsehen." ] },
-    { category: "Rechtskunde", subcategory: "StGB § 34", question: "Wann liegt ein rechtfertigender Notstand nach § 34 StGB vor?", options: [ "Gegenwärtige, nicht anders abwendbare Gefahr zur Abwendung eines größeren Schadens.", "Wenn der Vorgesetzte die ausdrückliche Erlaubnis dazu erteilt hat.", "Immer bei Eigentumsdelikten auf dem bewachten Werksgelände.", "Wenn die Polizei nicht erreichbar ist und ein Verdacht besteht." ] },
-    { category: "Rechtskunde", subcategory: "BGB § 228", question: "Was besagt der defensive Notstand nach § 228 BGB genau?", options: [ "Einwirkung auf eine Sache, um drohende Gefahr abzuwenden, wenn Schaden nicht unverhältnismäßig ist.", "Das unbeschränkte Recht, jeden Einbrecher körperlich niederzuschlagen.", "Das gesetzliche Recht auf Mietminderung bei starkem Baulärm.", "Die Pflicht zur direkten Schadenersatzzahlung ohne jede Prüfung." ] },
-    { category: "Rechtskunde", subcategory: "BGB § 904", question: "Was unterscheidet den aggressiven Notstand (§ 904 BGB) von § 228 BGB?", options: [ "Einwirkung auf eine Sache, von der keine direkte Gefahr ausgeht, zur Notfallabwehr.", "Es betrifft ausschließlich Schusswaffen im dienstlichen Einsatz.", "Es gilt ausschließlich für offizielle Behördenfahrzeuge im Einsatz.", "Es ist im privaten Sicherheitsgewerbe grundsätzlich verboten." ] },
-    { category: "Rechtskunde", subcategory: "Gewerberecht", question: "Welche gesetzliche Grundlage regelt das Wach- und Sicherheitsgewerbe primär?", options: [ "Gewerbeordnung (§ 34a GewO) und Bewachungsverordnung (BewachV).", "Das Bürgerliche Gesetzbuch und das Bundesdatenschutzgesetz.", "Das Bundespolizeigesetz und das Strafprozessrecht.", "Das Strafgesetzbuch in Verbindung mit dem Waffengesetz." ] },
-    { category: "Rechtskunde", subcategory: "Arbeitsrecht", question: "Welches Gesetz regelt die maximal zulässige Arbeitszeit und Pausen?", options: [ "Das Arbeitszeitgesetz (ArbZG).", "Das Betriebsverfassungsgesetz.", "Das Bürgerliche Gesetzbuch.", "Das Waffengesetz." ] },
-    { category: "Rechtskunde", subcategory: "StGB § 123", question: "Wann ist der Tatbestand des Hausfriedensbruchs nach § 123 StGB erfüllt?", options: [ "Unbefugtes Eindringen in fremde geschiedene Besitztümer oder Weigerung auf Aufforderung zu gehen.", "Jedes Betreten eines öffentlichen Supermarktes außerhalb der regulären Öffnungszeiten.", "Das Parken eines Fahrzeugs auf einem fremden, frei zugänglichen Kundenparkplatz.", "Das laute Rufen vor einem umzäunten Werksgelände bei Tag." ] },
-    { category: "Rechtskunde", subcategory: "BGB § 823", question: "Wann haftet eine Sicherheitskraft nach § 823 Abs. 1 BGB auf Schadensersatz?", options: [ "Bei vorsätzlicher oder fahrlässiger, rechtswidriger Verletzung von Leben, Körper, Gesundheit oder Eigentum.", "Immer dann, wenn ein Kunde auf dem Firmengelände unzufrieden mit dem Service ist.", "Ausschließlich dann, wenn der Arbeitgeber dies im Arbeitsvertrag ausdrücklich ausschließt.", "Niemals, da privates Wachpersonal unter allgemeiner Amtshilfe steht." ] },
-    { category: "Rechtskunde", subcategory: "BGB § 229", question: "Was versteht man unter Selbsthilfe nach § 229 BGB im zivilrechtlichen Bereich?", options: [ "Wegnahme, Zerstörung oder Beschädigung einer Sache bei Fluchtverdacht und Unerreichbarkeit obrigkeitlicher Hilfe.", "Das eigenmächtige Einsperren von Verdächtigen im Keller über das gesamte Wochenende.", "Die sofortige Durchsuchung von Wohnungen ohne richterlichen Beschluss.", "Die Verpflichtung zur sofortigen Selbstjustiz bei geringfügigen Sachbeschädigungen." ] },
-    { category: "Rechtskunde", subcategory: "StGB § 223", question: "Wann liegt eine Körperverletzung im Sinne des § 223 StGB vor?", options: [ "Körperliche Misshandlung oder Gesundheitsschädigung einer anderen Person.", "Ausschließlich das Verursachen von dauerhaften Knochenbrüchen durch Schusswaffen.", "Jedes laute Anschreien von Personen im Rahmen einer Personenkontrolle.", "Das absichtliche Verstecken von Firmenschlüsseln." ] },
-    { category: "Rechtskunde", subcategory: "Waffengesetz", question: "Welche Waffenart ist im deutschen Bewachungsgewerbe generell verboten zu führen?", options: [ "Verbotene Waffen nach Anlage 2 des Waffengesetzes (z.B. Butterflymesser, Totschläger, Faustmesser).", "Jede Art von herkömmlichen Taschenlampen mit hoher Lumen-Leistung.", "Diensthunde der Rasse Deutscher Schäferhund.", "Standardmäßige Teleskopschlagstöcke bei behördlicher Genehmigung." ] },
-    { category: "Rechtskunde", subcategory: "StGB § 242", question: "Was ist das wesentliche Merkmal eines Diebstahls nach § 242 StGB?", options: [ "Wegnahme einer fremden, beweglichen Sache in der Absicht, diese rechtswidrig zuzueignen.", "Die gewaltsame Zerstörung von fremdem Eigentum ohne Mitnahme der Gegenstände.", "Die unbefugte Nutzung eines fremden Autos für eine kurze Spritztour (Unbefugte Gebrauchnahme).", "Das heimliche Betreten eines Gebäudes zur Nachtzeit." ] },
-    { category: "Rechtskunde", subcategory: "StGB § 243", question: "Wann spricht man von einem besonders schweren Fall des Diebstahls (§ 243 StGB)?", options: [ "Einbruch in ein umschlossenen Raum zur Ausführung der Tat oder Diebstahl von Schutzgegenständen.", "Jeder Diebstahl im Wert von über fünf Euro.", "Wenn der Täter während der Tat ein Mobiltelefon mitführt.", "Wenn der Täter von einem Sicherheitsmitarbeiter beobachtet wurde." ] },
-    { category: "Rechtskunde", subcategory: "StGB § 249", question: "Wie unterscheidet sich der Raub (§ 249 StGB) vom einfachen Diebstahl?", options: [ "Die Wegnahme erfolgt unter Anwendung von Gewalt gegen eine Person oder durch Drohung mit gegenwärtiger Gefahr.", "Es wird ausschließlich Bargeld in geschlossenen Tresoren entwendet.", "Die Tat findet grundsätzlich nur zur Nachtzeit statt.", "Es sind mindestens drei Täter an der Ausführung beteiligt." ] },
-    { category: "Rechtskunde", subcategory: "StGB § 303", question: "Welcher Straftatbestand liegt vor, wenn jemand absichtlich eine Schrankenanlage beschädigt?", options: [ "Sachbeschädigung nach § 303 StGB.", "Hausfriedensbruch nach § 123 StGB.", "Unbefugter Gebrauch von Fahrzeugen.", "Gefährlicher Eingriff in den Straßenverkehr." ] },
-    { category: "Rechtskunde", subcategory: "StGB § 132", question: "Wann macht sich eine Sicherheitskraft wegen Amtsanmaßung (§ 132 StGB) strafbar?", options: [ "Wenn sie sich unbefugt als Amtsträger (z.B. Polizeibeamter) ausgibt oder amtliche Handlungen vornimmt.", "Wenn sie einen ertappten Ladendieb bis zum Eintreffen der Polizei festhält.", "Wenn sie auf dem Werksgelände einen Ausweis kontrolliert.", "Wenn sie einen Platzverweis im Auftrag des Hauseigentümers ausspricht." ] },
-    { category: "Rechtskunde", subcategory: "BGB Allgemein", question: "Was versteht man unter Geschäftsfähigkeit im Sinne des BGB?", options: [ "Die Fähigkeit, Willenserklärungen wirksam abzugeben und entgegenzunehmen.", "Das Recht, ein privates Sicherheitsunternehmen zu gründen.", "Die gesundheitliche Eignung zum Führen von Schusswaffen.", "Das Bestehen der IHK-Sachkundeprüfung." ] },
-    { category: "Rechtskunde", subcategory: "StPO Allgemein", question: "Wer ist im Rahmen einer Straftat die 'Staatsanwaltschaft'?", options: [ "Die Herrin des Ermittlungsverfahrens, zuständig für die Anklageerhebung.", "Das private Sicherheitsunternehmen vor Ort im Werk.", "Das zuständige Amtsgericht bei Urteilsverkündung.", "Die örtliche Handelskammer." ] },
-    { category: "Rechtskunde", subcategory: "Gewerberecht", question: "Welche Mindestqualifikation wird für Wachleute im Objektschutz in sensiblen Bereichen gefordert?", options: [ "Mindestens die Sachkundeprüfung nach § 34a GewO.", "Ausschließlich eine kurze mündliche Unterweisung durch den Chef.", "Ein abgeschlossenes Jurastudium.", "Eine polizeiliche Grundausbildung." ] },
-    { category: "Rechtskunde", subcategory: "StGB § 257", question: "Was versteht man unter Begünstigung nach § 257 StGB?", options: [ "Hilfeleistung für einen Vortäter nach der Tat, um ihm die Vorteile der Tat zu sichern.", "Die aktive Mithilfe bei der Planung eines Einbruchs vor der Tat.", "Das Verstecken von gestohlenen Gegenständen vor Begehung des Diebstahls.", "Die Erteilung eines unberechtigten Rabatts im Werksverkauf." ] },
-    { category: "Rechtskunde", subcategory: "Arbeitsschutzgesetz", question: "Welche Pflicht hat ein Arbeitnehmer laut Arbeitsschutzgesetz bei festgestellten Mängeln?", options: [ "Unverzügliche Meldung von Gefahren und Mängeln an den Vorgesetzten oder die Fachkraft.", "Das sofortige Niederlegen der Arbeit für den Rest des Monats.", "Die eigenständige Reparatur von elektrischen Starkstromanlagen.", "Das Verschweigen des Mangels, um den Betrieb nicht zu belasten." ] },
+    { id: 1, category: "Rechtskunde", subcategory: "StPO § 127 Abs. 1", question: "Wann ist eine vorläufige Festnahme durch privates Sicherheitspersonal zulässig?", options: [ "Auf frischer Tat angetroffen, Fluchtgefahr und Identität kann nicht sofort geklärt werden.", "Ausschließlich nach telefonischer Rücksprache mit der örtlichen Polizeidienststelle.", "Sobald ein begründeter Verdacht vom Vortag gegen eine bestimmte Person vorliegt.", "Zu jeder Tages- und Nachtzeit auf dem gesamten umzäunten Werksgelände." ] },
+    { id: 2, category: "Rechtskunde", subcategory: "StGB § 32", question: "Welche Voraussetzungen müssen für den Rechtfertigungsgrund der Notwehr vorliegen?", options: [ "Ein gegenwärtiger, rechtswidriger Angriff und eine gebotene Verteidigungshandlung.", "Eine vorherige schriftliche Genehmigung durch die zuständige Behörde.", "Gefahr für das eigene Leben im Verlauf der nächsten Stunden.", "Eine ausdrückliche mündliche Aufforderung zur Einstellung des Angriffs." ] },
+    { id: 3, category: "Rechtskunde", subcategory: "BGB § 859", question: "Welche Befugnisse gewährt die Besitzwehr nach § 859 Abs. 1 BGB dem Wachpersonal?", options: [ "Sich gegen verbotene Eigenmacht mit angemessener Gewalt zu wehren.", "Eigenmächtig in fremde Wohnungen einzudringen, um Beweise zu sichern.", "Eine dauerhafte, eigenständige Freiheitsentziehung von Straftätern.", "Ausschließlich die sofortige telefonische Benachrichtigung der Polizei." ] },
+    { id: 4, category: "Rechtskunde", subcategory: "Umgang mit Waffen", question: "Welche Nachweise sind für das Führen einer Schusswaffe im Objektschutz nötig?", options: [ "Bedürfnis, Sachkunde, Zuverlässigkeit, persönliche Eignung und Waffenschein.", "Vollendetes 18. Lebensjahr und eine einfache Anweisung des Schichtleiters.", "Ein privat ausgestellter Jagdschein ohne behördliche Zusätze.", "Eine Mitgliedschaft in einem regionalen Schützenverein." ] },
+    { id: 5, category: "Rechtskunde", subcategory: "Datenschutz (DSGVO)", question: "Was besagt der Zweckbindungsgrundsatz der DSGVO im Betrieb?", options: [ "Daten dürfen nur für festgelegte, eindeutige und legitime Zwecke erhoben werden.", "Personenbezogene Daten müssen grundsätzlich 10 Jahre gespeichert werden.", "Erhobene Daten dürfen frei an externe Dienstleister verkauft werden.", "Jeder Mitarbeiter darf uneingeschränkt alle Firmendaten einsehen." ] },
+    { id: 6, category: "Rechtskunde", subcategory: "StGB § 34", question: "Wann liegt ein rechtfertigender Notstand nach § 34 StGB vor?", options: [ "Gegenwärtige, nicht anders abwendbare Gefahr zur Abwendung eines größeren Schadens.", "Wenn der Vorgesetzte die ausdrückliche Erlaubnis dazu erteilt hat.", "Immer bei Eigentumsdelikten auf dem bewachten Werksgelände.", "Wenn die Polizei nicht erreichbar ist und ein Verdacht besteht." ] },
+    { id: 7, category: "Rechtskunde", subcategory: "BGB § 228", question: "Was besagt der defensive Notstand nach § 228 BGB genau?", options: [ "Einwirkung auf eine Sache, um drohende Gefahr abzuwenden, wenn Schaden nicht unverhältnismäßig ist.", "Das unbeschränkte Recht, jeden Einbrecher körperlich niederzuschlagen.", "Das gesetzliche Recht auf Mietminderung bei starkem Baulärm.", "Die Pflicht zur direkten Schadenersatzzahlung ohne jede Prüfung." ] },
+    { id: 8, category: "Rechtskunde", subcategory: "BGB § 904", question: "Was unterscheidet den aggressiven Notstand (§ 904 BGB) von § 228 BGB?", options: [ "Einwirkung auf eine Sache, von der keine direkte Gefahr ausgeht, zur Notfallabwehr.", "Es betrifft ausschließlich Schusswaffen im dienstlichen Einsatz.", "Es gilt ausschließlich für offizielle Behördenfahrzeuge im Einsatz.", "Es ist im privaten Sicherheitsgewerbe grundsätzlich verboten." ] },
+    { id: 9, category: "Rechtskunde", subcategory: "Gewerberecht", question: "Welche gesetzliche Grundlage regelt das Wach- und Sicherheitsgewerbe primär?", options: [ "Gewerbeordnung (§ 34a GewO) und Bewachungsverordnung (BewachV).", "Das Bürgerliche Gesetzbuch und das Bundesdatenschutzgesetz.", "Das Bundespolizeigesetz und das Strafprozessrecht.", "Das Strafgesetzbuch in Verbindung mit dem Waffengesetz." ] },
+    { id: 10, category: "Rechtskunde", subcategory: "Arbeitsrecht", question: "Welches Gesetz regelt die maximal zulässige Arbeitszeit und Pausen?", options: [ "Das Arbeitszeitgesetz (ArbZG).", "Das Betriebsverfassungsgesetz.", "Das Bürgerliche Gesetzbuch.", "Das Waffengesetz." ] },
+    { id: 11, category: "Rechtskunde", subcategory: "StGB § 123", question: "Wann ist der Tatbestand des Hausfriedensbruchs nach § 123 StGB erfüllt?", options: [ "Unbefugtes Eindringen in fremde geschiedene Besitztümer oder Weigerung auf Aufforderung zu gehen.", "Jedes Betreten eines öffentlichen Supermarktes außerhalb der regulären Öffnungszeiten.", "Das Parken eines Fahrzeugs auf einem fremden, frei zugänglichen Kundenparkplatz.", "Das laute Rufen vor einem umzäunten Werksgelände bei Tag." ] },
+    { id: 12, category: "Rechtskunde", subcategory: "BGB § 823", question: "Wann haftet eine Sicherheitskraft nach § 823 Abs. 1 BGB auf Schadensersatz?", options: [ "Bei vorsätzlicher oder fahrlässiger, rechtswidriger Verletzung von Leben, Körper, Gesundheit oder Eigentum.", "Immer dann, wenn ein Kunde auf dem Firmengelände unzufrieden mit dem Service ist.", "Ausschließlich dann, wenn der Arbeitgeber dies im Arbeitsvertrag ausdrücklich ausschließt.", "Niemals, da privates Wachpersonal unter allgemeiner Amtshilfe steht." ] },
+    { id: 13, category: "Rechtskunde", subcategory: "BGB § 229", question: "Was versteht man unter Selbsthilfe nach § 229 BGB im zivilrechtlichen Bereich?", options: [ "Wegnahme, Zerstörung oder Beschädigung einer Sache bei Fluchtverdacht und Unerreichbarkeit obrigkeitlicher Hilfe.", "Das eigenmächtige Einsperren von Verdächtigen im Keller über das gesamte Wochenende.", "Die sofortige Durchsuchung von Wohnungen ohne richterlichen Beschluss.", "Die Verpflichtung zur sofortigen Selbstjustiz bei geringfügigen Sachbeschädigungen." ] },
+    { id: 14, category: "Rechtskunde", subcategory: "StGB § 223", question: "Wann liegt eine Körperverletzung im Sinne des § 223 StGB vor?", options: [ "Körperliche Misshandlung oder Gesundheitsschädigung einer anderen Person.", "Ausschließlich das Verursachen von dauerhaften Knochenbrüchen durch Schusswaffen.", "Jedes laute Anschreien von Personen im Rahmen einer Personenkontrolle.", "Das absichtliche Verstecken von Firmenschlüsseln." ] },
+    { id: 15, category: "Rechtskunde", subcategory: "Waffengesetz", question: "Welche Waffenart ist im deutschen Bewachungsgewerbe generell verboten zu führen?", options: [ "Verbotene Waffen nach Anlage 2 des Waffengesetzes (z.B. Butterflymesser, Totschläger, Faustmesser).", "Jede Art von herkömmlichen Taschenlampen mit hoher Lumen-Leistung.", "Diensthunde der Rasse Deutscher Schäferhund.", "Standardmäßige Teleskopschlagstöcke bei behördlicher Genehmigung." ] },
+    { id: 16, category: "Rechtskunde", subcategory: "StGB § 242", question: "Was ist das wesentliche Merkmal eines Diebstahls nach § 242 StGB?", options: [ "Wegnahme einer fremden, beweglichen Sache in der Absicht, diese rechtswidrig zuzueignen.", "Die gewaltsame Zerstörung von fremdem Eigentum ohne Mitnahme der Gegenstände.", "Die unbefugte Nutzung eines fremden Autos für eine kurze Spritztour (Unbefugte Gebrauchnahme).", "Das heimliche Betreten eines Gebäudes zur Nachtzeit." ] },
+    { id: 17, category: "Rechtskunde", subcategory: "StGB § 243", question: "Wann spricht man von einem besonders schweren Fall des Diebstahls (§ 243 StGB)?", options: [ "Einbruch in ein umschlossenen Raum zur Ausführung der Tat oder Diebstahl von Schutzgegenständen.", "Jeder Diebstahl im Wert von über fünf Euro.", "Wenn der Täter während der Tat ein Mobiltelefon mitführt.", "Wenn der Täter von einem Sicherheitsmitarbeiter beobachtet wurde." ] },
+    { id: 18, category: "Rechtskunde", subcategory: "StGB § 249", question: "Wie unterscheidet sich der Raub (§ 249 StGB) vom einfachen Diebstahl?", options: [ "Die Wegnahme erfolgt unter Anwendung von Gewalt gegen eine Person oder durch Drohung mit gegenwärtiger Gefahr.", "Es wird ausschließlich Bargeld in geschlossenen Tresoren entwendet.", "Die Tat findet grundsätzlich nur zur Nachtzeit statt.", "Es sind mindestens drei Täter an der Ausführung beteiligt." ] },
+    { id: 19, category: "Rechtskunde", subcategory: "StGB § 303", question: "Welcher Straftatbestand liegt vor, wenn jemand absichtlich eine Schrankenanlage beschädigt?", options: [ "Sachbeschädigung nach § 303 StGB.", "Hausfriedensbruch nach § 123 StGB.", "Unbefugter Gebrauch von Fahrzeugen.", "Gefährlicher Eingriff in den Straßenverkehr." ] },
+    { id: 20, category: "Rechtskunde", subcategory: "StGB § 132", question: "Wann macht sich eine Sicherheitskraft wegen Amtsanmaßung (§ 132 StGB) strafbar?", options: [ "Wenn sie sich unbefugt als Amtsträger (z.B. Polizeibeamter) ausgibt oder amtliche Handlungen vornimmt.", "Wenn sie einen ertappten Ladendieb bis zum Eintreffen der Polizei festhält.", "Wenn sie auf dem Werksgelände einen Ausweis kontrolliert.", "Wenn sie einen Platzverweis im Auftrag des Hauseigentümers ausspricht." ] },
+    { id: 21, category: "Rechtskunde", subcategory: "BGB Allgemein", question: "Was versteht man unter Geschäftsfähigkeit im Sinne des BGB?", options: [ "Die Fähigkeit, Willenserklärungen wirksam abzugeben und entgegenzunehmen.", "Das Recht, ein privates Sicherheitsunternehmen zu gründen.", "Die gesundheitliche Eignung zum Führen von Schusswaffen.", "Das Bestehen der IHK-Sachkundeprüfung." ] },
+    { id: 22, category: "Rechtskunde", subcategory: "StPO Allgemein", question: "Wer ist im Rahmen einer Straftat die 'Staatsanwaltschaft'?", options: [ "Die Herrin des Ermittlungsverfahrens, zuständig für die Anklageerhebung.", "Das private Sicherheitsunternehmen vor Ort im Werk.", "Das zuständige Amtsgericht bei Urteilsverkündung.", "Die örtliche Handelskammer." ] },
+    { id: 23, category: "Rechtskunde", subcategory: "Gewerberecht", question: "Welche Mindestqualifikation wird für Wachleute im Objektschutz in sensiblen Bereichen gefordert?", options: [ "Mindestens die Sachkundeprüfung nach § 34a GewO.", "Ausschließlich eine kurze mündliche Unterweisung durch den Chef.", "Ein abgeschlossenes Jurastudium.", "Eine polizeiliche Grundausbildung." ] },
+    { id: 24, category: "Rechtskunde", subcategory: "StGB § 257", question: "Was versteht man unter Begünstigung nach § 257 StGB?", options: [ "Hilfeleistung für einen Vortäter nach der Tat, um ihm die Vorteile der Tat zu sichern.", "Die aktive Mithilfe bei der Planung eines Einbruchs vor der Tat.", "Das Verstecken von gestohlenen Gegenständen vor Begehung des Diebstahls.", "Die Erteilung eines unberechtigten Rabatts im Werksverkauf." ] },
+    { id: 25, category: "Rechtskunde", subcategory: "Arbeitsschutzgesetz", question: "Welche Pflicht hat an Arbeitnehmer laut Arbeitsschutzgesetz bei festgestellten Mängeln?", options: [ "Unverzügliche Meldung von Gefahren und Mängeln an den Vorgesetzten oder die Fachkraft.", "Das sofortige Niederlegen der Arbeit für den Rest des Monats.", "Die eigenständige Reparatur von elektrischen Starkstromanlagen.", "Das Verschweigen des Mangels, um den Betrieb nicht zu belasten." ] },
 
-    // --- DIENSTKUNDE (25 Fragen) ---
-    { category: "Dienstkunde", subcategory: "Objekt- und Werkschutz", question: "Was gehört zu den primären Aufgaben im Werkschutz?", options: [ "Schutz von Anlagen, Betriebsmitteln sowie die Verhinderung von Diebstahl und Sabotage.", "Die eigenständige Strafverfolgung von externen Ladendieben im Stadtgebiet.", "Die Erstellung von steuerlichen Bilanzen für das Sicherheitsunternehmen.", "Die Durchführung von straßenverkehrsrechtlichen Geschwindigkeitskontrollen." ] },
-    { category: "Dienstkunde", subcategory: "Revierdienst", question: "Welches Ziel verfolgt ein unregelmäßiger Revierkontrolldienst?", options: [ "Erhöhung der Entdeckungsgefahr für Täter durch variable Fahr- und Kontrollzeiten.", "Strikte Einhaltung sekundengenauer Pausenzeiten für das Fahrpersonal.", "Ausschließlich Kontrolle von privaten Wohngebäuden nachts.", "Vollständiger Verzicht auf schriftliche Kontrollberichte." ] },
-    { category: "Dienstkunde", subcategory: "Schutz von Anlagen", question: "Wie verhält sich das Wachpersonal bei der Entdeckung einer offenen Notausgangstür?", options: [ "Sofortige Verschlusskontrolle, Sicherung des Bereichs und Meldung an den Leitstand.", "Die Tür bis zum Schichtwechsel unverschlossen stehen lassen.", "Einen privaten Aushang zur Kennzeichnung anbringen.", "Die Tür dauerhaft von außen verbarrikadieren." ] },
-    { category: "Dienstkunde", subcategory: "Empfangsdienst", question: "Welche Aufgabe hat das Wachpersonal an einer Pforte bei Besucherverkehr?", options: [ "Besucher registrieren, Ausweise prüfen, Besucherausweise ausgeben und Einweisen.", "Besuchern den unbegrenzten Zugang zu allen Produktionshallen erlauben.", "Vertrauliche Geschäftspapiere der Kunden einsehen und kopieren.", "Sämtliche Privatfahrzeuge der Gäste auf Wertsachen durchsuchen." ] },
-    { category: "Dienstkunde", subcategory: "Schlüsselverwaltung", question: "Wie ist bei der Ausgabe von Hauptschlüsseln im Objektschutz vorzugehen?", options: [ "Lückenlose Dokumentation in einem Schlüsselbuch mit Unterschrift und Uhrzeit.", "Schlüssel unkontrolliert in einem offenen Kasten an der Pforte hinterlegen.", "Schlüssel an fremde Personen ohne Rücksprache ausleihen.", "Schlüssel nach Dienstschluss im Treppenhaus verstecken." ] },
-    { category: "Dienstkunde", subcategory: "Streifendienst", question: "Worauf ist während eines Kontrollgangs besonders zu achten?", options: [ "Auf ungewöhnliche Geräusche, Gerüche, Lichtverhältnisse, beschädigte Verschlüsse und Unregelmäßigkeiten.", "Ausschließlich darauf, ob die Kaffeemaschine im Pausenraum eingeschaltet ist.", "Auf die Bildqualität von privaten Smartphones der anwesenden Mitarbeiter.", "Auf das rechtzeitige Erreichen des Feierabends." ] },
-    { category: "Dienstkunde", subcategory: "Werkschutz", question: "Welche Maßnahme wird bei der Ausfahrtskontrolle von Lkw auf dem Werksgelände durchgeführt?", options: [ "Prüfung der Frachtpapiere gegen den tatsächlichen Ladezustand und Sichtkontrolle des Fahrzeugs.", "Vollständiger Ausbau des Lkw-Motors zur Materialprüfung.", "Durchsuchung des privaten Geldbeutels des Lkw-Fahrers.", "Prüfung des Reifendrucks aller Achsen." ] },
-    { category: "Dienstkunde", subcategory: "Baustellenschutz", question: "Welche Hauptgefahr besteht typischerweise auf unbewachten Großbaustellen nachts?", options: [ "Diebstahl von hochwertigen Werkzeugen, Baustoffen, Kabeln und Baumaschinen.", "Massenhafter Einbruch von streunenden Wildtieren in Büros.", "Überflutung des gesamten Areals durch unterirdische Quellen.", "Spontane Betriebsversammlungen von Handwerkern." ] },
-    { category: "Dienstkunde", subcategory: "Protokollierung", question: "Wofür dient ein Dienstbuch oder Berichtsheft im Wachdienst?", options: [ "Lückenlose, rechtssichere Dokumentation aller Vorkommnisse, Rundgänge und Meldungen während der Schicht.", "Als persönliches Tagebuch für private Notizen und Gedichte.", "Als Abrechnungsbasis für private Einkäufe der Mitarbeiter.", "Als Werbebroschüre für externe Kunden." ] },
-    { category: "Dienstkunde", subcategory: "Alarmverfolgung", question: "Wie reagiert eine Interventionskraft bei Eintreffen an einem Objekt nach Alarmauslösung?", options: [ "Äußere Erkundung ohne Eigengefährdung, Lagemeldung an die Leitstelle absetzen, keine Hektik.", "Sofort alleine und ohne Schutzausrüstung in ein dunkles Gebäude stürmen.", "Im Fahrzeug sitzen bleiben und auf das Ende des Alarms warten.", "Unangemeldet die Nachbargebäude betreten." ] },
-    { category: "Dienstkunde", subcategory: "Brandsicherheitswache", question: "Was ist die Hauptaufgabe bei einer Brandsicherheitswache (z.B. bei Theater oder Großveranstaltungen)?", options: [ "Überwachung der Brandschutzvorschriften, Freihaltung von Rettungswegen, schnelles Eingreifen bei Entstehungsbränden.", "Durchführung von Eintrittskontrollen und Ticketverkauf an der Abendkasse.", "Die Bewirtung von prominenten Gästen im VIP-Bereich.", "Die technische Wartung der Scheinwerferanlage." ] },
-    { category: "Dienstkunde", subcategory: "Objektschutz", question: "Was versteht man unter dem Begriff 'Perimeterschutz'?", options: [ "Die Sicherung der äußeren Grundstücksgrenze eines Objekts (Zaun, Tore, Übersteigschutz, Kameras).", "Der Innenschutz von einzelnen Büros im vierten Obergeschoss.", "Die Absicherung von Serverräumen durch Brandschutztüren.", "Der Schutz von Mitarbeitern auf dem Weg zur Kantine." ] },
-    { category: "Dienstkunde", subcategory: "Veranstaltungsschutz", question: "Welche Kontrollmaßnahme ist beim Einlass zu Großveranstaltungen Standard?", options: [ "Sicht- und Tastkontrolle von Taschen sowie Ticketprüfung zur Verhinderung von verbotenen Gegenständen.", "Vollständige körperliche Durchleuchtung aller Besucher durch Röntgengeräte.", "Abgabe aller persönlichen Wertsachen am Haupteingang.", "Erhebung von biometrischen DNA-Proben." ] },
-    { category: "Dienstkunde", subcategory: "Werttransport", question: "Welcher Grundsatz gilt beim Schutz von Geld- und Werttransporten primär?", options: [ "Geheimhaltung von Routen und Zeiten, Vermeidung von festen Schemata, maximale Aufmerksamkeit.", "Feste Routen zu exakt sekundengleichen Uhrzeiten jeden Tag.", "Freiwillige Bekanntgabe der Transportdetails in sozialen Netzwerken.", "Transport ohne jegliche Kommunikationsmittel." ] },
-    { category: "Dienstkunde", subcategory: "Freiwillige Maßnahmen", question: "Darf eine Sicherheitskraft fremde Fahrzeuge auf dem Werksgelände durchsuchen?", options: [ "Nur wenn dies in der Betriebsvereinbarung, im Werkschutzvertrag oder in den AGB des Geländes ausdrücklich geregelt ist.", "Immer und zu jeder Zeit bei absolut jedem Fahrzeug ohne Ausnahme.", "Niemals unter keinen Umständen, da dies Grundrechtseingriffe sind.", "Nur mit direkter Zustimmung des Bundesverkehrsministers." ] },
-    { category: "Dienstkunde", subcategory: "Revierdienst", question: "Welches Hilfsmittel ist bei nächtlichen Kontrollgängen im Außenbereich unverzichtbar?", options: [ "Eine zuverlässige, leistungsstarke Taschenlampe und ein funktionierendes Kommunikationsmittel.", "Ein privates Musikabspielgerät zur Entspannung.", "Ein schweres mobiles Sturmgewehr.", "Ein offener Notizblock ohne Stift." ] },
-    { category: "Dienstkunde", subcategory: "Empfangsdienst", question: "Wie verhält sich das Wachpersonal bei Annahme von verdächtigen Postsendungen oder Paketen?", options: [ "Paket nicht öffnen, bei Verdacht (Geruch, Pulver, ungewöhnliche Drähte) Bereich sichern und Spezialkräfte rufen.", "Paket sofort öffnen und den Inhalt auf dem Schreibtisch verteilen.", "Paket in den normalen Hausmüll werfen.", "Paket ungeprüft an einen beliebigen Mitarbeiter übergeben." ] },
-    { category: "Dienstkunde", subcategory: "Schichtwechsel", question: "Was ist beim ordnungsgemäßen Schichtwechsel im Objektschutz zwingend erforderlich?", options: [ "Eine lückenlose Übergabe aller wichtigen Vorkommnisse, offenen Mängel und Schlüsselbestände.", "Das lautlose Verlassen des Arbeitsplatzes ohne ein Wort zum Nachfolger.", "Die sofortige Zerstörung aller alten Aufzeichnungen der vorherigen Schicht.", "Das Übergeben von privaten Geldmitteln." ] },
-    { category: "Dienstkunde", subcategory: "Kontrollgang", question: "Was bedeutet es, wenn ein Wachmann einen Kontrollpunkt (Schlüssel-/Transponderpunkt) betätigt?", options: [ "Es wird elektronisch oder mechanisch registriert, dass der Kontrollpunkt zu einer bestimmten Uhrzeit abgelaufen wurde.", "Es wird automatisch ein Fehlalarm an die Polizei ausgelöst.", "Es schaltet sich im gesamten Gebäude die Beleuchtung aus.", "Es wird eine automatische Gehaltsabrechnung generiert." ] },
-    { category: "Dienstkunde", subcategory: "Intervention", question: "Welche Information benötigt eine Interventionskraft vor Anfahrt zu einem Alarmobjekt?", options: [ "Objektanschrift, Art des Alarms, Aufschaltcode, Besonderheiten vor Ort und Kontaktdaten.", "Die privaten Hobbys des Einbrechers.", "Die genauen Bilanzen des Kundenunternehmens.", "Das Wetter am Zielort." ] },
-    { category: "Dienstkunde", subcategory: "Fluchtwege", question: "Welcher Zustand von Flucht- und Rettungswegen ist während der Betriebszeit vorgeschrieben?", options: [ "Sie müssen in ihrer gesamten Breite jederzeit völlig frei, ungestellt und leicht zu öffnen sein.", "Sie dürfen zur Zwischenlagerung von Paletten genutzt werden, wenn noch Platz ist.", "Sie dürfen mit Vorhängeschlössern verschlossen werden, um Diebstahl zu verhindern.", "Sie müssen nur im Brandfall freigeräumt werden." ] },
-    { category: "Dienstkunde", subcategory: "Zutrittskontrolle", question: "Was ist bei der Ausgabe von Besucherausweisen zu beachten?", options: [ "Rückgabe des Ausweises beim Verlassen des Werks und Registrierung der Aufenthaltsdauer.", "Ausweise können beliebig behalten und als Andenken mitgenommen werden.", "Ausweise müssen nicht personalisiert werden.", "Ausweise berechtigen zum Betreten aller Hochsicherheitsbereiche." ] },
-    { category: "Dienstkunde", subcategory: "Brandwache", question: "Welche Ausrüstung gehört standardmäßig zu einer Brandwache in Industrieanlagen?", options: [ "Geeignete Feuerlöscher, ggf. Atemschutz, Kommunikationsmittel, Brandschutzordnung und Notizbuch.", "Ausschließlich ein Smartphone mit Internetzugang.", "Ein privater Erste-Hilfe-Kasten für Wanderer.", "Keinerlei Ausrüstung erforderlich." ] },
-    { category: "Dienstkunde", subcategory: "Schlüsselmanagement", question: "Welches Risiko besteht bei ungesicherter Aufbewahrung von Generalschlüsseln?", options: [ "Unbefugter Zutritt zu allen sensiblen Bereichen des Unternehmens, massives Sicherheitsrisiko.", "Keinerlei Risiko, da Generalschlüssel universell kopiergeschützt sind.", "Automatische Schließung aller Türen im Notfall.", "Erhöhung der Energieeffizienz des Gebäudes." ] },
-    { category: "Dienstkunde", subcategory: "Werkschutz", question: "Welche Aufgabe hat der Werkschutz bei Verkehrsunfällen auf dem Werksgelände?", options: [ "Absicherung der Unfallstelle, Erste Hilfe leisten, Rettungsdienste einweisen und Unfall dokumentieren.", "Den Unfallort sofort räumen und so tun, als sei nichts passiert.", "Die Unfallbeteiligten vor Ort verhören und sofort ein Urteil sprechen.", "Die Straße eigenhändig mit schwerem Gerät reparieren." ] },
+    // DIENSTKUNDE (25 Fragen)
+    { id: 26, category: "Dienstkunde", subcategory: "Objekt- und Werkschutz", question: "Was gehört zu den primären Aufgaben im Werkschutz?", options: [ "Schutz von Anlagen, Betriebsmitteln sowie die Verhinderung von Diebstahl und Sabotage.", "Die eigenständige Strafverfolgung von externen Ladendieben im Stadtgebiet.", "Die Erstellung von steuerlichen Bilanzen für das Sicherheitsunternehmen.", "Die Durchführung von straßenverkehrsrechtlichen Geschwindigkeitskontrollen." ] },
+    { id: 27, category: "Dienstkunde", subcategory: "Revierdienst", question: "Welches Ziel verfolgt ein unregelmäßiger Revierkontrolldienst?", options: [ "Erhöhung der Entdeckungsgefahr für Täter durch variable Fahr- und Kontrollzeiten.", "Strikte Einhaltung sekundengenauer Pausenzeiten für das Fahrpersonal.", "Ausschließlich Kontrolle von privaten Wohngebäuden nachts.", "Vollständiger Verzicht auf schriftliche Kontrollberichte." ] },
+    { id: 28, category: "Dienstkunde", subcategory: "Schutz von Anlagen", question: "Wie verhält sich das Wachpersonal bei der Entdeckung einer offenen Notausgangstür?", options: [ "Sofortige Verschlusskontrolle, Sicherung des Bereichs und Meldung an den Leitstand.", "Die Tür bis zum Schichtwechsel unverschlossen stehen lassen.", "Einen privaten Aushang zur Kennzeichnung anbringen.", "Die Tür dauerhaft von außen verbarrikadieren." ] },
+    { id: 29, category: "Dienstkunde", subcategory: "Empfangsdienst", question: "Welche Aufgabe hat das Wachpersonal an einer Pforte bei Besucherverkehr?", options: [ "Besucher registrieren, Ausweise prüfen, Besucherausweise ausgeben und Einweisen.", "Besuchern den unbegrenzten Zugang zu allen Produktionshallen erlauben.", "Vertrauliche Geschäftspapiere der Kunden einsehen und kopieren.", "Sämtliche Privatfahrzeuge der Gäste auf Wertsachen durchsuchen." ] },
+    { id: 30, category: "Dienstkunde", subcategory: "Schlüsselverwaltung", question: "Wie ist bei der Ausgabe von Hauptschlüsseln im Objektschutz vorzugehen?", options: [ "Lückenlose Dokumentation in einem Schlüsselbuch mit Unterschrift und Uhrzeit.", "Schlüssel unkontrolliert in einem offenen Kasten an der Pforte hinterlegen.", "Schlüssel an fremde Personen ohne Rücksprache ausleihen.", "Schlüssel nach Dienstschluss im Treppenhaus verstecken." ] },
+    { id: 31, category: "Dienstkunde", subcategory: "Streifendienst", question: "Worauf ist während eines Kontrollgangs besonders zu achten?", options: [ "Auf ungewöhnliche Geräusche, Gerüche, Lichtverhältnisse, beschädigte Verschlüsse und Unregelmäßigkeiten.", "Ausschließlich darauf, ob die Kaffeemaschine im Pausenraum eingeschaltet ist.", "Auf die Bildqualität von privaten Smartphones der anwesenden Mitarbeiter.", "Auf das rechtzeitige Erreichen des Feierabends." ] },
+    { id: 32, category: "Dienstkunde", subcategory: "Werkschutz", question: "Welche Maßnahme wird bei der Ausfahrtskontrolle von Lkw auf dem Werksgelände durchgeführt?", options: [ "Prüfung der Frachtpapiere gegen den tatsächlichen Ladezustand und Sichtkontrolle des Fahrzeugs.", "Vollständiger Ausbau des Lkw-Motors zur Materialprüfung.", "Durchsuchung des privaten Geldbeutels des Lkw-Fahrers.", "Prüfung des Reifendrucks aller Achsen." ] },
+    { id: 33, category: "Dienstkunde", subcategory: "Baustellenschutz", question: "Welche Hauptgefahr besteht typischerweise auf unbewachten Großbaustellen nachts?", options: [ "Diebstahl von hochwertigen Werkzeugen, Baustoffen, Kabeln und Baumaschinen.", "Massenhafter Einbruch von streunenden Wildtieren in Büros.", "Überflutung des gesamten Areals durch unterirdische Quellen.", "Spontane Betriebsversammlungen von Handwerkern." ] },
+    { id: 34, category: "Dienstkunde", subcategory: "Protokollierung", question: "Wofür dient ein Dienstbuch oder Berichtsheft im Wachdienst?", options: [ "Lückenlose, rechtssichere Dokumentation aller Vorkommnisse, Rundgänge und Meldungen während der Schicht.", "Als persönliches Tagebuch für private Notizen und Gedichte.", "Als Abrechnungsbasis für private Einkäufe der Mitarbeiter.", "Als Werbebroschüre für externe Kunden." ] },
+    { id: 35, category: "Dienstkunde", subcategory: "Alarmverfolgung", question: "Wie reagiert eine Interventionskraft bei Eintreffen an einem Objekt nach Alarmauslösung?", options: [ "Äußere Erkundung ohne Eigengefährdung, Lagemeldung an die Leitstelle absetzen, keine Hektik.", "Sofort alleine und ohne Schutzausrüstung in ein dunkles Gebäude stürmen.", "Im Fahrzeug sitzen bleiben und auf das Ende des Alarms warten.", "Unangemeldet die Nachbargebäude betreten." ] },
+    { id: 36, category: "Dienstkunde", subcategory: "Brandsicherheitswache", question: "Was ist die Hauptaufgabe bei einer Brandsicherheitswache (z.B. bei Theater oder Großveranstaltungen)?", options: [ "Überwachung der Brandschutzvorschriften, Freihaltung von Rettungswegen, schnelles Eingreifen bei Entstehungsbränden.", "Durchführung von Eintrittskontrollen und Ticketverkauf an der Abendkasse.", "Die Bewirtung von prominenten Gästen im VIP-Bereich.", "Die technische Wartung der Scheinwerferanlage." ] },
+    { id: 37, category: "Dienstkunde", subcategory: "Objektschutz", question: "Was versteht man unter dem Begriff 'Perimeterschutz'?", options: [ "Die Sicherung der äußeren Grundstücksgrenze eines Objekts (Zaun, Tore, Übersteigschutz, Kameras).", "Der Innenschutz von einzelnen Büros im vierten Obergeschoss.", "Die Absicherung von Serverräumen durch Brandschutztüren.", "Der Schutz von Mitarbeitern auf dem Weg zur Kantine." ] },
+    { id: 38, category: "Dienstkunde", subcategory: "Veranstaltungsschutz", question: "Welche Kontrollmaßnahme ist beim Einlass zu Großveranstaltungen Standard?", options: [ "Sicht- und Tastkontrolle von Taschen sowie Ticketprüfung zur Verhinderung von verbotenen Gegenständen.", "Vollständige körperliche Durchleuchtung aller Besucher durch Röntgengeräte.", "Abgabe aller persönlichen Wertsachen am Haupteingang.", "Erhebung von biometrischen DNA-Proben." ] },
+    { id: 39, category: "Dienstkunde", subcategory: "Werttransport", question: "Welcher Grundsatz gilt beim Schutz von Geld- und Werttransporten primär?", options: [ "Geheimhaltung von Routen und Zeiten, Vermeidung von festen Schemata, maximale Aufmerksamkeit.", "Feste Routen zu exakt sekundengleichen Uhrzeiten jeden Tag.", "Freiwillige Bekanntgabe der Transportdetails in sozialen Netzwerken.", "Transport ohne jegliche Kommunikationsmittel." ] },
+    { id: 40, category: "Dienstkunde", subcategory: "Freiwillige Maßnahmen", question: "Darf eine Sicherheitskraft fremde Fahrzeuge auf dem Werksgelände durchsuchen?", options: [ "Nur wenn dies in der Betriebsvereinbarung, im Werkschutzvertrag oder in den AGB des Geländes geregelt ist.", "Immer und zu jeder Zeit bei absolut jedem Fahrzeug ohne Ausnahme.", "Niemals unter keinen Umständen, da dies Grundrechtseingriffe sind.", "Nur mit direkter Zustimmung des Bundesverkehrsministers." ] },
+    { id: 41, category: "Dienstkunde", subcategory: "Revierdienst", question: "Welches Hilfsmittel ist bei nächtlichen Kontrollgängen im Außenbereich unverzichtbar?", options: [ "Eine zuverlässige, leistungsstarke Taschenlampe und ein funktionierendes Kommunikationsmittel.", "Ein privates Musikabspielgerät zur Entspannung.", "Ein schweres mobiles Sturmgewehr.", "Ein offener Notizblock ohne Stift." ] },
+    { id: 42, category: "Dienstkunde", subcategory: "Empfangsdienst", question: "Wie verhält sich das Wachpersonal bei Annahme von verdächtigen Postsendungen oder Paketen?", options: [ "Paket nicht öffnen, bei Verdacht (Geruch, Pulver, Drähte) Bereich sichern und Spezialkräfte rufen.", "Paket sofort öffnen und den Inhalt auf dem Schreibtisch verteilen.", "Paket in den normalen Hausmüll werfen.", "Paket ungeprüft an einen beliebigen Mitarbeiter übergeben." ] },
+    { id: 43, category: "Dienstkunde", subcategory: "Schichtwechsel", question: "Was ist beim ordnungsgemäßen Schichtwechsel im Objektschutz zwingend erforderlich?", options: [ "Eine lückenlose Übergabe aller wichtigen Vorkommnisse, offenen Mängel und Schlüsselbestände.", "Das lautlose Verlassen des Arbeitsplatzes ohne ein Wort zum Nachfolger.", "Die sofortige Zerstörung aller alten Aufzeichnungen der vorherigen Schicht.", "Das Übergeben von privaten Geldmitteln." ] },
+    { id: 44, category: "Dienstkunde", subcategory: "Kontrollgang", question: "Was bedeutet es, wenn ein Wachmann einen Kontrollpunkt (Schlüssel-/Transponderpunkt) betätigt?", options: [ "Es wird elektronisch oder mechanisch registriert, dass der Kontrollpunkt zu einer bestimmten Uhrzeit abgelaufen wurde.", "Es wird automatisch ein Fehlalarm an die Polizei ausgelöst.", "Es schaltet sich im gesamten Gebäude die Beleuchtung aus.", "Es wird eine automatische Gehaltsabrechnung generiert." ] },
+    { id: 45, category: "Dienstkunde", subcategory: "Intervention", question: "Welche Information benötigt eine Interventionskraft vor Anfahrt zu einem Alarmobjekt?", options: [ "Objektanschrift, Art des Alarms, Aufschaltcode, Besonderheiten vor Ort und Kontaktdaten.", "Die privaten Hobbys des Einbrechers.", "Die genauen Bilanzen des Kundenunternehmens.", "Das Wetter am Zielort." ] },
+    { id: 46, category: "Dienstkunde", subcategory: "Fluchtwege", question: "Welcher Zustand von Flucht- und Rettungswegen ist während der Betriebszeit vorgeschrieben?", options: [ "Sie müssen in ihrer gesamten Breite jederzeit völlig frei, ungestellt und leicht zu öffnen sein.", "Sie dürfen zur Zwischenlagerung von Paletten genutzt werden, wenn noch Platz ist.", "Sie dürfen mit Vorhängeschlössern verschlossen werden, um Diebstahl zu verhindern.", "Sie müssen nur im Brandfall freigeräumt werden." ] },
+    { id: 47, category: "Dienstkunde", subcategory: "Zutrittskontrolle", question: "Was ist bei der Ausgabe von Besucherausweisen zu beachten?", options: [ "Rückgabe des Ausweises beim Verlassen des Werks und Registrierung der Aufenthaltsdauer.", "Ausweise können beliebig behalten und als Andenken mitgenommen werden.", "Ausweise müssen nicht personalisiert werden.", "Ausweise berechtigen zum Betreten aller Hochsicherheitsbereiche." ] },
+    { id: 48, category: "Dienstkunde", subcategory: "Brandwache", question: "Welche Ausrüstung gehört standardmäßig zu einer Brandwache in Industrieanlagen?", options: [ "Geeignete Feuerlöscher, ggf. Atemschutz, Kommunikationsmittel, Brandschutzordnung und Notizbuch.", "Ausschließlich ein Smartphone mit Internetzugang.", "Ein privater Erste-Hilfe-Kasten für Wanderer.", "Keinerlei Ausrüstung erforderlich." ] },
+    { id: 49, category: "Dienstkunde", subcategory: "Schlüsselmanagement", question: "Welches Risiko besteht bei ungesicherter Aufbewahrung von Generalschlüsseln?", options: [ "Unbefugter Zutritt zu allen sensiblen Bereichen des Unternehmens, massives Sicherheitsrisiko.", "Keinerlei Risiko, da Generalschlüssel universell kopiergeschützt sind.", "Automatische Schließung aller Türen im Notfall.", "Erhöhung der Energieeffizienz des Gebäudes." ] },
+    { id: 50, category: "Dienstkunde", subcategory: "Werkschutz", question: "Welche Aufgabe hat der Werkschutz bei Verkehrsunfällen auf dem Werksgelände?", options: [ "Absicherung der Unfallstelle, Erste Hilfe leisten, Rettungsdienste einweisen und Unfall dokumentieren.", "Den Unfallort sofort räumen und so tun, als sei nichts passiert.", "Die Unfallbeteiligten vor Ort verhören und sofort ein Urteil sprechen.", "Die Straße eigenhändig mit schwerem Gerät reparieren." ] },
 
-    // --- GEFAHRENABWEHR UND SICHERHEITSTECHNIK (25 Fragen) ---
-    { category: "Gefahrenabwehr & Technik", subcategory: "Sicherheitstechnik (EMA)", question: "Welche VdS-Klasse wird für Einbruchmeldeanlagen in Hochrisiko-Objekten gefordert?", options: [ "VdS-Klasse C für exponierte Objekte mit hohem Risiko.", "VdS-Klasse A für einfache Wohnbereiche und Büros.", "VdS-Klasse B für standardmäßige Industrieanlagen.", "VdS-Klasse S für reine Schließfachanlagen." ] },
-    { category: "Gefahrenabwehr & Technik", subcategory: "Sicherheitstechnik (BMA)", question: "Welche Aufgabe erfüllt ein Multisensor-Brandmelder (OT-Melder)?", options: [ "Er kombiniert optische Streulichtmessung mit thermischen Sensoren.", "Er misst ausschließlich den lokalen CO2-Gehalt im Raum.", "Er schaltet im Alarmfall automatisch die Wasserzufuhr ab.", "Er erkennt Schwelbrände durch radioaktive Partikel." ] },
-    { category: "Gefahrenabwehr & Technik", subcategory: "Zutrittskontrolle", question: "Wie werden biometrische Systeme vor hochauflösenden Fotos geschützt?", options: [ "Durch integrierte Liveness Detection (Lebenderkennung).", "Durch ein zusätzliches Infrarot-Thermometer.", "Durch die gleichzeitige manuelle PIN-Eingabe.", "Durch die visuelle Sichtprüfung des Pförtners." ] },
-    { category: "Gefahrenabwehr & Technik", subcategory: "Brandschutz", question: "Welche Maßnahmen gehören zum vorbeugenden Brandschutz?", options: [ "Freihaltung von Flucht- und Rettungswegen sowie Wartung von Brandschutztüren.", "Das sofortige Löschen von Großbränden mit dem Feuerlöscher.", "Das Ausstellen von amtlichen Brandschutzzertifikaten durch Wachleute.", "Die Entsorgung alter brennbarer Chemikalien im Betrieb." ] },
-    { category: "Gefahrenabwehr & Technik", subcategory: "Notfallmaßnahmen", question: "Was ist die allererste Sofortmaßnahme bei einer Bombendrohung am Telefon?", options: [ "Ruhe bewahren, Anrufer ausreden lassen, Anrufnotizen machen und Leitstelle informieren.", "Sofort das gesamte Gebäude ohne Alarmierung evakuieren.", "Den Hörer sofort auflegen, um den Spurenschutz zu wahren.", "Den Anrufer lauthals beschimpfen und auflegen." ] },
-    { category: "Gefahrenabwehr & Technik", subcategory: "Arbeitsschutz", question: "Wer ist im Betrieb primär für die Einhaltung der Arbeitsschutzvorschriften zuständig?", options: [ "Der Arbeitgeber in Zusammenarbeit mit Sicherheitsbeauftragten und Fachkräften.", "Ausschließlich das private Wachpersonal vor Ort.", "Die örtliche Polizei im Rahmen der Amtshilfe.", "Das Ordnungsamt der Gemeinde." ] },
-    { category: "Gefahrenabwehr & Technik", subcategory: "Brandlehre", question: "Welche vier Faktoren müssen für einen Brand gleichzeitig vorhanden sein (Brandtetraeder)?", options: [ "Brennstoff, Sauerstoff, Hitze/Zündquelle und ungestörte Kettenreaktion.", "Holz, Wasser, Kohlenstoff und Wind.", "Strom, Metall, Gas und Druck.", "Dunkelheit, Kälte, Druck und Sauerstoff." ] },
-    { category: "Gefahrenabwehr & Technik", subcategory: "Feuerlöscher", question: "Für welche Brandklassen ist ein Schaumlöscher (Brandklasse A und B) besonders geeignet?", options: [ "Feste brennbare Stoffe und flüssige/flüssig werdende Stoffe.", "Brände von Metallen wie Magnesium und Aluminium.", "Elektrische Hochspannungsanlagen bis 1000 Volt aus nächster Nähe ohne Abstand.", "Speiseöle und Speisefette in Großküchen." ] },
-    { category: "Gefahrenabwehr & Technik", subcategory: "CCTV / Videoüberwachung", question: "Was ist bei der rechtlichen Ausrichtung von Videokameras auf Betriebsgeländen zu beachten?", options: [ "Überwachung öffentlicher Gehwege oder Nachbargrundstücke ist unzulässig; Kennzeichnungspflicht beachten.", "Kameras dürfen ohne jede Einschränkung überall im öffentlichen Raum filmen.", "Es muss grundsätzlich Ton mitgehört und aufgezeichnet werden.", "Kameras dürfen heimlich in Umkleidekabinen installiert werden." ] },
-    { category: "Gefahrenabwehr & Technik", subcategory: "Sicherheitstechnik", question: "Was ist die Funktion einer Schleuse (z.B. Personenschleuse im Hochsicherheitsbereich)?", options: [ "Verhinderung des gleichzeitigen Öffnens von Innen- und Außentür zur Kontrolle und Autorisierung.", "Beschleunigung des Durchgangs von großen Menschenmengen ohne Kontrolle.", "Kühlung des Eingangsbereichs an heißen Sommertagen.", "Versteckter Aufenthaltsraum für das Wachpersonal." ] },
-    { category: "Gefahrenabwehr & Technik", subcategory: "Einbruchmeldeanlage", question: "Was versteht man unter einer Sabotageschleife bei einer EMA?", options: [ "Ein separater Melderkreis, der das unbefugte Öffnen von Meldergehäusen oder das Durchtrennen von Kabeln sofort alarmiert.", "Eine Schleife zum automatischen Aufschließen von Türen.", "Ein technischer Defekt in der Hauptstromversorgung.", "Eine Vorrichtung zur automatischen Fehlersuche." ] },
-    { category: "Gefahrenabwehr & Technik", subcategory: "Brandschutz", question: "Was ist ein Feuerlöscher der Brandklasse F?", options: [ "Speziell für Brände von Speiseölen und Speisefetten (Frittieranlagen).", "Für brennbare Gase wie Propan und Butan.", "Für feste Kunststoffe und Papier.", "Für brennende Metalle." ] },
-    { category: "Gefahrenabwehr & Technik", subcategory: "Gefahrenmeldeanlage", question: "Was bedeutet die Abkürzung GMA im Bereich der Sicherheitstechnik?", options: [ "Gefahrenmeldeanlage (Oberbegriff für EMA, BMA, ÜMA etc.).", "Gemeinsamer Meldeaussschuss.", "Geprüfte Maschinen-Armatur.", "Grosstechnische Melde-Agentur." ] },
-    { category: "Gefahrenabwehr & Technik", subcategory: "Fluchtwege", question: "Wie müssen Notausgangstüren in Versammlungsstätten während des Betriebs verriegelt sein?", options: [ "Sie müssen jederzeit von innen ohne Hilfsmittel leicht in Fluchtrichtung zu öffnen sein (Paniktürverschluss).", "Sie müssen mit stabilen Vorhängeschlössern von außen verschlossen sein.", "Sie dürfen nur mit Spezialschlüssel des Schichtleiters zu öffnen sein.", "Sie müssen dauerhaft durch Keile blockiert werden." ] },
-    { category: "Gefahrenabwehr & Technik", subcategory: "Erste Hilfe", question: "Was ist die erste Handlung am Notfallort nach der Eigensicherung?", options: [ "Prüfung der Vitalfunktionen (Bewusstsein, Atmung) und Absetzen des Notrufs (112).", "Sofortige Entnahme von Blutproben der verletzten Person.", "Das Verabreichen von starken Medikamenten.", "Das Fotografieren des Verletzten für den Bericht." ] },
-    { category: "Gefahrenabwehr & Technik", subcategory: "Sicherheitstechnik", question: "Was ist ein Bewegungsmelder nach dem Passiv-Infrarot-Prinzip (PIR)?", options: [ "Er reagiert auf Temperaturveränderungen (Infrarotstrahlung) bewegter Körper im Erfassungsbereich.", "Er sendet aktiv Radarsignale aus und misst die Frequenzverschiebung.", "Er misst ausschließlich den Luftdruck im Raum.", "Er erfasst die Geräusche von Schritten auf dem Boden." ] },
-    { category: "Gefahrenabwehr & Technik", subcategory: "Brandschutz", question: "Welche Farbe hat das Schild für Brandbekämpfungsmittel (z.B. Feuerlöscher) nach ASR A1.3?", options: [ "Rot mit weißem Piktogramm.", "Grün mit weißem Piktogramm.", "Gelb mit schwarzem Rand.", "Blau mit weißem Symbol." ] },
-    { category: "Gefahrenabwehr & Technik", subcategory: "Umweltschutz", question: "Wie verhält man sich bei einem Leck an einem Fass mit umweltgefährdenden Flüssigkeiten?", options: [ "Eigensicherung beachten, Ausbreitung verhindern (Auffonnwannen/Bindemittel), Vorgesetzten und Feuerwehr informieren.", "Die Flüssigkeit in den nächsten Abfluss gießen, um Platz zu schaffen.", "Das Fass ohne Schutzausrüstung mit bloßen Händen wegbewegen.", "Den Vorfall ignorieren." ] },
-    { category: "Gefahrenabwehr & Technik", subcategory: "Sicherheitstechnik", question: "Was ist eine Aufzugsanlage mit Notrufeinrichtung?", options: [ "Eine Anlage mit direkter Sprechverbindung zu einer ständig besetzten Notruf- und Serviceleitstelle.", "Ein normaler Lastenaufzug ohne jegliche Kommunikationsmittel.", "Ein Aufzug, der nur vom Vorstand genutzt werden darf.", "Ein Aufzug mit eingebautem Fernseher." ] },
-    { category: "Gefahrenabwehr & Technik", subcategory: "Sicherheitstechnik", question: "Wozu dient eine Schrankenanlage mit Kennzeichenerkennung (ANPR)?", options: [ "Automatisierte Zufahrtskontrolle von berechtigten Fahrzeugen durch Abgleich des Kfz-Kennzeichens.", "Manuelle Erfassung von Fahrkarten.", "Messung der Geschwindigkeit auf dem Werksgelände.", "Kontrolle des Reifendrucks." ] },
-    { category: "Gefahrenabwehr & Technik", subcategory: "Brandschutz", question: "Was versteht man unter einer Rauch- und Wärmeabzugsanlage (RWA)?", options: [ "Eine Anlage, die im Brandfall toxischen Rauch und Hitze kontrolliert ins Freie ableitet.", "Eine Klimaanlage für normale Büroräume im Sommer.", "Eine Anlage zur Erzeugung von künstlichem Nebel bei Einbruch.", "Ein System zur Befeuchtung von Pflanzen." ] },
-    { category: "Gefahrenabwehr & Technik", subcategory: "Arbeitsschutz", question: "Was bedeutet das Piktogramm mit einem Totenkopf auf Chemikalienbehältern?", options: [ "Akute Toxizität (giftig bis sehr giftig bei Verschlucken, Einatmen oder Hautkontakt).", "Leicht entzündbare Flüssigkeit.", "Umweltgefährdender Stoff.", "Explosionsgefährlicher Stoff." ] },
-    { category: "Gefahrenabwehr & Technik", subcategory: "Sicherheitstechnik", question: "Was ist ein Magnetkontakt an einer Eingangstür?", options: [ "Ein Öffnungsmelder bestehend aus Magnet und Reed-Kontakt zur Überwachung des Zustands (offen/geschlossen).", "Ein elektrisches Türschloss zum automatischen Aufdrücken.", "Ein Sensor zur Messung der Raumtemperatur.", "Eine Vorrichtung zum automatischen Schließen der Tür bei Sturm." ] },
-    { category: "Gefahrenabwehr & Technik", subcategory: "Sicherheitstechnik", question: "Was ist ein Glasbruchmelder?", options: [ "Ein akustischer oder passiver Sensor, der die spezifischen Frequenzen oder Erschütterungen zerbrechenden Glases erkennt.", "Ein Melder, der Rauch bei Fensterscheiben misst.", "Ein Sensor zur Überprüfung der Fensterdichtungen.", "Eine Kamera für die Fensterscheibe." ] },
-    { category: "Gefahrenabwehr & Technik", subcategory: "Gefahrenabwehr", question: "Welche Pflicht hat der Sicherheitsmitarbeiter bei Ausfall der Brandmeldeanlage (BMA)?", options: [ "Durchführung von dauerhaften Brandsicherheitswachen (Brandpostengängen) nach Vorgabe.", "Sofortige Schließung und Räumung des gesamten Betriebes für mehrere Wochen.", "Keine Maßnahmen ergreifen, da die Anlage ohnehin meistens falsche Alarme liefert.", "Die Reparatur selbst mit Werkzeug durchführen." ] },
+    // GEFAHRENABWEHR UND SICHERHEITSTECHNIK (25 Fragen)
+    { id: 51, category: "Gefahrenabwehr & Technik", subcategory: "Sicherheitstechnik (EMA)", question: "Welche VdS-Klasse wird für Einbruchmeldeanlagen in Hochrisiko-Objekten gefordert?", options: [ "VdS-Klasse C für exponierte Objekte mit hohem Risiko.", "VdS-Klasse A für einfache Wohnbereiche und Büros.", "VdS-Klasse B für standardmäßige Industrieanlagen.", "VdS-Klasse S für reine Schließfachanlagen." ] },
+    { id: 52, category: "Gefahrenabwehr & Technik", subcategory: "Sicherheitstechnik (BMA)", question: "Welche Aufgabe erfüllt ein Multisensor-Brandmelder (OT-Melder)?", options: [ "Er kombiniert optische Streulichtmessung mit thermischen Sensoren.", "Er misst ausschließlich den lokalen CO2-Gehalt im Raum.", "Er schaltet im Alarmfall automatisch die Wasserzufuhr ab.", "Er erkennt Schwelbrände durch radioaktive Partikel." ] },
+    { id: 53, category: "Gefahrenabwehr & Technik", subcategory: "Zutrittskontrolle", question: "Wie werden biometrische Systeme vor hochauflösenden Fotos geschützt?", options: [ "Durch integrierte Liveness Detection (Lebenderkennung).", "Durch ein zusätzliches Infrarot-Thermometer.", "Durch die gleichzeitige manuelle PIN-Eingabe.", "Durch die visuelle Sichtprüfung des Pförtners." ] },
+    { id: 54, category: "Gefahrenabwehr & Technik", subcategory: "Brandschutz", question: "Welche Maßnahmen gehören zum vorbeugenden Brandschutz?", options: [ "Freihaltung von Flucht- und Rettungswegen sowie Wartung von Brandschutztüren.", "Das sofortige Löschen von Großbränden mit dem Feuerlöscher.", "Das Ausstellen von amtlichen Brandschutzzertifikaten durch Wachleute.", "Die Entsorgung alter brennbarer Chemikalien im Betrieb." ] },
+    { id: 55, category: "Gefahrenabwehr & Technik", subcategory: "Notfallmaßnahmen", question: "Was ist die allererste Sofortmaßnahme bei einer Bombendrohung am Telefon?", options: [ "Ruhe bewahren, Anrufer ausreden lassen, Anrufnotizen machen und Leitstelle informieren.", "Sofort das gesamte Gebäude ohne Alarmierung evakuieren.", "Den Hörer sofort auflegen, um den Spurenschutz zu wahren.", "Den Anrufer lauthals beschimpfen und auflegen." ] },
+    { id: 56, category: "Gefahrenabwehr & Technik", subcategory: "Arbeitsschutz", question: "Wer ist im Betrieb primär für die Einhaltung der Arbeitsschutzvorschriften zuständig?", options: [ "Der Arbeitgeber in Zusammenarbeit mit Sicherheitsbeauftragten und Fachkräften.", "Ausschließlich das private Wachpersonal vor Ort.", "Die örtliche Polizei im Rahmen der Amtshilfe.", "Das Ordnungsamt der Gemeinde." ] },
+    { id: 57, category: "Gefahrenabwehr & Technik", subcategory: "Brandlehre", question: "Welche vier Faktoren müssen für einen Brand gleichzeitig vorhanden sein (Brandtetraeder)?", options: [ "Brennstoff, Sauerstoff, Hitze/Zündquelle und ungestörte Kettenreaktion.", "Holz, Wasser, Kohlenstoff und Wind.", "Strom, Metall, Gas und Druck.", "Dunkelheit, Kälte, Druck und Sauerstoff." ] },
+    { id: 58, category: "Gefahrenabwehr & Technik", subcategory: "Feuerlöscher", question: "Für welche Brandklassen ist ein Schaumlöscher (Brandklasse A und B) besonders geeignet?", options: [ "Feste brennbare Stoffe und flüssige/flüssig werdende Stoffe.", "Brände von Metallen wie Magnesium und Aluminium.", "Elektrische Hochspannungsanlagen bis 1000 Volt aus nächster Nähe ohne Abstand.", "Speiseöle und Speisefette in Großküchen." ] },
+    { id: 59, category: "Gefahrenabwehr & Technik", subcategory: "CCTV / Videoüberwachung", question: "Was ist bei der rechtlichen Ausrichtung von Videokameras auf Betriebsgeländen zu beachten?", options: [ "Überwachung öffentlicher Gehwege oder Nachbargrundstücke ist unzulässig; Kennzeichnungspflicht beachten.", "Kameras dürfen ohne jede Einschränkung überall im öffentlichen Raum filmen.", "Es muss grundsätzlich Ton mitgehört und aufgezeichnet werden.", "Kameras dürfen heimlich in Umkleidekabinen installiert werden." ] },
+    { id: 60, category: "Gefahrenabwehr & Technik", subcategory: "Sicherheitstechnik", question: "Was ist die Funktion einer Schleuse (z.B. Personenschleuse im Hochsicherheitsbereich)?", options: [ "Verhinderung des gleichzeitigen Öffnens von Innen- und Außentür zur Kontrolle und Autorisierung.", "Beschleunigung des Durchgangs von großen Menschenmengen ohne Kontrolle.", "Kühlung des Eingangsbereichs an heißen Sommertagen.", "Versteckter Aufenthaltsraum für das Wachpersonal." ] },
+    { id: 61, category: "Gefahrenabwehr & Technik", subcategory: "Einbruchmeldeanlage", question: "Was versteht man unter einer Sabotageschleife bei einer EMA?", options: [ "Ein separater Melderkreis, der das unbefugte Öffnen von Meldergehäusen oder das Durchtrennen von Kabeln alarmiert.", "Eine Schleife zum automatischen Aufschließen von Türen.", "Ein technischer Defekt in der Hauptstromversorgung.", "Eine Vorrichtung zur automatischen Fehlersuche." ] },
+    { id: 62, category: "Gefahrenabwehr & Technik", subcategory: "Brandschutz", question: "Was ist ein Feuerlöscher der Brandklasse F?", options: [ "Speziell für Brände von Speiseölen und Speisefetten (Frittieranlagen).", "Für brennbare Gase wie Propan und Butan.", "Für feste Kunststoffe und Papier.", "Für brennende Metalle." ] },
+    { id: 63, category: "Gefahrenabwehr & Technik", subcategory: "Gefahrenmeldeanlage", question: "Was bedeutet die Abkürzung GMA im Bereich der Sicherheitstechnik?", options: [ "Gefahrenmeldeanlage (Oberbegriff für EMA, BMA, ÜMA etc.).", "Gemeinsamer Meldeaussschuss.", "Geprüfte Maschinen-Armatur.", "Grosstechnische Melde-Agentur." ] },
+    { id: 64, category: "Gefahrenabwehr & Technik", subcategory: "Fluchtwege", question: "Wie müssen Notausgangstüren in Versammlungsstätten während des Betriebs verriegelt sein?", options: [ "Sie müssen jederzeit von innen ohne Hilfsmittel leicht in Fluchtrichtung zu öffnen sein (Paniktürverschluss).", "Sie müssen mit stabilen Vorhängeschlössern von außen verschlossen sein.", "Sie dürfen nur mit Spezialschlüssel des Schichtleiters zu öffnen sein.", "Sie müssen dauerhaft durch Keile blockiert werden." ] },
+    { id: 65, category: "Gefahrenabwehr & Technik", subcategory: "Erste Hilfe", question: "Was ist die allererste Sofortmaßnahme am Notfallort nach der Eigensicherung?", options: [ "Prüfung der Vitalfunktionen (Bewusstsein, Atmung) und Absetzen des Notrufs (112).", "Sofortige Entnahme von Blutproben der verletzten Person.", "Das Verabreichen von starken Medikamenten.", "Das Fotografieren des Verletzten für den Bericht." ] },
+    { id: 66, category: "Gefahrenabwehr & Technik", subcategory: "Sicherheitstechnik", question: "Was ist ein Bewegungsmelder nach dem Passiv-Infrarot-Prinzip (PIR)?", options: [ "Er reagiert auf Temperaturveränderungen (Infrarotstrahlung) bewegter Körper im Erfassungsbereich.", "Er sendet aktiv Radarsignale aus und misst die Frequenzverschiebung.", "Er misst ausschließlich den Luftdruck im Raum.", "Er erfasst die Geräusche von Schritten auf dem Boden." ] },
+    { id: 67, category: "Gefahrenabwehr & Technik", subcategory: "Brandschutz", question: "Welche Farbe hat das Schild für Brandbekämpfungsmittel (z.B. Feuerlöscher) nach ASR A1.3?", options: [ "Rot mit weißem Piktogramm.", "Grün mit weißem Piktogramm.", "Gelb mit schwarzem Rand.", "Blau mit weißem Symbol." ] },
+    { id: 68, category: "Gefahrenabwehr & Technik", subcategory: "Umweltschutz", question: "Wie verhält man sich bei einem Leck an einem Fass mit umweltgefährdenden Flüssigkeiten?", options: [ "Eigensicherung beachten, Ausbreitung verhindern (Auffangwannen/Bindemittel), Vorgesetzten und Feuerwehr informieren.", "Die Flüssigkeit in den nächsten Abfluss gießen, um Platz zu schaffen.", "Das Fass ohne Schutzausrüstung mit bloßen Händen wegbewegen.", "Den Vorfall ignorieren." ] },
+    { id: 69, category: "Gefahrenabwehr & Technik", subcategory: "Sicherheitstechnik", question: "Was ist eine Aufzugsanlage mit Notrufeinrichtung?", options: [ "Eine Anlage mit direkter Sprechverbindung zu einer ständig besetzten Notruf- und Serviceleitstelle.", "Ein normaler Lastenaufzug ohne jegliche Kommunikationsmittel.", "Ein Aufzug, der nur vom Vorstand genutzt werden darf.", "Ein Aufzug mit eingebautem Fernseher." ] },
+    { id: 70, category: "Gefahrenabwehr & Technik", subcategory: "Sicherheitstechnik", question: "Wozu dient eine Schrankenanlage mit Kennzeichenerkennung (ANPR)?", options: [ "Automatisierte Zufahrtskontrolle von berechtigten Fahrzeugen durch Abgleich des Kfz-Kennzeichens.", "Manuelle Erfassung von Fahrkarten.", "Messung der Geschwindigkeit auf dem Werksgelände.", "Kontrolle des Reifendrucks." ] },
+    { id: 71, category: "Gefahrenabwehr & Technik", subcategory: "Brandschutz", question: "Was versteht man unter einer Rauch- und Wärmeabzugsanlage (RWA)?", options: [ "Eine Anlage, die im Brandfall toxischen Rauch und Hitze kontrolliert ins Freie ableitet.", "Eine Klimaanlage für normale Büroräume im Sommer.", "Eine Anlage zur Erzeugung von künstlichem Nebel bei Einbruch.", "Ein System zur Befeuchtung von Pflanzen." ] },
+    { id: 72, category: "Gefahrenabwehr & Technik", subcategory: "Arbeitsschutz", question: "Was bedeutet das Piktogramm mit einem Totenkopf auf Chemikalienbehältern?", options: [ "Akute Toxizität (giftig bis sehr giftig bei Verschlucken, Einatmen oder Hautkontakt).", "Leicht entzündbare Flüssigkeit.", "Umweltgefährdender Stoff.", "Explosionsgefährlicher Stoff." ] },
+    { id: 73, category: "Gefahrenabwehr & Technik", subcategory: "Sicherheitstechnik", question: "Was ist ein Magnetkontakt an einer Eingangstür?", options: [ "Ein Öffnungsmelder bestehend aus Magnet und Reed-Kontakt zur Überwachung des Zustands (offen/geschlossen).", "Ein elektrisches Türschloss zum automatischen Aufdrücken.", "Ein Sensor zur Messung der Raumtemperatur.", "Eine Vorrichtung zum automatischen Schließen der Tür bei Sturm." ] },
+    { id: 74, category: "Gefahrenabwehr & Technik", subcategory: "Sicherheitstechnik", question: "Was ist ein Glasbruchmelder?", options: [ "Ein akustischer oder passiver Sensor, der die spezifischen Frequenzen oder Erschütterungen zerbrechenden Glases erkennt.", "Ein Melder, der Rauch bei Fensterscheiben misst.", "Ein Sensor zur Überprüfung der Fensterdichtungen.", "Eine Kamera für die Fensterscheibe." ] },
+    { id: 75, category: "Gefahrenabwehr & Technik", subcategory: "Gefahrenabwehr", question: "Welche Pflicht hat der Sicherheitsmitarbeiter bei Ausfall der Brandmeldeanlage (BMA)?", options: [ "Durchführung von dauerhaften Brandsicherheitswachen (Brandpostengängen) nach Vorgabe.", "Sofortige Schließung und Räumung des gesamten Betriebes für mehrere Wochen.", "Keine Maßnahmen ergreifen, da die Anlage ohnehin meistens falsche Alarme liefert.", "Die Reparatur selbst mit Werkzeug durchführen." ] },
 
-    // --- SICHERHEITS- UND SERVICEORIENTIERTES VERHALTEN (25 Fragen) ---
-    { category: "Serviceorientiertes Verhalten", subcategory: "Situationsbewältigung", question: "Wie reagiert man professionell auf eine aggressive Person an der Pforte?", options: [ "Ruhig, sachlich, bestimmt bleiben, Distanz wahren und Deeskalation suchen.", "Sofort körperliche Gewalt anwenden, um Dominanz zu zeigen.", "Die Person beschimpfen und des Platzes verweisen.", "In Panik geraten und den Raum verlassen." ] },
-    { category: "Serviceorientiertes Verhalten", subcategory: "Kommunikation & Funkverkehr", question: "Welche Grundregel gilt für den professionellen BOS- oder Werksfunkverkehr?", options: [ "Kurz, präzise, klar und verständlich sprechen; keine privaten Gespräche.", "Lange, ausführliche Geschichten zur Unterhaltung erzählen.", "Ständig die Frequenz wechseln, um Abhörsicherheit zu garantieren.", "Nur flüstern, damit niemand mithört." ] },
-    { category: "Serviceorientiertes Verhalten", subcategory: "Kundenorientierung", question: "Welche Rolle nimmt der Sicherheitsmitarbeiter im Empfangsdienst ein?", options: [ "Visitenkarte des Unternehmens: freundlich, kompetent, hilfsbereit und sicherheitsbewusst.", "Ausschließlich ein unnahbarer Kontrolleur ohne Kundenkontakt.", "Ein technischer Berater für IT-Infrastruktur.", "Ein persönlicher Chaffeur für die Geschäftsführung." ] },
-    { category: "Serviceorientiertes Verhalten", subcategory: "Zusammenarbeit", question: "Wie verhält man sich bei eintreffenden Einsatzkräften (Polizei/Feuerwehr)?", options: [ "Einweisen der Kräfte, Übergabe von Lageinformationen und Unterstützung bieten.", "Den Zugang zum Objekt verweigern, bis der Werksleiter anwesend ist.", "Sich sofort vom Einsatzort zurückziehen und wegschauen.", "Die Einsatzleitung über eigene taktische Fehler belehren." ] },
-    { category: "Serviceorientiertes Verhalten", subcategory: "Deeskalation", question: "Was ist ein zentrales Element deeskalierender Kommunikation?",
-    options: [ "Aktives Zuhören, ruhige Tonlage, sachliche Argumente und Vermeidung von Provokationen.", "Lauteres Schreien als der Gegenüber, um sich Respekt zu verschaffen.", "Strikte Weigerung, auf Argumente einzugehen.", "Drohungen mit sofortigen harten Konsequenzen." ] },
-    { category: "Serviceorientiertes Verhalten", subcategory: "Kritikfähigkeit", question: "Wie geht eine professionelle Sicherheitskraft mit berechtigter Kritik eines Kunden um?", options: [ "Sachlich annehmen, Verständnis zeigen, Lösungsorientiert handeln und Fehler eingestehen.", "Den Kunden sofort der Lüge bezichtigen.", "Die Kritik ignorieren und den Raum verlassen.", "Den Kunden lautstark zurechtweisen." ] },
-    { category: "Serviceorientiertes Verhalten", subcategory: "Interkulturelle Kompetenz", question: "Warum ist interkulturelle Kompetenz im Sicherheitsgewerbe wichtig?", options: [ "Um Missverständnisse im Umgang mit internationalen Besuchern oder Mitarbeitern zu vermeiden und professionell zu bleiben.", "Um fremde Sprachen perfekt fließend als Dolmetscher zu übersetzen.", "Um Gesetze des Herkunftslandes von Ausländern in Deutschland anzuwenden.", "Um kulturelle Feste auf dem Werksgelände zu organisieren." ] },
-    { category: "Serviceorientiertes Verhalten", subcategory: "Konfliktmanagement", question: "Was versteht man unter dem Vier-Ohren-Modell von Friedemann Schulz von Thun in der Kommunikation?", options: [ "Jede Nachricht hat vier Ebenen: Sachinhalt, Selbstkundgabe, Beziehung und Appell.", "Man benötigt vier Ohren, um im Funkverkehr alles zu verstehen.", "Kommunikation findet immer über vier Beteiligte statt.", "Man soll dem Kunden niemals zuhören." ] },
-    { category: "Serviceorientiertes Verhalten", subcategory: "Teamwork", question: "Welche Bedeutung hat Teamarbeit im Sicherheitsdienst?", options: [ "Hohe Sicherheit durch gegenseitige Unterstützung, Absicherung und klare Aufgabenverteilung im Schichtdienst.", "Vollständige Unabhängigkeit der Mitarbeiter voneinander.", "Wettbewerb untereinander, wer die meisten Kollegen kontrolliert.", "Ausschließliche Alleinarbeit ohne Kommunikation." ] },
-    { category: "Serviceorientiertes Verhalten", subcategory: "Erscheinungsbild", question: "Welchen Einfluss hat das äußere Erscheinungsbild (Dienstkleidung, Auftreten) einer Sicherheitskraft?", options: [ "Es prägt den ersten Eindruck des Unternehmens, strahlt Kompetenz und Seriosität aus und wirkt präventiv.", "Es hat keinerlei Bedeutung für den Erfolg der Arbeit.", "Es dient ausschließlich dem persönlichen Kälteschutz im Winter.", "Es soll Besucher abschrecken und einschüchtern." ] },
-    { category: "Serviceorientiertes Verhalten", subcategory: "Telefonkompetenz", question: "Wie nimmt man einen geschäftlichen Telefonanruf in der Sicherheitszentrale professionell entgegen?", options: [ "Firmenname / Abteilung, eigener Name, freundliche Begrüßung ('Guten Tag, Zentrale, Müller am Apparat, was kann ich tun?').", "Mit einem kurzen 'Ja? Wer ist da?'", "Den Anruf klingeln lassen und nicht abheben.", "Mit privater Musik im Hintergrund." ] },
-    { category: "Serviceorientiertes Verhalten", subcategory: "Stressbewältigung", question: "Welche Methode hilft bei akuter Stressbelastung während eines Notfalleinsatzes?", options: [ "Bewusste tiefe Bauchatmung, kühlen Kopf bewahren, Prioritäten setzen (Erst absichern, dann handeln).", "Panikartig wegrennen und die Kollegen rufen.", "Lautes Schreien, um den Adrenalinspiegel abzubauen.", "Den Einsatz abbrechen." ] },
-    { category: "Serviceorientiertes Verhalten", subcategory: "Diskretion", question: "Welche Verschwiegenheitspflicht gilt für privates Wachpersonal?", options: [ "Strikte Verschwiegenheit über alle betrieblichen Interna, Sicherheitsvorkommen und Kundeninformationen (auch nach Dienstende).", "Informationen dürfen frei in sozialen Netzwerken geteilt werden.", "Man darf Details an Journalisten verkaufen.", "Verschwiegenheit gilt nur während der gesetzlichen Pausenzeiten." ] },
-    { category: "Serviceorientiertes Verhalten", subcategory: "Kundenorientierung", question: "Ein Kunde verlangt außerhalb der Dienstvorschrift eine Sonderbehandlung. Wie reagiert man?", options: [ "Freundlich erklären, warum dies aus Sicherheitsgründen nicht geht, und ggf. den Vorgesetzten zur Klärung hinzuziehen.", "Den Kunden beleidigen und Hausverbot erteilen.", "Die Vorschriften sofort ignorieren und dem Wunsch nachgeben.", "Den Kunden ignorieren." ] },
-    { category: "Serviceorientiertes Verhalten", subcategory: "Körperhaltung", question: "Welche Körpersprache unterstützt ein deeskalierendes Auftreten?", options: [ "Offene Körperhaltung, entspannte Schultern, angemessener Sicherheitsabstand, Hände sichtbar.", "Verschränkte Arme, geballte Fäuste und starrender Blick.", "Aggressives Vorgehen auf den Angreifer zu.", "Hände in den Hosentaschen mit provokanter Haltung." ] },
-    { category: "Serviceorientiertes Verhalten", subcategory: "Feedback", question: "Wie nimmt man konstruktives Feedback vom Schichtleiter an?", options: [ "Aufmerksam zuhören, ausreden lassen, sachlich annehmen und bei Unklarheiten nachfragen.", "Sofort laut widersprechen und den Schichtleiter kritisieren.", "Das Feedback ignorieren und weiterarbeiten wie bisher.", "Den Job sofort kündigen." ] },
-    { category: "Serviceorientiertes Verhalten", subcategory: "Beschwerdemanagement", question: "Wie reagiert man auf eine Beschwerde eines Besuchers über lange Wartezeiten an der Pforte?", options: [ "Empathisch zuhören, Verständnis zeigen, sachlich begründen (Sicherheitskontrollen) und freundlich verabschieden.", "Dem Besucher sagen, dass es ihm egal sein kann.", "Den Besucher auslachen.", "Sich lautstark über das eigene Unternehmen beschweren." ] },
-    { category: "Serviceorientiertes Verhalten", subcategory: "Zusammenarbeit", question: "Warum ist eine reibungslose Kommunikation zwischen Schichtwechsel wichtig?", options: [ "Um Informationsverluste über laufende Einsätze, offene Mängel oder besondere Vorkommnisse zu verhindern.", "Damit man länger Pause machen kann.", "Um Zeit totzuschlagen.", "Weil der Gesetzgeber dies ohne Sinn vorschreibt." ] },
-    { category: "Serviceorientiertes Verhalten", subcategory: "Konfliktlösung", question: "Was ist das Ziel eines professionellen Konfliktgesprächs im Sicherheitsdienst?", options: [ "Eine friedliche, rechtssichere Lösung zu finden, bei der das Gesicht aller Beteiligten gewahrt bleibt.", "Den Gegenüber öffentlich zu erniedrigen.", "Einen handgreiflichen Streit zu gewinnen.", "Den Kunden loszuwerden." ] },
-    { category: "Serviceorientiertes Verhalten", subcategory: "Zuverlässigkeit", question: "Was bedeutet absolute Zuverlässigkeit für eine Sicherheitskraft?", options: [ "Pünktlicher Dienstantritt, exakte Einhaltung von Anweisungen, Verschwiegenheit und ehrliches Handeln.", "Dienstbeginn nach eigenem Ermessen.", "Gelegentliches Weglassen von Kontrollgängen bei schlechtem Wetter.", "Weitergabe von vertraulichen Dienstplänen." ] },
-    { category: "Serviceorientiertes Verhalten", subcategory: "Empathie", question: "Welche Rolle spielt Empathie im Umgang mit Hilfesuchenden im Objekt?", options: [ "Sie hilft, die Situation des Gegenübers schnell zu erfassen, Ängste zu nehmen und zielgerichtet zu helfen.", "Sie ist im Sicherheitsdienst völlig unangebracht und ein Zeichen von Schwäche.", "Sie führt zu mangelnder Härte bei Straftätern.", "Sie verlängert unnötig die Bearbeitungszeit." ] },
-    { category: "Serviceorientiertes Verhalten", subcategory: "Servicequalität", question: "Was versteht man unter dienstleistungsorientiertem Handeln im Sicherheitsgewerbe?", options: [ "Sicherheit zu gewährleisten und gleichzeitig kundenfreundlich, hilfsbereit und lösungsorientiert aufzutreten.", "Ausschließlich als unnahbarer Türsteher ohne Servicegedanken aufzutreten.", "Dem Kunden bei allen privaten Angelegenheiten im Haushalt zu helfen.", "Sicherheitsvorschriften zu ignorieren, um Kunden zu gefallen." ] },
-    { category: "Serviceorientiertes Verhalten", subcategory: "Rhetorik", question: "Welche Wirkung hat eine ruhige, feste und deutliche Aussprache in einer kritischen Situation?", options: [ "Sie strahlt Souveränität und Sicherheit aus und beruhigt unruhige Personen.", "Sie wirkt provokant und arrogant.", "Sie wird vom Gegenüber meist überhört.", "Sie führt zu aggressivem Verhalten." ] },
-    { category: "Serviceorientiertes Verhalten", subcategory: "Teamkommunikation", question: "Welche Kommunikationsform ist bei gemeinsamen Einsätzen im Team wichtig?", options: [ "Kurze, klare Absprachen, Bestätigung von Befehlen (Funkdisziplin) und gegenseitiges Briefing.", "Lange Diskussionen mitten im Einsatz.", "Vollständiges Schweigen während des gesamten Einsatzes.", "Verwendung von privaten, unverständlichen Geheimsprachen." ] },
-    { category: "Serviceorientiertes Verhalten", subcategory: "Berufsethik", question: "Was gehört zur beruflichen Ethik einer Sicherheitskraft (gemäß Branchenkodex)?", options: [ "Gesetzestreue, Neutralität, Verhältnismäßigkeit, Schutz von Menschenleben und Eigentum.", "Ausübung von Macht ohne Rücksicht auf Gesetze.", "Bevorzugung von Freunden und Bekannten auf dem Werksgelände.", "Ausnutzung von Machtpositionen zur persönlichen Bereicherung." ] }
+    // SICHERHEITS- UND SERVICEORIENTIERTES VERHALTEN (25 Fragen)
+    { id: 76, category: "Serviceorientiertes Verhalten", subcategory: "Situationsbewältigung", question: "Wie reagiert man professionell auf eine aggressive Person an der Pforte?", options: [ "Ruhig, sachlich, bestimmt bleiben, Distanz wahren und Deeskalation suchen.", "Sofort körperliche Gewalt anwenden, um Dominanz zu zeigen.", "Die Person beschimpfen und des Platzes verweisen.", "In Panik geraten und den Raum verlassen." ] },
+    { id: 77, category: "Serviceorientiertes Verhalten", subcategory: "Kommunikation & Funkverkehr", question: "Welche Grundregel gilt für den professionellen BOS- oder Werksfunkverkehr?", options: [ "Kurz, präzise, klar und verständlich sprechen; keine privaten Gespräche.", "Lange, ausführliche Geschichten zur Unterhaltung erzählen.", "Ständig die Frequenz wechseln, um Abhörsicherheit zu garantieren.", "Nur flüstern, damit niemand mithört." ] },
+    { id: 78, category: "Serviceorientiertes Verhalten", subcategory: "Kundenorientierung", question: "Welche Rolle nimmt der Sicherheitsmitarbeiter im Empfangsdienst ein?", options: [ "Visitenkarte des Unternehmens: freundlich, kompetent, hilfsbereit und sicherheitsbewusst.", "Ausschließlich ein unnahbarer Kontrolleur ohne Kundenkontakt.", "Ein technischer Berater für IT-Infrastruktur.", "Ein persönlicher Chauffeur für die Geschäftsführung." ] },
+    { id: 79, category: "Serviceorientiertes Verhalten", subcategory: "Zusammenarbeit", question: "Wie verhält man sich bei eintreffenden Einsatzkräften (Polizei/Feuerwehr)?", options: [ "Einweisen der Kräfte, Übergabe von Lageinformationen und Unterstützung bieten.", "Den Zugang zum Objekt verweigern, bis der Werksleiter anwesend ist.", "Sich sofort vom Einsatzort zurückziehen und wegschauen.", "Die Einsatzleitung über eigene taktische Fehler belehren." ] },
+    { id: 80, category: "Serviceorientiertes Verhalten", subcategory: "Deeskalation", question: "Was ist ein zentrales Element deeskalierender Kommunikation?", options: [ "Aktives Zuhören, ruhige Tonlage, sachliche Argumente und Vermeidung von Provokationen.", "Lauteres Schreien als der Gegenüber, um sich Respekt zu verschaffen.", "Strikte Weigerung, auf Argumente einzugehen.", "Drohungen mit sofortigen harten Konsequenzen." ] },
+    { id: 81, category: "Serviceorientiertes Verhalten", subcategory: "Kritikfähigkeit", question: "Wie geht eine professionelle Sicherheitskraft mit berechtigter Kritik eines Kunden um?", options: [ "Sachlich annehmen, Verständnis zeigen, lösungsorientiert handeln und Fehler eingestehen.", "Den Kunden sofort der Lüge bezichtigen.", "Die Kritik ignorieren und den Raum verlassen.", "Den Kunden lautstark zurechtweisen." ] },
+    { id: 82, category: "Serviceorientiertes Verhalten", subcategory: "Interkulturelle Kompetenz", question: "Warum ist interkulturelle Kompetenz im Sicherheitsgewerbe wichtig?", options: [ "Um Missverständnisse im Umgang mit internationalen Besuchern oder Mitarbeitern zu vermeiden und professionell zu bleiben.", "Um fremde Sprachen perfekt fließend als Dolmetscher zu übersetzen.", "Um Gesetze des Herkunftslandes von Ausländern in Deutschland anzuwenden.", "Um kulturelle Feste auf dem Werksgelände zu organisieren." ] },
+    { id: 83, category: "Serviceorientiertes Verhalten", subcategory: "Konfliktmanagement", question: "Was versteht man unter dem Vier-Ohren-Modell von Friedemann Schulz von Thun in der Kommunikation?", options: [ "Jede Nachricht hat vier Ebenen: Sachinhalt, Selbstkundgabe, Beziehung und Appell.", "Man benötigt vier Ohren, um im Funkverkehr alles zu verstehen.", "Kommunikation findet immer über vier Beteiligte statt.", "Man soll dem Kunden niemals zuhören." ] },
+    { id: 84, category: "Serviceorientiertes Verhalten", subcategory: "Teamwork", question: "Welche Bedeutung hat Teamarbeit im Sicherheitsdienst?", options: [ "Hohe Sicherheit durch gegenseitige Unterstützung, Absicherung und klare Aufgabenverteilung im Schichtdienst.", "Vollständige Unabhängigkeit der Mitarbeiter voneinander.", "Wettbewerb untereinander, wer die meisten Kollegen kontrolliert.", "Ausschließliche Alleinarbeit ohne Kommunikation." ] },
+    { id: 85, category: "Serviceorientiertes Verhalten", subcategory: "Erscheinungsbild", question: "Welchen Einfluss hat das äußere Erscheinungsbild (Dienstkleidung, Auftreten) einer Sicherheitskraft?", options: [ "Es prägt den ersten Eindruck des Unternehmens, strahlt Kompetenz und Seriosität aus und wirkt präventiv.", "Es hat keinerlei Bedeutung für den Erfolg der Arbeit.", "Es dient ausschließlich dem persönlichen Kälteschutz im Winter.", "Es soll Besucher abschrecken und einschüchtern." ] },
+    { id: 86, category: "Serviceorientiertes Verhalten", subcategory: "Telefonkompetenz", question: "Wie nimmt man einen geschäftlichen Telefonanruf in der Sicherheitszentrale professionell entgegen?", options: [ "Firmenname / Abteilung, eigener Name, freundliche Begrüßung ('Guten Tag, Zentrale, Müller am Apparat, was kann ich tun?').", "Mit einem kurzen 'Ja? Wer ist da?'", "Den Anruf klingeln lassen und nicht abheben.", "Mit privater Musik im Hintergrund." ] },
+    { id: 87, category: "Serviceorientiertes Verhalten", subcategory: "Stressbewältigung", question: "Welche Methode hilft bei akuter Stressbelastung während eines Notfalleinsatzes?", options: [ "Bewusste tiefe Bauchatmung, kühlen Kopf bewahren, Prioritäten setzen (Erst absichern, dann handeln).", "Panikartig wegrennen und die Kollegen rufen.", "Lautes Schreien, um den Adrenalinspiegel abzubauen.", "Den Einsatz abbrechen." ] },
+    { id: 88, category: "Serviceorientiertes Verhalten", subcategory: "Diskretion", question: "Welche Verschwiegenheitspflicht gilt für privates Wachpersonal?", options: [ "Strikte Verschwiegenheit über alle betrieblichen Interna, Sicherheitsvorkommen und Kundeninformationen (auch nach Dienstende).", "Informationen dürfen frei in sozialen Netzwerken geteilt werden.", "Man darf Details an Journalisten verkaufen.", "Verschwiegenheit gilt nur während der gesetzlichen Pausenzeiten." ] },
+    { id: 89, category: "Serviceorientiertes Verhalten", subcategory: "Kundenorientierung", question: "Ein Kunde verlangt außerhalb der Dienstvorschrift eine Sonderbehandlung. Wie reagiert man?", options: [ "Freundlich erklären, warum dies aus Sicherheitsgründen nicht geht, und ggf. den Vorgesetzten zur Klärung hinzuziehen.", "Den Kunden beleidigen und Hausverbot erteilen.", "Die Vorschriften sofort ignorieren und dem Wunsch nachgeben.", "Den Kunden ignorieren." ] },
+    { id: 90, category: "Serviceorientiertes Verhalten", subcategory: "Körperhaltung", question: "Welche Körpersprache unterstützt ein deeskalierendes Auftreten?", options: [ "Offene Körperhaltung, entspannte Schultern, angemessener Sicherheitsabstand, Hände sichtbar.", "Verschränkte Arme, geballte Fäuste und starrender Blick.", "Aggressives Vorgehen auf den Angreifer zu.", "Hände in den Hosentaschen mit provokanter Haltung." ] },
+    { id: 91, category: "Serviceorientiertes Verhalten", subcategory: "Feedback", question: "Wie nimmt man konstruktives Feedback vom Schichtleiter an?", options: [ "Aufmerksam zuhören, ausreden lassen, sachlich annehmen und bei Unklarheiten nachfragen.", "Sofort laut widersprechen und den Schichtleiter kritisieren.", "Das Feedback ignorieren und weiterarbeiten wie bisher.", "Den Job sofort kündigen." ] },
+    { id: 92, category: "Serviceorientiertes Verhalten", subcategory: "Beschwerdemanagement", question: "Wie reagiert man auf eine Beschwerde eines Besuchers über lange Wartezeiten an der Pforte?", options: [ "Empathisch zuhören, Verständnis zeigen, sachlich begründen (Sicherheitskontrollen) und freundlich verabschieden.", "Dem Besucher sagen, dass es ihm egal sein kann.", "Den Besucher auslachen.", "Sich lautstark über das eigene Unternehmen beschweren." ] },
+    { id: 93, category: "Serviceorientiertes Verhalten", subcategory: "Zusammenarbeit", question: "Warum ist eine reibungslose Kommunikation zwischen Schichtwechsel wichtig?", options: [ "Um Informationsverluste über laufende Einsätze, offene Mängel oder besondere Vorkommnisse zu verhindern.", "Damit man länger Pause machen kann.", "Um Zeit totzuschlagen.", "Weil der Gesetzgeber dies ohne Sinn vorschreibt." ] },
+    { id: 94, category: "Serviceorientiertes Verhalten", subcategory: "Konfliktlösung", question: "Was ist das Ziel eines professionellen Konfliktgesprächs im Sicherheitsdienst?", options: [ "Eine friedliche, rechtssichere Lösung zu finden, bei der das Gesicht aller Beteiligten gewahrt bleibt.", "Den Gegenüber öffentlich zu erniedrigen.", "Einen handgreiflichen Streit zu gewinnen.", "Den Kunden loszuwerden." ] },
+    { id: 95, category: "Serviceorientiertes Verhalten", subcategory: "Zuverlässigkeit", question: "Was bedeutet absolute Zuverlässigkeit für eine Sicherheitskraft?", options: [ "Pünktlicher Dienstantritt, exakte Einhaltung von Anweisungen, Verschwiegenheit und ehrliches Handeln.", "Dienstbeginn nach eigenem Ermessen.", "Gelegentliches Weglassen von Kontrollgängen bei schlechtem Wetter.", "Weitergabe von vertraulichen Dienstplänen." ] },
+    { id: 96, category: "Serviceorientiertes Verhalten", subcategory: "Empathie", question: "Welche Rolle spielt Empathie im Umgang mit Hilfesuchenden im Objekt?", options: [ "Sie hilft, die Situation des Gegenübers schnell zu erfassen, Ängste zu nehmen und zielgerichtet zu helfen.", "Sie ist im Sicherheitsdienst völlig unangebracht und ein Zeichen von Schwäche.", "Sie führt zu mangelnder Härte bei Straftätern.", "Sie verlängert unnötig die Bearbeitungszeit." ] },
+    { id: 97, category: "Serviceorientiertes Verhalten", subcategory: "Servicequalität", question: "Was versteht man unter dienstleistungsorientiertem Handeln im Sicherheitsgewerbe?", options: [ "Sicherheit zu gewährleisten und gleichzeitig kundenfreundlich, hilfsbereit und lösungsorientiert aufzutreten.", "Ausschließlich als unnahbarer Türsteher ohne Servicegedanken aufzutreten.", "Dem Kunden bei allen privaten Angelegenheiten im Haushalt zu helfen.", "Sicherheitsvorschriften zu ignorieren, um Kunden zu gefallen." ] },
+    { id: 98, category: "Serviceorientiertes Verhalten", subcategory: "Rhetorik", question: "Welche Wirkung hat eine ruhige, feste und deutliche Aussprache in einer kritischen Situation?", options: [ "Sie strahlt Souveränität und Sicherheit aus und beruhigt unruhige Personen.", "Sie wirkt provokant und arrogant.", "Sie wird vom Gegenüber meist überhört.", "Sie führt zu aggressivem Verhalten." ] },
+    { id: 99, category: "Serviceorientiertes Verhalten", subcategory: "Teamkommunikation", question: "Welche Kommunikationsform ist bei gemeinsamen Einsätzen im Team wichtig?", options: [ "Kurze, klare Absprachen, Bestätigung von Befehlen (Funkdisziplin) und gegenseitiges Briefing.", "Lange Diskussionen mitten im Einsatz.", "Vollständiges Schweigen während des gesamten Einsatzes.", "Verwendung von privaten, unverständlichen Geheimsprachen." ] },
+    { id: 100, category: "Serviceorientiertes Verhalten", subcategory: "Berufsethik", question: "Was gehört zur beruflichen Ethik einer Sicherheitskraft (gemäß Branchenkodex)?", options: [ "Gesetzestreue, Neutralität, Verhältnismäßigkeit, Schutz von Menschenleben und Eigentum.", "Ausübung von Macht ohne Rücksicht auf Gesetze.", "Bevorzugung von Freunden und Bekannten auf dem Werksgelände.", "Ausnutzung von Machtpositionen zur persönlichen Bereicherung." ] }
   ];
 
-  // 10 PRAXISFÄLLE (GUTACHTENSTIL)
+  // 10 PRAXISFÄLLE
   const lawCases = [
     { title: "Fall 1: Der Ladendieb im Supermarkt", case: "Kunde A steckt in einem Supermarkt unauffällig eine teure Flasche Parfum in die Jackentasche und passiert den Kassenbereich ohne zu bezahlen. Der Detektor schlägt an. Sicherheitsmitarbeiter S beobachtet die Tat lückenlos über die Videokamera und eilt herbei. S will den A festhalten. A wehrt sich heftig und schlägt nach S.", question: "Prüfen Sie die strafrechtliche und befugnisrechtliche Lage für S (Festnahme, Notwehr).", solution: "1. Vorläufige Festnahme (§ 127 Abs. 1 StPO): Zulässig, da auf frischer Tat angetroffen (Tatbestand des Diebstahls nach § 242 StGB) und Fluchtgefahr/Identitätsklärung vorliegt.\n2. Notwehr (§ 32 StGB): Gegen den tätlichen Angriff von A darf sich S mit gebotener, verhältnismäßiger Verteidigung wehren." },
-    { title: "Fall 2: Das unverschlossene Bürofenster", case: "Im Rahmen eines abendlichen Kontrollgangs bemerkt Wachmann W im 1. Obergeschoss weit geöffnetes Fenster in einer Fabrikhalle. Es droht ein Gewittersturm mit starkem Regen. W betritt den Bereich, um das Fenster zu schließen, obwohl dieser Raum für das Wachpersonal eigentlich verschlossen gehalten werden soll.", question: "Darf W den Raum betreten? Nennen Sie den passenden Rechtfertigungsgrund.", solution: "1. Rechtfertigender Notstand (§ 34 StGB / BGB Notstand): Es liegt eine gegenwärtige Gefahr für fremdes Eigentum (Wasserschaden an Maschinen/Inventar) vor.\n2. Das Betreten ist zur Schadensabwehr geboten und verhältnismäßig." },
+    { title: "Fall 2: Das unverschlossene Bürofenster", case: "Im Rahmen eines abendlichen Kontrollgangs bemerkt Wachmann W im 1. Obergeschoss ein geöffnetes Fenster in einer Fabrikhalle. Es droht ein Gewittersturm mit starkem Regen. W betritt den Bereich, um das Fenster zu schließen, obwohl dieser Raum für das Wachpersonal eigentlich verschlossen gehalten werden soll.", question: "Darf W den Raum betreten? Nennen Sie den passenden Rechtfertigungsgrund.", solution: "1. Rechtfertigender Notstand (§ 34 StGB): Es liegt eine gegenwärtige Gefahr für fremdes Eigentum (Wasserschaden) vor.\n2. Das Betreten ist zur Schadensabwehr geboten und verhältnismäßig." },
     { title: "Fall 3: Der aggressive Besucher an der Pforte", case: "Ein externer Dienstleister B betritt das Werksgelände ohne gültigen Ausweis. Pfortenmitarbeiter P fordert ihn auf, den Ausweis vorzulegen oder das Gelände zu verlassen. B brüllt herum, beleidigt P schwer und ballt die Fäuste.", question: "Welche rechtlichen Möglichkeiten hat P zur Durchsetzung des Hausrechts?", solution: "1. Hausrecht (§ 903 BGB) durchsetzen.\n2. Platzverweis erteilen.\n3. Bei Weigerung Polizei wegen Hausfriedensbruch (§ 123 StGB) hinzuziehen.\n4. Bei Angriff Notwehr (§ 32 StGB) anwenden." },
-    { title: "Fall 4: Die verdächtige Person im Flur", case: "Wachmann M bemerckt nachts eine unbekannte Person in einem Bürogebäude, die in Schubladen wühlt. Auf Anruf bleibt die Person stehen, greift in die Tasche und zieht einen Schraubendreher als Waffe hervor.", question: "Welche Maßnahmen darf M ergreifen?", solution: "1. Androhung und Ausübung von Notwehr (§ 32 StGB) bei gegenwärtigem Angriff.\n2. Vorläufige Festnahme nach § 127 Abs. 1 StPO bei fortbestehender Fluchtgefahr, sofern verhältnismäßig und geboten." },
+    { title: "Fall 4: Die verdächtige Person im Flur", case: "Wachmann M bemerkt nachts eine unbekannte Person in einem Bürogebäude, die in Schubladen wühlt. Auf Anruf bleibt die Person stehen, greift in die Tasche und zieht einen Schraubendreher als Waffe hervor.", question: "Welche Maßnahmen darf M ergreifen?", solution: "1. Androhung und Ausübung von Notwehr (§ 32 StGB) bei gegenwärtigem Angriff.\n2. Vorläufige Festnahme nach § 127 Abs. 1 StPO bei fortbestehender Fluchtgefahr, sofern verhältnismäßig und geboten." },
     { title: "Fall 5: Sachbeschädigung am Zaun", case: "Jugendliche bewerfen den Maschendrahtzaun eines Umspannwerks mit Steinen und beschädigen diesen leicht. Sie wollen gerade flüchten.", question: "Prüfen Sie die Festnahmebefugnis nach § 127 StPO.", solution: "1. Sachbeschädigung (§ 303 StGB) ist eine Straftat.\n2. Auf frischer Tat angetroffen -> Festnahme nach § 127 Abs. 1 StPO bei Fluchtgefahr/unklarer Identität zulässig." },
     { title: "Fall 6: Rauchen im Gefahrstoffbereich", case: "Ein Mitarbeiter ignoriert demonstrativ das Rauchverbot in einem explizit ausgewiesenen Gefahrstofflager mit brennbaren Gasen. Wachmann W fordert ihn auf, die Zigarette sofort auszudrücken. Der Mitarbeiter weigert sich frech.", question: "Wie kann W reagieren?", solution: "1. Durchsetzung des Hausrechts (§ 903 BGB) und der betrieblichen Brandschutzordnung.\n2. Aussprechen eines Platzverweises.\n3. Meldung an die Geschäftsleitung bei Weigerung." },
     { title: "Fall 7: Fotografieren im Werk", case: "Ein Besucher zückt in einer geheimen Fertigungshalle sein Smartphone und filmt geschützte Maschinenteile, obwohl Schilder ein striktes Fotoverbot ausweisen.", question: "Welche rechtlichen Schritte darf das Wachpersonal einleiten?", solution: "1. Ausübung des Hausrechts.\n2. Aufforderung zum Löschen der Aufnahmen (Besitzschutz / Unterlassungsanspruch nach BGB).\n3. Verweisung des Besuchers vom Gelände." },
-    { title: "Fall 8: Notwehrüberschreitung (Extremfall)", case: "Ein ertappter Einbrecher flüchtet bereits ohne Gegenwehr über das Gelände. Wachmann X schlägt ihm in den Rücken, um ihn zu stoppen.", question: "Ist diese Handlung durch Notwehr gedeckt?", solution: "1. Nein! Der Angriff war bereits beendet, daher fehlt die Voraussetzung der 'Gegenwart' eines Angriffs.\n2. Körperverletzung (§ 223 StGB) durch X, ggf. gefährliche Körperverletzung." },
+    { title: "Fall 8: Notwehrüberschreitung (Extremfall)", case: "Ein ertappter Einbrecher flüchtet bereits ohne Gegenwehr über das Gelände. Wachmann X schlägt ihm in den Rücken, um ihn zu stoppen.", question: "Ist diese Handlung durch Notwehr gedeckt?", solution: "1. Nein! Der Angriff war bereits beendet, daher fehlt die Voraussetzung der 'Gegenwart' eines Angriffs.\n2. Körperverletzung (§ 223 StGB) durch X." },
     { title: "Fall 9: Betreten einer Baustelle", case: "Passanten klettern am Sonntagabend über den Bauzaun einer städtischen Großbaustelle, um dort Party zu machen.", question: "Welche Straftat liegt vor und wie reagiert das Wachpersonal?", solution: "1. Hausfriedensbruch nach § 123 StGB.\n2. Ansprechen, Personalien feststellen, Platzverweis erteilen, ggf. Polizei hinzuziehen." },
-    { title: "Fall 10: Die verweigerte Ausfahrt", case: "Ein Lieferant will das Werksgelände verlassen, weigert sich aber strikt gegen die laut Werksvorschrift vorgeschriebene Lkw-Kontrolle des Laderaums.", question: "Darf das Wachpersonal die Ausfahrt vorerst blockieren?", solution: "1. Ja, aufgrund vertraglicher AGB und betrieblicher Regelungen (Hausrecht) besteht ein berechtigtes Kontrollinteresse.\n2. Bei unkooperativem Verhalten Einbehaltung der Freigabe bis zur Klärung durch die Werkleitung oder Polizei." }
+    { title: "Fall 10: Die verweigerte Ausfahrt", case: "Ein Lieferant will das Werksgelände verlassen, weigert sich aber strikt gegen die laut Werksvorschrift vorgeschriebene Lkw-Kontrolle des Laderaums.", question: "Darf das Wachpersonal die Ausfahrt vorerst blockieren?", solution: "1. Ja, aufgrund vertraglicher AGB und betrieblicher Regelungen (Hausrecht) besteht ein berechtigtes Kontrollinteresse.\n2. Bei unkooperativem Verhalten Einbehaltung der Freigabe bis zur Klärung." }
   ];
 
-  // Global State Variables
+  // App State & Persistence
+  let bookmarkedIds = JSON.parse(localStorage.getItem('gssk_bookmarks') || '[]');
+  let userStats = JSON.parse(localStorage.getItem('gssk_stats') || '{}'); // { qId: { correct: X, total: Y } }
+  
   let currentQuizIndex = 0;
   let quizPool = [];
   let userQuizAnswers = {};
+
+  let onlyBookmarksActive = false;
+  let onlyWeakActive = false;
+  let searchQuery = "";
+  let soundEnabled = true;
+
+  // Single Question Timer Mode State
+  let timerModeActive = false;
+  let singleQuestionTimer = null;
+  let questionSecondsLeft = 45;
 
   let examPool = [];
   let currentExamIndex = 0;
   let userExamAnswers = {};
   let examTimerInterval = null;
-  let examTimeRemaining = 2700; // 45 mins
+  let examTimeRemaining = 2700;
 
-  // Helper: Shuffle Array
+  // Web Audio API Sound Generator
+  function playSound(type) {
+    if (!soundEnabled) return;
+    try {
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      if (type === 'correct') {
+        osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5
+        osc.frequency.setValueAtTime(880, audioCtx.currentTime + 0.1); // A5
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.3);
+      } else {
+        osc.frequency.setValueAtTime(220, audioCtx.currentTime); // A3
+        osc.frequency.setValueAtTime(150, audioCtx.currentTime + 0.15);
+        gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.4);
+      }
+    } catch(e) {}
+  }
+
+  function toggleSound() {
+    soundEnabled = !soundEnabled;
+    document.getElementById('soundBtn').innerText = soundEnabled ? "🔊 Sound: An" : "🔇 Sound: Aus";
+  }
+
+  function toggleDarkMode() {
+    const body = document.body;
+    if (body.getAttribute('data-theme') === 'light') {
+      body.setAttribute('data-theme', 'dark');
+      document.getElementById('darkModeBtn').innerText = "☀️ Light Mode";
+      localStorage.setItem('gssk_theme', 'dark');
+    } else {
+      body.setAttribute('data-theme', 'light');
+      document.getElementById('darkModeBtn').innerText = "🌙 Dark Mode";
+      localStorage.setItem('gssk_theme', 'light');
+    }
+  }
+
   function shuffleArray(array) {
     let arr = [...array];
     for (let i = arr.length - 1; i > 0; i--) {
@@ -315,8 +430,12 @@
     return arr;
   }
 
-  // Init App on Load
   window.onload = function() {
+    const savedTheme = localStorage.getItem('gssk_theme') || 'light';
+    if (savedTheme === 'dark') {
+      document.body.setAttribute('data-theme', 'dark');
+      document.getElementById('darkModeBtn').innerText = "☀️ Light Mode";
+    }
     initQuiz();
     initLawCases();
   };
@@ -342,29 +461,117 @@
     }
   }
 
-  // =========================================================================
-  // QUIZ LOGIC
-  // =========================================================================
+  // ================= QUIZ LOGIC =================
   function initQuiz() {
-    quizPool = rawGsskPool.map(q => {
+    let basePool = rawGsskPool.map(q => {
       const originalOptions = [...q.options];
-      const correctText = originalOptions[0]; // assuming index 0 is correct in raw
+      const correctText = originalOptions[0];
       const shuffledOpts = shuffleArray(originalOptions);
-      return {
-        ...q,
-        options: shuffledOpts,
-        correctOption: correctText
-      };
+      return { ...q, options: shuffledOpts, correctOption: correctText };
     });
-    quizPool = shuffleArray(quizPool);
+
+    quizPool = basePool.filter(q => {
+      let matchesSearch = searchQuery === "" || 
+        q.question.toLowerCase().includes(searchQuery.toLowerCase()) || 
+        q.subcategory.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        q.category.toLowerCase().includes(searchQuery.toLowerCase());
+      
+      let matchesBookmark = !onlyBookmarksActive || bookmarkedIds.includes(q.id);
+      
+      let matchesWeak = true;
+      if (onlyWeakActive) {
+        let stats = userStats[q.id];
+        if (!stats || (stats.total > 0 && (stats.correct / stats.total) >= 0.5)) {
+          matchesWeak = false;
+        }
+      }
+      return matchesSearch && matchesBookmark && matchesWeak;
+    });
+
     currentQuizIndex = 0;
     userQuizAnswers = {};
-    document.getElementById('quizContentArea').classList.remove('hidden');
-    document.getElementById('quizFinishedScreen').classList.add('hidden');
+    
+    if (quizPool.length === 0) {
+      document.getElementById('quizContentArea').classList.add('hidden');
+      document.getElementById('quizFinishedScreen').classList.remove('hidden');
+      document.getElementById('quizFinishedScreen').innerHTML = `
+        <h2>🔍 Keine Fragen gefunden</h2>
+        <p style="color: var(--text-muted); margin: 15px 0;">Zu deinen Filtereinstellungen konnten keine Fragen gefunden werden.</p>
+        <button class="btn-action" onclick="resetQuizFilters()">Filter zurücksetzen</button>
+      `;
+      return;
+    } else {
+      document.getElementById('quizContentArea').classList.remove('hidden');
+      document.getElementById('quizFinishedScreen').classList.add('hidden');
+    }
+
     loadQuizQuestion();
   }
 
+  function filterQuizQuestions() {
+    searchQuery = document.getElementById('quizSearchInput').value.trim();
+    initQuiz();
+  }
+
+  function toggleBookmarkFilter() {
+    onlyBookmarksActive = !onlyBookmarksActive;
+    document.getElementById('filterBookmarkBtn').classList.toggle('active', onlyBookmarksActive);
+    initQuiz();
+  }
+
+  function toggleWeakFilter() {
+    onlyWeakActive = !onlyWeakActive;
+    document.getElementById('filterWeakBtn').classList.toggle('active', onlyWeakActive);
+    initQuiz();
+  }
+
+  function toggleTimerMode() {
+    timerModeActive = document.getElementById('timerCheckbox').checked;
+    const box = document.getElementById('quizTimerBox');
+    if (timerModeActive) box.classList.remove('hidden');
+    else box.classList.add('hidden');
+    loadQuizQuestion();
+  }
+
+  function resetQuizFilters() {
+    searchQuery = "";
+    onlyBookmarksActive = false;
+    onlyWeakActive = false;
+    timerModeActive = false;
+    document.getElementById('quizSearchInput').value = "";
+    document.getElementById('filterBookmarkBtn').classList.remove('active');
+    document.getElementById('filterWeakBtn').classList.remove('active');
+    document.getElementById('timerCheckbox').checked = false;
+    document.getElementById('quizTimerBox').classList.add('hidden');
+    initQuiz();
+  }
+
+  function toggleCurrentBookmark() {
+    if (quizPool.length === 0 || currentQuizIndex >= quizPool.length) return;
+    const currentQ = quizPool[currentQuizIndex];
+    const indexInBm = bookmarkedIds.indexOf(currentQ.id);
+    
+    if (indexInBm > -1) bookmarkedIds.splice(indexInBm, 1);
+    else bookmarkedIds.push(currentQ.id);
+
+    localStorage.setItem('gssk_bookmarks', JSON.stringify(bookmarkedIds));
+    updateBookmarkIcon(currentQ.id);
+  }
+
+  function updateBookmarkIcon(qId) {
+    let bmBtn = document.getElementById('quizBookmarkBtn');
+    if (bookmarkedIds.includes(qId)) {
+      bmBtn.innerText = "★";
+      bmBtn.style.color = "#f39c12";
+    } else {
+      bmBtn.innerText = "☆";
+      bmBtn.style.color = "var(--text-color)";
+    }
+  }
+
   function loadQuizQuestion() {
+    if (singleQuestionTimer) clearInterval(singleQuestionTimer);
+
     if (currentQuizIndex >= quizPool.length) {
       showQuizFinished();
       return;
@@ -375,6 +582,8 @@
     document.getElementById('subCatBadge').innerText = q.subcategory;
     document.getElementById('question').innerText = q.question;
     
+    updateBookmarkIcon(q.id);
+
     const optionsDiv = document.getElementById('options');
     optionsDiv.innerHTML = '';
     
@@ -389,25 +598,61 @@
       optionsDiv.appendChild(btn);
     });
 
-    const nextBtn = document.getElementById('nextBtn');
-    nextBtn.innerText = (currentQuizIndex === quizPool.length - 1) ? '📊 Auswertung anzeigen' : 'Nächste Frage';
+    document.getElementById('nextBtn').innerText = (currentQuizIndex === quizPool.length - 1) ? '📊 Auswertung anzeigen' : 'Nächste Frage';
+
+    if (timerModeActive) {
+      questionSecondsLeft = 45;
+      document.getElementById('quizTimerBox').innerText = questionSecondsLeft;
+      singleQuestionTimer = setInterval(() => {
+        questionSecondsLeft--;
+        document.getElementById('quizTimerBox').innerText = questionSecondsLeft;
+        if (questionSecondsLeft <= 0) {
+          clearInterval(singleQuestionTimer);
+          // Auto fail on timeout
+          const allBtns = optionsDiv.getElementsByTagName('button');
+          for(let b of allBtns) {
+            b.disabled = true;
+            if(b.innerText === q.correctOption) b.classList.add('correct');
+          }
+          recordAnswerStats(q.id, false);
+          explanationBox.style.display = 'block';
+          document.getElementById('explanationText').innerText = "⏱️ Zeit abgelaufen! " + q.correctOption;
+          playSound('wrong');
+        }
+      }, 1000);
+    }
+  }
+
+  function recordAnswerStats(qId, isCorrect) {
+    if (!userStats[qId]) userStats[qId] = { correct: 0, total: 0 };
+    userStats[qId].total++;
+    if (isCorrect) userStats[qId].correct++;
+    localStorage.setItem('gssk_stats', JSON.stringify(userStats));
   }
 
   function selectQuizAnswer(buttonElem, selectedOpt, correctOpt) {
+    if (singleQuestionTimer) clearInterval(singleQuestionTimer);
+
+    const q = quizPool[currentQuizIndex];
     const optionsDiv = document.getElementById('options');
     const allBtns = optionsDiv.getElementsByTagName('button');
     
+    const isCorrect = (selectedOpt === correctOpt);
+    recordAnswerStats(q.id, isCorrect);
+
     for(let b of allBtns) {
       b.disabled = true;
       if(b.innerText === correctOpt) {
         b.classList.add('correct');
-      } else if(b === buttonElem && selectedOpt !== correctOpt) {
+      } else if(b === buttonElem && !isCorrect) {
         b.classList.add('wrong');
       }
     }
 
-    const isCorrect = (selectedOpt === correctOpt);
-    userQuizAnswers[currentQuizIndex] = { category: quizPool[currentQuizIndex].category, correct: isCorrect };
+    if (isCorrect) playSound('correct');
+    else playSound('wrong');
+
+    userQuizAnswers[currentQuizIndex] = { category: q.category, correct: isCorrect };
 
     const explanationBox = document.getElementById('explanation');
     document.getElementById('explanationText').innerText = correctOpt;
@@ -430,9 +675,7 @@
     let stats = {};
     for(let key in userQuizAnswers) {
       let item = userQuizAnswers[key];
-      if(!stats[item.category]) {
-        stats[item.category] = { total: 0, correct: 0 };
-      }
+      if(!stats[item.category]) stats[item.category] = { total: 0, correct: 0 };
       stats[item.category].total++;
       if(item.correct) stats[item.category].correct++;
     }
@@ -455,16 +698,21 @@
     }
   }
 
-  // =========================================================================
-  // REAL EXAM SIMULATION (30 QUESTIONS)
-  // =========================================================================
+  // ================= EXAM SIMULATION =================
   function startRealExam() {
-    let tempPool = rawGsskPool.map(q => {
+    let selectedCat = document.getElementById('examCategorySelect').value;
+    let sourcePool = rawGsskPool;
+    if (selectedCat !== 'all') {
+      sourcePool = rawGsskPool.filter(q => q.category === selectedCat);
+    }
+
+    let tempPool = sourcePool.map(q => {
       const originalOptions = [...q.options];
       const correctText = originalOptions[0];
       const shuffledOpts = shuffleArray(originalOptions);
       return { ...q, options: shuffledOpts, correctOption: correctText };
     });
+
     examPool = shuffleArray(tempPool).slice(0, 30);
     currentExamIndex = 0;
     userExamAnswers = {};
@@ -480,7 +728,7 @@
 
   function loadExamQuestion() {
     const q = examPool[currentExamIndex];
-    document.getElementById('examCounter').innerText = `Frage ${currentExamIndex + 1} von 30`;
+    document.getElementById('examCounter').innerText = `Frage ${currentExamIndex + 1} von ${examPool.length}`;
     document.getElementById('examQuestion').innerText = q.question;
 
     const optionsDiv = document.getElementById('examOptions');
@@ -490,9 +738,7 @@
       const btn = document.createElement('button');
       btn.className = 'btn-option';
       btn.innerText = opt;
-      if(userExamAnswers[currentExamIndex] === opt) {
-        btn.classList.add('selected');
-      }
+      if(userExamAnswers[currentExamIndex] === opt) btn.classList.add('selected');
       btn.onclick = () => {
         userExamAnswers[currentExamIndex] = opt;
         loadExamQuestion();
@@ -551,24 +797,23 @@
       if(isCorrect) correctCount++;
 
       reviewListHtml += `
-        <div class="review-item" style="background: ${isCorrect ? '#e6f4ea' : '#fce8e6'}; border-color: ${isCorrect ? '#34a853' : '#ea4335'}; margin-bottom: 10px; padding: 10px; border-radius: 6px;">
+        <div style="background: ${isCorrect ? 'rgba(40, 167, 69, 0.1)' : 'rgba(220, 53, 69, 0.1)'}; border: 1px solid ${isCorrect ? '#28a745' : '#dc3545'}; margin-bottom: 10px; padding: 10px; border-radius: 6px;">
           <strong>Frage ${idx + 1}:</strong> ${q.question}<br>
-          <span style="color: ${isCorrect ? '#137333' : '#c5221f'};">Deine Antwort: ${userAns}</span><br>
+          <span style="color: ${isCorrect ? '#28a745' : '#dc3545'};">Deine Antwort: ${userAns}</span><br>
           ${!isCorrect ? `<strong>Richtige Antwort:</strong> ${q.correctOption}` : ''}
         </div>
       `;
     });
 
-    let passed = correctCount >= 15;
-    let percent = Math.round((correctCount / 30) * 100);
+    let passed = correctCount >= Math.ceil(examPool.length * 0.5);
+    let percent = Math.round((correctCount / examPool.length) * 100);
 
     const resultBox = document.getElementById('resultBox');
-    resultBox.style.background = passed ? '#d4edda' : '#f8d7da';
-    resultBox.style.color = passed ? '#155724' : '#721c24';
+    resultBox.style.background = passed ? 'rgba(40, 167, 69, 0.2)' : 'rgba(220, 53, 69, 0.2)';
 
     document.getElementById('resultTitle').innerText = passed ? '🎉 Prüfung BESTANDEN!' : '❌ Prüfung NICHT bestanden';
-    document.getElementById('resultScore').innerText = `${correctCount} von 30 Punkten (${percent}%)`;
-    document.getElementById('resultStatus').innerText = passed ? 'Herzlichen Glückwunsch! Du hast das IHK-Bestehenslimit (min. 50%) erreicht.' : 'Du hast leider weniger als 50% erreicht. Bitte wiederhole die entsprechenden Themengebiete.';
+    document.getElementById('resultScore').innerText = `${correctCount} von ${examPool.length} Punkten (${percent}%)`;
+    document.getElementById('resultStatus').innerText = passed ? 'Herzlichen Glückwunsch! Mindestens 50% erreicht.' : 'Du hast weniger als 50% erreicht. Bitte wiederhole die Themen.';
     
     document.getElementById('examReviewList').innerHTML = reviewListHtml;
   }
@@ -578,9 +823,7 @@
     document.getElementById('examStartScreen').classList.remove('hidden');
   }
 
-  // =========================================================================
-  // LAW CASES TAB LOGIC
-  // =========================================================================
+  // ================= LAW CASES TAB =================
   function initLawCases() {
     const container = document.getElementById('caseContainer');
     container.innerHTML = '';
@@ -591,7 +834,7 @@
       card.innerHTML = `
         <div class="section-title law-title">${c.title}</div>
         <p style="font-size: 0.95rem; line-height: 1.4;">${c.case}</p>
-        <p style="font-weight: bold; font-size: 0.9rem; color: #333;">${c.question}</p>
+        <p style="font-weight: bold; font-size: 0.9rem;">${c.question}</p>
         
         <div class="textarea-container">
           <label class="textarea-label">Deine gutachtliche Lösung / Analyse:</label>
@@ -611,11 +854,7 @@
 
   function toggleSolution(index) {
     const box = document.getElementById(`solutionBox_${index}`);
-    if (box.style.display === 'block') {
-      box.style.display = 'none';
-    } else {
-      box.style.display = 'block';
-    }
+    box.style.display = (box.style.display === 'block') ? 'none' : 'block';
   }
 </script>
 
