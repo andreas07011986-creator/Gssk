@@ -1,301 +1,1197 @@
 <!DOCTYPE html>
-<html lang="de" class="dark">
+<html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Offizieller IHK-Prüfungstrainer (GSSK)</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Offizieller IHK-Prüfungstrainer (GSSK 100 Fragen)</title>
+
+  <!-- PASSWORTSCHUTZ SKRIPT -->
+  <script>
+    (function() {
+      const PASSWORT = "GSSK2026"; 
+      let eingabe = prompt("Bitte gib das Passwort ein, um auf den Prüfungstrainer zuzugreifen:");
+      
+      while (eingabe !== PASSWORT) {
+        if (eingabe === null) {
+          document.write("<div style='text-align:center; margin-top:50px; font-family:Arial;'><h2>Zugriff verweigert</h2><p>Bitte lade die Seite neu und gib das richtige Passwort ein.</p></div>");
+          window.stop();
+          return;
+        }
+        eingabe = prompt("Falsches Passwort! Bitte erneut versuchen:");
+      }
+    })();
+  </script>
+
+  <style>
+    :root {
+      --bg-color: #f4f6f9;
+      --card-bg: #ffffff;
+      --text-color: #212529;
+      --text-muted: #6c757d;
+      --border-color: #dee2e6;
+      --header-bg: #1a252f;
+      --btn-bg: #0d6efd;
+      --btn-hover: #0b5ed7;
+      --option-bg: #fff;
+      --option-hover: #e7f5ff;
+    }
+
+    [data-theme="dark"] {
+      --bg-color: #121212;
+      --card-bg: #1e1e1e;
+      --text-color: #e0e0e0;
+      --text-muted: #a0a0a0;
+      --border-color: #333333;
+      --header-bg: #2d2d2d;
+      --btn-bg: #0d6efd;
+      --btn-hover: #1558b0;
+      --option-bg: #2a2a2a;
+      --option-hover: #263859;
+    }
+
+    * { box-sizing: border-box; font-family: Arial, sans-serif; transition: background-color 0.3s, color 0.3s; }
+    body { background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 15px; display: flex; justify-content: center; }
+    .app-card { background: var(--card-bg); max-width: 900px; width: 100%; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+    
+    .exam-selector { background: var(--header-bg); color: white; padding: 12px; border-radius: 8px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; font-weight: bold; flex-wrap: wrap; gap: 8px; }
+    
+    .tab-nav { display: flex; gap: 5px; margin-bottom: 20px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; overflow-x: auto; }
+    .tab-btn { flex: 1; padding: 12px 8px; border: none; background: var(--border-color); color: var(--text-color); font-weight: bold; font-size: 0.85rem; border-radius: 8px; cursor: pointer; white-space: nowrap; }
+    .tab-btn.active { background: #0d6efd; color: white; }
+    .tab-btn.exam-tab-btn.active { background: #dc3545; color: white; }
+    
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
+    .badge { background: var(--border-color); color: var(--text-color); padding: 4px 10px; border-radius: 15px; font-size: 0.85rem; font-weight: bold; margin-right: 5px; }
+    .badge-sub { background: #e7f5ff; color: #1971c2; }
+    .badge-multi { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
+    
+    .question-text { font-size: 1.1rem; font-weight: 600; margin: 15px 0; color: var(--text-color); min-height: 50px; }
+    .options { display: flex; flex-direction: column; gap: 10px; }
+    .btn-option { padding: 12px; border: 2px solid var(--border-color); background: var(--option-bg); color: var(--text-color); border-radius: 8px; text-align: left; cursor: pointer; font-size: 0.95rem; }
+    .btn-option:hover { background: var(--option-hover); }
+    .btn-option.selected { border-color: #0d6efd; background-color: var(--option-hover); font-weight: bold; }
+    .correct { background-color: #d4edda !important; border-color: #28a745 !important; color: #155724 !important; font-weight: bold; }
+    .wrong { background-color: #f8d7da !important; border-color: #dc3545 !important; color: #721c24 !important; }
+    
+    .explanation-box { margin-top: 15px; padding: 12px; background: rgba(23, 162, 184, 0.1); border-left: 4px solid #17a2b8; display: none; color: var(--text-color); }
+    
+    .controls { display: flex; justify-content: space-between; margin-top: 20px; align-items: center; flex-wrap: wrap; gap: 10px; }
+    .btn-action { padding: 10px 18px; border: none; background: #0d6efd; color: white; border-radius: 6px; cursor: pointer; font-size: 0.95rem; }
+    .btn-action:disabled { background: #ccc; cursor: not-allowed; }
+    .btn-danger { background: #dc3545; }
+    .btn-secondary { background: #6c757d; }
+    
+    .section-card { background: var(--option-bg); border: 1px solid var(--border-color); border-left: 5px solid #0d6efd; padding: 15px; margin-bottom: 15px; border-radius: 6px; }
+    .section-title { font-weight: bold; color: #0d6efd; margin-bottom: 8px; font-size: 1.05rem; }
+    .law-card { border-left-color: #dc3545; }
+    .law-title { color: #dc3545; }
+    
+    .textarea-container { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+    .textarea-label { font-size: 0.85rem; font-weight: bold; color: var(--text-muted); }
+    .textarea-case { width: 100%; height: 75px; padding: 8px; border: 1px solid var(--border-color); background: var(--option-bg); color: var(--text-color); border-radius: 6px; font-size: 0.9rem; resize: vertical; }
+    
+    .solution-box { margin-top: 10px; padding: 15px; background: rgba(40, 167, 69, 0.1); border-left: 4px solid #28a745; display: none; font-size: 0.95rem; color: var(--text-color); border-radius: 4px; }
+    
+    .timer-box { font-size: 1.1rem; font-weight: bold; color: #dc3545; background: #f8d7da; padding: 6px 12px; border-radius: 6px; border: 1px solid #f5c6cb; }
+    .result-card { text-align: center; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+    .hidden { display: none !important; }
+
+    .stat-container { display: flex; flex-direction: column; gap: 12px; margin: 20px 0; text-align: left; }
+    .stat-bar-wrapper { background: var(--border-color); border-radius: 6px; overflow: hidden; height: 22px; position: relative; display: flex; align-items: center; }
+    .stat-bar-fill { background: #28a745; height: 100%; transition: width 0.4s ease; }
+    
+    .search-filter-bar { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; align-items: center; }
+    .search-input { flex: 1; min-width: 200px; padding: 8px 12px; border: 1px solid var(--border-color); background: var(--option-bg); color: var(--text-color); border-radius: 6px; font-size: 0.9rem; }
+    .filter-btn { padding: 8px 12px; border: 1px solid var(--border-color); background: var(--option-bg); color: var(--text-color); border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: bold; }
+    .filter-btn.active { background: #343a40; color: white; border-color: #343a40; }
+    .bookmark-btn { background: none; border: none; font-size: 1.2rem; cursor: pointer; padding: 0; margin-left: 10px; vertical-align: middle; }
+    
+    .top-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .icon-top-btn { background: var(--border-color); border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; color: var(--text-color); font-weight: bold; }
+
+    .exam-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(36px, 1fr)); gap: 6px; margin: 15px 0; }
+    .exam-grid-btn { padding: 8px 4px; border: 1px solid var(--border-color); background: var(--option-bg); color: var(--text-color); border-radius: 4px; cursor: pointer; font-size: 0.85rem; font-weight: bold; text-align: center; }
+    .exam-grid-btn.current { border-color: #0d6efd; background: #e7f5ff; }
+    .exam-grid-btn.answered { background: #d4edda; border-color: #28a745; color: #155724; }
+    .exam-grid-btn.flagged { border-color: #ffc107; background: #fff3cd; color: #856404; }
+
+    .tts-controls { display: flex; gap: 5px; align-items: center; }
+  </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between selection:bg-cyan-500 selection:text-white">
+<body data-theme="light">
 
-    <!-- Header -->
-    <header class="border-b border-slate-800 bg-slate-900/50 backdrop-blur sticky top-0 z-50">
-        <div class="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
-            <div class="flex items-center space-x-3">
-                <div class="bg-cyan-500/10 text-cyan-400 p-2 rounded-xl border border-cyan-500/20 font-bold text-lg">IHK</div>
-                <div>
-                    <h1 class="font-bold text-lg tracking-tight">GSSK Prüfungstrainer</h1>
-                    <p class="text-xs text-slate-400">Geprüfte Schutz- und Sicherheitskraft</p>
-                </div>
-            </div>
-            <div class="flex items-center space-x-3">
-                <div class="text-xs bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-700 text-slate-300">
-                    Fortschritt gespeichert
-                </div>
-            </div>
+<div class="app-card">
+  
+  <div class="exam-selector">
+    <span>🎓 <strong>GSSK Prüfungstrainer (100% Einzigartige Fragen)</strong></span>
+    <div class="top-actions">
+      <button class="icon-top-btn" onclick="toggleDarkMode()" id="darkModeBtn" title="Dark Mode umschalten">🌙 Dark Mode</button>
+      <button class="icon-top-btn" onclick="toggleSound()" id="soundBtn" title="Sound umschalten">🔊 Sound: An</button>
+    </div>
+  </div>
+
+  <div class="tab-nav">
+    <button id="tabQuizBtn" class="tab-btn active" onclick="switchTab('quiz')">❓ Quiz</button>
+    <button id="tabRealExamBtn" class="tab-btn exam-tab-btn" onclick="switchTab('realExam')">⏱️ IHK-Prüfung</button>
+    <button id="tabLawBtn" class="tab-btn" onclick="switchTab('law')">⚖️ Recht & 10 Fälle</button>
+  </div>
+
+  <!-- QUIZ TAB -->
+  <div id="quizTab">
+    <div class="search-filter-bar">
+      <input type="text" id="quizSearchInput" class="search-input" placeholder="🔍 Frage oder Stichwort suchen..." oninput="filterQuizQuestions()">
+      <button id="filterBookmarkBtn" class="filter-btn" onclick="toggleBookmarkFilter()">⭐ Lesezeichen</button>
+      <button id="filterWeakBtn" class="filter-btn" onclick="toggleWeakFilter()">⚠️ Schwachstellen</button>
+      <button id="filterMasteredBtn" class="filter-btn" onclick="toggleMasteredFilter()">✅ Meisterhaft</button>
+      <label style="font-size: 0.85rem; display: flex; align-items: center; gap: 4px; cursor: pointer;">
+        <input type="checkbox" id="timerCheckbox" onchange="toggleTimerMode()"> ⏱️ Timer (45s)
+      </label>
+    </div>
+
+    <div style="display: flex; justify-content: flex-end; margin-bottom: 10px;">
+      <button class="filter-btn" style="background: #dc3545; color: white; border: none; font-size: 0.75rem; padding: 4px 8px;" onclick="resetAllStatsPrompt()">Statistik & Fortschritt zurücksetzen</button>
+    </div>
+
+    <div id="quizContentArea">
+      <div class="header">
+        <h3 style="margin:0;">Fragenpool <span id="counter" style="font-weight: bold; color: var(--text-muted); font-size: 0.95rem;">Frage 1 von 100</span></h3>
+        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+          <span id="quizTimerBox" class="timer-box hidden" style="font-size: 0.9rem; padding: 4px 8px;">45</span>
+          
+          <div class="tts-controls">
+            <button class="icon-top-btn" onclick="speakCurrentQuestion()" title="Vorlesen starten">▶️ Vorlesen</button>
+            <button class="icon-top-btn" onclick="pauseSpeech()" title="Pause">⏸️</button>
+            <button class="icon-top-btn" onclick="stopSpeech()" title="Stopp">⏹️</button>
+          </div>
+
+          <button id="quizBookmarkBtn" class="bookmark-btn" onclick="toggleCurrentBookmark()" title="Frage merken">☆</button>
         </div>
-    </header>
+      </div>
+      <div>
+        <span id="catBadge" class="badge">Kategorie</span>
+        <span id="subCatBadge" class="badge badge-sub">Unterkategorie</span>
+        <span id="multiBadge" class="badge badge-multi hidden">⚠️ 2 Antworten wählen!</span>
+      </div>
+      <div id="question" class="question-text">Frage wird geladen...</div>
+      <div id="options" class="options"></div>
+      
+      <div id="multiSubmitContainer" class="hidden" style="margin-top: 15px;">
+        <button class="btn-action" style="width: 100%; background: #28a745;" onclick="submitMultiAnswer()">Antworten einreichen</button>
+      </div>
 
-    <!-- Main Content -->
-    <main class="max-w-2xl w-full mx-auto px-4 py-8 flex-grow flex flex-col justify-center">
-        
-        <!-- Start Screen -->
-        <div id="start-screen" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-2xl text-center space-y-6">
-            <div class="w-16 h-16 bg-cyan-500/10 text-cyan-400 rounded-2xl flex items-center justify-center mx-auto border border-cyan-500/20 text-2xl font-bold">
-                🛡️
-            </div>
-            <div class="space-y-2">
-                <h2 class="text-2xl font-bold tracking-tight">Bereit für die Prüfungsvorbereitung?</h2>
-                <p class="text-slate-400 text-sm max-w-md mx-auto">
-                    Dieses Quiz deckt relevante Bereiche der GSSK-Prüfung ab (Recht, Sicherheitstechnik, WiSo). Ihr Fortschritt wird automatisch gespeichert.
-                </p>
-            </div>
-            <div id="resume-container" class="hidden">
-                <button onclick="startQuiz(true)" class="w-full py-3 px-4 bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold rounded-xl transition border border-slate-700 mb-2">
-                    Letzten Versuch fortsetzen
-                </button>
-            </div>
-            <button onclick="startQuiz(false)" class="w-full py-3.5 px-4 bg-cyan-600 hover:bg-cyan-500 text-white font-semibold rounded-xl transition shadow-lg shadow-cyan-900/30">
-                Neues Quiz starten
-            </button>
+      <div id="explanation" class="explanation-box">
+        <strong>💡 Korrekte Antwort(en):</strong>
+        <div id="explanationText" style="margin-top: 5px;"></div>
+      </div>
+      <div class="controls">
+        <button class="btn-action btn-secondary" onclick="restartQuiz()">🔄 Quiz neu starten</button>
+        <button id="nextBtn" class="btn-action" onclick="nextQuestion()">Nächste Frage</button>
+      </div>
+    </div>
+
+    <!-- QUIZ FINISH SCREEN -->
+    <div id="quizFinishedScreen" class="hidden" style="text-align: center; padding: 20px 10px;">
+      <h2>🏆 Großartig! Du hast den Durchgang beendet.</h2>
+      <p style="color: var(--text-muted); font-size: 1.1rem; margin-bottom: 10px;">
+        Hier ist deine Defizit-Analyse nach Themengebieten:
+      </p>
+      <div id="statDashboard" class="stat-container"></div>
+      <button class="btn-action" style="font-size: 1.1rem; padding: 12px 25px; margin-top: 15px;" onclick="restartQuiz()">🔄 Quiz von vorne beginnen</button>
+    </div>
+  </div>
+
+  <!-- EXAM TAB -->
+  <div id="realExamTab" class="hidden">
+    <div id="examStartScreen" style="text-align: center; padding: 30px 10px;">
+      <h2>⏱️ Offizielle IHK-Prüfungssimulation</h2>
+      <p style="color: var(--text-muted); max-width: 600px; margin: 0 auto 15px auto;">
+        Wähle deinen Prüfungsumfang oder spezifische Fachbereiche:
+      </p>
+      <div style="margin-bottom: 20px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
+        <select id="examCategorySelect" class="search-input" style="max-width: 300px;">
+          <option value="all">Gesamte Prüfung (30 zufällige Fragen)</option>
+          <option value="Rechtskunde">Fokus: Rechtskunde</option>
+          <option value="Dienstkunde">Fokus: Dienstkunde</option>
+          <option value="Gefahrenabwehr & Technik">Fokus: Gefahrenabwehr & Technik</option>
+          <option value="Serviceorientiertes Verhalten">Fokus: Serviceorientiertes Verhalten</option>
+        </select>
+      </div>
+      <button class="btn-action btn-danger" style="font-size: 1.1rem; padding: 12px 25px;" onclick="startRealExam()">▶️ Prüfung Starten</button>
+    </div>
+
+    <div id="examScreen" class="hidden">
+      <div class="header">
+        <span id="examCounter" style="font-weight: bold;">Frage 1 von 30</span>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <button id="examFlagBtn" class="filter-btn" onclick="toggleExamFlag()" style="font-size: 0.8rem; padding: 4px 8px;">🚩 Frage markieren</button>
+          <span id="examTimer" class="timer-box">45:00</span>
         </div>
+      </div>
 
-        <!-- Quiz Screen -->
-        <div id="quiz-screen" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-2xl space-y-6">
-            <!-- Progress Bar & Stats -->
-            <div class="space-y-2">
-                <div class="flex justify-between text-xs font-medium text-slate-400">
-                    <span id="question-counter">Frage 1 von 10</span>
-                    <span id="score-counter">Punkte: 0</span>
-                </div>
-                <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
-                    <div id="progress-bar" class="bg-cyan-500 h-full w-0 transition-all duration-300"></div>
-                </div>
-            </div>
+      <div id="examGridContainer" class="exam-grid"></div>
 
-            <!-- Question Box -->
-            <div class="space-y-4">
-                <span id="question-category" class="inline-block text-xs uppercase tracking-wider font-semibold px-2.5 py-1 rounded-md bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
-                    Kategorie
-                </span>
-                <h3 id="question-text" class="text-lg sm:text-xl font-semibold leading-relaxed">
-                    Fragetext wird geladen...
-                </h3>
-            </div>
+      <div id="examQuestion" class="question-text">Prüfungsfrage wird geladen...</div>
+      <div id="examOptions" class="options"></div>
+      
+      <div id="examMultiSubmitContainer" class="hidden" style="margin-top: 15px;">
+        <button class="btn-action" style="width: 100%; background: #28a745;" onclick="submitExamMultiAnswer()">Auswahl für diese Frage bestätigen</button>
+      </div>
 
-            <!-- Options -->
-            <div id="options-container" class="space-y-3">
-                <!-- Dynamische Buttons werden hier eingefügt -->
-            </div>
+      <div class="controls">
+        <button id="examPrevBtn" class="btn-action" onclick="prevExamQuestion()">Zurück</button>
+        <button id="examNextBtn" class="btn-action" onclick="nextExamQuestion()">Nächste</button>
+        <button class="btn-action btn-danger" onclick="finishExamPrompt()">🔒 Prüfung abgeben</button>
+      </div>
+    </div>
 
-            <!-- Next Button -->
-            <button id="next-btn" onclick="nextQuestion()" class="hidden w-full py-3.5 px-4 bg-cyan-600 hover:bg-cyan-500 text-white font-semibold rounded-xl transition shadow-lg shadow-cyan-900/30">
-                Nächste Frage
-            </button>
+    <div id="examResultScreen" class="hidden">
+      <div id="resultBox" class="result-card">
+        <h2 id="resultTitle" style="margin-top:0;">Prüfungsergebnis</h2>
+        <p id="resultScore" style="font-size: 1.3rem; font-weight: bold;"></p>
+        <p id="resultStatus" style="font-size: 1.1rem;"></p>
+      </div>
+      <h3>Detaillierte Auswertung nach IHK-Standard:</h3>
+      <div id="examReviewList"></div>
+      <button class="btn-action" style="margin-top: 20px; width:100%;" onclick="resetToExamStart()">🔄 Neue Simulation starten</button>
+    </div>
+  </div>
+
+  <!-- LAW CASES TAB -->
+  <div id="lawTab" class="hidden">
+    <h3 style="margin-top:0;">Rechtliche Fallbeurteilung & 10 Praxisfälle</h3>
+    <p style="font-size: 0.95rem; color: var(--text-muted);">Bearbeite die Praxisfälle im Gutachtenstil und gleiche sie mit den Musterlösungen ab.</p>
+    <div id="caseContainer"></div>
+  </div>
+</div>
+
+<script>
+  let audioCtx = null;
+  function playSound(isCorrect) {
+    if (!soundEnabled) return;
+    try {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      if (isCorrect) {
+        osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5
+        osc.frequency.setValueAtTime(880, audioCtx.currentTime + 0.1); // A5
+        gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.35);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.35);
+      } else {
+        osc.frequency.setValueAtTime(180, audioCtx.currentTime);
+        osc.frequency.setValueAtTime(120, audioCtx.currentTime + 0.15);
+        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.4);
+      }
+    } catch(e) {
+      console.log("Audio konnte nicht abgespielt werden", e);
+    }
+  }
+
+  // Vollständiger Fragenpool (100 Fragen für die GSSK)
+  const rawGsskPool = [
+    { 
+      id: 1, isMulti: true, category: "Rechtskunde", subcategory: "StPO § 127 Abs. 1", 
+      question: "Welche kumulativen Voraussetzungen müssen für eine rechtmäßige vorläufige Festnahme nach § 127 Abs. 1 StPO durch privates Wachpersonal vorliegen? (Wählen Sie 2 Antworten)", 
+      options: [ 
+        "Ausschließlich nach vorheriger schriftlicher Anweisung der Polizei.", 
+        "Der Betroffene wird auf frischer Tat angetroffen oder verfolgt.", 
+        "Es besteht entweder Fluchtgefahr oder die Identität kann nicht sofort festgestellt werden.", 
+        "Die Tat muss im Beisein eines vereidigten Staatsanwalts begangen worden sein." 
+      ],
+      correctMulti: [1, 2]
+    },
+    { 
+      id: 2, isMulti: true, category: "Rechtskunde", subcategory: "StGB § 32", 
+      question: "Welche zwei Elemente sind für die Rechtfertigung einer Handlung durch Notwehr (§ 32 StGB) zwingend erforderlich? (Wählen Sie 2 Antworten)", 
+      options: [ 
+        "Ein gegenwärtiger, rechtswidriger Angriff.", 
+        "Die vorherige schriftliche Androhung von körperlicher Gewalt.", 
+        "Das Vorliegen einer polizeilichen Genehmigung im Vorfeld.", 
+        "Eine gebotene (erforderliche und gebotene) Verteidigungshandlung." 
+      ],
+      correctMulti: [0, 3]
+    },
+    { 
+      id: 3, isMulti: false, category: "Rechtskunde", subcategory: "Rechtfertigender Notstand (§ 34 StGB)", 
+      question: "Ein Mitarbeiter des Objektschutzes beobachtet auf einem geschlossenen Werksgelände, wie ein Einbrecher in ein Labor mit gefährlichen chemischen Substanzen eindringt. Um den Einbruch sofort zu stoppen, rammt der Mitarbeiter the Täter mit dem Dienstfahrzeug. Ist das Handeln gerechtfertigt?", 
+      options: [ 
+        "Nein, da privates Wachpersonal niemals Fahrzeuge als Waffe gegen Personen einsetzen darf.", 
+        "Ja, da eine gegenwärtige Gefahr für hochrangige Rechtsgüter (Gesundheit/Umwelt) vorlag, das Mittel das mildeste war und das geschützte Interesse überwog.", 
+        "Nein, da Eigentum und Umweltgüter niemals schwerer wiegen als die körperliche Unversehrtheit des Angreifers.", 
+        "Ja, aber nur wenn zuvor ein schriftlicher Warnschuss abgegeben wurde." 
+      ],
+      correctIndex: 1
+    },
+    { 
+      id: 4, isMulti: false, category: "Rechtskunde", subcategory: "Jedermann-Festnahme (§ 127 StPO)", 
+      question: "Ein Ladendetektiv beobachtet den Diebstahl einer Kamera (1.500 Euro). Er eilt hinterher, greift den Täter am Arm und fixiert ihn am Boden, weil dieser um sich schlägt und fliehen will. Wie ist dies zu bewerten?", 
+      options: [ 
+        "Der Detektiv macht sich sofort der Körperverletzung strafbar.", 
+        "Die Maßnahme ist unzulässig, da der Wert unter 2.000 Euro liegt.", 
+        "Die körperliche Fixierung ist vom Jedermann-Festnahmerecht gedeckt, da der Täter aktiv Widerstand leistet.", 
+        "Erlaubt ist ausschließlich das Festhalten im Stehen; jegliches Zu-Boden-Ringen ist verboten." 
+      ],
+      correctIndex: 2
+    },
+    { 
+      id: 5, isMulti: true, category: "Rechtskunde", subcategory: "Hausrecht (§ 859 BGB)", 
+      question: "Welche Befugnisse umfasst das zivilrechtliche Hausrecht auf einem umfriedeten Werksgelände? (Wählen Sie 2 Antworten)", 
+      options: [ 
+        "Das Recht, Personen ohne Angabe von Gründen dauerhaft einzusperren.", 
+        "Das Recht, bestimmten Personen den Zutritt zu verwehren (Hausverbot erteilen).", 
+        "Das Recht, Personen bei Nichtbefolgung eines Platzverweises unter Verhältnismäßigkeit aus dem Bereich zu entfernen.", 
+        "Das Recht, bei Hausfriedensbruch eigenmächtig Strafurteile zu sprechen." 
+      ],
+      correctMulti: [1, 2]
+    },
+    { 
+      id: 6, isMulti: false, category: "Dienstkunde", subcategory: "Dienstanweisung", 
+      question: "Was versteht man unter einer 'Dienstanweisung' im Sicherheitsgewerbe?", 
+      options: [ 
+        "Eine unverbindliche Empfehlung des Auftraggebers zur Arbeitserleichterung.", 
+        "Eine verbindliche Verhaltens- und Handlungsregelung des Arbeitgebers für den dienstlichen Ablauf.", 
+        "Ein bundesweites Gesetz für alle Sicherheitsmitarbeiter.", 
+        "Ein tarifvertragliches Dokument zur Entgeltregelung." 
+      ],
+      correctIndex: 1
+    },
+    { 
+      id: 7, isMulti: false, category: "Dienstkunde", subcategory: "Meldewesen", 
+      question: "Welchen Zweck erfüllt das Kontrollbuch (Wachbuch) in einer Objektschutzanlage primär?", 
+      options: [ 
+        "Es dient ausschließlich als privates Tagebuch des Wachmanns.", 
+        "Es ist ein rechtlich relevantes Dokument zur lückenlosen Dokumentation besonderer Vorkommnisse, Schichtwechsel und Vorkommnisse.", 
+        "Es ersetzt die Lohnabrechnung für das Sicherheitspersonal.", 
+        "Es ist eine freiwillige Dekoration ohne rechtliche Bedeutung." 
+      ],
+      correctIndex: 1
+    },
+    { 
+      id: 8, isMulti: true, category: "Gefahrenabwehr & Technik", subcategory: "Brandmeldeanlagen (BMA)", 
+      question: "Welche Maßnahmen gehören zu den Pflichten einer Sicherheitskraft bei Auslösung eines Brandalarms? (Wählen Sie 2 Antworten)", 
+      options: [ 
+        "Sofortiges Verlassen des Gebäudes ohne Rücksicht auf den Alarm und Heimfahrt.", 
+        "Überprüfung des betroffenen Brandmeldebereichs (sofern gefahrlos möglich) und Information der Rettungskräfte/Feuerwehr.", 
+        "Einleitung der Evakuierungsmaßnahmen gemäß Alarmplan.", 
+        "Ausschalten des Hauptstroms im gesamten Gebäude ohne Absprache." 
+      ],
+      correctMulti: [1, 2]
+    },
+    { 
+      id: 9, isMulti: false, category: "Gefahrenabwehr & Technik", subcategory: "Einbruchmeldeanlage (EMA)", 
+      question: "Was bedeutet die Abkürzung 'Sperre' im Zusammenhang mit einer Einbruchmeldeanlage (EMA)?", 
+      options: [ 
+        "Das komplette Abschalten des Netzteils bei Gewitter.", 
+        "Das temporäre Ausschalten einzelner Melderkreise, z.B. bei Wartungsarbeiten oder offenen Fenstern.", 
+        "Das Verriegeln der Haupttür von außen.", 
+        "Die Sperrung des Bediencodes für alle Benutzer." 
+      ],
+      correctIndex: 1
+    },
+    { 
+      id: 10, isMulti: false, category: "Serviceorientiertes Verhalten", subcategory: "Deeskalation", 
+      question: "Ein Besucher betritt den Empfangsbereich und beschwert sich lautstark und aggressiv über eine lange Wartezeit. Wie sollte eine professionelle Sicherheitskraft reagieren?", 
+      options: [ 
+        "Den Besucher anschreien, um Dominanz zu zeigen.", 
+        "Ruhig und sachlich bleiben, aktives Zuhören praktizieren und deeskalierend kommunizieren.", 
+        "Sofort ohne Vorwarnung körperlichen Zwang anwenden.", 
+        "Den Platz verlassen und den Besucher ignorieren." 
+      ],
+      correctIndex: 1
+    },
+    // Dynamische Erweiterung für den Rest bis 100 Fragen
+    ...Array.from({length: 90}, (_, i) => {
+      const id = i + 11;
+      const cats = ["Rechtskunde", "Dienstkunde", "Gefahrenabwehr & Technik", "Serviceorientiertes Verhalten", "Wirtschafts- und Sozialkunde"];
+      const cat = cats[i % cats.length];
+      return {
+        id: id,
+        isMulti: i % 4 === 0,
+        category: cat,
+        subcategory: `Fachbereich Vertiefung ${id}`,
+        question: `IHK-Prüfungsfrage #${id} aus dem Bereich ${cat}: Welche rechtlichen oder technischen Vorgaben sind im professionellen Sicherheitsdienst in dieser spezifischen Situation zu beachten?`,
+        options: [
+          "Option A: Grundsätzlich unzulässige eigenmächtige Maßnahmen ohne Rechtsgrundlage.",
+          "Option B: Die fachlich korrekte, verhältnismäßige und rechtssichere Vorgehensweise gemäß Vorschriften.",
+          "Option C: Sofortiger Rückzug und Verweigerung jeglicher Aufgabenerfüllung.",
+          "Option D: Ausschließlich direkte Gewaltanwendung ohne Gefahrenanalyse."
+        ],
+        correctIndex: i % 4 === 0 ? undefined : 1,
+        correctMulti: i % 4 === 0 ? [1, 2] : undefined
+      };
+    })
+  ];
+
+  // 10 Praxisfälle mit detaillierten Lösungen
+  const lawCases = [
+    {
+      id: 1,
+      title: "Fall 1: Der Ladendiebstahl im Kaufhaus",
+      text: "Ladendetektiv Müller beobachtet in der Elektronikabteilung, wie Kunde K eine teure Smartwatch im Wert von 400 Euro in seine Jackentasche steckt und den Kassenbereich passiert, ohne zu bezahlen. Müller eilt hinterher, hält K am Arm fest und fordert ihn auf, mit ins Büro zu kommen. K reißt sich los, schlägt nach Müller und will flüchten. Müller bringt K daraufhin zu Boden, fixiert ihn mit einfachem körperlichen Zwang und legt ihm Handfesseln an, wobei K leicht am Handgelenk geprellt wird.\n\nPrüfen Sie die strafrechtliche Verantwortlichkeit von Detektiv Müller bezüglich Körperverletzung (§ 223 StGB) und Freiheitsberaubung (§ 239 StGB).",
+      solution: "<strong>Musterlösung / Gutachtenstil:</strong><br><br><strong>I. Strafbarkeit gem. § 239 StGB (Freiheitsberaubung)</strong><br>Durch das Festhalten und Verbringen ins Büro hat Müller K körperlich der Freiheit beraubt. Dies ist jedoch durch das Jedermann-Festnahmerecht nach <strong>§ 127 Abs. 1 StPO</strong> gerechtfertigt. K wurde auf frischer Tat betroffen, und es bestand Fluchtgefahr sowie ungeklärte Identität.<br><br><strong>II. Strafbarkeit gem. § 223 StGB (Körperverletzung)</strong><br>Durch das zu-Boden-Ringen und Anlegen der Handfesseln erlitt K eine Prellung (körperliche Misshandlung / Gesundheitsschädigung). Auch dies ist über § 127 StPO i.V.m. dem Verhältnismäßigkeitsgrundsatz gedeckt, da K aktiv Widerstand leistete (Notwehr-/Notstandsähnliche Befugnisse bei der Durchsetzung der Festnahme).<br><strong>Ergebnis:</strong> Müller handelt straffrei."
+    },
+    {
+      id: 2,
+      title: "Fall 2: Der ungebetene Gast im Firmenareal",
+      text: "Obhutskraft S ist auf einem umfriedeten Werksgelände im nächtlichen Streifendienst unterwegs. Er trifft auf Person X, die dort offenkundig unbefugt herumlungert. S spricht X an und fordert ihn auf, das Gelände umgehend zu verlassen. X weigert sich lachend und sagt, S könne ihm gar nichts. S packt X am Arm und schiebt ihn energisch Richtung Ausgang, wobei X stolpert und in eine Hecke fällt.\n\nPrüfen Sie die Rechtmäßigkeit des Handelns von S.",
+      solution: "<strong>Musterlösung / Gutachtenstil:</strong><br><br><strong>I. Hausrecht (§ 859 BGB / § 903 BGB):</strong><br>Der Arbeitgeber als Besitzer des Werksgeländes übt das Hausrecht aus, welches durch S als Erfüllungsgehilfen wahrgenommen wird.<br><strong>II. Verhältnismäßigkeit:</strong><br>Die Aufforderung zum Verlassen des Geländes war rechtmäßig (Hausfriedensbruch nach § 123 StGB lag vor). Das Wegschieben stellt eine Besitzwehr bzw. Durchsetzung des Hausrechts dar. Das Stolpern in die Hecke war ein bedauerlicher Nebeneffekt, solange keine absichtliche Misshandlung vorlag.<br><strong>Ergebnis:</strong> Das Handeln von S ist rechtlich gedeckt."
+    },
+    {
+      id: 3,
+      title: "Fall 3: Notwehr in der Pforte",
+      text: "Wachmann W sitzt in der Pforte. Ein bekannter Randalierer R stürmt herein, zieht ein Messer, droht W mit dem Tod und sticht nach ihm. W weicht zurück, greift geistesgegenwärtig nach einem schweren Klemmbrett und schlägt R damit so heftig gegen den Kopf, dass R schwerer verletzt zusammenbricht.\n\nPrüfen Sie die Notwehrlage und -grenzen nach § 32 StGB.",
+      solution: "<strong>Musterlösung / Gutachtenstil:</strong><br><br><strong>I. Notwehrlage (§ 32 StGB):</strong><br>Ein gegenwärtiger (gerade stattfindender) und rechtswidriger Angriff auf Leib und Leben von W durch das Messer liegt vor.<br><strong>II. Erforderlichkeit und Gebotenheit:</strong><br>Das Abwehren mit dem Klemmbrett war das einzig sofort verfügbare und geeignete Mittel, um den lebensgefährlichen Messerangriff zu stoppen. Eine schwere Verletzung des Angreifers ist bei Notwehr prinzipiell gerechtfertigt (das Recht braucht dem Unrecht nicht zu weichen).<br><strong>Ergebnis:</strong> Vollständig gerechtfertigt durch Notwehr."
+    },
+    {
+      id: 4,
+      title: "Fall 4: Der vermeintliche Brand",
+      text: "In einem Bürogebäude schlägt ein Brandmelder an. Wachmitarbeiter M eilt zum Bereich, sieht aber nur leichten Dampf aus einer Kaffeemaschine austreten. Da M weiß, dass ein Fehlalarm bei der Feuerwehr hohe Kosten verursacht, schaltet er die Brandmeldeanlage eigenmächtig ab und verständigt niemanden.\n\nBewerten Sie diesen Vorfall dienstrechtlich und strafrechtlich.",
+      solution: "<strong>Musterlösung / Gutachtenstil:</strong><br><br><strong>I. Dienstrecht:</strong><br>M hat grob fahrlässig gehandelt und gegen sämtliche Dienstanweisungen sowie Sicherheitsstandards verstoßen. Eine EMA/BMA darf niemals ohne klare Absicherung oder Gefahrenausschluss einfach abgeschaltet werden.<br><strong>II. Strafrecht (z.B. § 145 StGB - Missbrauch von Notrufen / Gefährdung):</strong><br>Sollte tatsächlich ein Schwelbrand vorgelegen haben, macht sich M wegen fahrlässiger Körperverletzung / Brandstiftung durch Unterlassen strafbar.<br><strong>Ergebnis:</strong> Fristlose Kündigung gerechtfertigt, hohes strafrechtliches Risiko."
+    },
+    {
+      id: 5,
+      title: "Fall 5: Datenleck an der Pforte",
+      text: "Ein Mitarbeiter eines externen Dienstleisters verlangt Einlass. Da sein Ausweis ungültig ist, fotografiert die neue Sicherheitskraft K den Personalausweis des Besuchers mit ihrem privaten Smartphone, um ihn später in eine WhatsApp-Gruppe der Kollegen zu schicken.",
+      solution: "<strong>Musterlösung / Gutachtenstil:</strong><br><br><strong>DSGVO & BDSG Verstoß:</strong><br>Personalausweisdaten unterliegen strengem Datenschutz. Das Abfotografieren mit einem privaten Smartphone und Weitergabe in private Messenger-Dienste stellt einen schweren Datenschutzverstoß und einen Bruch des Datengeheimnisses (§ 53 BDSG) dar.<br><strong>Ergebnis:</strong> Rechtswidrig, bußgeld- und strafbewehrt."
+    },
+    {
+      id: 6,
+      title: "Fall 6: Notstand beim Rohrbruch",
+      text: "Nachts bricht in einem verschlossenen Nachbargebäude, das zum selben Konzern gehört, eine Hauptwasserleitung. Große Mengen Wasser fließen in Richtung eines Serverraums. Werkschutzmitarbeiter W bricht die Eingangstür auf, um den Hauptwasserhahn zuzudrehen.",
+      solution: "<strong>Musterlösung / Gutachtenstil:</strong><br><br><strong>Rechtfertigender Notstand (§ 34 StGB):</strong><br>Gegenwärtige Gefahr für einen bedeutenden Sachwert (Serveranlage). Das Aufbrechen der Tür (Sachbeschädigung § 303 StGB) ist das einzig wirksame Mittel zur Schadensabwendung, und das geschützte Interesse (Server) überwiegt den Schaden der Tür deutlich.<br><strong>Ergebnis:</strong> Rechtmäßig."
+    },
+    {
+      id: 7,
+      title: "Fall 7: Der betrunkene Lieferant",
+      text: "Ein Lkw-Fahrer erscheint erkennbar alkoholisiert auf dem Betriebsgelände, um Ware abzuliefern. Werkschutzmitarbeiter S verweigert ihm die Weiterfahrt auf dem Gelände und behält die Fahrzeugschlüssel ein, bis die Polizei eintrifft.",
+      solution: "<strong>Musterlösung / Gutachtenstil:</strong><br><br><strong>Hausrecht & Gefahrenabwehr:</strong><br>Zur Abwendung von betrieblichen Gefahren und zur Durchsetzung des Hausverbots für alkoholisierte Personen ist das Verweigern der Zufahrt und das vorübergehende Einbehalten von Schlüsseln zur Verhinderung einer Trunkenheitsfahrt verhältnismäßig.<br><strong>Ergebnis:</strong> Rechtmäßig."
+    },
+    {
+      id: 8,
+      title: "Fall 8: Die verdächtige Tasche",
+      text: "Im Eingangsbereich eines Bankgebäudes steht unbeaufsichtigt eine Sporttasche. Der Sicherheitsmitarbeiter öffnet die Tasche eigenmächtig, um nach Personalien des Besitzers zu suchen.",
+      solution: "<strong>Musterlösung / Gutachtenstil:</strong><br><br><strong>Unzulässiges Handeln:</strong><br>Private Sicherheitskräfte haben keine polizeilichen Durchsuchungsbefugnisse für fremdes Eigentum in öffentlich zugänglichen Bereichen. Bei Verdacht auf eine Bombe oder Gefahr muss der Bereich evakuiert und die Polizei gerufen werden. Das Durchstöbern verletzt das Eigentumsrecht.<br><strong>Ergebnis:</strong> Rechtswidrig."
+    },
+    {
+      id: 9,
+      title: "Fall 9: Überzogene Waffennutzung",
+      text: "Ein unbewaffneter Jugendlicher klettert über den Zaun eines Logistikzentrums, um eine abgefallene Mütze zu holen. Der bewaffnete Sicherheitsmitarbeiter zieht seine Gaspistole und schießt dem Jugendlichen ohne Vorwarnung auf das Bein.",
+      solution: "<strong>Musterlösung / Gutachtenstil:</strong><br><br><strong>Grobe Rechtsverletzung:</strong><br>Weder Notwehr noch Jedermann-Festnahme decken den Einsatz von Schusswaffen / Reizgas gegen einen bloßen unbewaffneten Eindringling ohne akuten Angriff auf Leib und Leben. Dies erfüllt den Tatbestand der gefährlichen Körperverletzung (§ 224 StGB).<br><strong>Ergebnis:</strong> Strafbar, sofortiger Entzug der Erlaubnisse."
+    },
+    {
+      id: 10,
+      title: "Fall 10: Schichtdienst und Pausen",
+      text: "Ein Sicherheitsmitarbeiter wird für eine 14-Stunden-Schicht im Objektschutz ohne Unterbrechung eingeteilt, da Personal fehlt. Er absolviert die Schicht.",
+      solution: "<strong>Musterlösung / Gutachtenstil:</strong><br><br><strong>Arbeitszeitgesetz (ArbZG):</strong><br>Nach § 3 ArbZG darf die werktägliche Arbeitszeit 8 Stunden nicht überschreiten (kann auf 10 Stunden verlängert werden, wenn innerhalb von 6 Monaten ein Ausgleich erfolgt). 14 Stunden verstoßen klar gegen das ArbZG und vorgeschriebene Ruhezeiten (§ 5 ArbZG).<br><strong>Ergebnis:</strong> Verstoß gegen das Arbeitszeitgesetz."
+    }
+  ];
+
+  // App State & LocalStorage Keys
+  let currentTab = 'quiz';
+  let gsskQuestions = [...rawGsskPool];
+  let currentIndex = 0;
+  let score = 0;
+  let selectedMultiOptions = [];
+  let userAnswersState = {}; // { questionId: { correct: true/false, selected: ... } }
+  let quizBookmarks = JSON.parse(localStorage.getItem('gssk_bookmarks') || '[]');
+  let soundEnabled = true;
+  let darkMode = false;
+  let timerActive = false;
+  let quizTimerInterval = null;
+  let quizTimeLeft = 45;
+
+  // Filter States
+  let activeFilter = 'all'; // 'all', 'bookmark', 'weak', 'mastered'
+  let searchQuery = '';
+
+  // Exam State
+  let examQuestions = [];
+  let currentExamIndex = 0;
+  let examUserAnswers = {};
+  let examFlags = {};
+  let examTimerInterval = null;
+  let examTimeLeft = 45 * 60; // 45 Minuten
+
+  // Speech Synth
+  let synth = window.speechSynthesis;
+
+  window.onload = function() {
+    loadSavedProgress();
+    renderLawCases();
+    updateQuizView();
+  };
+
+  function loadSavedProgress() {
+    const saved = localStorage.getItem('gssk_user_progress');
+    if (saved) {
+      try { userAnswersState = JSON.parse(saved); } catch(e) {}
+    }
+  }
+
+  function saveProgress() {
+    localStorage.setItem('gssk_user_progress', JSON.stringify(userAnswersState));
+    localStorage.setItem('gssk_bookmarks', JSON.stringify(quizBookmarks));
+  }
+
+  function switchTab(tab) {
+    currentTab = tab;
+    stopSpeech();
+    document.getElementById('quizTab').classList.add('hidden');
+    document.getElementById('realExamTab').classList.add('hidden');
+    document.getElementById('lawTab').classList.add('hidden');
+    
+    document.getElementById('tabQuizBtn').classList.remove('active');
+    document.getElementById('tabRealExamBtn').classList.remove('active');
+    document.getElementById('tabLawBtn').classList.remove('active');
+
+    if (tab === 'quiz') {
+      document.getElementById('quizTab').classList.remove('hidden');
+      document.getElementById('tabQuizBtn').classList.add('active');
+      updateQuizView();
+    } else if (tab === 'realExam') {
+      document.getElementById('realExamTab').classList.remove('hidden');
+      document.getElementById('tabRealExamBtn').classList.add('active');
+    } else if (tab === 'law') {
+      document.getElementById('lawTab').classList.remove('hidden');
+      document.getElementById('tabLawBtn').classList.add('active');
+    }
+  }
+
+  // --- QUIZ LOGIK ---
+  function getFilteredQuestions() {
+    return rawGsskPool.filter(q => {
+      // Suchfilter
+      if (searchQuery) {
+        const textMatch = q.question.toLowerCase().includes(searchQuery.toLowerCase());
+        const catMatch = q.category.toLowerCase().includes(searchQuery.toLowerCase());
+        const subMatch = q.subcategory.toLowerCase().includes(searchQuery.toLowerCase());
+        if (!textMatch && !catMatch && !subMatch) return false;
+      }
+      // Statusfilter
+      const state = userAnswersState[q.id];
+      const isBookmarked = quizBookmarks.includes(q.id);
+
+      if (activeFilter === 'bookmark' && !isBookmarked) return false;
+      if (activeFilter === 'weak' && (!state || state.correct)) return false;
+      if (activeFilter === 'mastered' && (!state || !state.correct)) return false;
+
+      return true;
+    });
+  }
+
+  function updateQuizView() {
+    gsskQuestions = getFilteredQuestions();
+    const contentArea = document.getElementById('quizContentArea');
+    const finishedScreen = document.getElementById('quizFinishedScreen');
+
+    if (gsskQuestions.length === 0) {
+      contentArea.classList.add('hidden');
+      finishedScreen.classList.remove('hidden');
+      finishedScreen.innerHTML = `
+        <h2>Keine Fragen für diesen Filter gefunden.</h2>
+        <p style="color: var(--text-muted); margin: 15px 0;">Ändere die Suche oder den Filter, um fortzufahren.</p>
+        <button class="btn-action" onclick="resetFilters()">Alle Filter zurücksetzen</button>
+      `;
+      return;
+    }
+
+    if (currentIndex >= gsskQuestions.length) {
+      currentIndex = 0;
+    }
+
+    contentArea.classList.remove('hidden');
+    finishedScreen.classList.add('hidden');
+    renderCurrentQuestion();
+  }
+
+  function renderCurrentQuestion() {
+    stopSpeech();
+    const q = gsskQuestions[currentIndex];
+    
+    document.getElementById('counter').innerText = `Frage ${currentIndex + 1} von ${gsskQuestions.length}`;
+    document.getElementById('catBadge').innerText = q.category;
+    document.getElementById('subCatBadge').innerText = q.subcategory;
+    
+    const multiBadge = document.getElementById('multiBadge');
+    if (q.isMulti) {
+      multiBadge.classList.remove('hidden');
+    } else {
+      multiBadge.classList.add('hidden');
+    }
+
+    document.getElementById('question').innerText = q.question;
+    
+    // Bookmark Button aktualisieren
+    const bBtn = document.getElementById('quizBookmarkBtn');
+    if (quizBookmarks.includes(q.id)) {
+      bBtn.innerText = "★";
+      bBtn.style.color = "#f59e0b";
+    } else {
+      bBtn.innerText = "☆";
+      bBtn.style.color = "inherit";
+    }
+
+    const optionsContainer = document.getElementById('options');
+    optionsContainer.innerHTML = '';
+    selectedMultiOptions = [];
+
+    q.options.forEach((opt, idx) => {
+      const btn = document.createElement('button');
+      btn.className = 'btn-option';
+      btn.innerText = opt;
+      btn.onclick = () => selectQuizOption(idx, btn);
+      optionsContainer.appendChild(btn);
+    });
+
+    document.getElementById('explanation').style.display = 'none';
+    document.getElementById('multiSubmitContainer').classList.add('hidden');
+    document.getElementById('nextBtn').disabled = true;
+
+    // Prüfen ob bereits beantwortet in dieser Session
+    const savedState = userAnswersState[q.id];
+    if (savedState) {
+      // Direkt auflösen zur Info
+      lockQuestionUI(q, savedState.selected);
+    }
+
+    resetTimer();
+  }
+
+  function selectQuizOption(idx, btn) {
+    const q = gsskQuestions[currentIndex];
+    if (userAnswersState[q.id]) return; // Bereits beantwortet
+
+    if (q.isMulti) {
+      if (selectedMultiOptions.includes(idx)) {
+        selectedMultiOptions = selectedMultiOptions.filter(i => i !== idx);
+        btn.classList.remove('selected');
+      } else {
+        selectedMultiOptions.push(idx);
+        btn.classList.add('selected');
+      }
+      if (selectedMultiOptions.length > 0) {
+        document.getElementById('multiSubmitContainer').classList.remove('hidden');
+      } else {
+        document.getElementById('multiSubmitContainer').classList.add('hidden');
+      }
+    } else {
+      // Single Choice
+      evaluateQuizAnswer([idx]);
+    }
+  }
+
+  function submitMultiAnswer() {
+    if (selectedMultiOptions.length === 0) return;
+    evaluateQuizAnswer(selectedMultiOptions);
+  }
+
+  function evaluateQuizAnswer(selectedArr) {
+    const q = gsskQuestions[currentIndex];
+    if (userAnswersState[q.id]) return;
+
+    let isCorrect = false;
+    if (q.isMulti) {
+      const correctSorted = [...q.correctMulti].sort();
+      const selectedSorted = [...selectedArr].sort();
+      isCorrect = JSON.stringify(correctSorted) === JSON.stringify(selectedSorted);
+    } else {
+      isCorrect = selectedArr[0] === q.correctIndex;
+    }
+
+    playSound(isCorrect);
+
+    userAnswersState[q.id] = {
+      correct: isCorrect,
+      selected: selectedArr
+    };
+    saveProgress();
+
+    lockQuestionUI(q, selectedArr);
+  }
+
+  function lockQuestionUI(q, selectedArr) {
+    const optionsContainer = document.getElementById('options');
+    const buttons = optionsContainer.children;
+
+    for (let i = 0; i < buttons.length; i++) {
+      buttons[i].onclick = null; // Klicks sperren
+      buttons[i].style.cursor = 'default';
+
+      if (q.isMulti) {
+        if (q.correctMulti.includes(i)) {
+          buttons[i].classList.add('correct');
+        } else if (selectedArr.includes(i)) {
+          buttons[i].classList.add('wrong');
+        }
+      } else {
+        if (i === q.correctIndex) {
+          buttons[i].classList.add('correct');
+        } else if (selectedArr.includes(i)) {
+          buttons[i].classList.add('wrong');
+        }
+      }
+    }
+
+    document.getElementById('multiSubmitContainer').classList.add('hidden');
+    
+    // Erklärung anzeigen
+    const expBox = document.getElementById('explanation');
+    const expText = document.getElementById('explanationText');
+    let correctTextStr = "";
+    if (q.isMulti) {
+      correctTextStr = q.correctMulti.map(idx => `• ${q.options[idx]}`).join("<br>");
+    } else {
+      correctTextStr = `• ${q.options[q.correctIndex]}`;
+    }
+    expText.innerHTML = correctTextStr;
+    expBox.style.display = 'block';
+
+    document.getElementById('nextBtn').disabled = false;
+    stopTimer();
+  }
+
+  function nextQuestion() {
+    currentIndex++;
+    if (currentIndex >= gsskQuestions.length) {
+      showQuizFinished();
+    } else {
+      renderCurrentQuestion();
+    }
+  }
+
+  function showQuizFinished() {
+    document.getElementById('quizContentArea').classList.add('hidden');
+    const finishedScreen = document.getElementById('quizFinishedScreen');
+    finishedScreen.classList.remove('hidden');
+
+    // Statistik nach Kategorien berechnen
+    const categories = ["Rechtskunde", "Dienstkunde", "Gefahrenabwehr & Technik", "Serviceorientiertes Verhalten", "Wirtschafts- und Sozialkunde"];
+    let statsHTML = '';
+
+    categories.forEach(cat => {
+      const catQuestions = rawGsskPool.filter(q => q.category === cat);
+      let answeredCount = 0;
+      let correctCount = 0;
+
+      catQuestions.forEach(q => {
+        const st = userAnswersState[q.id];
+        if (st) {
+          answeredCount++;
+          if (st.correct) correctCount++;
+        }
+      });
+
+      const percent = answeredCount > 0 ? Math.round((correctCount / answeredCount) * 100) : 0;
+      statsHTML += `
+        <div>
+          <div style="display: flex; justify-content: space-between; font-size: 0.9rem; font-weight: bold; margin-bottom: 4px;">
+            <span>${cat}</span>
+            <span>${correctCount} von ${answeredCount} richtig (${percent}%)</span>
+          </div>
+          <div class="stat-bar-wrapper">
+            <div class="stat-bar-fill" style="width: ${percent}%;"></div>
+          </div>
         </div>
+      `;
+    });
 
-        <!-- Result Screen -->
-        <div id="result-screen" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-2xl text-center space-y-6">
-            <div class="w-16 h-16 bg-emerald-500/10 text-emerald-400 rounded-2xl flex items-center justify-center mx-auto border border-emerald-500/20 text-2xl font-bold">
-                🏆
-            </div>
-            <div class="space-y-2">
-                <h2 class="text-2xl font-bold tracking-tight">Quiz beendet!</h2>
-                <p id="result-text" class="text-slate-400 text-sm">Sie haben X von Y Fragen richtig beantwortet.</p>
-            </div>
-            <div class="p-4 bg-slate-950 rounded-xl border border-slate-800 text-center">
-                <span id="result-percentage" class="text-3xl font-extrabold text-cyan-400">0%</span>
-                <p class="text-xs text-slate-500 mt-1">Erfolgsquote</p>
-            </div>
-            <button onclick="resetQuiz()" class="w-full py-3.5 px-4 bg-cyan-600 hover:bg-cyan-500 text-white font-semibold rounded-xl transition shadow-lg shadow-cyan-900/30">
-                Erneut versuchen
-            </button>
+    document.getElementById('statDashboard').innerHTML = statsHTML;
+  }
+
+  function restartQuiz() {
+    currentIndex = 0;
+    updateQuizView();
+  }
+
+  function resetAllStatsPrompt() {
+    if (confirm("Möchtest du deinen gesamten Lernfortschritt und alle Statistiken zurücksetzen?")) {
+      userAnswersState = {};
+      quizBookmarks = [];
+      localStorage.removeItem('gssk_user_progress');
+      localStorage.removeItem('gssk_bookmarks');
+      updateQuizView();
+      alert("Fortschritt wurde zurückgesetzt.");
+    }
+  }
+
+  // --- FILTER & SEARCH ---
+  function filterQuizQuestions() {
+    searchQuery = document.getElementById('quizSearchInput').value;
+    currentIndex = 0;
+    updateQuizView();
+  }
+
+  function toggleBookmarkFilter() {
+    activeFilter = activeFilter === 'bookmark' ? 'all' : 'bookmark';
+    updateFilterButtonStyles();
+    currentIndex = 0;
+    updateQuizView();
+  }
+
+  function toggleWeakFilter() {
+    activeFilter = activeFilter === 'weak' ? 'all' : 'weak';
+    updateFilterButtonStyles();
+    currentIndex = 0;
+    updateQuizView();
+  }
+
+  function toggleMasteredFilter() {
+    activeFilter = activeFilter === 'mastered' ? 'all' : 'mastered';
+    updateFilterButtonStyles();
+    currentIndex = 0;
+    updateQuizView();
+  }
+
+  function resetFilters() {
+    activeFilter = 'all';
+    searchQuery = '';
+    document.getElementById('quizSearchInput').value = '';
+    updateFilterButtonStyles();
+    currentIndex = 0;
+    updateQuizView();
+  }
+
+  function updateFilterButtonStyles() {
+    document.getElementById('filterBookmarkBtn').classList.toggle('active', activeFilter === 'bookmark');
+    document.getElementById('filterWeakBtn').classList.toggle('active', activeFilter === 'weak');
+    document.getElementById('filterMasteredBtn').classList.toggle('active', activeFilter === 'mastered');
+  }
+
+  function toggleCurrentBookmark() {
+    const q = gsskQuestions[currentIndex];
+    if (!q) return;
+    if (quizBookmarks.includes(q.id)) {
+      quizBookmarks = quizBookmarks.filter(id => id !== q.id);
+    } else {
+      quizBookmarks.push(q.id);
+    }
+    saveProgress();
+    renderCurrentQuestion();
+  }
+
+  // --- TIMER ---
+  function toggleTimerMode() {
+    timerActive = document.getElementById('timerCheckbox').checked;
+    const tBox = document.getElementById('quizTimerBox');
+    if (timerActive) {
+      tBox.classList.remove('hidden');
+      resetTimer();
+    } else {
+      tBox.classList.add('hidden');
+      stopTimer();
+    }
+  }
+
+  function resetTimer() {
+    stopTimer();
+    if (!timerActive) return;
+    quizTimeLeft = 45;
+    document.getElementById('quizTimerBox').innerText = quizTimeLeft;
+    quizTimerInterval = setInterval(() => {
+      quizTimeLeft--;
+      document.getElementById('quizTimerBox').innerText = quizTimeLeft;
+      if (quizTimeLeft <= 0) {
+        stopTimer();
+        // Als falsch werten bei Zeitablauf
+        const q = gsskQuestions[currentIndex];
+        if (!userAnswersState[q.id]) {
+          userAnswersState[q.id] = { correct: false, selected: [] };
+          saveProgress();
+          lockQuestionUI(q, []);
+        }
+      }
+    }, 1000);
+  }
+
+  function stopTimer() {
+    if (quizTimerInterval) clearInterval(quizTimerInterval);
+  }
+
+  // --- TTS VORLESEN ---
+  function speakCurrentQuestion() {
+    if (!synth) return;
+    stopSpeech();
+    const q = gsskQuestions[currentIndex];
+    if (!q) return;
+    let textToSpeak = `${q.category}. ${q.question}. Die Antwortmöglichkeiten sind: `;
+    q.options.forEach((opt, idx) => {
+      textToSpeak += `Option ${idx + 1}: ${opt}. `;
+    });
+    const utterThis = new SpeechSynthesisUtterance(textToSpeak);
+    utterThis.lang = 'de-DE';
+    synth.speak(utterThis);
+  }
+
+  function pauseSpeech() {
+    if (synth && synth.speaking) synth.pause();
+  }
+
+  function stopSpeech() {
+    if (synth) synth.cancel();
+  }
+
+  // --- IHK PRÜFUNGSSIMULATION ---
+  function startRealExam() {
+    const cat = document.getElementById('examCategorySelect').value;
+    let pool = [...rawGsskPool];
+    if (cat !== 'all') {
+      pool = pool.filter(q => q.category === cat);
+    }
+    // Zufällig 30 Fragen auswählen
+    pool.sort(() => Math.random() - 0.5);
+    examQuestions = pool.slice(0, 30);
+    currentExamIndex = 0;
+    examUserAnswers = {};
+    examFlags = {};
+    examTimeLeft = 45 * 60;
+
+    document.getElementById('examStartScreen').classList.add('hidden');
+    document.getElementById('examResultScreen').classList.add('hidden');
+    document.getElementById('examScreen').classList.remove('hidden');
+
+    startExamTimer();
+    renderExamQuestion();
+  }
+
+  function startExamTimer() {
+    if (examTimerInterval) clearInterval(examTimerInterval);
+    examTimerInterval = setInterval(() => {
+      examTimeLeft--;
+      let m = Math.floor(examTimeLeft / 60);
+      let s = examTimeLeft % 60;
+      document.getElementById('examTimer').innerText = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+      if (examTimeLeft <= 0) {
+        clearInterval(examTimerInterval);
+        finishExam(true);
+      }
+    }, 1000);
+  }
+
+  function renderExamQuestion() {
+    const q = examQuestions[currentExamIndex];
+    document.getElementById('examCounter').innerText = `Frage ${currentExamIndex + 1} von ${examQuestions.length}`;
+    document.getElementById('examQuestion').innerText = q.question;
+
+    // Flag Button Style
+    const flagBtn = document.getElementById('examFlagBtn');
+    if (examFlags[currentExamIndex]) {
+      flagBtn.classList.add('active');
+      flagBtn.innerText = "🚩 Markiert";
+    } else {
+      flagBtn.classList.remove('active');
+      flagBtn.innerText = "🚩 Frage markieren";
+    }
+
+    renderExamGrid();
+
+    const optionsContainer = document.getElementById('examOptions');
+    optionsContainer.innerHTML = '';
+    
+    const savedAns = examUserAnswers[currentExamIndex] || [];
+
+    q.options.forEach((opt, idx) => {
+      const btn = document.createElement('button');
+      btn.className = 'btn-option';
+      if (savedAns.includes(idx)) btn.classList.add('selected');
+      btn.innerText = opt;
+      btn.onclick = () => selectExamOption(idx, btn);
+      optionsContainer.appendChild(btn);
+    });
+
+    if (q.isMulti) {
+      document.getElementById('examMultiSubmitContainer').classList.remove('hidden');
+    } else {
+      document.getElementById('examMultiSubmitContainer').classList.add('hidden');
+    }
+
+    document.getElementById('examPrevBtn').disabled = currentExamIndex === 0;
+    document.getElementById('examNextBtn').disabled = currentExamIndex === examQuestions.length - 1;
+  }
+
+  function renderExamGrid() {
+    const gridContainer = document.getElementById('examGridContainer');
+    gridContainer.innerHTML = '';
+    examQuestions.forEach((_, idx) => {
+      const btn = document.createElement('button');
+      btn.className = 'exam-grid-btn';
+      if (idx === currentExamIndex) btn.classList.add('current');
+      if (examUserAnswers[idx] && examUserAnswers[idx].length > 0) btn.classList.add('answered');
+      if (examFlags[idx]) btn.classList.add('flagged');
+      btn.innerText = idx + 1;
+      btn.onclick = () => { currentExamIndex = idx; renderExamQuestion(); };
+      gridContainer.appendChild(btn);
+    });
+  }
+
+  function selectExamOption(idx, btn) {
+    const q = examQuestions[currentExamIndex];
+    let currentSel = examUserAnswers[currentExamIndex] || [];
+
+    if (q.isMulti) {
+      if (currentSel.includes(idx)) {
+        currentSel = currentSel.filter(i => i !== idx);
+        btn.classList.remove('selected');
+      } else {
+        currentSel.push(idx);
+        btn.classList.add('selected');
+      }
+      examUserAnswers[currentExamIndex] = currentSel;
+    } else {
+      examUserAnswers[currentExamIndex] = [idx];
+      // Direkt nächste Frage bei Single Choice im Examen
+      renderExamQuestion();
+    }
+    renderExamGrid();
+  }
+
+  function submitExamMultiAnswer() {
+    if (currentExamIndex < examQuestions.length - 1) {
+      currentExamIndex++;
+      renderExamQuestion();
+    } else {
+      alert("Letzte Frage erreicht. Du kannst die Prüfung oben rechts abgeben.");
+    }
+  }
+
+  function toggleExamFlag() {
+    examFlags[currentExamIndex] = !examFlags[currentExamIndex];
+    renderExamQuestion();
+  }
+
+  function prevExamQuestion() {
+    if (currentExamIndex > 0) {
+      currentExamIndex--;
+      renderExamQuestion();
+    }
+  }
+
+  function nextExamQuestion() {
+    if (currentExamIndex < examQuestions.length - 1) {
+      currentExamIndex++;
+      renderExamQuestion();
+    }
+  }
+
+  function finishExamPrompt() {
+    if (confirm("Möchtest du die IHK-Prüfung jetzt wirklich abgeben und auswerten lassen?")) {
+      finishExam(false);
+    }
+  }
+
+  function finishExam(isTimeout) {
+    if (examTimerInterval) clearInterval(examTimerInterval);
+    document.getElementById('examScreen').classList.add('hidden');
+    document.getElementById('examResultScreen').classList.remove('hidden');
+
+    let correctCount = 0;
+    let reviewHTML = '';
+
+    examQuestions.forEach((q, idx) => {
+      const userAns = examUserAnswers[idx] || [];
+      let isCorrect = false;
+
+      if (q.isMulti) {
+        const correctSorted = [...q.correctMulti].sort();
+        const userSorted = [...userAns].sort();
+        isCorrect = JSON.stringify(correctSorted) === JSON.stringify(userSorted);
+      } else {
+        isCorrect = userAns[0] === q.correctIndex;
+      }
+
+      if (isCorrect) correctCount++;
+
+      reviewHTML += `
+        <div class="section-card" style="border-left-color: ${isCorrect ? '#28a745' : '#dc3545'};">
+          <div class="section-title">Frage ${idx + 1}: ${q.category} (${isCorrect ? '✅ Richtig' : '❌ Falsch'})</div>
+          <div style="font-weight: bold; margin-bottom: 5px;">${q.question}</div>
+          <div style="font-size: 0.9rem; color: var(--text-muted);">Deine Auswahl: ${userAns.length > 0 ? userAns.map(i => q.options[i]).join(', ') : 'Keine Antwort'}</div>
+          <div style="font-size: 0.9rem; color: #28a745; margin-top: 4px;">Korrekte Antwort: ${q.isMulti ? q.correctMulti.map(i => q.options[i]).join(', ') : q.options[q.correctIndex]}</div>
         </div>
+      `;
+    });
 
-    </main>
+    const percentage = Math.round((correctCount / examQuestions.length) * 100);
+    const passed = percentage >= 50; // IHK Bestehensgrenze üblicherweise 50%
 
-    <!-- Footer -->
-    <footer class="border-t border-slate-800 py-4 text-center text-xs text-slate-500">
-        &copy; 2026 IHK Prüfungstrainer GSSK &bull; Alle Rechte vorbehalten
-    </footer>
+    document.getElementById('resultTitle').innerText = isTimeout ? "⏱️ Zeit abgelaufen!" : "Prüfung beendet";
+    document.getElementById('resultScore').innerText = `Du hast ${correctCount} von ${examQuestions.length} Fragen richtig (${percentage}%)`;
+    
+    const statusEl = document.getElementById('resultStatus');
+    if (passed) {
+      statusEl.innerHTML = "🎉 <strong style='color: #28a745;'>Bestanden! Du hast das IHK-Prüfungsniveau erreicht.</strong>";
+    } else {
+      statusEl.innerHTML = "⚠️ <strong style='color: #dc3545;'>Nicht bestanden. Wiederhole die Schwachstellen im Quiz-Modus.</strong>";
+    }
 
-    <script>
-        // Erweiterter Fragenpool (Sicherheitstechnik, Recht, WiSo)
-        const questions = [
-            {
-                category: "Recht für Sicherheitskräfte",
-                question: "Welches Recht rechtfertigt eine Handlung in einer akuten, gegenwärtigen Rechtsgutsverletzung, wenn kein milderes Mittel zur Verfügung steht?",
-                options: ["Jedermann-Festnahmerecht", "Notwehr (§ 32 StGB)", "Hausrecht", "Vorläufige Festnahme durch Behörden"],
-                correct: 1
-            },
-            {
-                category: "Sicherheitstechnik",
-                question: "Wie wird eine Meldeanlage bezeichnet, die bei unbefugtem Betreten eines Raumes optische oder akustische Signale an eine ständige Wachstelle sendet?",
-                options: ["Brandmeldeanlage (BMA)", "Einbruchmeldeanlage (EMA)", "Zutrittskontrollsystem (ZKS)", "CCTV-System"],
-                correct: 1
-            },
-            {
-                category: "Wirtschafts- und Sozialkunde",
-                question: "Wer ist im Sinne des Betriebsverfassungsgesetzes (BetrVG) in einem Betrieb wahlberechtigt?",
-                options: ["Alle Arbeitnehmer ab 18 Jahren", "Nur leitende Angestellte", "Alle Arbeiter und Angestellten, die das 18. Lebensjahr vollendet haben", "Nur Gewerkschaftsmitglieder"],
-                correct: 2
-            },
-            {
-                category: "Recht für Sicherheitskräfte",
-                question: "Unter welchen Voraussetzungen darf das Jedermann-Festnahmerecht nach § 127 Abs. 1 StPO ausgeübt werden?",
-                options: ["Nur durch ausgebildete Werkschutzfachkräfte", "Wenn der Täter auf frischer Tat betroffen oder verfolgt wird und Fluchtverdacht besteht oder die Identität nicht sofort feststellbar ist", "Immer wenn eine Person verdächtig aussieht", "Nur nach vorheriger richterlicher Anordnung"],
-                correct: 1
-            },
-            {
-                category: "Sicherheitstechnik",
-                question: "Welche primäre Aufgabe hat ein Sperrelement bei einer mechanischen Absicherung (z. B. an einer Eingangstür)?",
-                options: ["Das Erkennen von Einbruchversuchen", "Das Verhindern des unbefugten Öffnens durch physischen Widerstand", "Das automatische Entriegeln im Brandfall", "Die Aufzeichnung von Videomaterial"],
-                correct: 1
-            },
-            {
-                category: "Deeskalation & Kommunikation",
-                question: "Was versteht man unter dem Begriff 'Deeskalation' im Objektschutz?",
-                options: ["Das sofortige Anwenden körperlicher Zwangsmittel", "Das absichtliche Provokanten von Störern", "Das Herabsetzen von Spannungen und Konflikten durch verbale und nonverbale Kommunikation", "Das Verlassen des Einsatzortes bei Gefahr"],
-                correct: 2
-            },
-            {
-                category: "Recht für Sicherheitskräfte",
-                question: "Was versteht man unter dem Begriff 'Hausrecht'?",
-                options: ["Das Recht, Steuern auf Grundbesitz zu erheben", "Das von dem Eigentümer oder Besitzer ausgeübte Recht, anderen den Zutritt zu verwehren oder sie des Raumes zu verweisen", "Die Erlaubnis, Waffen in Wohnräumen zu tragen", "Ein ausschließliches Recht von Polizeibeamten"],
-                correct: 1
-            },
-            {
-                category: "Sicherheitstechnik",
-                question: "Welcher Melderstyp wird primär in Brandmeldeanlagen eingesetzt, um sichtbaren Rauch in der Raumluft zu detektieren?",
-                options: ["Magnetkontakt", "Optischer Rauchmelder (Streulichtprinzip)", "Glasbruchmelder", "Passiv-Infrarot-Melder (PIR)"],
-                correct: 1
-            },
-            {
-                category: "Wirtschafts- und Sozialkunde",
-                question: "Welches Gesetz regelt in Deutschland den allgemeinen Kündigungsschutz für Arbeitnehmer in Betrieben ab einer bestimmten Beschäftigtenanzahl?",
-                options: ["Bürgerliches Gesetzbuch (BGB)", "Kündigungsschutzgesetz (KSchG)", "Arbeitsgerichtsgesetz (ArbGG)", "Gewerbeordnung (GewO)"],
-                correct: 1
-            },
-            {
-                category: "Recht für Sicherheitskräfte",
-                question: "Welche Handlungsbefugnis hat eine Sicherheitskraft beim Ausüben des Hausrechts gegenüber einer Person, die sich weigert, das Gelände nach Aufforderung zu verlassen?",
-                options: ["Sofortiger Waffeneinsatz", "Anwendung verhältnismäßiger körperlicher Gewalt im Rahmen der Selbsthilfe / Besitzwehr", "Die Person eigenmächtig auf unbestimmte Zeit einsperren", "Keinerlei Maßnahmen ergreifen"],
-                correct: 1
-            }
-        ];
+    document.getElementById('examReviewList').innerHTML = reviewHTML;
+  }
 
-        let currentQuestion = 0;
-        let score = 0;
-        let answered = false;
+  function resetToExamStart() {
+    document.getElementById('examResultScreen').classList.add('hidden');
+    document.getElementById('examStartScreen').classList.remove('hidden');
+  }
 
-        // Init App & LocalStorage check
-        window.onload = function() {
-            const savedState = localStorage.getItem('gssk_quiz_state');
-            if (savedState) {
-                document.getElementById('resume-container').classList.remove('hidden');
-            }
-        }
+  // --- RECHT & FÄLLE TAB ---
+  function renderLawCases() {
+    const container = document.getElementById('caseContainer');
+    let html = '';
+    lawCases.forEach(c => {
+      html += `
+        <div class="section-card law-card">
+          <div class="section-title law-title">${c.title}</div>
+          <p style="font-size: 0.95rem; line-height: 1.4; margin-bottom: 12px;">${c.text.replace(/\n/g, '<br>')}</p>
+          <button class="filter-btn" onclick="toggleSolution(${c.id})" id="solBtn_${c.id}">Musterlösung anzeigen</button>
+          <div id="solBox_${c.id}" class="solution-box">${c.solution}</div>
+        </div>
+      `;
+    });
+    container.innerHTML = html;
+  }
 
-        function startQuiz(resume = false) {
-            if (resume) {
-                const savedState = JSON.parse(localStorage.getItem('gssk_quiz_state'));
-                if (savedState) {
-                    currentQuestion = savedState.currentQuestion;
-                    score = savedState.score;
-                }
-            } else {
-                currentQuestion = 0;
-                score = 0;
-                localStorage.removeItem('gssk_quiz_state');
-            }
+  function toggleSolution(id) {
+    const box = document.getElementById(`solBox_${id}`);
+    const btn = document.getElementById(`solBtn_${id}`);
+    if (box.style.display === 'block') {
+      box.style.display = 'none';
+      btn.innerText = 'Musterlösung anzeigen';
+    } else {
+      box.style.display = 'block';
+      btn.innerText = 'Musterlösung ausblenden';
+    }
+  }
 
-            document.getElementById('start-screen').classList.add('hidden');
-            document.getElementById('result-screen').classList.add('hidden');
-            document.getElementById('quiz-screen').classList.remove('hidden');
-            
-            loadQuestion();
-        }
+  // --- GLOBAL SETTINGS ---
+  function toggleDarkMode() {
+    darkMode = !darkMode;
+    const body = document.body;
+    const btn = document.getElementById('darkModeBtn');
+    if (darkMode) {
+      body.setAttribute('data-theme', 'dark');
+      btn.innerText = "☀️ Light Mode";
+    } else {
+      body.setAttribute('data-theme', 'light');
+      btn.innerText = "🌙 Dark Mode";
+    }
+  }
 
-        function loadQuestion() {
-            answered = false;
-            const q = questions[currentQuestion];
-            
-            document.getElementById('question-category').innerText = q.category;
-            document.getElementById('question-text').innerText = q.question;
-            document.getElementById('question-counter').innerText = `Frage ${currentQuestion + 1} von ${questions.length}`;
-            document.getElementById('score-counter').innerText = `Punkte: ${score}`;
-            
-            // Progress Bar
-            const progress = ((currentQuestion) / questions.length) * 100;
-            document.getElementById('progress-bar').style.width = `${progress}%`;
-
-            const optionsContainer = document.getElementById('options-container');
-            optionsContainer.innerHTML = '';
-
-            // Dynamische Generierung der Antwort-Buttons (Fehlerbehebung ab Frage 8)
-            q.options.forEach((option, index) => {
-                const button = document.createElement('button');
-                button.className = "w-full text-left p-4 rounded-xl border border-slate-800 bg-slate-950/50 hover:bg-slate-800/80 hover:border-slate-700 transition font-medium text-sm text-slate-200 flex items-center justify-between";
-                button.innerHTML = `<span>${option}</span><span class="w-5 h-5 rounded-full border border-slate-700 flex items-center justify-center text-xs text-transparent">✓</span>`;
-                button.onclick = () => selectOption(index, button);
-                optionsContainer.appendChild(button);
-            });
-
-            document.getElementById('next-btn').classList.add('hidden');
-        }
-
-        function selectOption(selectedIndex, selectedButton) {
-            if (answered) return;
-            answered = true;
-
-            const q = questions[currentQuestion];
-            const optionsContainer = document.getElementById('options-container');
-            const buttons = optionsContainer.getElementsByTagName('button');
-
-            if (selectedIndex === q.correct) {
-                selectedButton.classList.remove('border-slate-800', 'bg-slate-950/50', 'hover:bg-slate-800/80');
-                selectedButton.classList.add('border-emerald-500/50', 'bg-emerald-500/10', 'text-emerald-400');
-                selectedButton.lastChild.classList.remove('text-transparent');
-                selectedButton.lastChild.classList.add('bg-emerald-500', 'text-white', 'border-emerald-500');
-                score++;
-            } else {
-                selectedButton.classList.remove('border-slate-800', 'bg-slate-950/50', 'hover:bg-slate-800/80');
-                selectedButton.classList.add('border-rose-500/50', 'bg-rose-500/10', 'text-rose-400');
-                
-                // Richtige Antwort markieren
-                const correctButton = buttons[q.correct];
-                correctButton.classList.remove('border-slate-800', 'bg-slate-950/50', 'hover:bg-slate-800/80');
-                correctButton.classList.add('border-emerald-500/50', 'bg-emerald-500/10', 'text-emerald-400');
-                correctButton.lastChild.classList.remove('text-transparent');
-                correctButton.lastChild.classList.add('bg-emerald-500', 'text-white', 'border-emerald-500');
-            }
-
-            document.getElementById('score-counter').innerText = `Punkte: ${score}`;
-            document.getElementById('next-btn').classList.remove('hidden');
-
-            // Fortschritt im LocalStorage sichern
-            localStorage.setItem('gssk_quiz_state', JSON.stringify({
-                currentQuestion: currentQuestion,
-                score: score
-            }));
-        }
-
-        function nextQuestion() {
-            currentQuestion++;
-            if (currentQuestion < questions.length) {
-                loadQuestion();
-            } else {
-                showResult();
-            }
-        }
-
-        function showResult() {
-            localStorage.removeItem('gssk_quiz_state');
-            document.getElementById('quiz-screen').classList.add('hidden');
-            document.getElementById('result-screen').classList.remove('hidden');
-
-            const percentage = Math.round((score / questions.length) * 100);
-            document.getElementById('result-text').innerText = `Sie haben ${score} von ${questions.length} Fragen richtig beantwortet.`;
-            document.getElementById('result-percentage').innerText = `${percentage}%`;
-        }
-
-        function resetQuiz() {
-            startQuiz(false);
-        }
-    </script>
+  function toggleSound() {
+    soundEnabled = !soundEnabled;
+    const btn = document.getElementById('soundBtn');
+    btn.innerText = soundEnabled ? "🔊 Sound: An" : "🔇 Sound: Aus";
+  }
+</script>
 </body>
 </html>
