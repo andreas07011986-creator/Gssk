@@ -60,9 +60,11 @@
     .tab-btn.active { background: #0d6efd; color: white; }
     .tab-btn.exam-tab-btn.active { background: #dc3545; color: white; }
     
-    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
     .badge { background: var(--border-color); color: var(--text-color); padding: 4px 10px; border-radius: 15px; font-size: 0.85rem; font-weight: bold; margin-right: 5px; }
     .badge-sub { background: #e7f5ff; color: #1971c2; }
+    .badge-multi { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
+    
     .question-text { font-size: 1.1rem; font-weight: 600; margin: 15px 0; color: var(--text-color); min-height: 50px; }
     .options { display: flex; flex-direction: column; gap: 10px; }
     .btn-option { padding: 12px; border: 2px solid var(--border-color); background: var(--option-bg); color: var(--text-color); border-radius: 8px; text-align: left; cursor: pointer; font-size: 0.95rem; }
@@ -104,15 +106,16 @@
     .filter-btn.active { background: #343a40; color: white; border-color: #343a40; }
     .bookmark-btn { background: none; border: none; font-size: 1.2rem; cursor: pointer; padding: 0; margin-left: 10px; vertical-align: middle; }
     
-    .top-actions { display: flex; gap: 8px; align-items: center; }
+    .top-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
     .icon-top-btn { background: var(--border-color); border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; color: var(--text-color); font-weight: bold; }
 
-    /* NEU: Grid für die Exam-Fragenübersicht */
     .exam-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(36px, 1fr)); gap: 6px; margin: 15px 0; }
     .exam-grid-btn { padding: 8px 4px; border: 1px solid var(--border-color); background: var(--option-bg); color: var(--text-color); border-radius: 4px; cursor: pointer; font-size: 0.85rem; font-weight: bold; text-align: center; }
     .exam-grid-btn.current { border-color: #0d6efd; background: #e7f5ff; }
     .exam-grid-btn.answered { background: #d4edda; border-color: #28a745; color: #155724; }
     .exam-grid-btn.flagged { border-color: #ffc107; background: #fff3cd; color: #856404; }
+
+    .tts-controls { display: flex; gap: 5px; align-items: center; }
   </style>
 </head>
 <body data-theme="light">
@@ -120,7 +123,7 @@
 <div class="app-card">
   
   <div class="exam-selector">
-    <span>🎓 <strong>GSSK Prüfungstrainer</strong></span>
+    <span>🎓 <strong>GSSK Prüfungstrainer (Schwer & Multi-Choice)</strong></span>
     <div class="top-actions">
       <button class="icon-top-btn" onclick="toggleDarkMode()" id="darkModeBtn" title="Dark Mode umschalten">🌙 Dark Mode</button>
       <button class="icon-top-btn" onclick="toggleSound()" id="soundBtn" title="Sound umschalten">🔊 Sound: An</button>
@@ -152,20 +155,33 @@
     <div id="quizContentArea">
       <div class="header">
         <h3 style="margin:0;">Fragenpool <span id="counter" style="font-weight: bold; color: var(--text-muted); font-size: 0.95rem;">Frage 1 von 100</span></h3>
-        <div style="display: flex; align-items: center; gap: 10px;">
+        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
           <span id="quizTimerBox" class="timer-box hidden" style="font-size: 0.9rem; padding: 4px 8px;">45</span>
-          <button class="icon-top-btn" onclick="speakCurrentQuestion()" title="Frage vorlesen">🔊 Vorlesen</button>
+          
+          <!-- TTS Controls (Play / Pause / Stop) -->
+          <div class="tts-controls">
+            <button class="icon-top-btn" onclick="speakCurrentQuestion()" title="Vorlesen starten">▶️ Vorlesen</button>
+            <button class="icon-top-btn" onclick="pauseSpeech()" title="Pause">⏸️</button>
+            <button class="icon-top-btn" onclick="stopSpeech()" title="Stopp">⏹️</button>
+          </div>
+
           <button id="quizBookmarkBtn" class="bookmark-btn" onclick="toggleCurrentBookmark()" title="Frage merken">☆</button>
         </div>
       </div>
       <div>
         <span id="catBadge" class="badge">Kategorie</span>
         <span id="subCatBadge" class="badge badge-sub">Unterkategorie</span>
+        <span id="multiBadge" class="badge badge-multi hidden">⚠️ 2 Antworten wählen!</span>
       </div>
       <div id="question" class="question-text">Frage wird geladen...</div>
       <div id="options" class="options"></div>
+      
+      <div id="multiSubmitContainer" class="hidden" style="margin-top: 15px;">
+        <button class="btn-action" style="width: 100%; background: #28a745;" onclick="submitMultiAnswer()">Antworten einreichen</button>
+      </div>
+
       <div id="explanation" class="explanation-box">
-        <strong>💡 Korrekte Antwort:</strong>
+        <strong>💡 Korrekte Antwort(en):</strong>
         <div id="explanationText" style="margin-top: 5px;"></div>
       </div>
       <div class="controls">
@@ -213,11 +229,15 @@
         </div>
       </div>
 
-      <!-- Fragen-Übersichts-Grid -->
       <div id="examGridContainer" class="exam-grid"></div>
 
       <div id="examQuestion" class="question-text">Prüfungsfrage wird geladen...</div>
       <div id="examOptions" class="options"></div>
+      
+      <div id="examMultiSubmitContainer" class="hidden" style="margin-top: 15px;">
+        <button class="btn-action" style="width: 100%; background: #28a745;" onclick="submitExamMultiAnswer()">Auswahl für diese Frage bestätigen</button>
+      </div>
+
       <div class="controls">
         <button id="examPrevBtn" class="btn-action" onclick="prevExamQuestion()">Zurück</button>
         <button id="examNextBtn" class="btn-action" onclick="nextExamQuestion()">Nächste</button>
@@ -246,25 +266,27 @@
 </div>
 
 <script>
-  // DATENBANK: 100 GSSK-FRAGEN
+  // DATENBANK: 100 GSSK-FRAGEN (Mit schwereren Szenarien & Multiple-Choice / Multi-Correct Kennzeichnung)
+  // isMulti: true bedeutet, exakt die ersten beiden Optionen (Index 0 und 1 in den raw-Daten) sind korrekt.
   const rawGsskPool = [
-    { id: 1, category: "Rechtskunde", subcategory: "StPO § 127 Abs. 1", question: "Wann ist eine vorläufige Festnahme durch privates Sicherheitspersonal zulässig?", options: [ "Auf frischer Tat angetroffen, Fluchtgefahr und Identität kann nicht sofort geklärt werden.", "Ausschließlich nach telefonischer Rücksprache mit der örtlichen Polizeidienststelle.", "Sobald ein begründeter Verdacht vom Vortag gegen eine bestimmte Person vorliegt.", "Zu jeder Tages- und Nachtzeit auf dem gesamten umzäunten Werksgelände." ] },
-    { id: 2, category: "Rechtskunde", subcategory: "StGB § 32", question: "Welche Voraussetzungen müssen für den Rechtfertigungsgrund der Notwehr vorliegen?", options: [ "Ein gegenwärtiger, rechtswidriger Angriff und eine gebotene Verteidigungshandlung.", "Eine vorherige schriftliche Genehmigung durch die zuständige Behörde.", "Gefahr für das eigene Leben im Verlauf der nächsten Stunden.", "Eine ausdrückliche mündliche Aufforderung zur Einstellung des Angriffs." ] },
-    { id: 3, category: "Rechtskunde", subcategory: "BGB § 859", question: "Welche Befugnisse gewährt die Besitzwehr nach § 859 Abs. 1 BGB dem Wachpersonal?", options: [ "Sich gegen verbotene Eigenmacht mit angemessener Gewalt zu wehren.", "Eigenmächtig in fremde Wohnungen einzudringen, um Beweise zu sichern.", "Eine dauerhafte, eigenständige Freiheitsentziehung von Straftätern.", "Ausschließlich die sofortige telefonische Benachrichtigung der Polizei." ] },
-    { id: 4, category: "Rechtskunde", subcategory: "Umgang mit Waffen", question: "Welche Nachweise sind für das Führen einer Schusswaffe im Objektschutz nötig?", options: [ "Bedürfnis, Sachkunde, Zuverlässigkeit, persönliche Eignung und Waffenschein.", "Vollendetes 18. Lebensjahr und eine einfache Anweisung des Schichtleiters.", "Ein privat ausgestellter Jagdschein ohne behördliche Zusätze.", "Eine Mitgliedschaft in einem regionalen Schützenverein." ] },
-    { id: 5, category: "Rechtskunde", subcategory: "Datenschutz (DSGVO)", question: "Was besagt der Zweckbindungsgrundsatz der DSGVO im Betrieb?", options: [ "Daten dürfen nur für festgelegte, eindeutige und legitime Zwecke erhoben werden.", "Personenbezogene Daten müssen grundsätzlich 10 Jahre gespeichert werden.", "Erhobene Daten dürfen frei an externe Dienstleister verkauft werden.", "Jeder Mitarbeiter darf uneingeschränkt alle Firmendaten einsehen." ] },
-    { id: 6, category: "Rechtskunde", subcategory: "StGB § 34", question: "Wann liegt ein rechtfertigender Notstand nach § 34 StGB vor?", options: [ "Gegenwärtige, nicht anders abwendbare Gefahr zur Abwendung eines größeren Schadens.", "Wenn der Vorgesetzte die ausdrückliche Erlaubnis dazu erteilt hat.", "Immer bei Eigentumsdelikten auf dem bewachten Werksgelände.", "Wenn die Polizei nicht erreichbar ist und ein Verdacht besteht." ] },
-    { id: 7, category: "Rechtskunde", subcategory: "BGB § 228", question: "Was besagt der defensive Notstand nach § 228 BGB genau?", options: [ "Einwirkung auf eine Sache, um drohende Gefahr abzuwenden, wenn Schaden nicht unverhältnismäßig ist.", "Das unbeschränkte Recht, jeden Einbrecher körperlich niederzuschlagen.", "Das gesetzliche Recht auf Mietminderung bei starkem Baulärm.", "Die Pflicht zur direkten Schadenersatzzahlung ohne jede Prüfung." ] },
-    { id: 8, category: "Rechtskunde", subcategory: "BGB § 904", question: "Was unterscheidet den aggressiven Notstand (§ 904 BGB) von § 228 BGB?", options: [ "Einwirkung auf eine Sache, von der keine direkte Gefahr ausgeht, zur Notfallabwehr.", "Es betrifft ausschließlich Schusswaffen im dienstlichen Einsatz.", "Es gilt ausschließlich für offizielle Behördenfahrzeuge im Einsatz.", "Es ist im privaten Sicherheitsgewerbe grundsätzlich verboten." ] },
-    { id: 9, category: "Rechtskunde", subcategory: "Gewerberecht", question: "Welche gesetzliche Grundlage regelt das Wach- und Sicherheitsgewerbe primär?", options: [ "Gewerbeordnung (§ 34a GewO) und Bewachungsverordnung (BewachV).", "Das Bürgerliche Gesetzbuch und das Bundesdatenschutzgesetz.", "Das Bundespolizeigesetz und das Strafprozessrecht.", "Das Strafgesetzbuch in Verbindung mit dem Waffengesetz." ] },
-    { id: 10, category: "Rechtskunde", subcategory: "Arbeitsrecht", question: "Welches Gesetz regelt die maximal zulässige Arbeitszeit und Pausen?", options: [ "Das Arbeitszeitgesetz (ArbZG).", "Das Betriebsverfassungsgesetz.", "Das Bürgerliche Gesetzbuch.", "Das Waffengesetz." ] },
-    { id: 11, category: "Rechtskunde", subcategory: "StGB § 123", question: "Wann ist der Tatbestand des Hausfriedensbruchs nach § 123 StGB erfüllt?", options: [ "Unbefugtes Eindringen in fremde geschiedene Besitztümer oder Weigerung auf Aufforderung zu gehen.", "Jedes Betreten eines öffentlichen Supermarktes außerhalb der regulären Öffnungszeiten.", "Das Parken eines Fahrzeugs auf einem fremden, frei zugänglichen Kundenparkplatz.", "Das laute Rufen vor einem umzäunten Werksgelände bei Tag." ] },
-    { id: 12, category: "Rechtskunde", subcategory: "BGB § 823", question: "Wann haftet eine Sicherheitskraft nach § 823 Abs. 1 BGB auf Schadensersatz?", options: [ "Bei vorsätzlicher oder fahrlässiger, rechtswidriger Verletzung von Leben, Körper, Gesundheit oder Eigentum.", "Immer dann, wenn ein Kunde auf dem Firmengelände unzufrieden mit dem Service ist.", "Ausschließlich dann, wenn der Arbeitgeber dies im Arbeitsvertrag ausdrücklich ausschließt.", "Niemals, da privates Wachpersonal unter allgemeiner Amtshilfe steht." ] },
-    { id: 13, category: "Rechtskunde", subcategory: "BGB § 229", question: "Was versteht man unter Selbsthilfe nach § 229 BGB im zivilrechtlichen Bereich?", options: [ "Wegnahme, Zerstörung oder Beschädigung einer Sache bei Fluchtverdacht und Unerreichbarkeit obrigkeitlicher Hilfe.", "Das eigenmächtige Einsperren von Verdächtigen im Keller über das gesamte Wochenende.", "Die sofortige Durchsuchung von Wohnungen ohne richterlichen Beschluss.", "Die Verpflichtung zur sofortigen Selbstjustiz bei geringfügigen Sachbeschädigungen." ] },
+    // Rechtskunde (Multi-Choice & Schwer)
+    { id: 1, isMulti: true, category: "Rechtskunde", subcategory: "StPO § 127 Abs. 1", question: "Welche kumulativen Voraussetzungen müssen für eine rechtmäßige vorläufige Festnahme nach § 127 Abs. 1 StPO durch privates Wachpersonal vorliegen? (Wählen Sie 2 Antworten)", options: [ "Der Betroffene wird auf frischer Tat angetroffen oder verfolgt.", "Es besteht entweder Fluchtgefahr oder die Identität kann nicht sofort festgestellt werden.", "Ausschließlich nach vorheriger schriftlicher Anweisung der Polizei.", "Die Tat muss im Beisein eines vereidigten Staatsanwalts begangen worden sein." ] },
+    { id: 2, isMulti: true, category: "Rechtskunde", subcategory: "StGB § 32", question: "Welche zwei Elemente sind für die Rechtfertigung einer Handlung durch Notwehr (§ 32 StGB) zwingend erforderlich? (Wählen Sie 2 Antworten)", options: [ "Ein gegenwärtiger, rechtswidriger Angriff.", "Eine gebotene (erforderliche und gebotene) Verteidigungshandlung.", "Das Vorliegen einer polizeilichen Genehmigung im Vorfeld.", "Die vorherige schriftliche Androhung von körperlicher Gewalt." ] },
+    { id: 3, category: "Rechtskunde", subcategory: "BGB § 859", question: "Welche Befugnisse gewährt die Besitzwehr nach § 859 Abs. 1 BGB dem Wachpersonal im Objektschutz?", options: [ "Sich gegen verbotene Eigenmacht mit angemessener Gewalt zu wehren.", "Eigenmächtig in fremde Wohnungen einzudringen, um Beweise zu sichern.", "Eine dauerhafte, eigenständige Freiheitsentziehung von Straftätern.", "Ausschließlich die sofortige telefonische Benachrichtigung der Polizei." ] },
+    { id: 4, category: "Rechtskunde", subcategory: "Umgang mit Waffen", question: "Welche Nachweise sind für das Führen einer Schusswaffe im Objektschutz zwingend gesetzlich nötig?", options: [ "Bedürfnis, Sachkunde, Zuverlässigkeit, persönliche Eignung und behördlicher Waffenschein.", "Vollendetes 18. Lebensjahr und eine einfache Anweisung des Schichtleiters.", "Ein privat ausgestellter Jagdschein ohne behördliche Zusätze.", "Eine Mitgliedschaft in einem regionalen Schützenverein." ] },
+    { id: 5, category: "Rechtskunde", subcategory: "Datenschutz (DSGVO)", question: "Was besagen zentrale Grundsätze der DSGVO im Bereich der Sicherheitswirtschaft? (Wählen Sie 2 Antworten)", options: [ "Grundsatz der Datenminimierung (nur soviel wie nötig).", "Zweckbindung der erhobenen personenbezogenen Daten.", "Freier gewerblicher Handel mit Kundendaten ohne Einschränkung.", "Unbeschränkte Einsichtnahme für alle operativen Mitarbeiter." ] },
+    { id: 6, category: "Rechtskunde", subcategory: "StGB § 34", question: "Wann liegt ein rechtfertigender Notstand nach § 34 StGB vor?", options: [ "Gegenwärtige, nicht anders abwendbare Gefahr zur Abwendung eines größeren Schadens an geschützten Rechtsgütern.", "Wenn der Vorgesetzte die ausdrückliche mündliche Erlaubnis dazu erteilt hat.", "Immer bei einfachen Eigentumsdelikten auf dem bewachten Werksgelände.", "Wenn die Polizei nicht erreichbar ist und ein vager Verdacht besteht." ] },
+    { id: 7, category: "Rechtskunde", subcategory: "BGB § 228", question: "Was besagt der defensive Notstand nach § 228 BGB genau?", options: [ "Einwirkung auf eine fremde Sache, von der eine drohende Gefahr ausgeht, wenn der Schaden nicht unverhältnismäßig ist.", "Das unbeschränkte Recht, jeden Einbrecher körperlich niederzuschlagen.", "Das gesetzliche Recht auf Mietminderung bei starkem Baulärm.", "Die Pflicht zur direkten Schadenersatzzahlung ohne jede Prüfung." ] },
+    { id: 8, category: "Rechtskunde", subcategory: "BGB § 904", question: "Was unterscheidet den aggressiven Notstand (§ 904 BGB) von § 228 BGB?", options: [ "Einwirkung auf eine Sache, von der keine direkte Gefahr ausgeht, zur Abwehr einer drohenden Gefahr.", "Es betrifft ausschließlich Schusswaffen im dienstlichen Einsatz.", "Es gilt ausschließlich für offizielle Behördenfahrzeuge im Einsatz.", "Es ist im privaten Sicherheitsgewerbe grundsätzlich verboten." ] },
+    { id: 9, category: "Rechtskunde", subcategory: "Gewerberecht", question: "Welche gesetzlichen Vorschriften regeln das Wach- und Sicherheitsgewerbe in Deutschland primär?", options: [ "Gewerbeordnung (§ 34a GewO) und Bewachungsverordnung (BewachV).", "Das Bürgerliche Gesetzbuch und das Bundesdatenschutzgesetz.", "Das Bundespolizeigesetz und das Strafprozessrecht.", "Das Strafgesetzbuch in Verbindung mit dem Waffengesetz." ] },
+    { id: 10, category: "Rechtskunde", subcategory: "Arbeitsrecht", question: "Welches Gesetz regelt die maximal zulässige Arbeitszeit und zwingende Ruhepausen im Schichtdienst?", options: [ "Das Arbeitszeitgesetz (ArbZG).", "Das Betriebsverfassungsgesetz.", "Das Bürgerliche Gesetzbuch.", "Das Waffengesetz." ] },
+    { id: 11, category: "Rechtskunde", subcategory: "StGB § 123", question: "Wann ist der Tatbestand des Hausfriedensbruchs nach § 123 StGB rechtlich erfüllt?", options: [ "Unbefugtes Eindringen in fremde geschlossene Räume oder Weigerung auf Aufforderung des Berechtigten zu gehen.", "Jedes Betreten eines öffentlichen Supermarktes außerhalb der regulären Öffnungszeiten.", "Das Parken eines Fahrzeugs auf einem fremden, frei zugänglichen Kundenparkplatz.", "Das laute Rufen vor einem umzäunten Werksgelände bei Tag." ] },
+    { id: 12, category: "Rechtskunde", subcategory: "BGB § 823", question: "Wann haftet eine Sicherheitskraft nach § 823 Abs. 1 BGB deliktsrechtlich auf Schadensersatz?", options: [ "Bei vorsätzlicher oder fahrlässiger, rechtswidriger Verletzung von Leben, Körper, Gesundheit oder Eigentum.", "Immer dann, wenn ein Kunde auf dem Firmengelände unzufrieden mit dem Service ist.", "Ausschließlich dann, wenn der Arbeitgeber dies im Arbeitsvertrag ausdrücklich ausschließt.", "Niemals, da privates Wachpersonal unter allgemeiner Amtshilfe steht." ] },
+    { id: 13, category: "Rechtskunde", subcategory: "BGB § 229", question: "Was versteht man unter zivilrechtlicher Selbsthilfe nach § 229 BGB?", options: [ "Wegnahme, Zerstörung oder Beschädigung einer Sache bei Fluchtverdacht und Unerreichbarkeit obrigkeitlicher Hilfe.", "Das eigenmächtige Einsperren von Verdächtigen im Keller über das gesamte Wochenende.", "Die sofortige Durchsuchung von Wohnungen ohne richterlichen Beschluss.", "Die Verpflichtung zur sofortigen Selbstjustiz bei geringfügigen Sachbeschädigungen." ] },
     { id: 14, category: "Rechtskunde", subcategory: "StGB § 223", question: "Wann liegt eine Körperverletzung im Sinne des § 223 StGB vor?", options: [ "Körperliche Misshandlung oder Gesundheitsschädigung einer anderen Person.", "Ausschließlich das Verursachen von dauerhaften Knochenbrüchen durch Schusswaffen.", "Jedes laute Anschreien von Personen im Rahmen einer Personenkontrolle.", "Das absichtliche Verstecken von Firmenschlüsseln." ] },
     { id: 15, category: "Rechtskunde", subcategory: "Waffengesetz", question: "Welche Waffenart ist im deutschen Bewachungsgewerbe generell verboten zu führen?", options: [ "Verbotene Waffen nach Anlage 2 des Waffengesetzes (z.B. Butterflymesser, Totschläger, Faustmesser).", "Jede Art von herkömmlichen Taschenlampen mit hoher Lumen-Leistung.", "Diensthunde der Rasse Deutscher Schäferhund.", "Standardmäßige Teleskopschlagstöcke bei behördlicher Genehmigung." ] },
-    { id: 16, category: "Rechtskunde", subcategory: "StGB § 242", question: "Was ist das wesentliche Merkmal eines Diebstahls nach § 242 StGB?", options: [ "Wegnahme einer fremden, beweglichen Sache in der Absicht, diese rechtswidrig zuzueignen.", "Die gewaltsame Zerstörung von fremdem Eigentum ohne Mitnahme der Gegenstände.", "Die unbefugte Nutzung eines fremden Autos für eine kurze Spritztour (Unbefugte Gebrauchnahme).", "Das heimliche Betreten eines Gebäudes zur Nachtzeit." ] },
-    { id: 17, category: "Rechtskunde", subcategory: "StGB § 243", question: "Wann spricht man von einem besonders schweren Fall des Diebstahls (§ 243 StGB)?", options: [ "Einbruch in ein umschlossenen Raum zur Ausführung der Tat oder Diebstahl von Schutzgegenständen.", "Jeder Diebstahl im Wert von über fünf Euro.", "Wenn der Täter während der Tat ein Mobiltelefon mitführt.", "Wenn der Täter von einem Sicherheitsmitarbeiter beobachtet wurde." ] },
+    { id: 16, category: "Rechtskunde", subcategory: "StGB § 242", question: "Was ist das wesentliche Tatbestandsmerkmal eines Diebstahls nach § 242 StGB?", options: [ "Wegnahme einer fremden, beweglichen Sache in der Absicht, diese rechtswidrig zuzueignen.", "Die gewaltsame Zerstörung von fremdem Eigentum ohne Mitnahme der Gegenstände.", "Die unbefugte Nutzung eines fremden Autos für eine kurze Spritztour (Unbefugte Gebrauchnahme).", "Das heimliche Betreten eines Gebäudes zur Nachtzeit." ] },
+    { id: 17, category: "Rechtskunde", subcategory: "StGB § 243", question: "Wann spricht man von einem besonders schweren Fall des Diebstahls (§ 243 StGB)?", options: [ "Einbruch in einen umschlossenen Raum zur Ausführung der Tat oder Diebstahl von Schutzgegenständen.", "Jeder Diebstahl im Wert von über fünf Euro.", "Wenn der Täter während der Tat ein Mobiltelefon mitführt.", "Wenn der Täter von einem Sicherheitsmitarbeiter beobachtet wurde." ] },
     { id: 18, category: "Rechtskunde", subcategory: "StGB § 249", question: "Wie unterscheidet sich der Raub (§ 249 StGB) vom einfachen Diebstahl?", options: [ "Die Wegnahme erfolgt unter Anwendung von Gewalt gegen eine Person oder durch Drohung mit gegenwärtiger Gefahr.", "Es wird ausschließlich Bargeld in geschlossenen Tresoren entwendet.", "Die Tat findet grundsätzlich nur zur Nachtzeit statt.", "Es sind mindestens drei Täter an der Ausführung beteiligt." ] },
     { id: 19, category: "Rechtskunde", subcategory: "StGB § 303", question: "Welcher Straftatbestand liegt vor, wenn jemand absichtlich eine Schrankenanlage beschädigt?", options: [ "Sachbeschädigung nach § 303 StGB.", "Hausfriedensbruch nach § 123 StGB.", "Unbefugter Gebrauch von Fahrzeugen.", "Gefährlicher Eingriff in den Straßenverkehr." ] },
     { id: 20, category: "Rechtskunde", subcategory: "StGB § 132", question: "Wann macht sich eine Sicherheitskraft wegen Amtsanmaßung (§ 132 StGB) strafbar?", options: [ "Wenn sie sich unbefugt als Amtsträger (z.B. Polizeibeamter) ausgibt oder amtliche Handlungen vornimmt.", "Wenn sie einen ertappten Ladendieb bis zum Eintreffen der Polizei festhält.", "Wenn sie auf dem Werksgelände einen Ausweis kontrolliert.", "Wenn sie einen Platzverweis im Auftrag des Hauseigentümers ausspricht." ] },
@@ -272,9 +294,9 @@
     { id: 22, category: "Rechtskunde", subcategory: "StPO Allgemein", question: "Wer ist im Rahmen einer Straftat die 'Staatsanwaltschaft'?", options: [ "Die Herrin des Ermittlungsverfahrens, zuständig für die Anklageerhebung.", "Das private Sicherheitsunternehmen vor Ort im Werk.", "Das zuständige Amtsgericht bei Urteilsverkündung.", "Die örtliche Handelskammer." ] },
     { id: 23, category: "Rechtskunde", subcategory: "Gewerberecht", question: "Welche Mindestqualifikation wird für Wachleute im Objektschutz in sensiblen Bereichen gefordert?", options: [ "Mindestens die Sachkundeprüfung nach § 34a GewO.", "Ausschließlich eine kurze mündliche Unterweisung durch den Chef.", "Ein abgeschlossenes Jurastudium.", "Eine polizeiliche Grundausbildung." ] },
     { id: 24, category: "Rechtskunde", subcategory: "StGB § 257", question: "Was versteht man unter Begünstigung nach § 257 StGB?", options: [ "Hilfeleistung für einen Vortäter nach der Tat, um ihm die Vorteile der Tat zu sichern.", "Die aktive Mithilfe bei der Planung eines Einbruchs vor der Tat.", "Das Verstecken von gestohlenen Gegenständen vor Begehung des Diebstahls.", "Die Erteilung eines unberechtigten Rabatts im Werksverkauf." ] },
-    { id: 25, category: "Rechtskunde", subcategory: "Arbeitsschutzgesetz", question: "Welche Pflicht hat an Arbeitnehmer laut Arbeitsschutzgesetz bei festgestellten Mängeln?", options: [ "Unverzügliche Meldung von Gefahren und Mängeln an den Vorgesetzten oder die Fachkraft.", "Das sofortige Niederlegen der Arbeit für den Rest des Monats.", "Die eigenständige Reparatur von elektrischen Starkstromanlagen.", "Das Verschweigen des Mangels, um den Betrieb nicht zu belasten." ] },
+    { id: 25, category: "Rechtskunde", subcategory: "Arbeitsschutzgesetz", question: "Welche Pflicht hat ein Arbeitnehmer laut Arbeitsschutzgesetz bei festgestellten Mängeln?", options: [ "Unverzügliche Meldung von Gefahren und Mängeln an den Vorgesetzten oder die Fachkraft für Arbeitssicherheit.", "Das sofortige Niederlegen der Arbeit für den Rest des Monats.", "Die eigenständige Reparatur von elektrischen Starkstromanlagen.", "Das Verschweigen des Mangels, um den Betrieb nicht zu belasten." ] },
 
-    // DIENSTKUNDE (25 Fragen)
+    // DIENSTKUNDE (26-50)
     { id: 26, category: "Dienstkunde", subcategory: "Objekt- und Werkschutz", question: "Was gehört zu den primären Aufgaben im Werkschutz?", options: [ "Schutz von Anlagen, Betriebsmitteln sowie die Verhinderung von Diebstahl und Sabotage.", "Die eigenständige Strafverfolgung von externen Ladendieben im Stadtgebiet.", "Die Erstellung von steuerlichen Bilanzen für das Sicherheitsunternehmen.", "Die Durchführung von straßenverkehrsrechtlichen Geschwindigkeitskontrollen." ] },
     { id: 27, category: "Dienstkunde", subcategory: "Revierdienst", question: "Welches Ziel verfolgt ein unregelmäßiger Revierkontrolldienst?", options: [ "Erhöhung der Entdeckungsgefahr für Täter durch variable Fahr- und Kontrollzeiten.", "Strikte Einhaltung sekundengenauer Pausenzeiten für das Fahrpersonal.", "Ausschließlich Kontrolle von privaten Wohngebäuden nachts.", "Vollständiger Verzicht auf schriftliche Kontrollberichte." ] },
     { id: 28, category: "Dienstkunde", subcategory: "Schutz von Anlagen", question: "Wie verhält sich das Wachpersonal bei der Entdeckung einer offenen Notausgangstür?", options: [ "Sofortige Verschlusskontrolle, Sicherung des Bereichs und Meldung an den Leitstand.", "Die Tür bis zum Schichtwechsel unverschlossen stehen lassen.", "Einen privaten Aushang zur Kennzeichnung anbringen.", "Die Tür dauerhaft von außen verbarrikadieren." ] },
@@ -301,7 +323,7 @@
     { id: 49, category: "Dienstkunde", subcategory: "Schlüsselmanagement", question: "Welches Risiko besteht bei ungesicherter Aufbewahrung von Generalschlüsseln?", options: [ "Unbefugter Zutritt zu allen sensiblen Bereichen des Unternehmens, massives Sicherheitsrisiko.", "Keinerlei Risiko, da Generalschlüssel universell kopiergeschützt sind.", "Automatische Schließung aller Türen im Notfall.", "Erhöhung der Energieeffizienz des Gebäudes." ] },
     { id: 50, category: "Dienstkunde", subcategory: "Werkschutz", question: "Welche Aufgabe hat der Werkschutz bei Verkehrsunfällen auf dem Werksgelände?", options: [ "Absicherung der Unfallstelle, Erste Hilfe leisten, Rettungsdienste einweisen und Unfall dokumentieren.", "Den Unfallort sofort räumen und so tun, als sei nichts passiert.", "Die Unfallbeteiligten vor Ort verhören und sofort ein Urteil sprechen.", "Die Straße eigenhändig mit schwerem Gerät reparieren." ] },
 
-    // GEFAHRENABWEHR UND SICHERHEITSTECHNIK (25 Fragen)
+    // GEFAHRENABWEHR UND SICHERHEITSTECHNIK (51-75)
     { id: 51, category: "Gefahrenabwehr & Technik", subcategory: "Sicherheitstechnik (EMA)", question: "Welche VdS-Klasse wird für Einbruchmeldeanlagen in Hochrisiko-Objekten gefordert?", options: [ "VdS-Klasse C für exponierte Objekte mit hohem Risiko.", "VdS-Klasse A für einfache Wohnbereiche und Büros.", "VdS-Klasse B für standardmäßige Industrieanlagen.", "VdS-Klasse S für reine Schließfachanlagen." ] },
     { id: 52, category: "Gefahrenabwehr & Technik", subcategory: "Sicherheitstechnik (BMA)", question: "Welche Aufgabe erfüllt ein Multisensor-Brandmelder (OT-Melder)?", options: [ "Er kombiniert optische Streulichtmessung mit thermischen Sensoren.", "Er misst ausschließlich den lokalen CO2-Gehalt im Raum.", "Er schaltet im Alarmfall automatisch die Wasserzufuhr ab.", "Er erkennt Schwelbrände durch radioaktive Partikel." ] },
     { id: 53, category: "Gefahrenabwehr & Technik", subcategory: "Zutrittskontrolle", question: "Wie werden biometrische Systeme vor hochauflösenden Fotos geschützt?", options: [ "Durch integrierte Liveness Detection (Lebenderkennung).", "Durch ein zusätzliches Infrarot-Thermometer.", "Durch die gleichzeitige manuelle PIN-Eingabe.", "Durch die visuelle Sichtprüfung des Pförtners." ] },
@@ -328,7 +350,7 @@
     { id: 74, category: "Gefahrenabwehr & Technik", subcategory: "Sicherheitstechnik", question: "Was ist ein Glasbruchmelder?", options: [ "Ein akustischer oder passiver Sensor, der die spezifischen Frequenzen oder Erschütterungen zerbrechenden Glases erkennt.", "Ein Melder, der Rauch bei Fensterscheiben misst.", "Ein Sensor zur Überprüfung der Fensterdichtungen.", "Eine Kamera für die Fensterscheibe." ] },
     { id: 75, category: "Gefahrenabwehr & Technik", subcategory: "Gefahrenabwehr", question: "Welche Pflicht hat der Sicherheitsmitarbeiter bei Ausfall der Brandmeldeanlage (BMA)?", options: [ "Durchführung von dauerhaften Brandsicherheitswachen (Brandpostengängen) nach Vorgabe.", "Sofortige Schließung und Räumung des gesamten Betriebes für mehrere Wochen.", "Keine Maßnahmen ergreifen, da die Anlage ohnehin meistens falsche Alarme liefert.", "Die Reparatur selbst mit Werkzeug durchführen." ] },
 
-    // SICHERHEITS- UND SERVICEORIENTIERTES VERHALTEN (25 Fragen)
+    // SICHERHEITS- UND SERVICEORIENTIERTES VERHALTEN (76-100)
     { id: 76, category: "Serviceorientiertes Verhalten", subcategory: "Situationsbewältigung", question: "Wie reagiert man professionell auf eine aggressive Person an der Pforte?", options: [ "Ruhig, sachlich, bestimmt bleiben, Distanz wahren und Deeskalation suchen.", "Sofort körperliche Gewalt anwenden, um Dominanz zu zeigen.", "Die Person beschimpfen und des Platzes verweisen.", "In Panik geraten und den Raum verlassen." ] },
     { id: 77, category: "Serviceorientiertes Verhalten", subcategory: "Kommunikation & Funkverkehr", question: "Welche Grundregel gilt für den professionellen BOS- oder Werksfunkverkehr?", options: [ "Kurz, präzise, klar und verständlich sprechen; keine privaten Gespräche.", "Lange, ausführliche Geschichten zur Unterhaltung erzählen.", "Ständig die Frequenz wechseln, um Abhörsicherheit zu garantieren.", "Nur flüstern, damit niemand mithört." ] },
     { id: 78, category: "Serviceorientiertes Verhalten", subcategory: "Kundenorientierung", question: "Welche Rolle nimmt der Sicherheitsmitarbeiter im Empfangsdienst ein?", options: [ "Visitenkarte des Unternehmens: freundlich, kompetent, hilfsbereit und sicherheitsbewusst.", "Ausschließlich ein unnahbarer Kontrolleur ohne Kundenkontakt.", "Ein technischer Berater für IT-Infrastruktur.", "Ein persönlicher Chauffeur für die Geschäftsführung." ] },
@@ -372,7 +394,7 @@
 
   // App State & Persistence
   let bookmarkedIds = JSON.parse(localStorage.getItem('gssk_bookmarks') || '[]');
-  let userStats = JSON.parse(localStorage.getItem('gssk_stats') || '{}'); // { qId: { correct: X, total: Y } }
+  let userStats = JSON.parse(localStorage.getItem('gssk_stats') || '{}');
   
   let currentQuizIndex = 0;
   let quizPool = [];
@@ -396,7 +418,9 @@
   let examTimerInterval = null;
   let examTimeRemaining = 2700;
 
-  // Web Audio API Sound Generator
+  // TTS State
+  let currentUtterance = null;
+
   function playSound(type) {
     if (!soundEnabled) return;
     try {
@@ -407,14 +431,14 @@
       gain.connect(audioCtx.destination);
 
       if (type === 'correct') {
-        osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5
-        osc.frequency.setValueAtTime(880, audioCtx.currentTime + 0.1); // A5
+        osc.frequency.setValueAtTime(587.33, audioCtx.currentTime);
+        osc.frequency.setValueAtTime(880, audioCtx.currentTime + 0.1);
         gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
         osc.start();
         osc.stop(audioCtx.currentTime + 0.3);
       } else {
-        osc.frequency.setValueAtTime(220, audioCtx.currentTime); // A3
+        osc.frequency.setValueAtTime(220, audioCtx.currentTime);
         osc.frequency.setValueAtTime(150, audioCtx.currentTime + 0.15);
         gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
@@ -451,6 +475,41 @@
     return arr;
   }
 
+  // TTS Funktionen mit Play / Pause / Stop
+  function speakCurrentQuestion() {
+    if (!('speechSynthesis' in window)) {
+      alert("Dein Browser unterstützt keine Sprachausgabe.");
+      return;
+    }
+    window.speechSynthesis.cancel();
+    const q = quizPool[currentQuizIndex];
+    let textToSpeak = `Frage: ${q.question}. `;
+    if (q.isMulti) textToSpeak += "Hinweis: Bitte wählen Sie zwei richtige Antworten. ";
+    textToSpeak += "Antwortmöglichkeiten: ";
+    q.options.forEach((opt, idx) => {
+      textToSpeak += `Option ${idx + 1}: ${opt}. `;
+    });
+    currentUtterance = new SpeechSynthesisUtterance(textToSpeak);
+    currentUtterance.lang = 'de-DE';
+    window.speechSynthesis.speak(currentUtterance);
+  }
+
+  function pauseSpeech() {
+    if ('speechSynthesis' in window) {
+      if (window.speechSynthesis.speaking && !window.speechSynthesis.paused) {
+        window.speechSynthesis.pause();
+      } else if (window.speechSynthesis.paused) {
+        window.speechSynthesis.resume();
+      }
+    }
+  }
+
+  function stopSpeech() {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
+  }
+
   window.onload = function() {
     const savedTheme = localStorage.getItem('gssk_theme') || 'light';
     if (savedTheme === 'dark') {
@@ -462,6 +521,7 @@
   };
 
   function switchTab(tabName) {
+    stopSpeech();
     document.getElementById('quizTab').classList.add('hidden');
     document.getElementById('realExamTab').classList.add('hidden');
     document.getElementById('lawTab').classList.add('hidden');
@@ -484,11 +544,16 @@
 
   // ================= QUIZ LOGIC =================
   function initQuiz() {
+    stopSpeech();
     let basePool = rawGsskPool.map(q => {
       const originalOptions = [...q.options];
-      const correctText = originalOptions[0];
+      // Bei Multi-Fragen sind die ersten 2 Optionen (Index 0 und 1) korrekt.
+      // Wir behalten die Referenz, welche Texte korrekt sind.
+      let correctTexts = q.isMulti ? [originalOptions[0], originalOptions[1]] : [originalOptions[0]];
+      
+      // Mische die Optionen durch
       const shuffledOpts = shuffleArray(originalOptions);
-      return { ...q, options: shuffledOpts, correctOption: correctText };
+      return { ...q, options: shuffledOpts, correctTexts: correctTexts };
     });
 
     quizPool = basePool.filter(q => {
@@ -616,23 +681,10 @@
     }
   }
 
-  function speakCurrentQuestion() {
-    if (!('speechSynthesis' in window)) {
-      alert("Dein Browser unterstützt keine Sprachausgabe.");
-      return;
-    }
-    window.speechSynthesis.cancel();
-    const q = quizPool[currentQuizIndex];
-    let textToSpeak = `Frage: ${q.question}. Antwortmöglichkeiten: `;
-    q.options.forEach((opt, idx) => {
-      textToSpeak += `Option ${idx + 1}: ${opt}. `;
-    });
-    const utterance = new SpeechSynthesisUtterance(textToSpeak);
-    utterance.lang = 'de-DE';
-    window.speechSynthesis.speak(utterance);
-  }
+  let selectedMultiOptions = [];
 
   function loadQuizQuestion() {
+    stopSpeech();
     if (singleQuestionTimer) clearInterval(singleQuestionTimer);
 
     if (currentQuizIndex >= quizPool.length) {
@@ -640,11 +692,24 @@
       return;
     }
     const q = quizPool[currentQuizIndex];
+    selectedMultiOptions = [];
+
     document.getElementById('counter').innerText = `Frage ${currentQuizIndex + 1} von ${quizPool.length}`;
     document.getElementById('catBadge').innerText = q.category;
     document.getElementById('subCatBadge').innerText = q.subcategory;
     document.getElementById('question').innerText = q.question;
     
+    const multiBadge = document.getElementById('multiBadge');
+    const multiSubmitContainer = document.getElementById('multiSubmitContainer');
+    
+    if (q.isMulti) {
+      multiBadge.classList.remove('hidden');
+      multiSubmitContainer.classList.remove('hidden');
+    } else {
+      multiBadge.classList.add('hidden');
+      multiSubmitContainer.classList.add('hidden');
+    }
+
     updateBookmarkIcon(q.id);
 
     const optionsDiv = document.getElementById('options');
@@ -657,7 +722,12 @@
       const btn = document.createElement('button');
       btn.className = 'btn-option';
       btn.innerText = opt;
-      btn.onclick = () => selectQuizAnswer(btn, opt, q.correctOption);
+      
+      if (q.isMulti) {
+        btn.onclick = () => toggleMultiOption(btn, opt);
+      } else {
+        btn.onclick = () => selectQuizAnswerSingle(btn, opt, q.correctTexts[0]);
+      }
       optionsDiv.appendChild(btn);
     });
 
@@ -674,15 +744,69 @@
           const allBtns = optionsDiv.getElementsByTagName('button');
           for(let b of allBtns) {
             b.disabled = true;
-            if(b.innerText === q.correctOption) b.classList.add('correct');
+            if(q.correctTexts.includes(b.innerText)) b.classList.add('correct');
           }
           recordAnswerStats(q.id, false);
           explanationBox.style.display = 'block';
-          document.getElementById('explanationText').innerText = "⏱️ Zeit abgelaufen! " + q.correctOption;
+          document.getElementById('explanationText').innerText = "⏱️ Zeit abgelaufen! Richtige Antworten: " + q.correctTexts.join(" | ");
           playSound('wrong');
         }
       }, 1000);
     }
+  }
+
+  function toggleMultiOption(btn, optText) {
+    if (btn.disabled) return;
+    const index = selectedMultiOptions.indexOf(optText);
+    if (index > -1) {
+      selectedMultiOptions.splice(index, 1);
+      btn.classList.remove('selected');
+    } else {
+      if (selectedMultiOptions.length >= 2) {
+        alert("Du kannst maximal 2 Antworten auswählen.");
+        return;
+      }
+      selectedMultiOptions.push(optText);
+      btn.classList.add('selected');
+    }
+  }
+
+  function submitMultiAnswer() {
+    if (selectedMultiOptions.length !== 2) {
+      alert("Bitte wähle exakt 2 Antworten aus!");
+      return;
+    }
+    if (singleQuestionTimer) clearInterval(singleQuestionTimer);
+
+    const q = quizPool[currentQuizIndex];
+    const optionsDiv = document.getElementById('options');
+    const allBtns = optionsDiv.getElementsByTagName('button');
+
+    // Prüfen ob beide gewählten Optionen in correctTexts enthalten sind
+    let isCorrect = selectedMultiOptions.length === 2 && 
+                    q.correctTexts.includes(selectedMultiOptions[0]) && 
+                    q.correctTexts.includes(selectedMultiOptions[1]);
+
+    recordAnswerStats(q.id, isCorrect);
+
+    for(let b of allBtns) {
+      b.disabled = true;
+      if(q.correctTexts.includes(b.innerText)) {
+        b.classList.add('correct');
+      } else if (selectedMultiOptions.includes(b.innerText) && !q.correctTexts.includes(b.innerText)) {
+        b.classList.add('wrong');
+      }
+    }
+
+    if (isCorrect) playSound('correct');
+    else playSound('wrong');
+
+    userQuizAnswers[currentQuizIndex] = { category: q.category, correct: isCorrect };
+
+    const explanationBox = document.getElementById('explanation');
+    document.getElementById('explanationText').innerText = q.correctTexts.join(" und ");
+    explanationBox.style.display = 'block';
+    document.getElementById('multiSubmitContainer').classList.add('hidden');
   }
 
   function recordAnswerStats(qId, isCorrect) {
@@ -692,7 +816,7 @@
     localStorage.setItem('gssk_stats', JSON.stringify(userStats));
   }
 
-  function selectQuizAnswer(buttonElem, selectedOpt, correctOpt) {
+  function selectQuizAnswerSingle(buttonElem, selectedOpt, correctOpt) {
     if (singleQuestionTimer) clearInterval(singleQuestionTimer);
 
     const q = quizPool[currentQuizIndex];
@@ -761,6 +885,8 @@
   }
 
   // ================= EXAM SIMULATION =================
+  let examSelectedMultiOptions = [];
+
   function startRealExam() {
     let selectedCat = document.getElementById('examCategorySelect').value;
     let sourcePool = rawGsskPool;
@@ -770,9 +896,9 @@
 
     let tempPool = sourcePool.map(q => {
       const originalOptions = [...q.options];
-      const correctText = originalOptions[0];
+      let correctTexts = q.isMulti ? [originalOptions[0], originalOptions[1]] : [originalOptions[0]];
       const shuffledOpts = shuffleArray(originalOptions);
-      return { ...q, options: shuffledOpts, correctOption: correctText };
+      return { ...q, options: shuffledOpts, correctTexts: correctTexts };
     });
 
     examPool = shuffleArray(tempPool).slice(0, 30);
@@ -846,19 +972,61 @@
     const optionsDiv = document.getElementById('examOptions');
     optionsDiv.innerHTML = '';
 
+    examSelectedMultiOptions = userExamAnswers[currentExamIndex] || (q.isMulti ? [] : null);
+
+    const examMultiSubmitContainer = document.getElementById('examMultiSubmitContainer');
+    if (q.isMulti) {
+      examMultiSubmitContainer.classList.remove('hidden');
+    } else {
+      examMultiSubmitContainer.classList.add('hidden');
+    }
+
     q.options.forEach(opt => {
       const btn = document.createElement('button');
       btn.className = 'btn-option';
       btn.innerText = opt;
-      if(userExamAnswers[currentExamIndex] === opt) btn.classList.add('selected');
-      btn.onclick = () => {
-        userExamAnswers[currentExamIndex] = opt;
-        loadExamQuestion();
-      };
+
+      if (q.isMulti) {
+        if (Array.isArray(examSelectedMultiOptions) && examSelectedMultiOptions.includes(opt)) {
+          btn.classList.add('selected');
+        }
+        btn.onclick = () => {
+          if (!Array.isArray(examSelectedMultiOptions)) examSelectedMultiOptions = [];
+          const idx = examSelectedMultiOptions.indexOf(opt);
+          if (idx > -1) {
+            examSelectedMultiOptions.splice(idx, 1);
+            btn.classList.remove('selected');
+          } else {
+            if (examSelectedMultiOptions.length >= 2) {
+              alert("Maximal 2 Antworten wählbar.");
+              return;
+            }
+            examSelectedMultiOptions.push(opt);
+            btn.classList.add('selected');
+          }
+        };
+      } else {
+        if(userExamAnswers[currentExamIndex] === opt) btn.classList.add('selected');
+        btn.onclick = () => {
+          userExamAnswers[currentExamIndex] = opt;
+          loadExamQuestion();
+        };
+      }
       optionsDiv.appendChild(btn);
     });
 
     document.getElementById('examPrevBtn').disabled = (currentExamIndex === 0);
+  }
+
+  function submitExamMultiAnswer() {
+    const q = examPool[currentExamIndex];
+    if (!Array.isArray(examSelectedMultiOptions) || examSelectedMultiOptions.length !== 2) {
+      alert("Bitte wähle genau 2 Antworten aus!");
+      return;
+    }
+    userExamAnswers[currentExamIndex] = [...examSelectedMultiOptions];
+    alert("Antworten gespeichert.");
+    renderExamGrid();
   }
 
   function nextExamQuestion() {
@@ -904,15 +1072,30 @@
     let reviewListHtml = '';
 
     examPool.forEach((q, idx) => {
-      let userAns = userExamAnswers[idx] || "Keine Antwort";
-      let isCorrect = (userAns === q.correctOption);
+      let userAns = userExamAnswers[idx];
+      let isCorrect = false;
+
+      if (q.isMulti) {
+        if (Array.isArray(userAns) && userAns.length === 2 && 
+            q.correctTexts.includes(userAns[0]) && q.correctTexts.includes(userAns[1])) {
+          isCorrect = true;
+        }
+      } else {
+        if (userAns === q.correctTexts[0]) {
+          isCorrect = true;
+        }
+      }
+
       if(isCorrect) correctCount++;
+
+      let formattedUserAns = Array.isArray(userAns) ? userAns.join(", ") : (userAns || "Keine Antwort");
+      let formattedCorrect = q.correctTexts.join(" und ");
 
       reviewListHtml += `
         <div style="background: ${isCorrect ? 'rgba(40, 167, 69, 0.1)' : 'rgba(220, 53, 69, 0.1)'}; border: 1px solid ${isCorrect ? '#28a745' : '#dc3545'}; margin-bottom: 10px; padding: 10px; border-radius: 6px;">
           <strong>Frage ${idx + 1}:</strong> ${q.question}<br>
-          <span style="color: ${isCorrect ? '#28a745' : '#dc3545'};">Deine Antwort: ${userAns}</span><br>
-          ${!isCorrect ? `<strong>Richtige Antwort:</strong> ${q.correctOption}` : ''}
+          <span style="color: ${isCorrect ? '#28a745' : '#dc3545'};">Deine Antwort: ${formattedUserAns}</span><br>
+          ${!isCorrect ? `<strong>Richtige Antwort(en):</strong> ${formattedCorrect}` : ''}
         </div>
       `;
     });
@@ -971,7 +1154,6 @@
     box.style.display = isHidden ? 'block' : 'none';
 
     if (isHidden) {
-      // Live Keyword Check
       const userText = document.getElementById(`caseText_${index}`).value.toLowerCase();
       let keywords = ["§ 32", "notwehr", "§ 127", "festnahme", "§ 34", "notstand", "hausrecht", "§ 903", "§ 123", "hausfriedensbruch", "sachbeschädigung", "§ 303"];
       let foundKeywords = keywords.filter(kw => userText.includes(kw));
