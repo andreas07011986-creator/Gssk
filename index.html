@@ -46,10 +46,11 @@
     
     .explanation-box { margin-top: 15px; padding: 12px; background: #e8f4f8; border-left: 4px solid #17a2b8; display: none; }
     
-    .controls { display: flex; justify-content: space-between; margin-top: 20px; }
+    .controls { display: flex; justify-content: space-between; margin-top: 20px; align-items: center; }
     .btn-action { padding: 10px 18px; border: none; background: #0d6efd; color: white; border-radius: 6px; cursor: pointer; font-size: 0.95rem; }
     .btn-action:disabled { background: #ccc; cursor: not-allowed; }
     .btn-danger { background: #dc3545; }
+    .btn-secondary { background: #6c757d; }
     
     .section-card { background: #f8f9fa; border: 1px solid #e9ecef; border-left: 5px solid #0d6efd; padding: 15px; margin-bottom: 15px; border-radius: 6px; }
     .section-title { font-weight: bold; color: #0d6efd; margin-bottom: 8px; font-size: 1.05rem; }
@@ -67,12 +68,10 @@
     .timer-box { font-size: 1.1rem; font-weight: bold; color: #dc3545; background: #f8d7da; padding: 6px 12px; border-radius: 6px; border: 1px solid #f5c6cb; }
     .result-card { text-align: center; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
     .result-pass { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-    .result-fail { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
     .hidden { display: none !important; }
 
     .review-item { padding: 10px; margin-bottom: 10px; border-radius: 6px; border-left: 4px solid; }
     .review-correct { background: #e6f4ea; border-color: #34a853; }
-    .review-wrong { background: #fce8e6; border-color: #ea4335; }
   </style>
 </head>
 <body>
@@ -92,23 +91,34 @@
 
   <!-- QUIZ TAB -->
   <div id="quizTab">
-    <div class="header">
-      <h3 style="margin:0;">Original IHK-Fragenpool (100 Fragen)</h3>
-      <span id="counter" style="font-weight: bold; color: #6c757d;">Frage 1</span>
+    <div id="quizContentArea">
+      <div class="header">
+        <h3 style="margin:0;">Original IHK-Fragenpool (100 Fragen)</h3>
+        <span id="counter" style="font-weight: bold; color: #6c757d;">Frage 1</span>
+      </div>
+      <div>
+        <span id="catBadge" class="badge">Kategorie</span>
+        <span id="subCatBadge" class="badge badge-sub">Unterkategorie</span>
+      </div>
+      <div id="question" class="question-text">Frage wird geladen...</div>
+      <div id="options" class="options"></div>
+      <div id="explanation" class="explanation-box">
+        <strong>💡 Korrekte Antwort:</strong>
+        <div id="explanationText" style="margin-top: 5px;"></div>
+      </div>
+      <div class="controls">
+        <button class="btn-action btn-secondary" onclick="restartQuiz()">🔄 Quiz neu starten</button>
+        <button id="nextBtn" class="btn-action" onclick="nextQuestion()">Nächste Frage</button>
+      </div>
     </div>
-    <div>
-      <span id="catBadge" class="badge">Kategorie</span>
-      <span id="subCatBadge" class="badge badge-sub">Unterkategorie</span>
-    </div>
-    <div id="question" class="question-text">Frage wird geladen...</div>
-    <div id="options" class="options"></div>
-    <div id="explanation" class="explanation-box">
-      <strong>💡 Korrekte Antwort:</strong>
-      <div id="explanationText" style="margin-top: 5px;"></div>
-    </div>
-    <div class="controls">
-      <button class="btn-action" style="visibility: hidden;">Zurück</button>
-      <button id="nextBtn" class="btn-action" onclick="nextQuestion()">Nächste Frage</button>
+
+    <!-- QUIZ FINISH SCREEN -->
+    <div id="quizFinishedScreen" class="hidden" style="text-align: center; padding: 30px 10px;">
+      <h2>🏆 Geschafft!</h2>
+      <p style="color: #555; font-size: 1.1rem; margin-bottom: 20px;">
+        Sie haben alle 100 Fragen des Quiz-Modus durchgearbeitet.
+      </p>
+      <button class="btn-action" style="font-size: 1.1rem; padding: 12px 25px;" onclick="restartQuiz()">🔄 Quiz von vorne beginnen</button>
     </div>
   </div>
 
@@ -159,7 +169,6 @@
 <script>
   // =========================================================================
   // DATENBANK: 100 GSSK IHK-PRÜFUNGSFRAGEN
-  // (Im Rohdaten-Array ist index [0] immer die korrekte Antwort)
   // =========================================================================
   const rawGsskPool = [
     { category: "Recht", subcategory: "StPO § 127 Abs. 1", question: "Wann ist eine vorläufige Festnahme nach § 127 Abs. 1 StPO durch privates Sicherheitspersonal zulässig?", options: [ "Wenn eine Person auf frischer Tat angetroffen wird, Fluchtgefahr vorliegt und die Identität nicht sofort festgestellt werden kann.", "Ausschließlich dann, wenn die Polizei telefonisch zustimmt.", "Sobald ein Verdacht vom Vortag vorliegt.", "Zu jeder Zeit auf dem Werksgelände." ] },
@@ -265,26 +274,29 @@
     { category: "Wirtschaft", subcategory: "Unternehmen", question: "Was ist ein Asset Protection Plan?", options: [ "Ein systematischer Plan zum Schutz von materiellen und immateriellen Werten (Assets) eines Unternehmens.", "Ein Finanzplan für Steuern.", "Ein Urlaubsplan für Mitarbeiter.", "Ein Einkaufsplan für Büromaterial." ] }
   ];
 
-  // =========================================================================
-  // AUTOMATISCHES MISCHEN DER ANTWORTEN BEIM LADEN
-  // =========================================================================
-  let gssk100Pool = rawGsskPool.map(item => {
-    let optionsCopy = [...item.options];
-    let correctText = optionsCopy[0];
-    
-    for (let i = optionsCopy.length - 1; i > 0; i--) {
-      let j = Math.floor(Math.random() * (i + 1));
-      [optionsCopy[i], optionsCopy[j]] = [optionsCopy[j], optionsCopy[i]];
-    }
-    
-    return {
-      category: item.category,
-      subcategory: item.subcategory,
-      question: item.question,
-      options: optionsCopy,
-      correct: correctText
-    };
-  });
+  // Dynamischer Pool mit gemischten Antworten
+  let gssk100Pool = [];
+  let currentQuizIndex = 0;
+
+  function initQuizPool() {
+    gssk100Pool = rawGsskPool.map(item => {
+      let optionsCopy = [...item.options];
+      let correctText = optionsCopy[0];
+      
+      for (let i = optionsCopy.length - 1; i > 0; i--) {
+        let j = Math.floor(Math.random() * (i + 1));
+        [optionsCopy[i], optionsCopy[j]] = [optionsCopy[j], optionsCopy[i]];
+      }
+      
+      return {
+        category: item.category,
+        subcategory: item.subcategory,
+        question: item.question,
+        options: optionsCopy,
+        correct: correctText
+      };
+    });
+  }
 
   // 10 Rechtliche Praxisfälle im Gutachtenstil
   const lawCases = [
@@ -299,9 +311,6 @@
     { title: "Fall 9: Vorläufige Festnahme ohne Fluchtgefahr", desc: "Ein bekannter Mitarbeiter T verlässt das Werk. Wachmann W vermutet Diebstahl, hält T fest, obwohl T seinen Ausweis zeigt und fest im Unternehmen verwurzelt ist.", task: "War die Festnahme nach § 127 StPO rechtmäßig?", solution: "<strong>Unrechtmäßig:</strong> Eine Voraussetzung des § 127 Abs. 1 StPO fehlt: Die Identität stand sofort fest und es lag keine Fluchtgefahr vor. Somit ist die Freiheitsentziehung rechtswidrig (Freiheitsberaubung § 239 StGB)." },
     { title: "Fall 10: Einsatz einer nicht zugelassenen Waffe", desc: "Ein Sicherheitsmitarbeiter führt im Objektschutz eigenmächtig eine verbotene Schusswaffe (Kurzwaffe ohne behördlichen Waffenschein und Waffentrageerlaubnis) mit sich.", task: "Welche Gesetze wurden hier verletzt?", solution: "<strong>Verstöße:</strong> Verstoß gegen das Waffengesetz (WaffG) – Führen einer Schusswaffe ohne Waffenschein sowie Verstoß gegen die Bewachungsverordnung (§ 34a GewO / waffenrechtliche Zuverlässigkeit und behördliche Erlaubnisse)." }
   ];
-
-  // Quiz State
-  let currentQuizIndex = 0;
 
   // Real Exam State
   let examQuestions = [];
@@ -323,7 +332,6 @@
     if (tabName === 'quiz') {
       document.getElementById('quizTab').classList.remove('hidden');
       document.getElementById('tabQuizBtn').classList.add('active');
-      loadQuizQuestion();
     } else if (tabName === 'realExam') {
       document.getElementById('realExamTab').classList.remove('hidden');
       document.getElementById('tabRealExamBtn').classList.add('active');
@@ -373,7 +381,20 @@
   }
 
   function nextQuestion() {
-    currentQuizIndex = (currentQuizIndex + 1) % gssk100Pool.length;
+    currentQuizIndex++;
+    if (currentQuizIndex >= gssk100Pool.length) {
+      document.getElementById('quizContentArea').classList.add('hidden');
+      document.getElementById('quizFinishedScreen').classList.remove('hidden');
+    } else {
+      loadQuizQuestion();
+    }
+  }
+
+  function restartQuiz() {
+    initQuizPool();
+    currentQuizIndex = 0;
+    document.getElementById('quizFinishedScreen').classList.add('hidden');
+    document.getElementById('quizContentArea').classList.remove('hidden');
     loadQuizQuestion();
   }
 
@@ -524,7 +545,8 @@
     box.style.display = box.style.display === 'block' ? 'none' : 'block';
   }
 
-  // Initialize first view
+  // Initialisierung beim Start der App
+  initQuizPool();
   loadQuizQuestion();
 </script>
 
