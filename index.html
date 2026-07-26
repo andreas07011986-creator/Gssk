@@ -295,6 +295,7 @@ body.setAttribute('data-theme', 'dark');
 document.getElementById('darkModeBtn').textContent = "☀️ Light Mode";  
 }  
 }  
+
 // VOLLSTÄNDIGER FRAGENPOOL (100 anspruchsvolle, rechtlich vertiefte GSSK-Fragen mit komplexen Distraktoren)  
 const rawGsskPool = [  
 // Rechtskunde (1-25)  
@@ -320,7 +321,7 @@ options: [
 "D) Die Maßnahme ist über den rechtfertigenden Notstand nach § 34 StGB gedeckt, da der Schutz von Betriebseigentum schwerer wiegt als die körperliche Unversehrtheit des Eindringlings."  
 ],  
 correct: 1,  
-explanation: "Da der Wachmann keinerlei aktive Tathandlung (Gewalt) vorgenommen hat, fehlt es an einer tatbestandsmäßigen Körperverletzung durch ihn. Ein bloßes Auffordern begründet keinen haftungsrechtlichen oder strafrechtlichen Kausalzusammenhang für den Sturz."  
+explanation: "Da the Wachmann keinerlei aktive Tathandlung (Gewalt) vorgenommen hat, fehlt es an einer tatbestandsmäßigen Körperverletzung durch ihn. Ein bloßes Auffordern begründet keinen haftungsrechtlichen oder strafrechtlichen Kausalzusammenhang für den Sturz."  
 },  
 {  
 id: 3, isMulti: true, category: "Rechtskunde", subcategory: "StGB § 34 - Rechtfertigender Notstand",  
@@ -445,7 +446,7 @@ explanation: "Das Wachbuch ist ein offizielles Dokument des Objektschutzes. Es d
 },  
 {  
 id: 28, isMulti: true, category: "Dienstkunde", subcategory: "Kontrollgang & Streifendienst",  
-question: "Worauf hat an Sicherheitsmitarbeiter während eines präventiven Kontrollgangs in einem Industrieobjekt besonders zu achten?",  
+question: "Worauf hat ein Sicherheitsmitarbeiter während eines präventiven Kontrollgangs in einem Industrieobjekt besonders zu achten?",  
 options: [  
 "A) Auf intakte Verschlüsse von Türen, Fenstern, Toren und Notausgängen.",  
 "B) Auf Anzeichen von Brandgefahren (z.B. Rauchentwicklung, defekte Elektrogeräte, ausgetretene Chemikalien).",  
@@ -555,6 +556,7 @@ correct: [0, 1, 3],
 explanation: "KSchG, fristlose Kündigung nach § 626 BGB und Jugendarbeitsschutz sind klassische arbeitsrechtliche Grundlagen. Notarielle Beglaubigungen durch den Bundeskanzler sind hanebüchener Unsinn."  
 }  
 ];  
+
 for (let i = rawGsskPool.length + 1; i <= 100; i++) {  
 let cat = i <= 25 ? "Rechtskunde" : (i <= 50 ? "Dienstkunde" : (i <= 75 ? "Gefahrenabwehr & Technik" : (i <= 90 ? "Serviceorientiertes Verhalten" : "Wirtschafts- und Sozialkunde")));  
 rawGsskPool.push({  
@@ -573,6 +575,7 @@ correct: (i % 3 === 0) ? [0, 2] : 0,
 explanation: `Musterlösung zu Frage ${i}: Option A und C spiegeln das professionelle, rechtskonforme Handeln eines qualifizierten Sicherheitsmitarbeiters wider. Eigenmächtiges Fehlverhalten oder übermäßige Härte sind unzulässig.`  
 });  
 }  
+
 let gsskQuestions = [...rawGsskPool];  
 let currentQuizIndex = 0;  
 let userQuizAnswers = {};  
@@ -584,6 +587,7 @@ let quizTimer = null;
 let quizTimeLeft = 45;  
 let timerModeActive = false;  
 let synth = window.speechSynthesis;  
+
 function speakCurrentQuestion() {  
 if (!synth) return;  
 synth.cancel();  
@@ -598,6 +602,7 @@ synth.speak(utterThis);
 }  
 function pauseSpeech() { if (synth) synth.pause(); }  
 function stopSpeech() { if (synth) synth.cancel(); }  
+
 function switchTab(tabName) {  
 stopSpeech();  
 document.getElementById('quizTab').classList.add('hidden');  
@@ -609,8 +614,6 @@ document.getElementById('tabLawBtn').classList.remove('active');
 if (tabName === 'quiz') {  
 document.getElementById('quizTab').classList.remove('hidden');  
 document.getElementById('tabQuizBtn').classList.add('active');  
-// WICHTIG: Hier wird das Quiz NICHT komplett zurückgesetzt, sondern nur sichergestellt,  
-// dass die Ansicht korrekt geladen ist (falls man aus dem Beendet-Bildschirm kam).  
 const finishedScreen = document.getElementById('quizFinishedScreen');  
 const container = document.getElementById('quizContentArea');  
 if (finishedScreen.classList.contains('hidden') && currentQuizIndex < filteredQuestions.length) {  
@@ -625,6 +628,7 @@ document.getElementById('tabLawBtn').classList.add('active');
 renderLawCases();  
 }  
 }  
+
 function filterQuizQuestions() {  
 const query = document.getElementById('quizSearchInput').value.toLowerCase();  
 filteredQuestions = gsskQuestions.filter(q => {  
@@ -644,6 +648,7 @@ return true;
 currentQuizIndex = 0;  
 renderQuizQuestion();  
 }  
+
 function toggleBookmarkFilter() {  
 activeFilter = activeFilter === 'bookmarks' ? 'all' : 'bookmarks';  
 document.getElementById('filterBookmarkBtn').classList.toggle('active', activeFilter === 'bookmarks');  
@@ -659,6 +664,7 @@ activeFilter = activeFilter === 'mastered' ? 'all' : 'mastered';
 document.getElementById('filterMasteredBtn').classList.toggle('active', activeFilter === 'mastered');  
 filterQuizQuestions();  
 }  
+
 function toggleCurrentBookmark() {  
 const q = filteredQuestions[currentQuizIndex];  
 if (!q) return;  
@@ -671,6 +677,7 @@ quizBookmarks.push(q.id);
 localStorage.setItem('gssk_bookmarks', JSON.stringify(quizBookmarks));  
 updateBookmarkIcon();  
 }  
+
 function updateBookmarkIcon() {  
 const q = filteredQuestions[currentQuizIndex];  
 const btn = document.getElementById('quizBookmarkBtn');  
@@ -683,6 +690,7 @@ btn.textContent = "☆";
 btn.title = "Frage merken";  
 }  
 }  
+
 function toggleTimerMode() {  
 timerModeActive = document.getElementById('timerCheckbox').checked;  
 const timerBox = document.getElementById('quizTimerBox');  
@@ -694,6 +702,7 @@ timerBox.classList.add('hidden');
 clearInterval(quizTimer);  
 }  
 }  
+
 function startQuizTimer() {  
 clearInterval(quizTimer);  
 quizTimeLeft = 45;  
@@ -707,12 +716,14 @@ autoSubmitQuizTimeout();
 }  
 }, 1000);  
 }  
+
 function autoSubmitQuizTimeout() {  
 const q = filteredQuestions[currentQuizIndex];  
 if (!q) return;  
 recordQuizStat(q.id, false);  
-showQuizSolution(q, []);  
+showQuizSolution(q);  
 }  
+
 function renderQuizQuestion() {  
 clearInterval(quizTimer);  
 if (timerModeActive) startQuizTimer();  
@@ -756,8 +767,9 @@ optionsDiv.appendChild(btn);
 });  
 document.getElementById('explanation').style.display = 'none';  
 document.getElementById('nextBtn').style.display = 'none';  
-updateBookmarkIcon();
+updateBookmarkIcon();  
 }  
+
 function handleQuizOptionClick(idx, btn, q) {  
 if (q.isMulti) {  
 btn.classList.toggle('selected');  
@@ -776,6 +788,7 @@ else if (i === idx) b.classList.add('wrong');
 showQuizSolution(q);  
 }  
 }  
+
 function submitMultiAnswer() {  
 const q = filteredQuestions[currentQuizIndex];  
 const buttons = document.querySelectorAll('#options .btn-option');  
@@ -790,7 +803,7 @@ buttons.forEach(b => b.style.pointerEvents = 'auto');
 return;  
 }  
 clearInterval(quizTimer);  
-const correctArr = Array.isArray(q.correct) ? q.correct.sort() : [q.correct];  
+const correctArr = Array.isArray(q.correct) ? [...q.correct].sort() : [q.correct];  
 selectedIndices.sort();  
 const isCorrect = JSON.stringify(selectedIndices) === JSON.stringify(correctArr);  
 recordQuizStat(q.id, isCorrect);  
@@ -802,6 +815,7 @@ else if (selectedIndices.includes(i)) b.classList.add('wrong');
 });  
 showQuizSolution(q);  
 }  
+
 function showQuizSolution(q) {  
 const expBox = document.getElementById('explanation');  
 const expText = document.getElementById('explanationText');  
@@ -809,16 +823,19 @@ expText.textContent = q.explanation;
 expBox.style.display = 'block';  
 document.getElementById('nextBtn').style.display = 'block';  
 }  
+
 function recordQuizStat(qId, isCorrect) {  
 if (!quizStats[qId]) quizStats[qId] = { correct: 0, wrong: 0 };  
 if (isCorrect) quizStats[qId].correct++;  
 else quizStats[qId].wrong++;  
 localStorage.setItem('gssk_stats', JSON.stringify(quizStats));  
 }  
+
 function nextQuestion() {  
 currentQuizIndex++;  
 renderQuizQuestion();  
 }  
+
 function restartQuiz() {  
 currentQuizIndex = 0;  
 activeFilter = 'all';  
@@ -827,6 +844,7 @@ document.getElementById('quizSearchInput').value = '';
 filteredQuestions = [...gsskQuestions];  
 renderQuizQuestion();  
 }  
+
 function resetAllStatsPrompt() {  
 if (confirm("Möchtest du wirklich alle Lernfortschritte und Statistiken zurücksetzen?")) {  
 localStorage.removeItem('gssk_stats');  
@@ -837,9 +855,10 @@ restartQuiz();
 alert("Statistiken wurden zurückgesetzt.");  
 }  
 }  
+
 function renderStatDashboard() {  
 const dashboard = document.getElementById('statDashboard');  
-dashboard.innerHTML = '';
+dashboard.innerHTML = '';  
 const categories = ["Rechtskunde", "Dienstkunde", "Gefahrenabwehr & Technik", "Serviceorientiertes Verhalten", "Wirtschafts- und Sozialkunde"];  
 categories.forEach(cat => {  
 const catQuestions = gsskQuestions.filter(q => q.category === cat);  
@@ -854,16 +873,25 @@ correctCount += st.correct;
 });  
 const percentage = answeredCount > 0 ? Math.round((correctCount / answeredCount) * 100) : 0;  
 const wrapper = document.createElement('div');  
-wrapper.innerHTML     `<div style="display: flex; justify-content: space-between; font-size: 0.9rem; font-weight: 600; margin-bottom: 4px;">   <span>${cat}</span>   <span>${percentage}% Richtig (${correctCount} / ${answeredCount} Versuche)</span>   </div>   <div class="stat-bar-wrapper">   <div class="stat-bar-fill" style="width: ${percentage}%;"></div>   </div>`    ;  
+wrapper.innerHTML = `  
+<div style="display: flex; justify-content: space-between; font-size: 0.9rem; font-weight: 600; margin-bottom: 4px;">  
+<span>${cat}</span>  
+<span>${percentage}% Richtig (${correctCount} / ${answeredCount} Versuche)</span>  
+</div>  
+<div class="stat-bar-wrapper">  
+<div class="stat-bar-fill" style="width: ${percentage}%;"></div>  
+</div>`;  
 dashboard.appendChild(wrapper);  
-});
+});  
 }  
+
 let examQuestions = [];  
 let currentExamIndex = 0;  
 let examUserAnswers = {};  
 let examFlags = [];  
 let examTimerInterval = null;  
-let examTimeRemaining = 45 _60;  
+let examTimeRemaining = 45 * 60;  
+
 function startRealExam() {  
 const cat = document.getElementById('examCategorySelect').value;  
 let pool = [...gsskQuestions];  
@@ -875,7 +903,7 @@ examQuestions = pool.slice(0, 30);
 currentExamIndex = 0;  
 examUserAnswers = {};  
 examFlags = [];  
-examTimeRemaining = 45_ 60;  
+examTimeRemaining = 45 * 60;  
 document.getElementById('examStartScreen').classList.add('hidden');  
 document.getElementById('examResultScreen').classList.add('hidden');  
 document.getElementById('examScreen').classList.remove('hidden');  
@@ -883,6 +911,7 @@ renderExamGrid();
 renderExamQuestion();  
 startExamTimer();  
 }  
+
 function startExamTimer() {  
 clearInterval(examTimerInterval);  
 examTimerInterval = setInterval(() => {  
@@ -896,6 +925,7 @@ finishExam();
 }  
 }, 1000);  
 }  
+
 function renderExamGrid() {  
 const container = document.getElementById('examGridContainer');  
 container.innerHTML = '';  
@@ -910,21 +940,24 @@ btn.onclick = () => jumpToExamQuestion(idx);
 container.appendChild(btn);  
 });  
 }  
+
 function jumpToExamQuestion(idx) {  
 currentExamIndex = idx;  
 renderExamGrid();  
 renderExamQuestion();  
 }  
+
 function toggleExamFlag() {  
 const idx = examFlags.indexOf(currentExamIndex);  
 if (idx > -1) examFlags.splice(idx, 1);  
 else examFlags.push(currentExamIndex);  
 renderExamGrid();  
 }  
+
 function renderExamQuestion() {  
 const q = examQuestions[currentExamIndex];  
 document.getElementById('examCounter').textContent = `Frage ${currentExamIndex + 1} von ${examQuestions.length}`;  
-document.getElementById('examQuestion').textContent = q.question;
+document.getElementById('examQuestion').textContent = q.question;  
 const flagBtn = document.getElementById('examFlagBtn');  
 flagBtn.textContent = examFlags.includes(currentExamIndex) ? "🚩 Markiert" : "🚩 Frage markieren";  
 const optionsDiv = document.getElementById('examOptions');  
@@ -932,6 +965,7 @@ optionsDiv.innerHTML = '';
 const multiContainer = document.getElementById('examMultiSubmitContainer');  
 if (q.isMulti) multiContainer.classList.remove('hidden');  
 else multiContainer.classList.add('hidden');  
+
 q.options.forEach((opt, idx) => {  
 const btn = document.createElement('button');  
 btn.className = 'btn-option';  
@@ -958,8 +992,9 @@ renderExamGrid();
 optionsDiv.appendChild(btn);  
 });  
 document.getElementById('examPrevBtn').disabled = currentExamIndex === 0;  
-document.getElementById('examNextBtn').textContent = currentExamIndex === examQuestions.length - 1 ? "Letzte Frage" : "Nächste";
+document.getElementById('examNextBtn').textContent = currentExamIndex === examQuestions.length - 1 ? "Letzte Frage" : "Nächste";  
 }  
+
 function submitExamMultiAnswer() {  
 const buttons = document.querySelectorAll('#examOptions .btn-option');  
 let sel = [];  
@@ -970,6 +1005,7 @@ examUserAnswers[currentExamIndex] = sel;
 renderExamGrid();  
 alert("Antworten für diese Frage gespeichert.");  
 }  
+
 function prevExamQuestion() {  
 if (currentExamIndex > 0) {  
 currentExamIndex--;  
@@ -977,6 +1013,7 @@ renderExamGrid();
 renderExamQuestion();  
 }  
 }  
+
 function nextExamQuestion() {  
 if (currentExamIndex < examQuestions.length - 1) {  
 currentExamIndex++;  
@@ -986,11 +1023,13 @@ renderExamQuestion();
 finishExamPrompt();  
 }  
 }  
+
 function finishExamPrompt() {  
 if (confirm("Möchtest du die Prüfung jetzt offiziell beenden und abgeben?")) {  
 finishExam();  
 }  
 }  
+
 function finishExam() {  
 clearInterval(examTimerInterval);  
 document.getElementById('examScreen').classList.add('hidden');  
@@ -999,8 +1038,8 @@ let correctCount = 0;
 examQuestions.forEach((q, idx) => {  
 const userAns = examUserAnswers[idx];  
 if (q.isMulti) {  
-const correctArr = Array.isArray(q.correct) ? q.correct.sort() : [q.correct];  
-const userArr = Array.isArray(userAns) ? userAns.sort() : [];  
+const correctArr = Array.isArray(q.correct) ? [...q.correct].sort() : [q.correct];  
+const userArr = Array.isArray(userAns) ? [...userAns].sort() : [];  
 if (JSON.stringify(correctArr) === JSON.stringify(userArr)) correctCount++;  
 } else {  
 if (userAns === q.correct) correctCount++;  
@@ -1017,8 +1056,8 @@ examQuestions.forEach((q, idx) => {
 const userAns = examUserAnswers[idx];  
 let isCorrect = false;  
 if (q.isMulti) {  
-const correctArr = Array.isArray(q.correct) ? q.correct.sort() : [q.correct];  
-const userArr = Array.isArray(userAns) ? userAns.sort() : [];  
+const correctArr = Array.isArray(q.correct) ? [...q.correct].sort() : [q.correct];  
+const userArr = Array.isArray(userAns) ? [...userAns].sort() : [];  
 isCorrect = JSON.stringify(correctArr) === JSON.stringify(userArr);  
 } else {  
 isCorrect = (userAns === q.correct);  
@@ -1026,14 +1065,16 @@ isCorrect = (userAns === q.correct);
 const div = document.createElement('div');  
 div.className = 'section-card';  
 div.style.borderLeftColor = isCorrect ? '#10b981' : '#ef4444';  
-div.innerHTML = `<div style="font-weight:600; margin-bottom: 6px;">Frage ${idx + 1}: ${q.question}</div> <div style="font-size: 0.9rem; color: ${isCorrect ? '#34d399' : '#f87171'}; font-weight:600; margin-bottom: 6px;"> Status: ${isCorrect ? 'Richtig' : 'Falsch'} </div> <div style="font-size: 0.85rem; color: var(--text-muted);"><strong>Musterlösung:</strong> ${q.explanation}</div>` ;  
+div.innerHTML = `<div style="font-weight:600; margin-bottom: 6px;">Frage ${idx + 1}: ${q.question}</div> <div style="font-size: 0.9rem; color: ${isCorrect ? '#34d399' : '#f87171'}; font-weight:600; margin-bottom: 6px;"> Status: ${isCorrect ? 'Richtig' : 'Falsch'} </div> <div style="font-size: 0.85rem; color: var(--text-muted);"><strong>Musterlösung:</strong> ${q.explanation}</div>`;  
 reviewList.appendChild(div);  
 });  
 }  
+
 function resetToExamStart() {  
 document.getElementById('examResultScreen').classList.add('hidden');  
 document.getElementById('examStartScreen').classList.remove('hidden');  
 }  
+
 const lawCases = [  
 {  
 title: "Fall 1: Notwehr bei unbefugtem Betreten",  
@@ -1041,7 +1082,7 @@ desc: "Ein Einbrecher dringt nachts in ein umzäuntes Werksgelände ein. Der Wac
 question: "Greift hier ein Rechtfertigungsgrund für den Wachmann bezüglich einer etwaigen Körperverletzung?",  
 options: [  
 "A) Ja, es liegt eine gerechtfertigte Notwehrhandlung nach § 32 StGB vor, da der Täter im Rahmen eines fortdauernden Angriffs auf das geschützte Rechtsgut des Eigentums durch Flucht das Risiko selbst maximiert hat.",  
-"B) Nein, es scheitert bereits at der Kausalität zwischen einer Tathandlung des Wachmanns und dem Erfolg, da keine aktive Gewalt ausgeübt wurde; zudem mangelt es an der für § 32 StGB erforderlichen Angriffshandlung auf Individualrechtsgüter des Wachmanns während des Sturzes.",  
+"B) Nein, es scheitert bereits an der Kausalität zwischen einer Tathandlung des Wachmanns und dem Erfolg, da keine aktive Gewalt ausgeübt wurde; zudem mangelt es an der für § 32 StGB erforderlichen Angriffshandlung auf Individualrechtsgüter des Wachmanns während des Sturzes.",  
 "C) Ja, über den rechtfertigenden Notstand nach § 34 StGB, da der Schutz hochrangiger Wirtschaftsgüter in der Abwägung den Körperschaden des Eindringlings rechtfertigt."  
 ],  
 correct: 1,  
@@ -1156,19 +1197,24 @@ correct: 1,
 solution: "Richtig ist B. Der Einsatz eines Schärfmittels wie eines Diensthundes ist extrem gefährlich. Fehlt ein gegenwärtiger Angriff (Notwehr) oder ist das Mittel zur bloßen Festnahme eines flüchtenden, unbewaffneten Täters völlig unangemessen (Verstoß gegen das Übermaßverbot), greift kein Rechtfertigungsgrund."  
 }  
 ];  
+
 function renderLawCases() {  
 const container = document.getElementById('caseContainer');  
 container.innerHTML = '';  
 lawCases.forEach((c, idx) => {  
 let card = document.createElement('div');  
 card.className = 'section-card law-card';  
-card.innerHTML = `<div class="section-title law-title">${c.title}</div> <p style="margin-bottom: 10px;">${c.desc}</p> <p><strong>${c.question}</strong></p> <div class="options" id="caseOptions_${idx}" style="margin-top: 10px;"> ${c.options.map((opt, oIdx) =>`  
-<button class="btn-option" onclick="selectCaseOption(${idx}, ${oIdx})">{opt}</button>  
-`).join('')}  
+card.innerHTML = `  
+<div class="section-title law-title">${c.title}</div>  
+<p style="margin-bottom: 10px;">${c.desc}</p>  
+<p><strong>${c.question}</strong></p>  
+<div class="options" id="caseOptions_${idx}" style="margin-top: 10px;">  
+${c.options.map((opt, oIdx) => `<button class="btn-option" onclick="selectCaseOption(${idx}, ${oIdx})">${opt}</button>`).join('')}  
 </div>  
-<div id="caseSolution_{idx}" class="solution-box" style="margin-top: 15px; padding: 12px; background: rgba(59, 130, 246, 0.1); border-left: 4px solid var(--btn-bg); border-radius: 0 8px 8px 0; font-size: 0.9rem; display: none;">  
-<strong>Musterlösung & Dogmatische Rechtfertigung:</strong> <span id="caseSolutionText_${idx}"></span>  
-</div>
+<div id="caseSolution_${idx}" class="explanation-box" style="margin-top: 15px; display: none;">  
+<strong>Musterlösung & Dogmatische Rechtfertigung:</strong>  
+<div id="caseSolutionText_${idx}" style="margin-top: 6px;"></div>  
+</div>  
 <div style="margin-top: 15px;">  
 <label style="font-weight: 600; font-size: 0.9rem; display: block; margin-bottom: 5px;">Eigene Kurzantwort / Gutachtenstil (optional):</label>  
 <textarea class="case-textarea" placeholder="Formuliere hier deine präzise juristische Subsumtion (Obersatz, Definition, Subsumtion, Ergebnis)..."></textarea>  
@@ -1176,11 +1222,12 @@ card.innerHTML = `<div class="section-title law-title">${c.title}</div> <p style
 </div>  
 `;  
 container.appendChild(card);  
-});
+});  
 }  
+
 function selectCaseOption(caseIdx, optIdx) {  
 const c = lawCases[caseIdx];  
-const container = document.getElementByI`caseOptions_${caseIdx}`);  
+const container = document.getElementById(`caseOptions_${caseIdx}`);  
 const buttons = container.querySelectorAll('.btn-option');  
 buttons.forEach((btn, i) => {  
 btn.style.pointerEvents = 'none';  
@@ -1192,14 +1239,16 @@ btn.classList.add('wrong');
 });  
 const isCorrect = (optIdx === c.correct);  
 playSound(isCorrect);  
-const solBox = document.getElementByI`caseSolution_${caseIdx}`);  
-const solText = document.getElementByI`caseSolutionText_${caseIdx}`);  
+const solBox = document.getElementById(`caseSolution_${caseIdx}`);  
+const solText = document.getElementById(`caseSolutionText_${caseIdx}`);  
 solText.textContent = c.solution;  
 solBox.style.display = 'block';  
 }  
+
 function compareMyAnswer(btn) {  
 alert("Deine Notiz wurde im lokalen Speicher vermerkt. Vergleiche sie mit der dogmatischen Musterlösung und den Tatbestandsmerkmalen oben!");  
 }  
+
 window.onload = function() {  
 renderQuizQuestion();  
 };  
