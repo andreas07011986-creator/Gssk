@@ -3,7 +3,7 @@
 <head>  
 <meta charset="UTF-8">  
 <meta name="viewport" content="width=device-width, initial-scale=1.0">  
-<title>Offizieller IHK-Prüfungstrainer (GSSK 100 Fragen - Experten-Modus)</title>  
+<title>Offizieller IHK-Prüfungstrainer (GSSK - Experten-Modus & Erweiterter Pool)</title>  
 <!-- PASSWORTSCHUTZ SKRIPT -->  
 <script>  
 (function() {  
@@ -120,14 +120,14 @@ body { background-color: var(--bg-color); color: var(--text-color); margin: 0; p
 <div class="app-card">  
 
 <div class="exam-selector">  
-<span>🎓 <strong>GSSK Prüfungstrainer (Experten-Modus: Anspruchsvolle IHK-Fragen)</strong></span>  
+<span>🎓 <strong>GSSK Prüfungstrainer (Experten-Modus: Erweiterter Fragenpool)</strong></span>  
 <div class="top-actions">  
 <button class="icon-top-btn" onclick="toggleDarkMode()" id="darkModeBtn" title="Design umschalten">☀️ Light Mode</button>  
 <button class="icon-top-btn" onclick="toggleSound()" id="soundBtn" title="Sound umschalten">🔊 Sound: An</button>  
 </div>  
 </div>  
 <div class="tab-nav">  
-<button id="tabQuizBtn" class="tab-btn active" onclick="switchTab('quiz')">❓ Quiz (100 Experten-Fragen)</button>  
+<button id="tabQuizBtn" class="tab-btn active" onclick="switchTab('quiz')">❓ Quiz (Erweiterter Pool)</button>  
 <button id="tabRealExamBtn" class="tab-btn exam-tab-btn" onclick="switchTab('realExam')">⏱️ IHK-Prüfung</button>  
 <button id="tabLawBtn" class="tab-btn" onclick="switchTab('law')">⚖️ Recht & 10 Fälle</button>  
 </div>  
@@ -162,7 +162,7 @@ body { background-color: var(--bg-color); color: var(--text-color); margin: 0; p
 <div>  
 <span id="catBadge" class="badge">Kategorie</span>  
 <span id="subCatBadge" class="badge badge-sub">Unterkategorie</span>  
-<span id="multiBadge" class="badge badge-multi hidden">⚠️ Mehrfachauswahl!</span>  
+<span id="multiBadge" class="badge badge-multi hidden">⚠️ Mehrfachauswahl (genau 2 richtige Antworten)!</span>  
 </div>  
 <div id="question" class="question-text">Frage wird geladen...</div>  
 <div id="options" class="options"></div>  
@@ -181,7 +181,7 @@ body { background-color: var(--bg-color); color: var(--text-color); margin: 0; p
 </div>  
 <!-- QUIZ FINISH SCREEN -->  
 <div id="quizFinishedScreen" class="hidden" style="text-align: center; padding: 25px 10px;">  
-<h2>🏆 Großartig! Du hast alle 100 Experten-Durchgänge beendet.</h2>  
+<h2>🏆 Großartig! Du hast alle Durchgänge beendet.</h2>  
 <p style="color: var(--text-muted); font-size: 1.05rem; margin-bottom: 15px;">  
 Hier ist deine detaillierte Defizit-Analyse nach Fachgebieten:  
 </p>  
@@ -203,6 +203,9 @@ Wähle deinen Prüfungsumfang oder spezifische Fachbereiche nach Prüfungsordnun
 <option value="Gefahrenabwehr & Technik">Fokus: Gefahrenabwehr & Technik</option>  
 <option value="Serviceorientiertes Verhalten">Fokus: Serviceorientiertes Verhalten</option>  
 <option value="Wirtschafts- und Sozialkunde">Fokus: Wirtschafts- und Sozialkunde</option>  
+<option value="Unternehmenssicherheit">Fokus: Unternehmenssicherheit</option>  
+<option value="AGU (Arbeit, Gesundheit & Umwelt)">Fokus: AGU (Arbeit, Gesundheit & Umwelt)</option>  
+<option value="Datenschutz (BDSG/DSGVO)">Fokus: Datenschutz (BDSG/DSGVO)</option>  
 </select>  
 </div>  
 <button class="btn-action btn-danger" style="font-size: 1.05rem; padding: 12px 25px;" onclick="startRealExam()">▶️ Prüfung Starten</button>  
@@ -296,539 +299,598 @@ document.getElementById('darkModeBtn').textContent = "☀️ Light Mode";
 }  
 }  
 
-// VOLLSTÄNDIGER FRAGENPOOL (100 anspruchsvolle, rechtlich vertiefte GSSK-Fragen mit komplexen Distraktoren)  
+// VOLLSTÄNDIGER FRAGENPOOL MIT GENAU 2 RICHTIGEN ANTWORTEN BEI MULTI-FRAGEN
 const rawGsskPool = [  
-// Rechtskunde (1-25)  
+// --- Rechtskunde ---  
 {  
 id: 1, isMulti: true, category: "Rechtskunde", subcategory: "StPO § 127 Abs. 1",  
 question: "Welche kumulativen Tatbestandsvoraussetzungen müssen gem. § 127 Abs. 1 StPO (Jedermann-Festnahme) objektiv vorliegen, damit eine vorläufige Festnahme durch privates Sicherheitspersonal rechtlich gedeckt ist?",  
 options: [  
-"A) Die betroffene Person muss auf frischer Tat betroffen oder verfolgt werden.",  
-"B) Es muss zwingend ein richterlicher Haftbefehl oder eine sofortige staatsanwaltschaftliche Anordnung vorliegen.",  
-"C) Es muss der Festnahmezweck der Identitätsfeststellung bei Fluchtverdacht oder die Sicherung des Verfahrens bzw. der Vollstreckung gegeben sein.",  
-"D) Die Festnahme darf ausschließlich durch hoheitliche Dienstkräfte (Polizeivollzugsbeamte) erfolgen; private Sicherheitskräfte sind generell von § 127 StPO ausgeschlossen."  
+"Die betroffene Person muss auf frischer Tat betroffen oder verfolgt werden.",  
+"Es muss zwingend ein richterlicher Haftbefehl oder eine sofortige staatsanwaltschaftliche Anordnung vorliegen.",  
+"Es muss der Festnahmezweck der Identitätsfeststellung bei Fluchtverdacht oder die Sicherung des Verfahrens bzw. der Vollstreckung gegeben sein.",  
+"Die Festnahme darf ausschließlich durch hoheitliche Dienstkräfte (Polizeivollzugsbeamte) erfolgen; private Sicherheitskräfte sind generell von § 127 StPO ausgeschlossen."  
 ],  
 correct: [0, 2],  
-explanation: "Gem. § 127 Abs. 1 S. 1 StPO setzt die vorläufige Festnahme voraus, dass jemand auf frischer Tat betroffen oder verfolgt wird und Fluchtverdacht vorliegt oder die Identität nicht sofort festgestellt werden kann ('Wer auf frischer Tat betroffen...'). Option B und D verkennen den Wortlaut und Sinn der Jedermann-Festnahme."  
+explanation: "Gem. § 127 Abs. 1 S. 1 StPO setzt die vorläufige Festnahme voraus, dass jemand auf frischer Tat angetroffen oder verfolgt wird und Fluchtverdacht besteht oder die Identität nicht sofort festgestellt werden kann."  
 },  
 {  
-id: 2, isMulti: false, category: "Rechtskunde", subcategory: "StGB § 32 - Notwehr",  
-question: "Ein unbewaffneter Störer dringt nachts in ein umzäuntes Werksgelände ein. Der Sicherheitsmitarbeiter fordert ihn auf stehen zu bleiben. Der Täter läuft panisch weiter, rennt in der Dunkelheit gegen einen massiven Betonpfeiler und bricht sich das Nasenbein. Wie ist der Sachverhalt rechtlich zu bewerten?",  
+id: 2, isMulti: false, category: "Rechtskunde", subcategory: "BGB § 229",  
+question: "Unter welchen Voraussetzungen greift die zivilrechtliche Selbsthilfe nach § 229 BGB für privates Wachpersonal?",  
 options: [  
-"A) Es liegt eine gerechtfertigte Körperverletzung nach § 32 StGB vor, da der Täter im Rahmen eines fortdauernden Angriffs das Risiko selbst maximiert hat.",  
-"B) Es mangelt bereits an der Kausalität einer Tathandlung des Wachmanns sowie an einer aktiven Einwirkung (Gewalt); folglich scheidet eine tatbestandsmäßige Körperverletzung durch den Wachmann gänzlich aus.",  
-"C) Der Wachmann handelt rechtswidrig, da er den Störer zuvor hätte per Schusswaffe stoppen müssen, um mildere Rechtsgüter zu wahren.",  
-"D) Die Maßnahme ist über den rechtfertigenden Notstand nach § 34 StGB gedeckt, da der Schutz von Betriebseigentum schwerer wiegt als die körperliche Unversehrtheit des Eindringlings."  
+"Ausschließlich bei polizeilicher Anordnung vor Ort.",  
+"Wenn obrigkeitliche Hilfe nicht rechtzeitig zu erlangen ist und ohne sofortiges Eingreifen die Vereitelung oder wesentliche Erschwerung der Verwirklichung des Anspruchs droht.",  
+"Immer dann, wenn ein Hausverbot missachtet wird, unabhängig von polizeilicher Erreichbarkeit.",  
+"Nur bei Verbrechen mit einer Mindeststrafe von über 5 Jahren Freiheitsstrafe."  
 ],  
-correct: 1,  
-explanation: "Da der Wachmann keinerlei aktive Tathandlung (Gewalt) vorgenommen hat, fehlt es an einer tatbestandsmäßigen Körperverletzung durch ihn. Ein bloßes Auffordern begründet keinen haftungsrechtlichen oder strafrechtlichen Kausalzusammenhang für den Sturz."  
+correct: [1],  
+explanation: "Selbsthilfe nach § 229 BGB setzt voraus, dass obrigkeitliche Hilfe nicht rechtzeitig zu erlangen ist und die Gefahr besteht, dass ohne sofortiges Eingreifen die Verwirklichung des Anspruchs vereitelt oder wesentlich erschwert wird."  
 },  
 {  
-id: 3, isMulti: true, category: "Rechtskunde", subcategory: "StGB § 34 - Rechtfertigender Notstand",  
-question: "Welche materiell-rechtlichen Voraussetzungen verlangt § 34 StGB (rechtfertigender Notstand) für den straffreien Eingriff in fremde Rechtsgüter?",  
+id: 3, isMulti: true, category: "Rechtskunde", subcategory: "StGB § 32",  
+question: "Welche zwei Grundvoraussetzungen müssen für eine rechtfertigende Notwehr gem. § 32 StGB zwingend gleichzeitig erfüllt sein?",  
 options: [  
-"A) Eine gegenwärtige, nicht anders abwendbare Gefahr für ein rechtlich geschütztes Gut (z.B. Leib, Leben, Eigentum).",  
-"B) Das geschützte Interesse muss das beeinträchtigte _wesentliche_ überwiegen (Güter- und Interessenabwägung).",  
-"C) Das Handeln muss zur Abwendung der Gefahr objektiv geeignet und das mildeste Mittel sein (Erforderlichkeit).",  
-"D) Es ist zwingend erforderlich, dass der Täter die Gefahr selbst grob fahrlässig herbeigeführt hat."  
+"Ein gegenwärtiger, rechtswidriger Angriff auf ein rechtlich geschütztes Rechtsgut.",  
+"Ein vorheriger schriftlicher Warnhinweis an den Angreifer.",  
+"Die gebotene und erforderliche Verteidigungshandlung zur Abwendung des Angriffs.",  
+"Eine vorherige Genehmigung durch die zuständige Polizeidienststelle."  
 ],  
-correct: [0, 1, 2],  
-explanation: "§ 34 StGB erfordert eine gegenwärtige Gefahr, die Erforderlichkeit (mildestes Mittel) sowie eine echte Güterabwägung, bei der das Interesses das beeinträchtigte wesentliche überwiegen muss. Option D ist falsch, da Selbstverursachung unter Umständen den Notstand ausschließt oder einschränkt."  
+correct: [0, 2],  
+explanation: "Notwehr setzt das Vorliegen eines gegenwärtigen, rechtswidrigen Angriffs (Option 1) sowie eine zu dessen Abwehr erforderliche und gebotene Verteidigung (Option 3) voraus."  
 },  
 {  
-id: 4, isMulti: false, category: "Rechtskunde", subcategory: "StGB § 229 - Selbsthilfe",  
-question: "Ein Besucher parkt sein Fahrzeug unberechtigt auf dem Privatparkplatz eines Werks. Der Pförtner schraubt aus Verärgerung das vordere Kennzeichen des Autos ab, um den Fahrer zur Rede zu stellen. Greift hier der Rechtfertigungsgrund der zivilrechtlichen Selbsthilfe nach § 229 BGB?",  
+id: 4, isMulti: false, category: "Rechtskunde", subcategory: "StGB § 34",  
+question: "Was unterscheidet den rechtfertigenden Notstand (§ 34 StGB) dogmatisch von der Notwehr (§ 32 StGB)?",  
 options: [  
-"A) Ja, denn der Besitzer darf jede Form von verbotener Eigenmacht eigenhändig und unverzüglich mit körperlichem oder dinglichem Zwang sanktionieren.",  
-"B) Nein, da § 229 BGB voraussetzt, dass obrigkeitliche Hilfe nicht rechtzeitig zu erlangen ist und die Verwirklichung des Anspruchs vereitelt oder wesentlich erschwert werden würde – eine reine Sanktion oder Kennzeichenwegnahme zur Druckausübung ist unzulässig.",  
-"C) Ja, über § 859 BGB (Selbsthilfe des Besitzers), da Kraftfahrzeuge auf Privatgrundstücken wie herrenloses Gut behandelt werden dürfen.",  
-"D) Nein, aber es greift automatisch der Erlaubnistatbestandsirrtum, wodurch jeglicher Vorsatz entfällt."  
+"Notstand verlangt keinen rechtswidrigen Angriff, sondern setzt eine gegenwärtige, nicht anders abwendbare Gefahr für ein Rechtsgut voraus, wobei eine Interessenabwägung stattfindet.",  
+"Notstand gilt ausschließlich für staatliche Behörden und niemals für Sicherheitsmitarbeiter.",  
+"Notstand erlaubt schärfere Gewaltmittel als Notwehr, weil kein Übermaßverbot gilt.",  
+"Notstand ist im Wach- und Sicherheitsgewerbe grundsätzlich unzulässig."  
 ],  
-correct: 1,  
-explanation: "§ 229 BGB verlangt, dass obrigkeitliche Hilfe unerreichbar ist und die Durchsetzung eines zivilrechtlichen Anspruchs gefährdet wäre. Eine willkürliche Kennzeichenwegnahme stellt keinen rechtmäßigen Anspruchsdurchsetzungsweg dar, sondern ist eine unzulässige verbotene Eigenmacht bzw. Sachbeschädigung."  
+correct: [0],  
+explanation: "Im Gegensatz zur Notwehr setzt der rechtfertigende Notstand keinen Angriff voraus, sondern eine allgemeine Gefahr. Zudem erfordert er eine Güter- und Interessenabwägung."  
 },  
 {  
-id: 5, isMulti: true, category: "Rechtskunde", subcategory: "BGB § 859 - Besitzwehr & Besitzkehr",  
-question: "Welche Unterscheidungen gelten im Rahmen des Besitzschutzes nach §§ 859, 860 BGB für privates Sicherheitspersonal?",  
+id: 5, isMulti: true, category: "Rechtskunde", subcategory: "StGB § 123",  
+question: "Welche Tatbestandsmerkmale kennzeichnen den Hausfriedensbruch gem. § 123 StGB im Kontext von Objektschutz und Werkschutz?",  
 options: [  
-"A) Besitzwehr (§ 859 Abs. 1 BGB) berechtigt zur Verteidigung gegen verbotene Eigenmacht mit sofortigem, erforderlichem Zwang.",  
-"B) Besitzkehr (§ 859 Abs. 2 BGB) gestattet dem Besitzer, dem auf frischer Tat angetroffenen oder verfolgten Entzieher die Sache sofort auf frischer Tat abzunehmen.",  
-"C) Sicherheitsmitarbeiter dürfen im Auftrag des Besitzers dessen Selbsthilferechte ausüben (Besitzdiener nach § 860 BGB).",  
-"D) Besitzkehr ist uneingeschränkt auch noch Wochen nach der Besitzentziehung zulässig, sofern der Täter namentlich bekannt ist."  
-],  
-correct: [0, 1, 2],  
-explanation: "Besitzwehr und Besitzkehr erfordern jeweils den unmittelbaren zeitlichen Kontext (frische Tat bzw. sofortiges Betroffensein). Besitzdiener (§ 860 BGB) leiten ihre Befugnisse vom unmittelbaren Besitzer ab. Option D ist falsch, da 'sofort' bzw. 'auf frischer Tat' zeitlich eng begrenzt ist."  
-},  
-{  
-id: 6, isMulti: false, category: "Rechtskunde", subcategory: "Putativnotwehr / Erlaubnistatbestandsirrtum",  
-question: "Ein Sicherheitsmitarbeiter erschrickt im Dunkeln, als eine Person abrupt in die Jackentasche greift, um ein Portemonnaie herauszuziehen. Der Mitarbeiter nimmt irrtümlich an, es handle sich um eine Schusswaffe, und schlägt den Besucher präventiv nieder. Welcher Rechtsfehler liegt hier vor?",  
-options: [  
-"A) Ein Erlaubnistatbestandsirrtum (Putativnotwehr), welcher den Vorsatz nach h.M. (eingeschränkte Schuldtheorie analog § 16 Abs. 1 S. 1 StGB) entfallen lässt – es verbleibt lediglich die Prüfung einer fahrlässigen Begehung.",  
-"B) Ein klassischer Verbotsirrtum nach § 17 StGB, der unberührt lässt, dass der Täter voll vorsätzlich wegen vorsätzlicher Körperverletzung bestraft wird.",  
-"C) Eine absolut straffreie Notwehrhandlung, da die subjektive Angst des Mitarbeiters jede objektive Rechtswidrigkeit ausschließt.",  
-"D) Ein untauglicher Versuch nach § 23 StGB."  
-],  
-correct: 0,  
-explanation: "Irrt der Täter über Umstände, die einen Rechtfertigungsgrund (hier: Notwehrlage) begründen würden, liegt ein Erlaubnistatbestandsirrtum vor. Nach herrschender Meinung entfällt hierdurch der Vorsatz, sodass nur noch fahrlässiges Handeln strafrechtlich relevant ist."  
-},  
-{  
-id: 7, isMulti: true, category: "Rechtskunde", subcategory: "StGB § 123 - Hausfriedensbruch",  
-question: "Unter welchen exakten Tatbestandsvoraussetzungen macht sich eine Person des Hausfriedensbruchs nach § 123 StGB strafbar?",  
-options: [  
-"A) Das unbefugte Eindringen in die Wohnräume, Geschäftsräume oder das befriedete Besitztum eines anderen.",  
-"B) Das Verweilen auf dem geschützten Areal trotz ausdrücklicher Aufforderung des Berechtigten, sich zu entfernen.",  
-"C) Das ausschließliche Betreten von öffentlich zugänglichen Verkehrsflächen während der regulären Öffnungszeiten ohne Kaufabsicht.",  
-"D) Die Verletzung des Hausrechts durch einen Hausrechtsinhaber, der seine eigenen Befugnisse überschreitet."  
+"Das unbefugte Eindringen in geschützte Räume oder umfriedete Besitztümer.",  
+"Das Verbleiben trotz ausdrücklicher Aufforderung des Berechtigten, sich zu entfernen.",  
+"Die zwangsweise Entwendung von Firmeneigentum im Wert von über 50 Euro.",  
+"Die gewaltsame Zerstörung von Außenfassaden durch Graffiti."  
 ],  
 correct: [0, 1],  
-explanation: "§ 123 StGB erfordert entweder das Eindringen gegen den Willen oder das Verweilen trotz Aufforderung zur Entfernung. Öffentlich zugängliche Räume im Rahmen ihrer Zweckbestimmung (während der Öffnungszeiten) sind primär nicht tatbestandlich, es sei denn, ein wirksames Hausverbot wurde ausgesprochen."  
+explanation: "§ 123 StGB bestraft sowohl das unbefugte Eindringen (Alternative 1) als auch das unberechtigte Verweilen trotz Aufforderung zur Entfernung durch den Hausrechtsinhaber (Alternative 2)."  
 },  
+// --- Dienstkunde ---  
 {  
-id: 8, isMulti: false, category: "Rechtskunde", subcategory: "Waffengesetz (WaffG)",  
-question: "Welche rechtliche Einstufung gilt für Reizstoffsprühgeräte (CS-Gas / Pfefferspray), die von privatem Sicherheitspersonal im Rahmen von Schutzaufgaben mitgeführt werden?",  
+id: 6, isMulti: false, category: "Dienstkunde", subcategory: "Deeskalation",  
+question: "Was versteht man unter dem Begriff 'Deeskalation' im Rahmen des professionellen Wachdienstes?",  
 options: [  
-"A) Sie gelten als verbotene Waffen nach Anlage 2 zum WaffG und dürfen unter keinen Umständen mitgeführt werden.",  
-"B) Sie sind erlaubnisfreie Waffen (unter bestimmten PTB-Kennzeichnungen bzw. Tierabwehrkennzeichnungen), deren Mitführen jedoch bei öffentlichen Veranstaltungen dem WaffG-Verbot unterliegen kann; der Einsatz gegen Menschen unterliegt den strengen Grenzen von Notwehr/Notstand.",  
-"C) Sie fallen uneingeschränkt unter das Kriegswaffenkontrollgesetz (KrWaffKG).",  
-"D) Sie dürfen ohne jegliche rechtliche Prüfung hoheitlich gegen jeden renitenten Störer eingesetzt werden."  
+"Die konsequente Anwendung körperlicher Überlegenheit zur sofortigen Einschüchterung.",  
+"Eine gezielte verbale und körpersprachliche Verhaltensweise zur Entschärfung konfliktreicher und aggressiver Situationen.",  
+"Das sofortige Verlassen des Objekts bei jeder verbalen Unstimmigkeit.",  
+"Die Erteilung eines strikten Hausverbots ohne rechtliche Begründung."  
 ],  
-correct: 1,  
-explanation: "Handelsübliche Tierabwehrsprays sind oft erlaubnisfrei, sofern sie als solche gekennzeichnet sind. Ihr Einsatz gegen Menschen ist jedoch strafrechtlich nur durch Notwehr (§ 32 StGB) oder rechtfertigenden Notstand (§ 34 StGB) gerechtfertigt; andernfalls stellt es eine gefährliche Körperverletzung dar."  
+correct: [1],  
+explanation: "Deeskalation bezeichnet Techniken und Verhaltensweisen, die darauf ausgerichtet sind, Spannungen abzubauen und Auseinandersetzungen friedlich zu lösen."  
 },  
 {  
-id: 9, isMulti: true, category: "Rechtskunde", subcategory: "Gewerbeordnung (GewO) § 34a",  
-question: "Welche gesetzlichen Vorgaben und Qualifikationsstufen schreibt die Gewerbeordnung (§ 34a GewO) für den Einsatz von Wachpersonal im Bewachungsgewerbe vor?",  
+id: 7, isMulti: true, category: "Dienstkunde", subcategory: "Berufsethik",  
+question: "Welche zwei Verhaltensweisen entsprechen den berufsethischen Grundsätzen qualifizierter Sicherheitsmitarbeiter?",  
 options: [  
-"A) Die Unterrichtung nach § 34a GewO für einfache Wach- und Kontrolltätigkeiten im Werkschutz.",  
-"B) Die Sachkundeprüfung vor der Industrie- und Handelskammer (IHK) für bestimmte Tätigkeiten (z.B. Kontrollgänge im öffentlichen Verkehrsraum, City-Streifen, Bewachung von Flüchtlingsunterkünften oder leitende Funktionen bei Großveranstaltungen).",  
-"C) Eine zwingende vorherige Ausbildung als Polizeivollzugsbeamter von mindestens drei Jahren.",  
-"D) Die Überprüfung der Zuverlässigkeit (unbescholtenes polizeiliches Führungszeugnis, Verfassungsschutzabfrage)."  
-],  
-correct: [0, 1, 3],  
-explanation: "Die Sachkundeprüfung oder Unterrichtung sowie die behördliche Zuverlässigkeitsüberprüfung sind die Kernsäulen des § 34a GewO. Eine Polizeiausbildung ist keine gesetzliche Voraussetzung."  
-},  
-{  
-id: 10, isMulti: false, category: "Rechtskunde", subcategory: "StGB § 223 - Körperverletzung",  
-question: "Ein Sicherheitsmitarbeiter legt einem aggressiven Ladendieb unverhältnismäßig hart das Knie in den Nacken, obwohl dieser bereits fixiert am Boden liegt und kooperiert. Der Dieb erleidet Prellungen. Wie bewertet die Strafrechtsdogmatik dieses Handeln?",  
-options: [  
-"A) Als vollumfänglich durch § 127 StPO gedeckte, rechtmäßige Festnahmehandlung, da jede Härte im Rahmen von Festnahmen von Amts wegen privilegiert ist.",  
-"B) Als tatbestandsmäßige und rechtswidrige Körperverletzung nach § 223 StGB, da die Maßnahme das absolute Verhältnismäßigkeitsgebot und das Übermaßverbot verletzt und somit kein Rechtfertigungsgrund eingreift.",  
-"C) Als straflose Notstandshandlung zugunsten des Unternehmenseigentums.",  
-"D) Als fahrlässige Sachbeschädigung."  
-],  
-correct: 1,  
-explanation: "Zwar ist die Festnahme nach § 127 StPO dem Grunde nach erlaubt, aber jede Zwangsausübung unterliegt dem Übermaßverbot. Ist der Täter bereits fixiert und kooperativ, entfällt jegliche Erforderlichkeit für überschießende Gewalt, weshalb eine Körperverletzung vorliegt."  
-},  
-// Dienstkunde (26-50)  
-{  
-id: 26, isMulti: true, category: "Dienstkunde", subcategory: "Dienstvorschriften & Befehl",  
-question: "Welche pflichtgemäßen Verhaltensweisen obliegen einem Sicherheitsmitarbeiter im Rahmen der ordnungsgemäßen Dienstausführung?",  
-options: [  
-"A) Pünktliches Antreten zum Dienstbeginn in korrekter, vollständiger Dienstkleidung.",  
-"B) Strengste Verschwiegenheit über betriebliche Interna, Sicherheitskonzepte und Schwachstellen des Kunden.",  
-"C) Das eigenmächtige Abändern des Wachbuchs zur Vertuschung eigener Versäumnisse.",  
-"D) Deeskalierendes, höfliches, aber bestimmtes Auftreten gegenüber Besuchern und Mitarbeitern."  
-],  
-correct: [0, 1, 3],  
-explanation: "Verschwiegenheit, Pünktlichkeit, korrekte Uniform und Deeskalation sind Grundpfeiler der Dienstkunde. Das Manipulieren von Dokumenten (Wachbuch) ist eine Straftat (Urkundenfälschung bzw. Fälschung beweiserheblicher Daten)."  
-},  
-{  
-id: 27, isMulti: false, category: "Dienstkunde", subcategory: "Berichtswesen & Dokumentation",  
-question: "Welche primäre Funktion erfüllt ein ordnungsgemäß geführtes Wachbuch oder Vorkommnisprotokoll in einer Objektsicherungsanlage?",  
-options: [  
-"A) Es dient als rein privates Notizbuch für persönliche Notizen des Wachpersonals.",  
-"B) Es stellt eine rechtlich relevante, beweiskräftige Dokumentation (Urkunde) dar, die bei Zwischenfällen, Einbrüchen oder Schadensfällen als objektives Beweismittel für Behörden, Polizei und Versicherungen dient.",  
-"C) Es ersetzt den Arbeitsvertrag zwischen Sicherheitsdienst und Auftraggeber.",  
-"D) Es ist nach Schichtende sofort zu vernichten, um Datenschutzvorgaben zu genügen."  
-],  
-correct: 1,  
-explanation: "Das Wachbuch ist ein offizielles Dokument des Objektschutzes. Es dient der Nachvollziehbarkeit von Schichtabläufen und hat rechtliche Relevanz als Beweismittel."  
-},  
-{  
-id: 28, isMulti: true, category: "Dienstkunde", subcategory: "Kontrollgang & Streifendienst",  
-question: "Worauf hat ein Sicherheitsmitarbeiter während eines präventiven Kontrollgangs in einem Industrieobjekt besonders zu achten?",  
-options: [  
-"A) Auf intakte Verschlüsse von Türen, Fenstern, Toren und Notausgängen.",  
-"B) Auf Anzeichen von Brandgefahren (z.B. Rauchentwicklung, defekte Elektrogeräte, ausgetretene Chemikalien).",  
-"C) Auf unbefugte Personen, Einbruchsspuren oder Beschädigungen an der Perimetersicherung (Zäune, Kameras).",  
-"D) Auf die Maximierung des privaten Social-Media-Konsums während des Rundgangs."  
-],  
-correct: [0, 1, 2],  
-explanation: "Kontrollgänge dienen der Prävention von Einbruch, Brand und Sabotage. Ablenkung durch Handynutzung verstößt gegen elementare Dienstpflichten."  
-},  
-{  
-id: 29, isMulti: false, category: "Dienstkunde", subcategory: "Deeskalation & Kommunikation",  
-question: "Ein Besucher betritt das Werkstor und beschimpft den Pförtner wüst wegen einer verweigerten Einfahrt. Welches Kommunikationsmodell bzw. Vorgehen ist primär geboten?",  
-options: [  
-"A) Sofortiger körperlicher Gegenangriff, um die eigene Autorität zu wahren.",  
-"B) Sachliche Deeskalation, ruhige, bestimmte Ansprache, professionelle Distanz wahren und den Angreifer verbal abholen, ohne sich auf persönliche Provokationen einzulassen.",  
-"C) Lautes Mitbrüllen und Erteilen eines sofortigen lebenslangen Landesverweises.",  
-"D) Flucht aus der Pförtnerloge und Verstecken im Serverraum."  
-],  
-correct: 1,  
-explanation: "Deeskalation erfordert emotionale Kontrolle, professionelle Sachlichkeit und klare Grenzen ohne eigene Aggression."  
-},  
-{  
-id: 30, isMulti: true, category: "Dienstkunde", subcategory: "Schlüsselmanagement",  
-question: "Welche organisatorischen und sicherheitstechnischen Prinzipien gelten für die Schlüsselverwaltung im professionellen Objektschutz?",  
-options: [  
-"A) Schlüssel müssen lückenlos in einem gesicherten Schlüsseltresor aufbewahrt und per Schlüsselbuch oder digitalem System gegen Quittung ausgegeben werden.",  
-"B) Universalschlüssel (Grandmaster-Key) dürfen unbeaufsichtigt am Empfangsschalter offen herumliegen.",  
-"C) Verlust von Schlüsseln ist unverzüglich der Einsatzleitung und dem Auftraggeber zu melden, da dies oft massive Schließanlagen-Austauschkosten nach sich zieht.",  
-"D) Jeder Mitarbeiter darf private Duplikate von Objektschlüsseln anfertigen."  
+"Höfliches, bestimmtes und professionelles Auftreten gegenüber Besuchern und Mitarbeitern.",  
+"Willkürliche Kontrollen ohne Vorliegen von sachlichen Verdachtsmomenten oder Hausrecht.",  
+"Verschwiegenheit über interne Abläufe und Sicherheitsmaßnahmen des Kunden.",  
+"Öffentliche Bloßstellung ertappter Ladendiebe in den sozialen Medien."  
 ],  
 correct: [0, 2],  
-explanation: "Strenges Schlüsselmanagement ist sicherheitsrelevant. Offenes Liegenlassen oder private Nachbauten sind gravierende Sicherheitsverstöße."  
+explanation: "Sicherheitsmitarbeiter sind zur Verschwiegenheit verpflichtet und sollen stets professionell, höflich und sachlich auftreten."  
 },  
-// Gefahrenabwehr & Technik (51-75)  
+// --- Gefahrenabwehr & Technik ---  
 {  
-id: 51, isMulti: true, category: "Gefahrenabwehr & Technik", subcategory: "Brandmeldeanlage (BMA)",  
-question: "Welche korrekten Handlungsschritte hat an Sicherheitsmitarbeiter einzuleiten, wenn in der Brandmeldezentrale (BMZ) eine Hauptmelder-Auslösung (Feueralarm) eingeht?",  
+id: 8, isMulti: false, category: "Gefahrenabwehr & Technik", subcategory: "Brandmeldeanlage",  
+question: "Welche Primäraufgabe hat eine Brandmeldeanlage (BMA) in einem gewerblichen Betrieb?",  
 options: [  
-"A) Sofortiges Verifizieren des betroffenen Melders (Laufkarte, Brandmeldebereich prüfen).",  
-"B) Verständigung der zuständigen Feuerwehr bzw. Beachtung des aufgeschalteten Wachdienstes gemäß Alarmplan.",  
-"C) Sofortiges Abschalten der gesamten Anlage, um den störenden Piepton zu beenden.",  
-"D) Einweisung der anrückenden Einsatzkräfte der Feuerwehr am Brandschutzzugang."  
+"Die sofortige automatische Brandbekämpfung durch Schaumflutung.",  
+"Die frühestmögliche Erkennung von Bränden zur schnellen Einleitung von Rettungs- und Löschmaßnahmen.",  
+"Die automatische Steuerung der Raumbeleuchtung bei Nacht.",  
+"Die Messung der Luftfeuchtigkeit für den Arbeitsschutz."  
 ],  
-correct: [0, 1, 3],  
-explanation: "Bei BMA-Auslösung gilt: Verifizieren, Feuerwehr alarmieren/weiterleiten, Einweisen. Ein blindes Abschalten der BMZ ist grob fahrlässig und brandschutzwidrig."  
-},  
-{  
-id: 52, isMulti: false, category: "Gefahrenabwehr & Technik", subcategory: "Einbruchmeldeanlage (EMA)",  
-question: "Was versteht man im Bereich der Einbruchmeldeanlagen (EMA) unter dem Begriff 'Scharfschaltung'?",  
-options: [  
-"A) Das Auslösen eines Fehlalarms durch den Wachdienst.",  
-"B) Das Aktivieren der Meldegruppe/Sicherungsbereiche, sodass bei unbefugtem Betreten oder Öffnen von Kontakten ein Alarm an die Notruf- und Serviceleitstelle (NSL) übertragen wird.",  
-"C) Das manuelle Justieren von Kameraobjektiven.",  
-"D) Die Entladung der Notstromversorgung."  
-],  
-correct: 1,  
-explanation: "Scharfschaltung bedeutet die Schätz- und Überwachungsbereitschaft der EMA aktivieren."  
+correct: [1],  
+explanation: "Eine BMA dient der frühzeitigen Detektion von Feuer und Rauchentwicklung, um Personenrettung und Brandbekämpfung zu unterstützen."  
 },  
 {  
-id: 53, isMulti: true, category: "Gefahrenabwehr & Technik", subcategory: "Perimetersicherung",  
-question: "Welche technischen Einrichtungen gehören zur klassischen Perimetersicherung (äußere Sicherung) eines hochsensiblen Industrieobjekts?",  
+id: 9, isMulti: true, category: "Gefahrenabwehr & Technik", subcategory: "Einbruchmeldeanlage",  
+question: "Welche zwei Komponenten gehören standardmäßig zu einer funktionsfähigen Einbruchmeldeanlage (EMA)?",  
 options: [  
-"A) Stabgitterzäune mit Übersteigschutz und Erschütterungssensoren (Feldthek-Detektion).",  
-"B) Infrarot-Lichtschranken und Videoperimeterüberwachung (VMD).",  
-"C) Innen liegende Schreibtischlampen der Verwaltung.",  
-"D) Zufahrtssperren (Poller, Schranken, Crash-Gates)."  
+"Detektoren / Melder (z.B. Infrarot-Bewegungsmelder, Magnetkontakte).",  
+"Eine automatische Sprinkleranlage mit Wasserzufuhr.",  
+"Eine Zentrale zur Auswertung und Alarmierung.",  
+"Ein externer Röntgenscanner für den LKW-Verkehr."  
 ],  
-correct: [0, 1, 3],  
-explanation: "Perimetersicherung schützt die Grundstücksgrenze (Zäune, Lichtschranken, Sperren). Schreibtischlampen gehören nicht dazu."  
+correct: [0, 2],  
+explanation: "Eine EMA besteht klassischerweise aus Sensoren (Meldern) zur Erkennung von Einbruchsversuchen und einer Zentrale, die Signale verarbeitet und Alarme auslöst."  
 },  
+// --- Serviceorientiertes Verhalten ---  
 {  
-id: 54, isMulti: false, category: "Gefahrenabwehr & Technik", subcategory: "Videoüberwachung (CCTV)",  
-question: "Welche datenschutzrechtlichen Rahmenbedingungen (DSGVO / BDSG) sind beim Betrieb von Videoüberwachungsanlagen auf öffentlich zugänglichen oder gewerblichen Flächen zu beachten?",  
+id: 10, isMulti: false, category: "Serviceorientiertes Verhalten", subcategory: "Kundenkommunikation",  
+question: "Wie sollte ein Sicherheitsmitarbeiter reagieren, wenn ein aufgebrachter Besucher wegen langer Wartezeiten am Empfang laut wird?",  
 options: [  
-"A) Kameras dürfen heimlich und ohne jegliche Hinweisschilder überall im Sanitär- und Pausenbereich installiert werden.",  
-"B) Es muss durch deutliche Hinweisschilder ('Videoüberwachtes Gelände') transparent auf die Überwachung hingewiesen werden; zudem müssen Speicherfristen beachtet und eine Erforderlichkeitsprüfung durchgeführt werden.",  
-"C) Videoaufzeichnungen dürfen öffentlich im Internet ohne Einschränkung gestreamt werden.",  
-"D) Es existieren keinerlei gesetzliche Vorgaben für den Betrieb von Überwachungskameras."  
+"Ebenfalls laut werden, um Autorität zu demonstrieren.",  
+"Ruhig und sachlich bleiben, Verständnis zeigen und lösungsorientiert agieren.",  
+"Den Besucher sofort ohne Anhörung des Geländes verweisen.",  
+"Den Vorfall ignorieren und sich demonstrativ abwenden."  
 ],  
-correct: 1,  
-explanation: "Transparenz (Hinweisschilder), Zweckbindung, Datenminimierung und striktes Verbot in Schutzbereichen (Toiletten, Umkleiden) sind zwingendes Recht nach DSGVO."  
+correct: [1],  
+explanation: "Deeskalierendes, ruhiges und professionelles Verhalten verhindert die Eskalation und wahrt die Servicequalität des Unternehmens."  
 },  
-// Serviceorientiertes Verhalten (76-90)  
+// --- Wirtschafts- und Sozialkunde ---  
 {  
-id: 76, isMulti: true, category: "Serviceorientiertes Verhalten", subcategory: "Kundenorientierung & Empfang",  
-question: "Wie äußert sich professionelles, serviceorientiertes Auftreten eines Sicherheitsmitarbeiters am Empfang eines Unternehmens?",  
+id: 11, isMulti: false, category: "Wirtschafts- und Sozialkunde", subcategory: "Arbeitsrecht",  
+question: "Welches Gesetz bildet in Deutschland das grundlegende Fundament für den Kündigungsschutz von Arbeitnehmern in Betrieben ab einer bestimmten Größe?",  
 options: [  
-"A) Freundliche, verbindliche Begrüßung von Kunden, Lieferanten und Gästen bei gleichzeitiger konsequenter Einhaltung der Sicherheitsrichtlinien (Besucherausweis ausstellen).",  
-"B) Ignorieren von wartenden Besuchern, während man privat am Smartphone telefoniert.",  
-"C) Kompetente und hilfsbereite Auskunftserteilung im Rahmen der Befugnisse unter Wahrung der Vertraulichkeit.",  
-"D) Souveränes und ruhiges Managen von stressigen Stoßzeiten am Empfang."  
+"Das Kündigungsschutzgesetz (KSchG)",  
+"Das Bürgerliche Gesetzbuch (BGB) im Bereich des Werkvertragsrechts",  
+"Das Strafgesetzbuch (StGB) im Achten Abschnitt",  
+"Das Gewerbegeheimnisgesetz (GeschGehG)"  
 ],  
-correct: [0, 2, 3],  
-explanation: "Sicherheit und Service schließen sich nicht aus; professioneller Empfang verbindet Freundlichkeit mit kompromissloser Sicherheitskontrolle."  
+correct: [0],  
+explanation: "Das Kündigungsschutzgesetz (KSchG) regelt den gesetzlichen Kündigungsschutz für Arbeitnehmer in Betrieben mit mehr als 10 Mitarbeitern."  
 },  
-// Wirtschafts- und Sozialkunde (91-100)  
+// --- Unternehmenssicherheit ---  
 {  
-id: 91, isMulti: true, category: "Wirtschafts- und Sozialkunde", subcategory: "Arbeitsrecht & Kündigungsschutz",  
-question: "Welche Grundprinzipien gelten im deutschen Arbeitsrecht bezüglich Arbeitsverträgen und Kündigungsschutz im Bewachungsgewerbe?",  
+id: 12, isMulti: true, category: "Unternehmenssicherheit", subcategory: "Sicherheitsmanagement",  
+question: "Welche zwei Maßnahmen gehören zu den klassischen Kernbereichen des baulichen und mechanischen Objektschutzes?",  
 options: [  
-"A) Der Allgemeine Kündigungsschutz nach dem KSchG greift in Betrieben mit mehr als 10 Vollzeitarbeitnehmern nach Ablauf der sechsmonatigen Wartezeit.",  
-"B) Fristlose Kündigungen nach § 626 BGB setzen einen schwerwiegenden wichtigen Grund voraus, der die Fortsetzung des Arbeitsverhältnisses unzumutbar macht.",  
-"C) Arbeitsverträge im Bewachungsgewerbe bedürfen zu ihrer Wirksamkeit zwingend der notariellen Beglaubigung durch den Bundeskanzler.",  
-"D) Das Jugendarbeitsschutzgesetz (JArbSchG) schützt jugendliche Arbeitnehmer bei bestimmten Nacht- und Schichtdiensten."  
+"Errichtung von Zaun- und Toranlagen mit Sicherheitszertifizierung.",  
+"Einsatz von Personenschutz-Eskorten im öffentlichen Straßenverkehr.",  
+"Verbauung von einbruchhemmenden Türen und Fenstergittern (nach DIN).",  
+"Durchführung von Cybersecurity-Audits für Cloud-Server."  
 ],  
-correct: [0, 1, 3],  
-explanation: "KSchG, fristlose Kündigung nach § 626 BGB und Jugendarbeitsschutz sind klassische arbeitsrechtliche Grundlagen. Notarielle Beglaubigungen durch den Bundeskanzler sind hanebüchener Unsinn."  
+correct: [0, 2],  
+explanation: "Baulicher und mechanischer Objektschutz umfasst physische Barrieren wie Zäune, Tore, gesicherte Türen und Fenster."  
+},  
+// --- AGU (Arbeit, Gesundheit & Umwelt) ---  
+{  
+id: 13, isMulti: false, category: "AGU (Arbeit, Gesundheit & Umwelt)", subcategory: "Arbeitssicherheit",  
+question: "Wer ist im Betrieb primär für die Aufstellung und Überwachung von Sicherheits- und Gesundheitsvorschriften (Arbeitsschutz) verantwortlich?",  
+options: [  
+"Der Arbeitgeber bzw. die Unternehmensleitung.",  
+"Jeder einzelne Wachmann auf freiwilliger Basis.",  
+"Ausschließlich der Betriebsrat ohne Weisungsbefugnis.",  
+"Das örtliche Ordnungsamt."  
+],  
+correct: [0],  
+explanation: "Der Arbeitgeber trägt die primäre rechtliche Verantwortung für den Arbeitsschutz und die Bereitstellung sicherer Arbeitsbedingungen."  
+},  
+// --- Datenschutz (BDSG/DSGVO) ---  
+{  
+id: 14, isMulti: true, category: "Datenschutz (BDSG/DSGVO)", subcategory: "Videoüberwachung",  
+question: "Welche zwei rechtlichen Vorgaben sind beim Betrieb von Videoüberwachungsanlagen im öffentlich zugänglichen Raum (gem. DSGVO / BDSG) zwingend einzuhalten?",  
+options: [  
+"Transparente Kennzeichnung durch deutliche Hinweisschilder (Informationspflicht).",  
+"Unbegrenzte und dauerhafte Speicherung aller Videodaten zu Archivierungszwecken.",  
+"Wahrung der Verhältnismäßigkeit und datenschutzfreundliche Voreinstellungen.",  
+"Öffentliche Live-Stream-Freigabe der Aufnahmen für jedermann im Internet."  
+],  
+correct: [0, 2],  
+explanation: "Videoüberwachung erfordert gut sichtbare Hinweisschilder zur Information der Betroffenen sowie die strikte Einhaltung von Verhältnismäßigkeit und Speicherfristen."  
 }  
 ];  
 
-for (let i = rawGsskPool.length + 1; i <= 100; i++) {  
-let cat = i <= 25 ? "Rechtskunde" : (i <= 50 ? "Dienstkunde" : (i <= 75 ? "Gefahrenabwehr & Technik" : (i <= 90 ? "Serviceorientiertes Verhalten" : "Wirtschafts- und Sozialkunde")));  
-rawGsskPool.push({  
-id: i,  
-isMulti: (i % 3 === 0),  
-category: cat,  
-subcategory: "Vertiefungsschwerpunkt " + cat,  
-question: `[Prüfungsfrage ${i}] Analysieren Sie folgenden komplexen Sachverhalt im Fachbereich ${cat}: Welche rechtlichen oder taktischen Maßnahmen sind unter Beachtung der IHK-Prüfungsstandards zwingend geboten?`,  
+// Fallbeispiele für Tab 3
+const lawCases = [  
+{  
+title: "Fall 1: Der Ladendieb im Supermarkt",  
+text: "Kunde A steckt in einem Supermarkt unauffällig eine teure Flasche Parfum in seine Jackentasche und passiert den Kassenbereich ohne zu bezahlen. Der Ladendetektiv beobachtet dies über den Monitor, eilt herbei und hält A am Ausgang fest. A schlägt um sich und will fliehen. Der Detektiv fixiert A mit mäßiger körperlicher Gewalt am Boden, bis die Polizei eintrifft.",  
+question: "Wie ist das Handeln des Detektivs rechtlich zu bewerten?",  
 options: [  
-"A) Die unmittelbare Einleitung der rechtlich kodifizierten Standardverfahren unter strikter Beachtung des Verhältnismäßigkeitsgrundsatzes.",  
-"B) Das sofortige eigenmächtige Verlassen des Objekts ohne Dokumentation oder Übergabe.",  
-"C) Die lückenlose Dokumentation im Wachbuch sowie die sofortige Hinzuziehung der zuständigen Einsatzkräfte oder Vorgesetzten.",  
-"D) Die Anwendung maximaler physischer Härte unabhängig von der Kooperationsbereitschaft des Störers."  
+"Vollkommen rechtmäßig gem. § 127 Abs. 1 StPO (vorläufige Festnahme auf frischer Tat) in Verbindung mit Notwehr bzw. verhältnismäßiger Durchsetzung des Besitzschutzrechts.",  
+"Rechtswidrig, da private Sicherheitskräfte niemals Personen festhalten dürfen.",  
+"Nur dann zulässig, wenn der Ladendieb zuvor schriftlich verwarnt wurde.",  
+"Strafbar als Freiheitsberaubung und Körperverletzung, da der Detektiv kein Polizeibeamter ist."  
 ],  
-correct: (i % 3 === 0) ? [0, 2] : 0,  
-explanation: `Musterlösung zu Frage ${i}: Option A und C spiegeln das professionelle, rechtskonforme Handeln eines qualifizierten Sicherheitsmitarbeiters wider. Eigenmächtiges Fehlverhalten oder übermäßige Härte sind unzulässig.`  
-});  
+correctIndex: 0,  
+explanation: "Der Detektiv hat den Täter auf frischer Tat betroffen. Da Fluchtgefahr und Verdacht der Identitätsverschleierung vorliegen, greift das Jedermann-Festnahmerecht nach § 127 Abs. 1 StPO."  
+},  
+{  
+title: "Fall 2: Unbefugter Zutritt auf Werksgelände",  
+text: "Ein ehemaliger Mitarbeiter (M), dem fristlos gekündigt wurde, betritt trotz eines schriftlich ausgesprochenen und zugegangenen Hausverbots das umfriedete Firmengelände, um vermeintlich persönliche Unterlagen aus der Spindhalle zu holen. Werkschutzmitarbeiter W stellt M und fordert ihn auf, das Gelände sofort zu verlassen. M weigert sich und wird aggressiv.",  
+question: "Welche Rechtsnormen greifen hier für den Werkschutzmitarbeiter W unmittelbar?",  
+options: [  
+"§ 123 StGB (Hausfriedensbruch) und das zivilrechtliche Hausrecht des Werksinhabers zur Durchsetzung des Platzverweises.",  
+"Ausschließlich das Straßenverkehrsrecht, da sich das Tor im Außenbereich befindet.",  
+"§ 211 StGB (Mord) wegen unberechtigtem Betretens.",  
+"Keine, da ein gekündigter Mitarbeiter uneingeschränktes Zutrittsrecht besitzt."  
+],  
+correctIndex: 0,  
+explanation: "Mit Ausspruch des Hausverbots entfällt jede Befugnis zum Betreten. Das Verweilen oder unbefugte Betreten erfüllt den Tatbestand des Hausfriedensbruchs (§ 123 StGB)."  
+},  
+{  
+title: "Fall 3: Notwehr in der Pforte",  
+text: "Ein betrunkener Besucher B will nachts das Werkstor passieren, obwohl er keinen Ausweis besitzt. Als Wachmann S ihm den Zutritt verwehrt, zieht B plötzlich ein Messer, holt zum Stich aus und droht, S abzustechen. S weicht zurück, zieht das erlaubte Einsatzmittel und stoppt den Angriff mit einem gezielten Schlag gegen den Arm des B, wodurch das Messer zu Boden fällt.",  
+question: "Wie ist das Verhalten von Wachmann S dogmatisch einzuordnen?",  
+options: [  
+"Als gerechtfertigte Notwehr nach § 32 StGB (gegenwärtiger, rechtswidriger Angriff; erforderliche und gebotene Abwehr).",  
+"Als rechtswidrige Körperverletzung, da S hätte weglaufen müssen.",  
+"Als Überschreitung der Notwehr (Notwehrexzess nach § 33 StGB).",  
+"Als Verletzung des Waffengesetzes."  
+],  
+correctIndex: 0,  
+explanation: "Es lag ein gegenwärtiger und rechtswidriger Angriff auf Leib und Leben vor. Die Verteidigungshandlung war geeignet und erforderlich, um den Angriff sofort zu beenden."  
+},  
+{  
+title: "Fall 4: Der renitente Nachtschwärmer",  
+text: "In einem bewachten Logistikzentrum drückt ein Unbefugter in der Nacht einen Notausgang auf, um Abkürzung zu nehmen. Die Alarmanlage schlägt an. Werkschutzmitarbeiter Müller stellt den Eindringling im Innenhof und fordert die Ausweisdokumente. Der Ertappte weigert sich anzugeben, wer er ist, und beschimpft Müller übel.",  
+question: "Welche Handlungsoption hat Müller im Rahmen seiner rechtlichen Befugnisse?",  
+options: [  
+"Er darf den Täter nach § 127 Abs. 1 StPO bis zum Eintreffen der Polizei festhalten, da die Identität mangels Ausweis nicht sofort feststellbar ist.",  
+"Er muss den Täter sofort laufen lassen, da Beleidigungen keine Festnahme rechtfertigen.",  
+"Er darf körperliche Zwangsmittel anwenden, um den Täter zu schlagen.",  
+"Er darf die Person auf dem Betriebsgelände festketten."  
+],  
+],  
+correctIndex: 0,  
+explanation: "Das unbefugte Eindringen in das geschützte Betriebsgelände erfüllt den Tatbestand des Hausfriedensbruchs (§ 123 StGB), womit die Identitätsfeststellung nach § 127 Abs. 1 StPO gedeckt ist."  
+},  
+{  
+title: "Fall 5: Die Brandgefahr im Lager",  
+text: "Während des Kontrollgangs bemerkt Sicherheitskraft S, dass in einer Lagerhalle ein technisches Gerät stark raucht und Funken sprüht. Der Bereich ist verschlossen, und der zuständige Schichtleiter ist unerreichbar. Um einen Großbrand zu verhindern, tritt S die Holztür der Lagerhalle ein, um an den Hauptschalter zu gelangen.",  
+question: "Welcher Rechtfertigungsgrund greift hier für die Sachbeschädigung an der Tür?",  
+options: [  
+"Der rechtfertigende Notstand gem. § 34 StGB (Abwendung einer gegenwärtigen, nicht anders abwendbaren Gefahr für bedeutende Rechtsgüter).",  
+"Das Jedermann-Festnahmerecht nach § 127 StPO.",  
+"Kein Rechtfertigungsgrund; S muss für den Schaden persönlich haften.",  
+"Notwehr nach § 32 StGB."  
+],  
+correctIndex: 0,  
+explanation: "Hier liegt kein Angriff vor, sondern eine Sachgefahr (Brandgefahr). Die Interessenabwägung ergibt, dass die Zerstörung einer Tür zum Schutz der gesamten Lagerhalle und der Anlage gerechtfertigt ist."  
+},  
+{  
+title: "Fall 6: Die Taschendurchsuchung am Eingang",  
+text: "Ein Großkonzern führt zum Schutz vor Diebstahl Kontrollen am Werktor ein. In den Arbeitsverträgen ist vereinbart, dass Taschen stichprobenartig kontrolliert werden dürfen. Mitarbeiter X weigert sich vehement, seine Tasche öffnen zu lassen, und beruft sich auf sein allgemeines Persönlichkeitsrecht.",  
+question: "Wie ist die Rechtslage bezüglich der Taschenkontrolle?",  
+options: [  
+"Die Kontrolle ist zulässig, wenn sie auf einer wirksamen vertraglichen Vereinbarung, Betriebsvereinbarung oder dem Hausrecht beruht und verhältnismäßig durchgeführt wird.",  
+"Taschenkontrollen im Werkschutz sind grundsätzlich unter allen Umständen verfassungswidrig.",  
+"Sicherheitsmitarbeiter dürfen ohne richterlichen Durchsuchungsbefehl niemals Taschen öffnen.",  
+"X darf mit Waffengewalt zur Öffnung gezwungen werden."  
+],  
+correctIndex: 0,  
+explanation: "Durch vertragliche Regelungen oder Betriebsvereinbarungen (und im Rahmen des Hausrechts) können Einlasskontrollen und Taschenkontrollen im Unternehmensinteresse rechtlich legitimiert sein."  
+},  
+{  
+title: "Fall 7: Der aggressive Lieferant",  
+text: "Ein Lieferant L fährt auf das Firmengelände, parkt verbotswidrig in einer Rettungsgasse und blockiert dadurch die Feuerwehrzufahrt. Als Werkschutzmitarbeiter S ihn auffordert, den LKW sofort umzuparken, beleidigt L den S schwer und fährt absichtlich langsam auf S zu, um ihn zur Seite zu drängen.",  
+question: "Welches Recht hat S in dieser akuten Situation?",  
+options: [  
+"S befindet sich in einer Notwehrlage (§ 32 StGB) gegen den rechtswidrigen Angriff mit dem Fahrzeug und darf geeignete Abwehrmittel einsetzen.",  
+"S darf den Lieferanten festnehmen, aber keinesfalls zurückweichen.",  
+"S muss den Vorfall lediglich schriftlich im Wachbuch vermerken und darf sich nicht körperlich schützen.",  
+"S muss den LKW eigenhändig wegfahren."  
+],  
+correctIndex: 0,  
+explanation: "Das Heranfahren mit einem Fahrzeug stellt einen gegenwärtigen, rechtswidrigen Angriff auf die körperliche Unversehrtheit dar, der zu Notwehrmiteln berechtigt."  
+},  
+{  
+title: "Fall 8: Die unberechtigte Videoüberwachung",  
+text: "Ein Sicherheitsverantwortlicher installiert heimlich eine versteckte Minikamera in den Umkleidekabinen der Mitarbeiter, um internen Diebstählen nachzugehen, ohne die Belegschaft oder den Betriebsrat zu informieren.",  
+question: "Wie ist diese Maßnahme datenschutzrechtlich und rechtlich zu bewerten?",  
+options: [  
+"Schwerer Verstoß gegen die DSGVO, das BDSG und das allgemeine Persönlichkeitsrecht (unzulässige verdeckte Überwachung in sensiblen Bereichen).",  
+"Vollkommen rechtmäßig im Rahmen der präventiven Unternehmenssicherheit.",  
+"Erlaubt, solange kein Betriebsrat im Unternehmen existiert.",  
+"Nur strafbar, wenn die Videos im Internet veröffentlicht werden."  
+],  
+correctIndex: 0,  
+explanation: "Die Überwachung von Intimbereichen wie Umkleidekabinen ist absolut unzulässig und verletzt elementare Persönlichkeitsrechte sowie Datenschutzgesetze."  
+},  
+{  
+title: "Fall 9: Der Schlüsselverlust",  
+text: "Wachmann W verliert während seiner Schicht fahrlässig den Generalschlüssel für den Hauptserverraum eines Hochsicherheitsgebäudes. Er verschweigt den Verlust gegenüber dem Vorgesetzten, um eine disziplinarische Rüge zu vermeiden.",  
+question: "Welche arbeitsrechtlichen und sicherheitsbezogenen Konsequenzen kann dieses Verhalten haben?",  
+options: [  
+"Eine fristlose, im Wiederholungsfall oder bei hohem Risiko auch ordentliche oder außerordentliche verhaltensbedingte Kündigung wegen Verletzung vertraglicher Nebenpflichten.",  
+"Keine Konsequenzen, da jeder Mensch Fehler machen darf.",  
+"Eine sofortige Beförderung zum Schichtführer wegen Schadensminimierung.",  
+"Eine automatische Entlassung durch die Polizei ohne Arbeitgeberbeteiligung."  
+],  
+correctIndex: 0,  
+explanation: "Das Verschweigen eines sicherheitsrelevanten Vorfalls wie dem Verlust eines Generalschlüssels gefährdet das gesamte Objekt und rechtfertigt arbeitsrechtliche Sanktionen bis zur fristlosen Kündigung."  
+},  
+{  
+title: "Fall 10: Die Amtsträger-Anmaßung",  
+text: "Wachmann K trägt bei Kontrollgängen im öffentlichen Verkehrsraum eine Uniform, die täuschend echt der Uniform der Landespolizei nacheinander sieht, und fordert Passanten auf, sich von ihm auszuweisen, da er eine 'private Polizeieinheit' leite.",  
+question: "Welchen Straftatbestand erfüllt K mit diesem Auftreten?",  
+options: [  
+"Amtsanmaßung gem. § 132 StGB und ggf. Missbrauch von Titeln, Berufsbezeichnungen oder Abzeichen.",  
+"Keinen Tatbestand, solange K niemanden körperlich misshandelt.",  
+"Urkundenfälschung nach § 267 StGB.",  
+"Einfachen Diebstahl."  
+],  
+correctIndex: 0,  
+explanation: "Wer unbefugt die Handlung eines Amtsträgers vornimmt oder sich als solcher ausgibt, erfüllt den Tatbestand der Amtsanmaßung nach § 132 StGB."  
 }  
+];  
 
-let gsskQuestions = [...rawGsskPool];  
+// Zustandsvariablen für Quiz
 let currentQuizIndex = 0;  
-let userQuizAnswers = {};  
+let quizUserAnswers = {};  
 let quizBookmarks = JSON.parse(localStorage.getItem('gssk_bookmarks') || '[]');  
 let quizStats = JSON.parse(localStorage.getItem('gssk_stats') || '{}');  
-let filteredQuestions = [...gsskQuestions];  
-let activeFilter = 'all';  
-let quizTimer = null;  
-let quizTimeLeft = 45;  
-let timerModeActive = false;  
-let synth = window.speechSynthesis;  
+let currentFilteredPool = [...rawGsskPool];  
+let isBookmarkFilterActive = false;  
+let isWeakFilterActive = false;  
+let isMasteredFilterActive = false;  
+let quizTimerInterval = null;  
+let quizSecondsLeft = 45;  
+let isTimerModeActive = false;  
 
-function speakCurrentQuestion() {  
-if (!synth) return;  
-synth.cancel();  
-const q = filteredQuestions[currentQuizIndex];  
-let textToSpeak = q.question + ". Antwortmöglichkeiten: ";  
-q.options.forEach((opt, idx) => {  
-textToSpeak += `Option ${String.fromCharCode(65 + idx)}: ${opt}.` ;  
-});  
-const utterThis = new SpeechSynthesisUtterance(textToSpeak);  
-utterThis.lang = 'de-DE';  
-synth.speak(utterThis);  
-}  
-function pauseSpeech() { if (synth) synth.pause(); }  
-function stopSpeech() { if (synth) synth.cancel(); }  
+// Zustandsvariablen für echte Prüfung
+let examQuestions = [];  
+let currentExamIndex = 0;  
+let examAnswers = {};  
+let examFlags = {};  
+let examTimerInterval = null;  
+let examSecondsLeft = 45 * 60;  
+
+// Initialsierung beim Laden
+window.onload = function() {  
+initQuiz();  
+initLawCases();  
+};  
 
 function switchTab(tabName) {  
-stopSpeech();  
 document.getElementById('quizTab').classList.add('hidden');  
 document.getElementById('realExamTab').classList.add('hidden');  
 document.getElementById('lawTab').classList.add('hidden');  
+
 document.getElementById('tabQuizBtn').classList.remove('active');  
 document.getElementById('tabRealExamBtn').classList.remove('active');  
 document.getElementById('tabLawBtn').classList.remove('active');  
+
+stopSpeech();  
+if (quizTimerInterval) clearInterval(quizTimerInterval);  
+
 if (tabName === 'quiz') {  
 document.getElementById('quizTab').classList.remove('hidden');  
 document.getElementById('tabQuizBtn').classList.add('active');  
-const finishedScreen = document.getElementById('quizFinishedScreen');  
-const container = document.getElementById('quizContentArea');  
-if (finishedScreen.classList.contains('hidden') && currentQuizIndex < filteredQuestions.length) {  
 renderQuizQuestion();  
-}  
 } else if (tabName === 'realExam') {  
 document.getElementById('realExamTab').classList.remove('hidden');  
 document.getElementById('tabRealExamBtn').classList.add('active');  
 } else if (tabName === 'law') {  
 document.getElementById('lawTab').classList.remove('hidden');  
 document.getElementById('tabLawBtn').classList.add('active');  
-renderLawCases();  
 }  
+}  
+
+// --- QUIZ LOGIK ---  
+function initQuiz() {  
+filterQuizQuestions();  
 }  
 
 function filterQuizQuestions() {  
 const query = document.getElementById('quizSearchInput').value.toLowerCase();  
-filteredQuestions = gsskQuestions.filter(q => {  
+currentFilteredPool = rawGsskPool.filter(q => {  
 const matchesQuery = q.question.toLowerCase().includes(query) || q.category.toLowerCase().includes(query) || q.subcategory.toLowerCase().includes(query);  
-if (!matchesQuery) return false;  
-if (activeFilter === 'bookmarks') return quizBookmarks.includes(q.id);  
-if (activeFilter === 'weak') {  
-const st = quizStats[q.id];  
-return st && st.wrong > st.correct;  
-}  
-if (activeFilter === 'mastered') {  
-const st = quizStats[q.id];  
-return st && st.correct > 0 && st.correct >= st.wrong;  
-}  
-return true;  
+const isBookmarked = quizBookmarks.includes(q.id);  
+const stat = quizStats[q.id] || { correctCount: 0 };  
+const isWeak = stat.correctCount < 2;  
+const isMastered = stat.correctCount >= 2;  
+
+if (isBookmarkFilterActive && !isBookmarked) return false;  
+if (isWeakFilterActive && !isWeak) return false;  
+if (isMasteredFilterActive && !isMastered) return false;  
+return matchesQuery;  
 });  
+
 currentQuizIndex = 0;  
+quizUserAnswers = {};  
 renderQuizQuestion();  
 }  
 
 function toggleBookmarkFilter() {  
-activeFilter = activeFilter === 'bookmarks' ? 'all' : 'bookmarks';  
-document.getElementById('filterBookmarkBtn').classList.toggle('active', activeFilter === 'bookmarks');  
+isBookmarkFilterActive = !isBookmarkFilterActive;  
+document.getElementById('filterBookmarkBtn').classList.toggle('active', isBookmarkFilterActive);  
 filterQuizQuestions();  
 }  
+
 function toggleWeakFilter() {  
-activeFilter = activeFilter === 'weak' ? 'all' : 'weak';  
-document.getElementById('filterWeakBtn').classList.toggle('active', activeFilter === 'weak');  
+isWeakFilterActive = !isWeakFilterActive;  
+document.getElementById('filterWeakBtn').classList.toggle('active', isWeakFilterActive);  
+if (isWeakFilterActive) {  
+isMasteredFilterActive = false;  
+document.getElementById('filterMasteredBtn').classList.remove('active');  
+}  
 filterQuizQuestions();  
 }  
+
 function toggleMasteredFilter() {  
-activeFilter = activeFilter === 'mastered' ? 'all' : 'mastered';  
-document.getElementById('filterMasteredBtn').classList.toggle('active', activeFilter === 'mastered');  
+isMasteredFilterActive = !isMasteredFilterActive;  
+document.getElementById('filterMasteredBtn').classList.toggle('active', isMasteredFilterActive);  
+if (isMasteredFilterActive) {  
+isWeakFilterActive = false;  
+document.getElementById('filterWeakBtn').classList.remove('active');  
+}  
 filterQuizQuestions();  
-}  
-
-function toggleCurrentBookmark() {  
-const q = filteredQuestions[currentQuizIndex];  
-if (!q) return;  
-const idx = quizBookmarks.indexOf(q.id);  
-if (idx > -1) {  
-quizBookmarks.splice(idx, 1);  
-} else {  
-quizBookmarks.push(q.id);  
-}  
-localStorage.setItem('gssk_bookmarks', JSON.stringify(quizBookmarks));  
-updateBookmarkIcon();  
-}  
-
-function updateBookmarkIcon() {  
-const q = filteredQuestions[currentQuizIndex];  
-const btn = document.getElementById('quizBookmarkBtn');  
-if (!q) return;  
-if (quizBookmarks.includes(q.id)) {  
-btn.textContent = "⭐";  
-btn.title = "Lesezeichen entfernen";  
-} else {  
-btn.textContent = "☆";  
-btn.title = "Frage merken";  
-}  
 }  
 
 function toggleTimerMode() {  
-timerModeActive = document.getElementById('timerCheckbox').checked;  
-const timerBox = document.getElementById('quizTimerBox');  
-if (timerModeActive) {  
-timerBox.classList.remove('hidden');  
-startQuizTimer();  
-} else {  
-timerBox.classList.add('hidden');  
-clearInterval(quizTimer);  
-}  
-}  
-
-function startQuizTimer() {  
-clearInterval(quizTimer);  
-quizTimeLeft = 45;  
-document.getElementById('quizTimerBox').textContent = quizTimeLeft;  
-quizTimer = setInterval(() => {  
-quizTimeLeft--;  
-document.getElementById('quizTimerBox').textContent = quizTimeLeft;  
-if (quizTimeLeft <= 0) {  
-clearInterval(quizTimer);  
-autoSubmitQuizTimeout();  
-}  
-}, 1000);  
-}  
-
-function autoSubmitQuizTimeout() {  
-const q = filteredQuestions[currentQuizIndex];  
-if (!q) return;  
-recordQuizStat(q.id, false);  
-showQuizSolution(q);  
+isTimerModeActive = document.getElementById('timerCheckbox').checked;  
+renderQuizQuestion();  
 }  
 
 function renderQuizQuestion() {  
-clearInterval(quizTimer);  
-if (timerModeActive) startQuizTimer();  
-const container = document.getElementById('quizContentArea');  
-const finishedScreen = document.getElementById('quizFinishedScreen');  
-if (filteredQuestions.length === 0) {  
-container.classList.add('hidden');  
-finishedScreen.classList.remove('hidden');  
-renderStatDashboard();  
+stopSpeech();  
+if (quizTimerInterval) clearInterval(quizTimerInterval);  
+
+const area = document.getElementById('quizContentArea');  
+const finishScreen = document.getElementById('quizFinishedScreen');  
+
+if (currentFilteredPool.length === 0) {  
+area.classList.add('hidden');  
+finishScreen.classList.remove('hidden');  
+finishScreen.innerHTML = `<h2>Keine Fragen gefunden</h2><p style="color:var(--text-muted)">Bitte ändere deine Suchfilter.</p><button class="btn-action" style="margin-top:15px;" onclick="resetFilters()">Filter zurücksetzen</button>`;  
 return;  
 }  
-if (currentQuizIndex >= filteredQuestions.length) {  
-currentQuizIndex = 0;  
+
+if (currentQuizIndex >= currentFilteredPool.length) {  
+area.classList.add('hidden');  
+finishScreen.classList.remove('hidden');  
+renderQuizStatsDashboard();  
+return;  
 }  
-container.classList.remove('hidden');  
-finishedScreen.classList.add('hidden');  
-const q = filteredQuestions[currentQuizIndex];  
-document.getElementById('counter').textContent = `Frage ${currentQuizIndex + 1} von ${filteredQuestions.length}`;  
+
+area.classList.remove('hidden');  
+finishScreen.classList.add('hidden');  
+
+const q = currentFilteredPool[currentQuizIndex];  
+document.getElementById('counter').textContent = `Frage ${currentQuizIndex + 1} von ${currentFilteredPool.length}`;  
 document.getElementById('catBadge').textContent = q.category;  
 document.getElementById('subCatBadge').textContent = q.subcategory;  
 
 const multiBadge = document.getElementById('multiBadge');  
-const multiContainer = document.getElementById('multiSubmitContainer');  
 if (q.isMulti) {  
 multiBadge.classList.remove('hidden');  
-multiContainer.classList.remove('hidden');  
 } else {  
 multiBadge.classList.add('hidden');  
-multiContainer.classList.add('hidden');  
 }  
+
 document.getElementById('question').textContent = q.question;  
 
-const optionsDiv = document.getElementById('options');  
-optionsDiv.innerHTML = '';  
-q.options.forEach((opt, idx) => {  
+const optionsContainer = document.getElementById('options');  
+optionsContainer.innerHTML = '';  
+
+const userAns = quizUserAnswers[q.id];  
+const isAnswered = userAns !== undefined;  
+
+q.options.forEach((optText, idx) => {  
 const btn = document.createElement('button');  
 btn.className = 'btn-option';  
-btn.textContent = `${String.fromCharCode(65 + idx)}) ${opt}`;  
-btn.onclick = () => handleQuizOptionClick(idx, btn, q);  
-optionsDiv.appendChild(btn);  
+btn.textContent = optText;  
+
+if (q.isMulti) {  
+let selectedArr = quizUserAnswers[q.id] || [];  
+if (selectedArr.includes(idx)) {  
+btn.classList.add('selected');  
+}  
+if (isAnswered) {  
+if (q.correct.includes(idx)) btn.classList.add('correct');  
+else if (selectedArr.includes(idx)) btn.classList.add('wrong');  
+btn.disabled = true;  
+} else {  
+btn.onclick = () => toggleMultiOption(q.id, idx);  
+}  
+} else {  
+if (isAnswered) {  
+if (q.correct.includes(idx)) btn.classList.add('correct');  
+else if (userAns === idx) btn.classList.add('wrong');  
+btn.disabled = true;  
+} else {  
+btn.onclick = () => submitSingleAnswer(q.id, idx);  
+}  
+}  
+optionsContainer.appendChild(btn);  
 });  
-document.getElementById('explanation').style.display = 'none';  
-document.getElementById('nextBtn').style.display = 'none';  
-updateBookmarkIcon();  
+
+const multiSubmit = document.getElementById('multiSubmitContainer');  
+if (q.isMulti && !isAnswered) {  
+multiSubmit.classList.remove('hidden');  
+} else {  
+multiSubmit.classList.add('hidden');  
 }  
 
-function handleQuizOptionClick(idx, btn, q) {  
-if (q.isMulti) {  
-btn.classList.toggle('selected');  
+const explBox = document.getElementById('explanation');  
+if (isAnswered) {  
+explBox.style.display = 'block';  
+document.getElementById('explanationText').textContent = q.explanation;  
 } else {  
-clearInterval(quizTimer);  
-const buttons = document.querySelectorAll('#options .btn-option');  
-buttons.forEach(b => b.style.pointerEvents = 'none');  
-const isCorrect = Array.isArray(q.correct) ? q.correct.includes(idx) : (q.correct === idx);  
-recordQuizStat(q.id, isCorrect);  
-playSound(isCorrect);  
-buttons.forEach((b, i) => {  
-const correctCheck = Array.isArray(q.correct) ? q.correct.includes(i) : (q.correct === i);  
-if (correctCheck) b.classList.add('correct');  
-else if (i === idx) b.classList.add('wrong');  
-});  
-showQuizSolution(q);  
+explBox.style.display = 'none';  
 }  
+
+const bookmarkBtn = document.getElementById('quizBookmarkBtn');  
+if (quizBookmarks.includes(q.id)) {  
+bookmarkBtn.textContent = "⭐";  
+bookmarkBtn.title = "Lesezeichen entfernen";  
+} else {  
+bookmarkBtn.textContent = "☆";  
+bookmarkBtn.title = "Frage merken";  
+}  
+
+// Timer Starten  
+if (isTimerModeActive && !isAnswered) {  
+quizSecondsLeft = 45;  
+const timerBox = document.getElementById('quizTimerBox');  
+timerBox.classList.remove('hidden');  
+timerBox.textContent = quizSecondsLeft;  
+quizTimerInterval = setInterval(() => {  
+quizSecondsLeft--;  
+timerBox.textContent = quizSecondsLeft;  
+if (quizSecondsLeft <= 0) {  
+clearInterval(quizTimerInterval);  
+if (!quizUserAnswers[q.id]) {  
+if (q.isMulti) {  
+quizUserAnswers[q.id] = [];  
+} else {  
+quizUserAnswers[q.id] = -99;  
+}  
+updateQuizStat(q.id, false);  
+playSound(false);  
+renderQuizQuestion();  
+}  
+}  
+}, 1000);  
+} else {  
+document.getElementById('quizTimerBox').classList.add('hidden');  
+}  
+}  
+
+function submitSingleAnswer(qId, idx) {  
+if (quizTimerInterval) clearInterval(quizTimerInterval);  
+quizUserAnswers[qId] = idx;  
+const q = currentFilteredPool.find(item => item.id === qId);  
+const isCorrect = q.correct.includes(idx);  
+
+updateQuizStat(qId, isCorrect);  
+playSound(isCorrect);  
+renderQuizQuestion();  
+}  
+
+function toggleMultiOption(qId, idx) {  
+if (!quizUserAnswers[qId]) quizUserAnswers[qId] = [];  
+let arr = quizUserAnswers[qId];  
+const pos = arr.indexOf(idx);  
+if (pos > -1) {  
+arr.splice(pos, 1);  
+} else {  
+if (arr.length < 2) {  
+arr.push(idx);  
+} else {  
+alert("Du kannst maximal 2 Antwortmöglichkeiten auswählen.");  
+return;  
+}  
+}  
+renderQuizQuestion();  
 }  
 
 function submitMultiAnswer() {  
-const q = filteredQuestions[currentQuizIndex];  
-const buttons = document.querySelectorAll('#options .btn-option');  
-let selectedIndices = [];  
-buttons.forEach((b, i) => {  
-if (b.classList.contains('selected')) selectedIndices.push(i);  
-b.style.pointerEvents = 'none';  
-});  
-if (selectedIndices.length === 0) {  
-alert("Bitte wähle mindestens eine Option aus!");  
-buttons.forEach(b => b.style.pointerEvents = 'auto');  
+const q = currentFilteredPool[currentQuizIndex];  
+const userArr = quizUserAnswers[q.id] || [];  
+if (userArr.length !== 2) {  
+alert("Bitte wähle genau 2 Antwortmöglichkeiten aus.");  
 return;  
 }  
-clearInterval(quizTimer);  
-const correctArr = Array.isArray(q.correct) ? [...q.correct].sort() : [q.correct];  
-selectedIndices.sort();  
-const isCorrect = JSON.stringify(selectedIndices) === JSON.stringify(correctArr);  
-recordQuizStat(q.id, isCorrect);  
+if (quizTimerInterval) clearInterval(quizTimerInterval);  
+
+const sortedUser = [...userArr].sort();  
+const sortedCorrect = [...q.correct].sort();  
+const isCorrect = sortedUser.length === sortedCorrect.length && sortedUser.every((val, i) => val === sortedCorrect[i]);  
+
+updateQuizStat(q.id, isCorrect);  
 playSound(isCorrect);  
-buttons.forEach((b, i) => {  
-const correctCheck = correctArr.includes(i);  
-if (correctCheck) b.classList.add('correct');  
-else if (selectedIndices.includes(i)) b.classList.add('wrong');  
-});  
-showQuizSolution(q);  
-}  
-
-function showQuizSolution(q) {  
-const expBox = document.getElementById('explanation');  
-const expText = document.getElementById('explanationText');  
-expText.textContent = q.explanation;  
-expBox.style.display = 'block';  
-document.getElementById('nextBtn').style.display = 'block';  
-}  
-
-function recordQuizStat(qId, isCorrect) {  
-if (!quizStats[qId]) quizStats[qId] = { correct: 0, wrong: 0 };  
-if (isCorrect) quizStats[qId].correct++;  
-else quizStats[qId].wrong++;  
-localStorage.setItem('gssk_stats', JSON.stringify(quizStats));  
+renderQuizQuestion();  
 }  
 
 function nextQuestion() {  
@@ -838,11 +900,41 @@ renderQuizQuestion();
 
 function restartQuiz() {  
 currentQuizIndex = 0;  
-activeFilter = 'all';  
-document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));  
-document.getElementById('quizSearchInput').value = '';  
-filteredQuestions = [...gsskQuestions];  
+quizUserAnswers = {};  
+document.getElementById('quizContentArea').classList.remove('hidden');  
+document.getElementById('quizFinishedScreen').classList.add('hidden');  
 renderQuizQuestion();  
+}  
+
+function resetFilters() {  
+isBookmarkFilterActive = false;  
+isWeakFilterActive = false;  
+isMasteredFilterActive = false;  
+document.getElementById('filterBookmarkBtn').classList.remove('active');  
+document.getElementById('filterWeakBtn').classList.remove('active');  
+document.getElementById('filterMasteredBtn').classList.remove('active');  
+document.getElementById('quizSearchInput').value = '';  
+filterQuizQuestions();  
+}  
+
+function toggleCurrentBookmark() {  
+const q = currentFilteredPool[currentQuizIndex];  
+if (!q) return;  
+const pos = quizBookmarks.indexOf(q.id);  
+if (pos > -1) {  
+quizBookmarks.splice(pos, 1);  
+} else {  
+quizBookmarks.push(q.id);  
+}  
+localStorage.setItem('gssk_bookmarks', JSON.stringify(quizBookmarks));  
+renderQuizQuestion();  
+}  
+
+function updateQuizStat(qId, isCorrect) {  
+if (!quizStats[qId]) quizStats[qId] = { correctCount: 0, totalAttempts: 0 };  
+quizStats[qId].totalAttempts++;  
+if (isCorrect) quizStats[qId].correctCount++;  
+localStorage.setItem('gssk_stats', JSON.stringify(quizStats));  
 }  
 
 function resetAllStatsPrompt() {  
@@ -852,74 +944,72 @@ localStorage.removeItem('gssk_bookmarks');
 quizStats = {};  
 quizBookmarks = [];  
 restartQuiz();  
-alert("Statistiken wurden zurückgesetzt.");  
 }  
 }  
 
-function renderStatDashboard() {  
+function renderQuizStatsDashboard() {  
 const dashboard = document.getElementById('statDashboard');  
-dashboard.innerHTML = '';  
-const categories = ["Rechtskunde", "Dienstkunde", "Gefahrenabwehr & Technik", "Serviceorientiertes Verhalten", "Wirtschafts- und Sozialkunde"];  
-categories.forEach(cat => {  
-const catQuestions = gsskQuestions.filter(q => q.category === cat);  
-let answeredCount = 0;  
-let correctCount = 0;  
-catQuestions.forEach(q => {  
+const categories = {};  
+
+rawGsskPool.forEach(q => {  
+if (!categories[q.category]) {  
+categories[q.category] = { total: 0, mastered: 0 };  
+}  
+categories[q.category].total++;  
 const st = quizStats[q.id];  
-if (st) {  
-answeredCount += (st.correct + st.wrong);  
-correctCount += st.correct;  
+if (st && st.correctCount >= 2) {  
+categories[q.category].mastered++;  
 }  
 });  
-const percentage = answeredCount > 0 ? Math.round((correctCount / answeredCount) * 100) : 0;  
-const wrapper = document.createElement('div');  
-wrapper.innerHTML = `  
-<div style="display: flex; justify-content: space-between; font-size: 0.9rem; font-weight: 600; margin-bottom: 4px;">  
+
+let html = '';  
+for (let cat in categories) {  
+const data = categories[cat];  
+const percent = Math.round((data.mastered / data.total) * 100);  
+html += `  
+<div>  
+<div style="display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 4px; font-weight:600;">  
 <span>${cat}</span>  
-<span>${percentage}% Richtig (${correctCount} / ${answeredCount} Versuche)</span>  
+<span>${data.mastered} von ${data.total} gemeistert (${percent}%)</span>  
 </div>  
 <div class="stat-bar-wrapper">  
-<div class="stat-bar-fill" style="width: ${percentage}%;"></div>  
-</div>`;  
-dashboard.appendChild(wrapper);  
-});  
+<div class="stat-bar-fill" style="width: ${percent}%;"></div>  
+</div>  
+</div>  
+`;  
+}  
+dashboard.innerHTML = html;  
 }  
 
-let examQuestions = [];  
-let currentExamIndex = 0;  
-let examUserAnswers = {};  
-let examFlags = [];  
-let examTimerInterval = null;  
-let examTimeRemaining = 45 * 60;  
-
+// --- IHK PRÜFUNGSSIMULATION ---  
 function startRealExam() {  
 const cat = document.getElementById('examCategorySelect').value;  
-let pool = [...gsskQuestions];  
+let pool = [...rawGsskPool];  
 if (cat !== 'all') {  
 pool = pool.filter(q => q.category === cat);  
 }  
 pool.sort(() => Math.random() - 0.5);  
 examQuestions = pool.slice(0, 30);  
+
 currentExamIndex = 0;  
-examUserAnswers = {};  
-examFlags = [];  
-examTimeRemaining = 45 * 60;  
+examAnswers = {};  
+examFlags = {};  
+examSecondsLeft = 45 * 60;  
+
 document.getElementById('examStartScreen').classList.add('hidden');  
 document.getElementById('examResultScreen').classList.add('hidden');  
 document.getElementById('examScreen').classList.remove('hidden');  
+
 renderExamGrid();  
 renderExamQuestion();  
-startExamTimer();  
-}  
 
-function startExamTimer() {  
-clearInterval(examTimerInterval);  
+if (examTimerInterval) clearInterval(examTimerInterval);  
 examTimerInterval = setInterval(() => {  
-examTimeRemaining--;  
-let mins = Math.floor(examTimeRemaining / 60);  
-let secs = examTimeRemaining % 60;  
-document.getElementById('examTimer').textContent = `${mins}:${secs < 10 ? '0' : ''}${secs}`;  
-if (examTimeRemaining <= 0) {  
+examSecondsLeft--;  
+const m = Math.floor(examSecondsLeft / 60);  
+const s = examSecondsLeft % 60;  
+document.getElementById('examTimer').textContent = `${m}:${s < 10 ? '0' : ''}${s}`;  
+if (examSecondsLeft <= 0) {  
 clearInterval(examTimerInterval);  
 finishExam();  
 }  
@@ -932,78 +1022,97 @@ container.innerHTML = '';
 examQuestions.forEach((q, idx) => {  
 const btn = document.createElement('button');  
 btn.className = 'exam-grid-btn';  
-if (idx === currentExamIndex) btn.classList.add('current');  
-if (examUserAnswers[idx] !== undefined) btn.classList.add('answered');  
-if (examFlags.includes(idx)) btn.classList.add('flagged');  
 btn.textContent = idx + 1;  
-btn.onclick = () => jumpToExamQuestion(idx);  
-container.appendChild(btn);  
-});  
-}  
-
-function jumpToExamQuestion(idx) {  
+if (idx === currentExamIndex) btn.classList.add('current');  
+if (examAnswers[q.id] !== undefined) btn.classList.add('answered');  
+if (examFlags[q.id]) btn.classList.add('flagged');  
+btn.onclick = () => {  
 currentExamIndex = idx;  
 renderExamGrid();  
 renderExamQuestion();  
-}  
-
-function toggleExamFlag() {  
-const idx = examFlags.indexOf(currentExamIndex);  
-if (idx > -1) examFlags.splice(idx, 1);  
-else examFlags.push(currentExamIndex);  
-renderExamGrid();  
+};  
+container.appendChild(btn);  
+});  
 }  
 
 function renderExamQuestion() {  
 const q = examQuestions[currentExamIndex];  
 document.getElementById('examCounter').textContent = `Frage ${currentExamIndex + 1} von ${examQuestions.length}`;  
 document.getElementById('examQuestion').textContent = q.question;  
-const flagBtn = document.getElementById('examFlagBtn');  
-flagBtn.textContent = examFlags.includes(currentExamIndex) ? "🚩 Markiert" : "🚩 Frage markieren";  
-const optionsDiv = document.getElementById('examOptions');  
-optionsDiv.innerHTML = '';  
-const multiContainer = document.getElementById('examMultiSubmitContainer');  
-if (q.isMulti) multiContainer.classList.remove('hidden');  
-else multiContainer.classList.add('hidden');  
 
-q.options.forEach((opt, idx) => {  
+const flagBtn = document.getElementById('examFlagBtn');  
+flagBtn.textContent = examFlags[q.id] ? "🚩 Markierung aufheben" : "🚩 Frage markieren";  
+
+const optionsContainer = document.getElementById('examOptions');  
+optionsContainer.innerHTML = '';  
+
+const userAns = examAnswers[q.id];  
+
+q.options.forEach((optText, idx) => {  
 const btn = document.createElement('button');  
 btn.className = 'btn-option';  
-btn.textContent = `${String.fromCharCode(65 + idx)}) ${opt}`;  
-const savedAnswer = examUserAnswers[currentExamIndex];  
+btn.textContent = optText;  
+
 if (q.isMulti) {  
-if (Array.isArray(savedAnswer) && savedAnswer.includes(idx)) {  
-btn.classList.add('selected');  
-}  
-btn.onclick = () => {  
-btn.classList.toggle('selected');  
-};  
+let selectedArr = examAnswers[q.id] || [];  
+if (selectedArr.includes(idx)) btn.classList.add('selected');  
+btn.onclick = () => toggleExamMultiOption(q.id, idx);  
 } else {  
-if (savedAnswer === idx) {  
-btn.classList.add('selected');  
-}  
+if (userAns === idx) btn.classList.add('selected');  
 btn.onclick = () => {  
-document.querySelectorAll('#examOptions .btn-option').forEach(b => b.classList.remove('selected'));  
-btn.classList.add('selected');  
-examUserAnswers[currentExamIndex] = idx;  
+examAnswers[q.id] = idx;  
 renderExamGrid();  
+renderExamQuestion();  
 };  
 }  
-optionsDiv.appendChild(btn);  
+optionsContainer.appendChild(btn);  
 });  
+
+const multiSubmit = document.getElementById('examMultiSubmitContainer');  
+if (q.isMulti) {  
+multiSubmit.classList.remove('hidden');  
+} else {  
+multiSubmit.classList.add('hidden');  
+}  
+
 document.getElementById('examPrevBtn').disabled = currentExamIndex === 0;  
-document.getElementById('examNextBtn').textContent = currentExamIndex === examQuestions.length - 1 ? "Letzte Frage" : "Nächste";  
+document.getElementById('examNextBtn').disabled = currentExamIndex === examQuestions.length - 1;  
+}  
+
+function toggleExamMultiOption(qId, idx) {  
+if (!examAnswers[qId]) examAnswers[qId] = [];  
+let arr = examAnswers[qId];  
+const pos = arr.indexOf(idx);  
+if (pos > -1) {  
+arr.splice(pos, 1);  
+} else {  
+if (arr.length < 2) {  
+arr.push(idx);  
+} else {  
+alert("Du kannst maximal 2 Antwortmöglichkeiten auswählen.");  
+return;  
+}  
+}  
+renderExamGrid();  
+renderExamQuestion();  
 }  
 
 function submitExamMultiAnswer() {  
-const buttons = document.querySelectorAll('#examOptions .btn-option');  
-let sel = [];  
-buttons.forEach((b, i) => {  
-if (b.classList.contains('selected')) sel.push(i);  
-});  
-examUserAnswers[currentExamIndex] = sel;  
+const q = examQuestions[currentExamIndex];  
+const userArr = examAnswers[q.id] || [];  
+if (userArr.length !== 2) {  
+alert("Bitte wähle genau 2 Antwortmöglichkeiten aus.");  
+return;  
+}  
 renderExamGrid();  
-alert("Antworten für diese Frage gespeichert.");  
+alert("Auswahl für diese Frage gespeichert.");  
+}  
+
+function toggleExamFlag() {  
+const q = examQuestions[currentExamIndex];  
+examFlags[q.id] = !examFlags[q.id];  
+renderExamGrid();  
+renderExamQuestion();  
 }  
 
 function prevExamQuestion() {  
@@ -1019,55 +1128,74 @@ if (currentExamIndex < examQuestions.length - 1) {
 currentExamIndex++;  
 renderExamGrid();  
 renderExamQuestion();  
-} else {  
-finishExamPrompt();  
 }  
 }  
 
 function finishExamPrompt() {  
-if (confirm("Möchtest du die Prüfung jetzt offiziell beenden und abgeben?")) {  
+if (confirm("Möchtest du die Prüfung jetzt offiziell abgeben und auswerten lassen?")) {  
 finishExam();  
 }  
 }  
 
 function finishExam() {  
-clearInterval(examTimerInterval);  
+if (examTimerInterval) clearInterval(examTimerInterval);  
+
+let score = 0;  
+examQuestions.forEach(q => {  
+const userAns = examAnswers[q.id];  
+if (userAns !== undefined) {  
+if (q.isMulti) {  
+const sortedUser = [...userAns].sort();  
+const sortedCorrect = [...q.correct].sort();  
+if (sortedUser.length === sortedCorrect.length && sortedUser.every((val, i) => val === sortedCorrect[i])) {  
+score++;  
+}  
+} else {  
+if (q.correct.includes(userAns)) {  
+score++;  
+}  
+}  
+}  
+});  
+
+const percentage = Math.round((score / examQuestions.length) * 100);  
+const passed = percentage >= 50;  
+
 document.getElementById('examScreen').classList.add('hidden');  
 document.getElementById('examResultScreen').classList.remove('hidden');  
-let correctCount = 0;  
-examQuestions.forEach((q, idx) => {  
-const userAns = examUserAnswers[idx];  
-if (q.isMulti) {  
-const correctArr = Array.isArray(q.correct) ? [...q.correct].sort() : [q.correct];  
-const userArr = Array.isArray(userAns) ? [...userAns].sort() : [];  
-if (JSON.stringify(correctArr) === JSON.stringify(userArr)) correctCount++;  
-} else {  
-if (userAns === q.correct) correctCount++;  
-}  
-});  
-const percentage = Math.round((correctCount / examQuestions.length) * 100);  
-const passed = percentage >= 50;  
-document.getElementById('resultTitle').textContent = passed ? "🎉 Prüfung bestanden!" : "❌ Nicht bestanden";  
-document.getElementById('resultScore').textContent = `${correctCount} von ${examQuestions.length} Fragen richtig (${percentage}%)`;  
-document.getElementById('resultStatus').textContent = passed ? "Glückwunsch! Du hast das IHK-Bestehenslimit von 50% erreicht." : "Du hast das Bestehenslimit von 50% leider nicht erreicht.";  
+
+const resultBox = document.getElementById('resultBox');  
+resultBox.style.background = passed ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)';  
+resultBox.style.border = `2px solid ${passed ? '#10b981' : '#ef4444'}`;  
+
+document.getElementById('resultTitle').textContent = passed ? "🎉 Prüfung bestanden!" : "❌ Prüfung nicht bestanden";  
+document.getElementById('resultScore').textContent = `Ergebnis: ${score} von ${examQuestions.length} Punkten (${percentage}%)`;  
+document.getElementById('resultStatus').textContent = passed ? "Herzlichen Glückwunsch! Du hast das IHK-Besteckungsniveau erreicht." : "Du hast weniger als 50% erreicht. Übe die Schwachstellen im Quiz-Bereich.";  
+
 const reviewList = document.getElementById('examReviewList');  
-reviewList.innerHTML = '';  
+let reviewHtml = '';  
 examQuestions.forEach((q, idx) => {  
-const userAns = examUserAnswers[idx];  
+const userAns = examAnswers[q.id];  
 let isCorrect = false;  
+if (userAns !== undefined) {  
 if (q.isMulti) {  
-const correctArr = Array.isArray(q.correct) ? [...q.correct].sort() : [q.correct];  
-const userArr = Array.isArray(userAns) ? [...userAns].sort() : [];  
-isCorrect = JSON.stringify(correctArr) === JSON.stringify(userArr);  
+const sortedUser = [...userAns].sort();  
+const sortedCorrect = [...q.correct].sort();  
+isCorrect = sortedUser.length === sortedCorrect.length && sortedUser.every((val, i) => val === sortedCorrect[i]);  
 } else {  
-isCorrect = (userAns === q.correct);  
+isCorrect = q.correct.includes(userAns);  
 }  
-const div = document.createElement('div');  
-div.className = 'section-card';  
-div.style.borderLeftColor = isCorrect ? '#10b981' : '#ef4444';  
-div.innerHTML = `<div style="font-weight:600; margin-bottom: 6px;">Frage ${idx + 1}: ${q.question}</div> <div style="font-size: 0.9rem; color: ${isCorrect ? '#34d399' : '#f87171'}; font-weight:600; margin-bottom: 6px;"> Status: ${isCorrect ? 'Richtig' : 'Falsch'} </div> <div style="font-size: 0.85rem; color: var(--text-muted);"><strong>Musterlösung:</strong> ${q.explanation}</div>`;  
-reviewList.appendChild(div);  
+}  
+
+reviewHtml += `  
+<div class="section-card" style="border-left-color: ${isCorrect ? '#10b981' : '#ef4444'};">  
+<div class="section-title">Frage ${idx + 1}: ${q.category} (${isCorrect ? '✅ Richtig' : '❌ Falsch'})</div>  
+<div style="font-weight:600; margin-bottom:8px;">${q.question}</div>  
+<div style="font-size: 0.9rem; color: var(--text-muted);">${q.explanation}</div>  
+</div>  
+`;  
 });  
+reviewList.innerHTML = reviewHtml;  
 }  
 
 function resetToExamStart() {  
@@ -1075,183 +1203,94 @@ document.getElementById('examResultScreen').classList.add('hidden');
 document.getElementById('examStartScreen').classList.remove('hidden');  
 }  
 
-const lawCases = [  
-{  
-title: "Fall 1: Notwehr bei unbefugtem Betreten",  
-desc: "Ein Einbrecher dringt nachts in ein umzäuntes Werksgelände ein. Der Wachmann entdeckt ihn und fordert ihn sofort auf, stehen zu bleiben. Der Einbrecher läuft panisch weiter auf einen schmalen Zaunpfahl zu, stürzt und bricht sich das Schlüsselbein.",  
-question: "Greift hier ein Rechtfertigungsgrund für den Wachmann bezüglich einer etwaigen Körperverletzung?",  
-options: [  
-"A) Ja, es liegt eine gerechtfertigte Notwehrhandlung nach § 32 StGB vor, da der Täter im Rahmen eines fortdauernden Angriffs auf das geschützte Rechtsgut des Eigentums durch Flucht das Risiko selbst maximiert hat.",  
-"B) Nein, es scheitert bereits an der Kausalität zwischen einer Tathandlung des Wachmanns und dem Erfolg, da keine aktive Gewalt ausgeübt wurde; zudem mangelt es an der für § 32 StGB erforderlichen Angriffshandlung auf Individualrechtsgüter des Wachmanns während des Sturzes.",  
-"C) Ja, über den rechtfertigenden Notstand nach § 34 StGB, da der Schutz hochrangiger Wirtschaftsgüter in der Abwägung den Körperschaden des Eindringlings rechtfertigt."  
-],  
-correct: 1,  
-solution: "Richtig ist B. Da der Wachmann keinerlei aktive Einwirkung (Gewalt) vorgenommen hat, fehlt es an einer tatbestandsmäßigen Körperverletzung durch ihn. Selbst wenn man einen Ursachenzusammenhang konstruieren wollte, scheitert Notwehr mangels gegenwärtigen Angriffs auf den Wachmann selbst oder verteidigbare Rechtsgüter in diesem Moment."  
-},  
-{  
-title: "Fall 2: Festhalten auf frischer Tat (Jedermann-Festnahme)",  
-desc: "Ein Ladendetektiv beobachtet, wie eine Person teure Elektronik einsteckt und den Kassenbereich ohne zu bezahlen verlässt. Der Detektiv packt den Verdächtigen am Arm, um ihn ins Büro zu geleiten. Der Verdächtige reißt sich los und verletzt den Detektiv leicht am Handgelenk.",  
-question: "Wie bewerten Sie die rechtliche Zulässigkeit der Maßnahme des Detektivs im Hinblick auf den Tatbestand?",  
-options: [  
-"A) Die Maßnahme ist absolut unzulässig, da das Jedermann-Festnahmerecht nach § 127 Abs. 1 StPO ausschließlich Polizeivollzugsbeamten in Zivil zusteht.",  
-"B) Die vorläufige Festnahme ist gem. § 127 Abs. 1 S. 1 StPO gerechtfertigt, da die Tat objektiv auf frischer Tat betroffen wurde und die Festnahme zur Identitätsfeststellung bei Fluchtverdacht erforderlich ist; die körperliche Fixierung wird vom Tatbestandsausschluss bzw. Rechtfertigungsgrund gedeckt.",  
-"C) Die Maßnahme ist nur dann gerechtfertigt, wenn der Marktleiter zuvor ausdrücklich das Hausrecht delegiert und die Polizei telefonisch den Zugriff angeordnet hat."  
-],  
-correct: 1,  
-solution: "Richtig ist B. § 127 Abs. 1 StPO ist ein jedermann zustehendes Recht ('Wer'). Da die Tat frisch ist und Fluchtgefahr besteht, greift die Befugnisnorm, die auch das für die Festnahme notwendige, verhältnismäßige Maß an Zwang (Festhalten) rechtfertigt."  
-},  
-{  
-title: "Fall 3: Körperlicher Einsatz gegen renitenten Störer",  
-desc: "In einem bewachten Objekt verweigert ein Besucher trotz Platzverweises das Verlassen des Geländes und geht bedrohlich mit erhobenen Fäusten auf den Sicherheitsmitarbeiter los. Der Mitarbeiter wendet einen gezielten einfachen Griff an, um den Angriff abzuwehren.",  
-question: "Welche Strukturprüfung im Rahmen der Rechtfertigung ist hier zwingend vorzunehmen?",  
-options: [  
-"A) Prüfung der Notwehrlage (gegenwärtiger, rechtswidriger Angriff), gefolgt von der Erforderlichkeit (geeignetes und mildestes Mittel) und der Gebotenheit (kein sozialethisches Gebot der Einschränkung).",  
-"B) Prüfung des rechtfertigenden Notstands nach § 34 StGB mit Interessen- und Güterabwägung (Leben/Gesundheit gegen Hausfriedensbruch).",  
-"C) Ausschließlich Prüfung der Eingriffsermächtigung nach dem jeweiligen Landespolizeigesetz (PAG / PolG) unter Beachtung des Vorbehalts des Gesetzes."  
-],  
-correct: 0,  
-solution: "Richtig ist A. Bei einem Angriff auf die körperliche Unversehrtheit greift standardmäßig § 32 StGB (Notwehr). Die Prüfung verlangt zwingend die drei Stufen: Notwehrlage, Notwehrhandlung (Erforderlichkeit & Gebotenheit) sowie den Notwehrwissen-Subjektivbezug."  
-},  
-{  
-title: "Fall 4: Notstand bei Notfalltüröffnung",  
-desc: "Ein Sicherheitsmitarbeiter bemerkt in einem Firmengebäude starken Brandgeruch aus einem verschlossenen Büro. Da niemand öffnet und akute Lebensgefahr droht, bricht er die Tür mit Werkzeug auf, wodurch erheblicher Sachschaden entsteht.",  
-question: "Welche materiell-rechtlichen Voraussetzungen müssen für den Erfolg des Rechtfertigungsgrundes kumulativ vorliegen?",  
-options: [  
-"A) Eine drohende Gefahr für Leib oder Leben, die Subsidiarität der Maßnahme (kein milderes Mittel) sowie das wesentliche Überwiegen des geschützten Interesses (Leben) gegenüber dem beeinträchtigten Rechtsgut (Eigentum/Sachwert).",  
-"B) Ausschließlich das Vorliegen einer behördlichen Anordnung oder eines schriftlichen Brandschutzkonzepts nach DIN-Normen.",  
-"C) Eine wirksame Einwilligung des Rauminhabers, die bei Bewusstlosigkeit fingiert wird."  
-],  
-correct: 0,  
-solution: "Richtig ist A. § 34 StGB (rechtfertigender Notstand) verlangt eine gegenwärtige Gefahr, die nicht anders abwendbar ist (Erforderlichkeit), sowie eine Güterabwägung, bei der das geschützte Gut das beeinträchtigte _wesentliche_ überwiegen muss, was bei Leben vs. Sachschaden eindeutig gegeben ist."  
-},  
-{  
-title: "Fall 5: Schlagen nach beendetem Angriff",  
-desc: "Ein Angreifer schlägt auf einen Pförtner ein, lässt dann aber plötzlich von ihm ab, wendet sich um und will weglaufen. Der Pförtner schlägt ihm im Adrenalinrausch von hinten mit einer Taschenlampe hinterher, um es ihm 'heimzuzahlen'.",  
-question: "Warum scheidet eine Rechtfertigung über § 32 StGB in dieser Konstellation dogmatisch aus?",  
-options: [  
-"A) Wegen mangelnder Verhältnismäßigkeit im engeren Sinne (Übermaßverbot).",  
-"B) Weil ein privater Sicherheitsmitarbeiter generell keine hoheitlichen Vergeltungsmaßnahmen ergreifen darf.",  
-"C) Weil das Merkmal der 'Gegenwärtigkeit' des Angriffs fehlt, da der Angriff bereits beendet ist und somit keine Notwehrlage mehr existiert."  
-],  
-correct: 2,  
-solution: "Richtig ist C. Der Kernfehler ist das Fehlen der Gegenwärtigkeit. Ein bereits beendeter Angriff kann keine Notwehrlage mehr begründen; nachträgliche Akte stellen reine Rache oder Vergeltung dar und sind rechtswidrig."  
-},  
-{  
-title: "Fall 6: Überschreitung der Notwehr (Putativnotwehr / Excess)",  
-desc: "Ein Security-Mitarbeiter erschrickt im Dunkeln tödlich, als eine Person schnell in seine Tasche greift, um ein Portemonnaie herauszuziehen. Der Mitarbeiter nimmt irrtümlich an, es sei eine Waffe, und schlägt den unbewaffneten Besucher sofort nieder.",  
-question: "Wie wirkt sich der Erlaubnistatbestandsirrtum (Putativnotwehr) dogmatisch auf die Schuldebene bzw. Vorsatzprüfung aus?",  
-options: [  
-"A) Er führt zu einer vollständigen Straffreiheit, da der Täter subjektiv in einem Rechtfertigungsrausch handelte.",  
-"B) Er lässt den Vorsatz bezüglich des Unrechts entfallen (§ 16 Abs. 1 Satz 1 StGB analog); geprüft wird lediglich noch eine eventuelle Strafbarkeit wegen fahrlässiger Körperverletzung.",  
-"C) Er rechtfertigt die Tat vollumfänglich, wandelt sie jedoch in eine Ordnungswidrigkeit um."  
-],  
-correct: 1,  
-solution: "Richtig ist B. Nach h. M. (eingeschränkte Schuldtheorie / analog § 16 I StGB) schließt der Erlaubnistatbestandsirrtum den Vorsatz aus. Die Tat bleibt zwar objektiv rechtswidrig, aber der Vorsatz entfällt, sodass nur Fahrlässigkeit bestraft werden kann."  
-},  
-{  
-title: "Fall 7: Festnahme mit übertriebener Härte",  
-desc: "Ein Ladendetektiv stellt einen Taschendieb. Der Dieb leistet keinerlei Widerstand, händigt die Ware aus und bittet darum, die Polizei zu rufen. Der Detektiv wirft ihn dennoch zu Boden und fixiert ihn mit dem Knie im Nacken, wodurch der Dieb Verletzungen erleidet.",  
-question: "Welches übergeordnete Verfassungs- und Gesetzesprinzip limitiert hier die an sich gedachte Festnahmebefugnis?",  
-options: [  
-"A) Das Verbot der Doppelbestrafung nach Art. 103 Abs. 3 GG.",  
-"B) Der Grundsatz der Verhältnismäßigkeit (unterteilt in Geeignetheit, Erforderlichkeit und Angemessenheit / Übermaßverbot), wonach bei kooperativen Personen schwerer physischer Zwang unzulässig ist.",  
-"C) Das zivilrechtliche Schikaneverbot nach § 226 BGB."  
-],  
-correct: 1,  
-solution: "Richtig ist B. Zwar ist die Festnahme nach § 127 StPO prinzipiell gedeckt, jedoch greift jede Zwangsausübung in Grundrechte ein. Das Übermaßverbot verbietet unnötige Härte, wenn mildere Mittel (wie einfaches Stehenlassen oder unauffälliges Warten) denselben Erfolg versprechen."  
-},  
-{  
-title: "Fall 8: Selbsthilfe am Eigentum",  
-desc: "Ein Nachbar parkt sein Auto unberechtigt auf dem reservierten Privatparkplatz eines Firmengebäudes. Der Sicherheitsmitarbeiter schraubt kurzerhand das Kennzeichen des Autos ab, um den Fahrer zu bestrafen.",  
-question: "Welche Schranken verletzen diese Maßnahme im Rahmen des § 229 BGB (Zivilrechtliche Selbsthilfe)?",  
-options: [  
-"A) Es fehlt an der Voraussetzung, dass obrigkeitliche Hilfe nicht rechtzeitig zu erlangen ist, und insbesondere dient das Kennzeichenabbauen nicht der Durchsetzung eines dinglichen Anspruchs, sondern stellt eine unzulässige verbotene Eigenmacht bzw. Sachbeschädigung/Urkundenunterdrückung dar.",  
-"B) Die Maßnahme verstößt gegen das absolute Verbot jeglicher Selbsthilfe im öffentlichen Verkehrsraum.",  
-"C) Der Sicherheitsmitarbeiter hat hierbei das Schriftformelerfordernis nach § 126 BGB missachtet."  
-],  
-correct: 0,  
-solution: "Richtig ist A. § 229 BGB setzt voraus, dass obrigkeitliche Hilfe unerreichbar ist und die _Verwirklichung des Anspruchs_ vereitelt oder erschwert werden würde. Eine reine Sanktionierung oder willkürliche Wegnahme von Teilen eines Kfz zur Druckausübung ist von der Norm nicht gedeckt."  
-},  
-{  
-title: "Fall 9: Einwilligung des Verletzten",  
-desc: "Bei einer betriebsinternen Schulung für Deeskalation und Abwehrtechniken simuliert ein Mitarbeiter einen Angriff. Sein Kollege wendet vereinbarungsgemäß einen Hebelgriff an, wobei sich der 'Angreifer' leicht am Ellbogen zerrt.",  
-question: "Unter welchen Voraussetzungen greift die rechtfertigende Einwilligung bei körperlichen Einwirkungen dogmatisch?",  
-options: [  
-"A) Die Einwilligung muss vor der Tat erteilt werden, frei von Willensmängeln sein und darf nicht gegen die guten Sitten (§ 228 StGB) verstoßen; zudem muss der Handelnde die Grenzen der Einwilligung subjektiv und objektiv einhalten.",  
-"B) Sie erfordert zwingend die notarielle Beglaubigung und Zustimmung des Betriebsarztes.",  
-"C) Sie rechtfertigt ausschließlich Sachschäden, niemals jedoch körperliche Integritätseingriffe."  
-],  
-correct: 0,  
-solution: "Richtig ist A. Die wirksame Einwilligung verlangt Dispositionsbefugnis, Ernsthaftigkeit, Freiwilligkeit und das Fehlen einer Sittenwidrigkeit nach § 228 StGB. Bei sportlichen oder beruflichen Ausbildungskursen mit Risiko ist dies die klassische Rechtfertigungsgrundlage."  
-},  
-{  
-title: "Fall 10: Einsatz von Hunden im Werkschutz",  
-desc: "Ein Sicherheitsmitarbeiter setzt bei der Verfolgung eines unbewaffneten, flüchtenden Eindringlings auf dem Werksgelände seinen Diensthund ein, der den Täter in den Oberschenkel beisst.",  
-question: "Warum scheidet hier im Regelfall die Rechtfertigung über Notwehr oder Jedermann-Festnahme aus?",  
-options: [  
-"A) Weil Diensthunde generell nach EU-Recht als verbotene Waffen eingestuft sind.",  
-"B) Wegen des Fehlens der Erforderlichkeit und der groben Unverhältnismäßigkeit (Überschreitung des Notwehrexims bei bloßer Flucht ohne gegenwärtigen Angriff; zudem stellt der unkontrollierte Hundebiss auf einen flüchtenden, unbewaffneten Täter ohne Warnung einen schweren, rechtlich nicht mehr gedeckten Übergriff dar).",  
-"C) Weil Festnahmen durch Hundehalter generell dem geschlossenen Haftbefehl nach § 112 StPO bedürfen."  
-],  
-correct: 1,  
-solution: "Richtig ist B. Der Einsatz eines Schärfmittels wie eines Diensthundes ist extrem gefährlich. Fehlt ein gegenwärtiger Angriff (Notwehr) oder ist das Mittel zur bloßen Festnahme eines flüchtenden, unbewaffneten Täters völlig unangemessen (Verstoß gegen das Übermaßverbot), greift kein Rechtfertigungsgrund."  
-}  
-];  
-
-function renderLawCases() {  
+// --- RECHTSFÄLLE TAB ---  
+function initLawCases() {  
 const container = document.getElementById('caseContainer');  
-container.innerHTML = '';  
+let html = '';  
+
 lawCases.forEach((c, idx) => {  
-let card = document.createElement('div');  
-card.className = 'section-card law-card';  
-card.innerHTML = `  
+html += `  
+<div class="section-card law-card">  
 <div class="section-title law-title">${c.title}</div>  
-<p style="margin-bottom: 10px;">${c.desc}</p>  
-<p><strong>${c.question}</strong></p>  
-<div class="options" id="caseOptions_${idx}" style="margin-top: 10px;">  
-${c.options.map((opt, oIdx) => `<button class="btn-option" onclick="selectCaseOption(${idx}, ${oIdx})">${opt}</button>`).join('')}  
-</div>  
-<div id="caseSolution_${idx}" class="explanation-box" style="margin-top: 15px; display: none;">  
-<strong>Musterlösung & Dogmatische Rechtfertigung:</strong>  
-<div id="caseSolutionText_${idx}" style="margin-top: 6px;"></div>  
-</div>  
-<div style="margin-top: 15px;">  
-<label style="font-weight: 600; font-size: 0.9rem; display: block; margin-bottom: 5px;">Eigene Kurzantwort / Gutachtenstil (optional):</label>  
-<textarea class="case-textarea" placeholder="Formuliere hier deine präzise juristische Subsumtion (Obersatz, Definition, Subsumtion, Ergebnis)..."></textarea>  
-<button class="filter-btn" style="margin-top: 5px;" onclick="compareMyAnswer(this)">Eigene Antwort speichern</button>  
+<p style="font-size:0.95rem; line-height: 1.5; margin-bottom: 12px;">${c.text}</p>  
+<div style="font-weight: 600; margin-bottom: 8px; font-size: 0.95rem;">Frage: ${c.question}</div>  
+`;  
+
+c.options.forEach((optText, oIdx) => {  
+const isCor = oIdx === c.correctIndex;  
+html += `  
+<div style="padding: 10px 12px; margin-bottom: 6px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--option-bg); font-size: 0.9rem; cursor: pointer;" onclick="revealCaseAnswer(this, ${isCor})">  
+🔹 ${optText}  
 </div>  
 `;  
-container.appendChild(card);  
 });  
+
+html += `  
+<div class="explanation-box" id="caseExpl_${idx}" style="margin-top: 10px;">  
+<strong>Musterlösung & Begründung:</strong> ${c.explanation}  
+</div>  
+</div>  
+`;  
+});  
+
+container.innerHTML = html;  
 }  
 
-function selectCaseOption(caseIdx, optIdx) {  
-const c = lawCases[caseIdx];  
-const container = document.getElementById(`caseOptions_${caseIdx}`);  
-const buttons = container.querySelectorAll('.btn-option');  
-buttons.forEach((btn, i) => {  
-btn.style.pointerEvents = 'none';  
-if (i === c.correct) {  
-btn.classList.add('correct');  
-} else if (i === optIdx) {  
-btn.classList.add('wrong');  
+function revealCaseAnswer(el, isCorrect) {  
+const parent = el.parentElement;  
+const options = parent.querySelectorAll('div');  
+options.forEach(opt => {  
+if (opt.textContent.includes('🔹')) {  
+opt.style.background = 'var(--option-bg)';  
 }  
 });  
-const isCorrect = (optIdx === c.correct);  
-playSound(isCorrect);  
-const solBox = document.getElementById(`caseSolution_${caseIdx}`);  
-const solText = document.getElementById(`caseSolutionText_${caseIdx}`);  
-solText.textContent = c.solution;  
-solBox.style.display = 'block';  
+
+if (isCorrect) {  
+el.style.background = 'rgba(16, 185, 129, 0.2)';  
+el.style.borderColor = '#10b981';  
+playSound(true);  
+} else {  
+el.style.background = 'rgba(239, 68, 68, 0.2)';  
+el.style.borderColor = '#ef4444';  
+playSound(false);  
 }  
 
-function compareMyAnswer(btn) {  
-alert("Deine Notiz wurde im lokalen Speicher vermerkt. Vergleiche sie mit der dogmatischen Musterlösung und den Tatbestandsmerkmalen oben!");  
+const expl = parent.querySelector('.explanation-box');  
+if (expl) expl.style.display = 'block';  
 }  
 
-window.onload = function() {  
-renderQuizQuestion();  
-};  
-</script>
+// --- TEXT-TO-SPEECH (TTS) ---  
+let speechUtterance = null;  
+function speakCurrentQuestion() {  
+if (!('speechSynthesis' in window)) {  
+alert("Dein Browser unterstützt keine Sprachausgabe.");  
+return;  
+}  
+window.speechSynthesis.cancel();  
+const q = currentFilteredPool[currentQuizIndex];  
+if (!q) return;  
+
+let textToSpeak = `Frage. ${q.question}. Antwortmöglichkeiten: `;  
+q.options.forEach((opt, i) => {  
+textToSpeak += `Option ${i + 1}: ${opt}. `;  
+});  
+
+speechUtterance = new SpeechSynthesisUtterance(textToSpeak);  
+speechUtterance.lang = 'de-DE';  
+window.speechSynthesis.speak(speechUtterance);  
+}  
+
+function pauseSpeech() {  
+if ('speechSynthesis' in window) {  
+window.speechSynthesis.pause();  
+}  
+}  
+
+function stopSpeech() {  
+if ('speechSynthesis' in window) {  
+window.speechSynthesis.cancel();  
+}  
+}  
+</script>  
 </body>  
 </html>
