@@ -1,0 +1,101 @@
+<!DOCTYPE html>  
+<html lang="de">  
+<head>  
+<meta charset="UTF-8">  
+<meta name="viewport" content="width=device-width, initial-scale=1.0">  
+<title>GSSK - Quiz & Fragen-Index</title>  
+<link rel="stylesheet" href="style.css">  
+<script src="auth.js"></script>  
+</head>  
+<body data-theme="dark">  
+<div class="app-card">  
+  <div class="exam-selector">  
+    <span>🎓 <strong>GSSK Prüfungstrainer - Quiz-Modus</strong></span>  
+    <div class="top-actions">  
+      <button class="icon-top-btn" onclick="toggleDarkMode()" id="darkModeBtn">☀️ Light Mode</button>  
+      <button class="icon-top-btn" onclick="toggleSound()" id="soundBtn">🔊 Sound: An</button>  
+    </div>  
+  </div>  
+
+  <div class="tab-nav">  
+    <button class="tab-btn" onclick="location.href='index.html'">🏠 Startseite</button>  
+    <button class="tab-btn active" onclick="location.href='questions.html'">❓ Quiz (100)</button>  
+    <button class="tab-btn exam-tab-btn" onclick="location.href='pruefung.html'">⏱️ IHK-Prüfung</button>  
+    <button class="tab-btn" onclick="location.href='recht.html'">⚖️ Recht & 10 Fälle</button>  
+    <button class="tab-btn" onclick="location.href='theorie.html'">📚 Theorie & Praxis</button>  
+  </div>  
+
+  <div class="search-filter-bar">  
+    <input type="text" id="quizSearchInput" class="search-input" placeholder="🔍 Frage oder Stichwort suchen..." oninput="filterQuizQuestions()">  
+    <button id="filterBookmarkBtn" class="filter-btn" onclick="toggleBookmarkFilter()">⭐ Lesezeichen</button>  
+    <button id="filterWeakBtn" class="filter-btn" onclick="toggleWeakFilter()">⚠️ Schwachstellen</button>  
+    <button id="filterMasteredBtn" class="filter-btn" onclick="toggleMasteredFilter()">✅ Meisterhaft</button>  
+    <label style="font-size: 0.85rem; display: flex; align-items: center; gap: 6px; cursor: pointer; color: var(--text-muted);">  
+      <input type="checkbox" id="timerCheckbox" onchange="toggleTimerMode()"> ⏱️ Timer (45s)  
+    </label>  
+  </div>  
+  <div style="display: flex; justify-content: flex-end; margin-bottom: 12px;">  
+    <button class="filter-btn" style="background: rgba(239, 68, 68, 0.15); color: #f87171; border-color: rgba(239, 68, 68, 0.3); font-size: 0.75rem; padding: 5px 10px;" onclick="resetAllStatsPrompt()">Statistik zurücksetzen</button>  
+  </div>  
+
+  <div class="main-layout">
+    <!-- SIDEBAR INDEX -->
+    <div class="sidebar-index">
+      <div class="sidebar-title">
+        <span>Fragen-Index</span>
+        <span id="quizIndexCount" style="font-size: 0.75rem; color: var(--text-muted);">100</span>
+      </div>
+      <div id="quizGridContainer" class="index-grid"></div>
+    </div>
+
+    <!-- CONTENT AREA -->
+    <div class="content-area">
+      <div id="quizContentArea">  
+        <div class="header">  
+          <h3 style="margin:0; font-size: 1.05rem;"><span id="counter" style="font-weight: normal; color: var(--text-muted); font-size: 0.9rem;">Frage 1 von 100</span></h3>  
+          <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">  
+            <span id="quizTimerBox" class="timer-box hidden" style="font-size: 0.85rem; padding: 4px 8px;">45</span>  
+            <div class="tts-controls">  
+              <button class="icon-top-btn" style="background: var(--option-bg); border-color: var(--border-color); color: var(--text-color);" onclick="speakCurrentQuestion()" title="Vorlesen">▶️</button>  
+              <button class="icon-top-btn" style="background: var(--option-bg); border-color: var(--border-color); color: var(--text-color);" onclick="pauseSpeech()" title="Pause">⏸️</button>  
+              <button class="icon-top-btn" style="background: var(--option-bg); border-color: var(--border-color); color: var(--text-color);" onclick="stopSpeech()" title="Stopp">⏹️</button>  
+            </div>  
+            <button id="quizBookmarkBtn" class="bookmark-btn" onclick="toggleCurrentBookmark()" title="Frage merken">☆</button>  
+          </div>  
+        </div>  
+        <div>  
+          <span id="catBadge" class="badge">Kategorie</span>  
+          <span id="subCatBadge" class="badge badge-sub">Unterkategorie</span>  
+          <span id="multiBadge" class="badge badge-multi hidden">⚠️ Mehrfachauswahl (genau 2 richtige Antworten)!</span>  
+        </div>  
+        <div id="question" class="question-text">Frage wird geladen...</div>  
+        <div id="options" class="options"></div>  
+
+        <div id="multiSubmitContainer" class="hidden" style="margin-top: 18px;">  
+          <button class="btn-action" style="width: 100%; background: #10b981;" onclick="submitMultiAnswer()">Antworten einreichen</button>  
+        </div>  
+        <div id="explanation" class="explanation-box">  
+          <strong>💡 Dogmatische Musterlösung & Rechtfertigung:</strong>  
+          <div id="explanationText" style="margin-top: 6px;"></div>  
+        </div>  
+        <div class="controls">  
+          <button class="btn-action btn-secondary" onclick="restartQuiz()">🔄 Neu starten</button>  
+          <button id="nextBtn" class="btn-action" onclick="nextQuestion()">Nächste Frage</button>  
+        </div>  
+      </div>  
+      <div id="quizFinishedScreen" class="hidden" style="text-align: center; padding: 25px 10px;">  
+        <h2>🏆 Großartig! Du hast alle Durchgänge beendet.</h2>  
+        <div id="statDashboard" class="stat-container"></div>  
+        <button class="btn-action" style="font-size: 1.05rem; padding: 12px 25px; margin-top: 15px;" onclick="restartQuiz()">🔄 Quiz von vorne beginnen</button>  
+      </div> 
+    </div>
+  </div>
+</div>  
+<script src="script.js"></script>  
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    renderQuizQuestion();
+  });
+</script>
+</body>  
+</html>
