@@ -1,0 +1,93 @@
+<!DOCTYPE html>  
+<html lang="de">  
+<head>  
+<meta charset="UTF-8">  
+<meta name="viewport" content="width=device-width, initial-scale=1.0">  
+<title>GSSK - IHK-Prüfungssimulation</title>  
+<link rel="stylesheet" href="style.css">  
+<script src="auth.js"></script>  
+</head>  
+<body data-theme="dark">  
+<div class="app-card">  
+  <div class="exam-selector">  
+    <span>🎓 <strong>GSSK Prüfungstrainer - IHK-Prüfungssimulation</strong></span>  
+    <div class="top-actions">  
+      <button class="icon-top-btn" onclick="toggleDarkMode()" id="darkModeBtn">☀️ Light Mode</button>  
+      <button class="icon-top-btn" onclick="toggleSound()" id="soundBtn">🔊 Sound: An</button>  
+    </div>  
+  </div>  
+
+  <div class="tab-nav">  
+    <button class="tab-btn" onclick="location.href='index.html'">🏠 Startseite</button>  
+    <button class="tab-btn" onclick="location.href='questions.html'">❓ Quiz (100)</button>  
+    <button class="tab-btn exam-tab-btn active" onclick="location.href='pruefung.html'">⏱️ IHK-Prüfung</button>  
+    <button class="tab-btn" onclick="location.href='recht.html'">⚖️ Recht & 10 Fälle</button>  
+    <button class="tab-btn" onclick="location.href='theorie.html'">📚 Theorie & Praxis</button>  
+  </div>  
+
+  <div id="examStartScreen" style="text-align: center; padding: 35px 10px;">  
+    <h2>⏱️ Offizielle IHK-Prüfungssimulation</h2>  
+    <p style="color: var(--text-muted); max-width: 600px; margin: 0 auto 20px auto;">Wähle deinen Prüfungsumfang nach Prüfungsordnung:</p>  
+    <div style="margin-bottom: 22px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">  
+      <select id="examCategorySelect" class="search-input" style="max-width: 320px;">  
+        <option value="all">Gesamte Prüfung (30 zufällige Fragen)</option>  
+        <option value="Rechtskunde">Fokus: Rechtskunde</option>  
+        <option value="Dienstkunde">Fokus: Dienstkunde</option>  
+        <option value="Gefahrenabwehr & Technik">Fokus: Gefahrenabwehr & Technik</option>  
+        <option value="Serviceorientiertes Verhalten">Fokus: Serviceorientiertes Verhalten</option>  
+        <option value="Wirtschafts- und Sozialkunde">Fokus: Wirtschafts- und Sozialkunde</option>  
+        <option value="Unternehmenssicherheit">Fokus: Unternehmenssicherheit</option>  
+        <option value="AGU (Arbeit, Gesundheit & Umwelt)">Fokus: AGU (Arbeit, Gesundheit & Umwelt)</option>  
+        <option value="Datenschutz (BDSG/DSGVO)">Fokus: Datenschutz (BDSG/DSGVO)</option>  
+      </select>  
+    </div>  
+    <button class="btn-action btn-danger" style="font-size: 1.05rem; padding: 12px 25px;" onclick="startRealExam()">▶️ Prüfung Starten</button>  
+  </div>  
+
+  <div id="examScreen" class="hidden">  
+    <div class="main-layout">
+      <!-- SIDEBAR EXAM INDEX -->
+      <div class="sidebar-index">
+        <div class="sidebar-title">
+          <span>Prüfungs-Index</span>
+          <span id="examTimer" class="timer-box" style="font-size: 0.75rem; padding: 2px 6px;">45:00</span>
+        </div>
+        <div id="examGridContainer" class="index-grid"></div>
+        <div style="margin-top: 15px;">
+          <button class="btn-action btn-danger" style="width: 100%; font-size: 0.85rem; padding: 8px;" onclick="finishExamPrompt()">🔒 Abgeben</button>
+        </div>
+      </div>
+
+      <!-- EXAM CONTENT -->
+      <div class="content-area">
+        <div class="header">  
+          <span id="examCounter" style="font-weight: bold;">Frage 1 von 30</span>  
+          <button id="examFlagBtn" class="filter-btn" onclick="toggleExamFlag()" style="font-size: 0.8rem; padding: 5px 10px;">🚩 Frage markieren</button>  
+        </div>  
+        <div id="examQuestion" class="question-text">Prüfungsfrage wird geladen...</div>  
+        <div id="examOptions" class="options"></div>  
+        <div id="examMultiSubmitContainer" class="hidden" style="margin-top: 18px;">  
+          <button class="btn-action" style="width: 100%; background: #10b981;" onclick="submitExamMultiAnswer()">Auswahl für diese Frage bestätigen</button>  
+        </div>  
+        <div class="controls">  
+          <button id="examPrevBtn" class="btn-action btn-secondary" onclick="prevExamQuestion()">Zurück</button>  
+          <button id="examNextBtn" class="btn-action" onclick="nextExamQuestion()">Nächste</button>  
+        </div>  
+      </div>
+    </div>
+  </div>  
+
+  <div id="examResultScreen" class="hidden">  
+    <div id="resultBox" class="result-card">  
+      <h2 id="resultTitle" style="margin-top:0;">Prüfungsergebnis</h2>  
+      <p id="resultScore" style="font-size: 1.25rem; font-weight: bold;"></p>  
+      <p id="resultStatus" style="font-size: 1.05rem; color: var(--text-muted);"></p>  
+    </div>  
+    <h3>Detaillierte Auswertung:</h3>  
+    <div id="examReviewList"></div>  
+    <button class="btn-action" style="margin-top: 20px; width:100%;" onclick="resetToExamStart()">🔄 Neue Simulation starten</button>  
+  </div> 
+</div>  
+<script src="script.js"></script>  
+</body>  
+</html>
