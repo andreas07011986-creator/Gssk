@@ -1,54 +1,332 @@
-<!DOCTYPE html>  
-<html lang="de">  
-<head>  
-<meta charset="UTF-8">  
-<meta name="viewport" content="width=device-width, initial-scale=1.0">  
-<title>GSSK Prüfungstrainer - Dashboard</title>  
-<link rel="stylesheet" href="style.css">  
-<script src="auth.js"></script>  
-</head>  
-<body data-theme="dark">  
-<div class="app-card">  
-  <div class="exam-selector">  
-    <span>🎓 <strong>GSSK Prüfungstrainer (Zentrales Dashboard)</strong></span>  
-    <div class="top-actions">  
-      <button class="icon-top-btn" onclick="toggleDarkMode()" id="darkModeBtn">☀️ Light Mode</button>  
-      <button class="icon-top-btn" onclick="toggleSound()" id="soundBtn">🔊 Sound: An</button>  
-    </div>  
-  </div>  
-
-  <div class="tab-nav">  
-    <button class="tab-btn active" onclick="location.href='index.html'">🏠 Startseite</button>  
-    <button class="tab-btn" onclick="location.href='questions.html'">❓ Quiz (100)</button>  
-    <button class="tab-btn exam-tab-btn" onclick="location.href='pruefung.html'">⏱️ IHK-Prüfung</button>  
-    <button class="tab-btn" onclick="location.href='recht.html'">⚖️ Recht & 10 Fälle</button>  
-    <button class="tab-btn" onclick="location.href='theorie.html'">📚 Theorie & Praxis</button>  
-  </div>  
-
-  <div style="text-align: center; padding: 30px 10px;">
-    <h2>Willkommen im offiziellen GSSK-Prüfungstrainer</h2>
-    <p style="color: var(--text-muted); max-width: 600px; margin: 0 auto 25px auto;">Wähle oben im Menü den gewünschten Bereich aus, um mit dem Lernen, dem Quiz oder der IHK-Prüfungssimulation zu beginnen.</p>
+<!DOCTYPE html>
+<html lang="de" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GSSK Trainer</title>
+  <style>
+    :root {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --text-color: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --border-color: #334155;
+      --option-bg: #334155;
+    }
+    [data-theme="light"] {
+      --bg-color: #f1f5f9;
+      --card-bg: #ffffff;
+      --text-color: #0f172a;
+      --text-muted: #64748b;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --border-color: #cbd5e1;
+      --option-bg: #e2e8f0;
+    }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    header {
+      background-color: var(--card-bg);
+      border-bottom: 1px solid var(--border-color);
+      padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .nav-buttons {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .nav-btn {
+      background: var(--option-bg);
+      color: var(--text-color);
+      border: none;
+      padding: 8px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .nav-btn.active {
+      background: var(--primary);
+      color: white;
+    }
+    main {
+      flex: 1;
+      max-width: 800px;
+      width: 100%;
+      margin: 20px auto;
+      padding: 0 15px;
+      box-sizing: border-box;
+    }
+    .view-container {
+      display: none;
+    }
+    .view-container.active {
+      display: block;
+    }
+    .section-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .section-title {
+      font-size: 1.25rem;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+    .btn-option {
+      display: block;
+      width: 100%;
+      text-align: left;
+      background: var(--option-bg);
+      color: var(--text-color);
+      border: 1px solid var(--border-color);
+      padding: 12px 16px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background 0.2s;
+    }
+    .btn-option:hover:not(:disabled) {
+      background: var(--border-color);
+    }
+    .btn-option.selected {
+      border-color: var(--primary);
+      background: rgba(59, 130, 246, 0.2);
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+    .btn-danger {
+      background: #ef4444;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .hidden { display: none !important; }
     
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-top: 25px;">
-      <div class="section-card" style="cursor: pointer;" onclick="location.href='questions.html'">
-        <div class="section-title">❓ Quiz-Modus</div>
-        <p style="font-size: 0.85rem; color: var(--text-muted);">Alle 100 Fragen mit Index, Suchfilter und Sprachausgabe.</p>
+    .index-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+      gap: 6px;
+      max-height: 180px;
+      overflow-y: auto;
+      margin-bottom: 15px;
+      padding: 5px;
+      background: rgba(0,0,0,0.1);
+      border-radius: 6px;
+    }
+    .index-grid-btn {
+      aspect-ratio: 1;
+      background: var(--option-bg);
+      color: var(--text-color);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .index-grid-btn.current {
+      border: 2px solid var(--primary);
+    }
+    .index-grid-btn.flagged {
+      border-color: #fbbf24;
+    }
+    .stat-bar-wrapper {
+      background: var(--option-bg);
+      border-radius: 10px;
+      height: 12px;
+      width: 100%;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+    .stat-bar-fill {
+      background: #10b981;
+      height: 100%;
+      width: 0%;
+      transition: width 0.3s;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h2>🛡️ GSSK Trainer</h2>
+    <div class="nav-buttons">
+      <button class="nav-btn active" onclick="switchView('quiz')">Quiz</button>
+      <button class="nav-btn" onclick="switchView('exam')">IHK-Prüfung</button>
+      <button class="nav-btn" onclick="switchView('cases')">Fälle</button>
+      <button class="nav-btn" onclick="switchView('theory')">Theorie</button>
+      <button class="nav-btn" id="soundBtn" onclick="toggleSound()">🔊 Sound: An</button>
+      <button class="nav-btn" id="darkModeBtn" onclick="toggleDarkMode()">☀️ Light Mode</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- QUIZ VIEW -->
+    <div id="view-quiz" class="view-container active">
+      <div class="section-card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+          <input type="text" id="quizSearchInput" placeholder="Frage oder Stichwort suchen..." oninput="filterQuizQuestions()" style="padding:8px; width:60%; border-radius:6px; border:1px solid var(--border-color); background:var(--option-bg); color:var(--text-color);">
+          <button onclick="resetAllStats()" class="btn-danger" style="font-size:0.8rem; padding:8px 12px;">Statistik zurücksetzen</button>
+        </div>
+        
+        <div style="display:flex; gap:8px; margin-bottom:10px; flex-wrap:wrap;">
+          <button id="filterBookmarkBtn" class="nav-btn" style="font-size:0.8rem;" onclick="toggleBookmarkFilter()">★ Lesezeichen</button>
+          <button id="filterWeakBtn" class="nav-btn" style="font-size:0.8rem;" onclick="toggleWeakFilter()">⚠️ Schwachstellen</button>
+          <button id="filterMasteredBtn" class="nav-btn" style="font-size:0.8rem;" onclick="toggleMasteredFilter()">✅ Meisterhaft</button>
+          <label style="font-size:0.9rem; display:flex; align-items:center; gap:5px; cursor:pointer;"><input type="checkbox" id="timerCheckbox" onchange="toggleTimerMode()"> Timer (45s)</label>
+        </div>
+
+        <div style="font-weight:bold; font-size:0.9rem; margin-bottom:5px;">Fragen-Index (<span id="quizIndexCount">35</span>)</div>
+        <div id="quizGridContainer" class="index-grid"></div>
       </div>
-      <div class="section-card" style="cursor: pointer;" onclick="location.href='pruefung.html'">
-        <div class="section-title" style="color: #f87171;">⏱️ IHK-Prüfung</div>
-        <p style="font-size: 0.85rem; color: var(--text-muted);">Realistische Prüfungssimulation mit Timer und Auswertung.</p>
+
+      <div class="section-card">
+        <div id="quizFinishedScreen" class="hidden" style="text-align:center; padding:20px;">
+          <h3>🎉 Du hast alle gefilterten Fragen durchgearbeitet!</h3>
+          <button onclick="restartQuiz()" class="btn-primary" style="margin-top:15px;">Quiz von vorne beginnen</button>
+        </div>
+
+        <div id="quizContentArea">
+          <div style="display:flex; justify-content:space-between; margin-bottom:10px; font-size:0.85rem; color:var(--text-muted);">
+            <div><span id="catBadge" style="background:var(--primary); color:white; padding:2px 6px; border-radius:4px;">Rechtskunde</span> • <span id="subCatBadge">StGB</span></div>
+            <div id="counter">Frage 1 von 35</div>
+          </div>
+          <div id="multiBadge" class="hidden" style="color:#fbbf24; font-weight:bold; font-size:0.85rem; margin-bottom:8px;">Mehrfachauswahl (genau 2 richtige Antworten)!</div>
+          
+          <div id="question" style="font-size:1.1rem; font-weight:600; margin-bottom:15px;">Lade Frage...</div>
+          <div id="options"></div>
+
+          <div id="multiSubmitContainer" class="hidden" style="margin-top:15px;">
+            <button onclick="submitMultiAnswer()" class="btn-primary" style="width:100%;">Antworten prüfen</button>
+          </div>
+
+          <div id="explanation" style="margin-top:15px; padding:12px; background:var(--option-bg); border-radius:8px; display:none;">
+            <strong>Erklärung:</strong> <span id="explanationText"></span>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:20px;">
+            <div style="display:flex; gap:10px;">
+              <button onclick="speakCurrentQuestion()" class="nav-btn">🗣️ Vorlesen</button>
+              <button id="quizBookmarkBtn" onclick="toggleCurrentBookmark()" class="nav-btn" style="font-size:1.2rem;">☆</button>
+            </div>
+            <div id="quizTimerBox" class="hidden" style="font-weight:bold; color:#ef4444; font-size:1.2rem;">45</div>
+            <button id="nextBtn" onclick="nextQuestion()" class="btn-primary" disabled>Nächste Frage ➡️</button>
+          </div>
+        </div>
       </div>
-      <div class="section-card" style="cursor: pointer;" onclick="location.href='recht.html'">
-        <div class="section-title">⚖️ Recht & Fälle</div>
-        <p style="font-size: 0.85rem; color: var(--text-muted);">10 praktische Praxisfälle für die mündliche IHK-Prüfung.</p>
+      <div id="statDashboard"></div>
+    </div>
+
+    <!-- IHK PRÜFUNG VIEW -->
+    <div id="view-exam" class="view-container">
+      <div id="examStartScreen" class="section-card" style="text-align:center;">
+        <div class="section-title">🎓 IHK-Prüfungssimulation (35 Fragen in 45 Minuten)</div>
+        <p style="color:var(--text-muted); margin-bottom:20px;">Simuliere die echte Sachkundeprüfung nach § 34a GewO unter realen Bedingungen.</p>
+        <select id="examCategorySelect" style="padding:10px; width:80%; max-width:300px; margin-bottom:20px; border-radius:6px; background:var(--option-bg); color:var(--text-color); border:1px solid var(--border-color);">
+          <option value="all">Alle Themenbereiche gemischt</option>
+          <option value="Rechtskunde">Rechtskunde</option>
+          <option value="Dienstkunde">Dienstkunde</option>
+          <option value="Gefahrenabwehr & Technik">Gefahrenabwehr & Technik</option>
+        </select>
+        <br>
+        <button onclick="startRealExam()" class="btn-primary" style="font-size:1.1rem; padding:12px 30px;">Prüfung starten</button>
       </div>
-      <div class="section-card" style="cursor: pointer;" onclick="location.href='theorie.html'">
-        <div class="section-title">📚 Kompaktwissen</div>
-        <p style="font-size: 0.85rem; color: var(--text-muted);">Ausführliche Theorie und Fallbeispiele zum Nachschlagen.</p>
+
+      <div id="examScreen" class="hidden">
+        <div class="section-card" style="display:flex; justify-content:space-between; align-items:center; padding:12px 20px;">
+          <div id="examCounter" style="font-weight:bold;">Frage 1 von 35</div>
+          <div id="examTimer" style="font-size:1.2rem; font-weight:bold; color:#ef4444;">45:00</div>
+          <button onclick="finishExamPrompt()" class="btn-danger" style="padding:6px 12px; font-size:0.8rem;">Prüfung abgeben</button>
+        </div>
+        <div class="section-card">
+          <div id="examGridContainer" class="index-grid" style="margin-bottom:15px;"></div>
+          <div id="examQuestion" style="font-size:1.1rem; font-weight:600; margin-bottom:15px;"></div>
+          <div id="examOptions"></div>
+          <div id="examMultiSubmitContainer" class="hidden" style="margin-top:15px;">
+            <button onclick="submitExamMultiAnswer()" class="btn-primary" style="width:100%;">Auswahl für diese Frage speichern</button>
+          </div>
+          <div style="display:flex; justify-content:space-between; margin-top:20px;">
+            <button id="examPrevBtn" onclick="prevExamQuestion()" class="nav-btn">⬅️ Zurück</button>
+            <button id="examFlagBtn" onclick="toggleExamFlag()" class="nav-btn">🚩 Frage markieren</button>
+            <button id="examNextBtn" onclick="nextExamQuestion()" class="btn-primary">Weiter ➡️</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="examResultScreen" class="hidden section-card" style="text-align:center;">
+        <div id="resultTitle" class="section-title">Auswertung</div>
+        <p id="resultScore" style="font-size:1.2rem; font-weight:bold; margin-bottom:10px;"></p>
+        <p id="resultStatus" style="margin-bottom:20px;"></p>
+        <button onclick="resetToExamStart()" class="btn-primary" style="margin-bottom:20px;">Zurück zur Startseite</button>
+        <div id="examReviewList" style="text-align:left;"></div>
       </div>
     </div>
-  </div>
-</div>  
-<script src="script.js"></script>  
-</body>  
+
+    <!-- FÄLLE VIEW -->
+    <div id="view-cases" class="view-container">
+      <div class="section-card">
+        <div class="section-title">⚖️ Rechtsfälle & Sachverhalte</div>
+        <p style="color:var(--text-muted); margin-bottom:15px;">Typische Praxisfälle zur Vertiefung für die mündliche IHK-Prüfung.</p>
+        <div id="caseContainer"></div>
+      </div>
+    </div>
+
+    <!-- THEORIE VIEW -->
+    <div id="view-theory" class="view-container">
+      <div class="section-card">
+        <div class="section-title">📚 Kompakt-Theorie</div>
+        <div id="theoryContainer"></div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    function switchView(viewName) {
+      document.querySelectorAll('.view-container').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('header .nav-btn').forEach(el => {
+        if(!el.id.includes('Btn')) el.classList.remove('active');
+      });
+      
+      const target = document.getElementById('view-' + viewName);
+      if(target) target.classList.add('active');
+      
+      event.target.classList.add('active');
+      if(viewName === 'quiz') { renderStatDashboard(); }
+    }
+  </script>
+  
+  <script src="script.js"></script>
+</body>
 </html>
