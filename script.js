@@ -1,5 +1,6 @@
 let audioCtx = null;  
 let soundEnabled = true;  
+
 function playSocketSound(isCorrect) {  
   if (!soundEnabled) return;  
   try {  
@@ -52,7 +53,6 @@ function toggleDarkMode() {
   }  
 }  
 
-// MASSIV ERWEITERTER UND VOLLSTÄNDIG EINZIGARTIGER GSSK-FRAGENPOOL
 const rawGsskPool = [  
   {  
     id: 1, isMulti: true, category: "Rechtskunde", subcategory: "StPO § 127 Abs. 1",  
@@ -498,7 +498,6 @@ const theoryTopics = [
   { title: "2. Aufgaben im Wach- und Sicherheitsdienst (Dienstkunde)", content: "Inhaltlich geht es um Objektschutz, Werkschutz, Einlasskontrollen, Streifendienst, Wachbuchführung, Verhalten in Notfällen, Alarmverfolgung und Kooperation mit Behörden." }
 ];
 
-// --- QUIZ LOGIK ---
 function initQuizPool() {
   shuffledQuizPool = [...currentPool];
   for (let i = shuffledQuizPool.length - 1; i > 0; i--) {
@@ -524,13 +523,12 @@ function renderQuizGrid() {
     
     if(bookmarks.includes(q.id)) btn.classList.add('flagged');
     
-    // Status-Färbung im Grid: Grün bei Richtig, Rot bei Falsch
     if (stats[q.id]) {
       if (stats[q.id].correct > 0 && stats[q.id].wrong === 0) {
-        btn.style.backgroundColor = '#10b981'; // Grün für komplett richtig
+        btn.style.backgroundColor = '#10b981';
         btn.style.color = 'white';
       } else if (stats[q.id].wrong > 0) {
-        btn.style.backgroundColor = '#ef4444'; // Rot für Fehler
+        btn.style.backgroundColor = '#ef4444';
         btn.style.color = 'white';
       }
     }
@@ -636,12 +634,12 @@ function handleOptionClickDynamic(selectedOriginalIdx, q) {
     let origIdx = parseInt(b.dataset.originalIndex);
     if (origIdx === q.correct) {
       b.classList.add('correct');
-      b.style.backgroundColor = '#10b981'; // Grün für richtig
+      b.style.backgroundColor = '#10b981';
       b.style.color = 'white';
     }
     if (origIdx === selectedOriginalIdx && !isCorrect) {
       b.classList.add('wrong');
-      b.style.backgroundColor = '#ef4444'; // Rot für falsch
+      b.style.backgroundColor = '#ef4444';
       b.style.color = 'white';
     }
   });
@@ -677,11 +675,11 @@ function submitMultiAnswer() {
     let origIdx = parseInt(buttons[i].dataset.originalIndex);
     if (correctArr.includes(origIdx)) {
       buttons[i].classList.add('correct');
-      buttons[i].style.backgroundColor = '#10b981'; // Grün für richtig
+      buttons[i].style.backgroundColor = '#10b981';
       buttons[i].style.color = 'white';
     } else if (buttons[i].classList.contains('selected')) {
       buttons[i].classList.add('wrong');
-      buttons[i].style.backgroundColor = '#ef4444'; // Rot für falsch
+      buttons[i].style.backgroundColor = '#ef4444';
       buttons[i].style.color = 'white';
     }
   }
@@ -905,7 +903,6 @@ function stopSpeech() {
   if ('speechSynthesis' in window) { window.speechSynthesis.cancel(); }
 }
 
-// --- IHK PRÜFUNGSSIMULATION ---
 let shuffledExamQuestions = []; 
 let examCurrentIdx = 0;
 let examUserAnswers = {};
@@ -1193,3 +1190,11 @@ function renderTheoryTopics() {
     container.appendChild(div);
   });
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+  initQuizPool();
+  renderQuizQuestion();
+  renderStatDashboard();
+  renderLawCases();
+  renderTheoryTopics();
+});
