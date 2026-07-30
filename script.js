@@ -481,7 +481,6 @@ let shuffledQuizPool = [];
 let currentIndex = 0;
 let userAnswers = {};
 let bookmarks = JSON.parse(localStorage.getItem('gssk_bookmarks') || '[]');
-let stats = JSON.parse(localStorage.getItem('gssk_stats') || '{}');
 let filterMode = 'all'; 
 let timerInterval = null;
 let timeLeft = 45;
@@ -523,16 +522,6 @@ function renderQuizGrid() {
     
     if(bookmarks.includes(q.id)) btn.classList.add('flagged');
     
-    if (stats[q.id]) {
-      if (stats[q.id].correct > 0 && stats[q.id].wrong === 0) {
-        btn.style.backgroundColor = '#10b981';
-        btn.style.color = 'white';
-      } else if (stats[q.id].wrong > 0) {
-        btn.style.backgroundColor = '#ef4444';
-        btn.style.color = 'white';
-      }
-    }
-    
     btn.textContent = idx + 1;
     btn.onclick = () => { 
       const foundIdx = shuffledQuizPool.findIndex(item => item.id === q.id);
@@ -559,7 +548,6 @@ function renderQuizQuestion() {
     const finishedScreen = document.getElementById('quizFinishedScreen');
     if(contentArea) contentArea.classList.add('hidden');
     if(finishedScreen) finishedScreen.classList.remove('hidden');
-    renderStatDashboard();
     return;
   }
 
@@ -644,7 +632,6 @@ function handleOptionClickDynamic(selectedOriginalIdx, q) {
     }
   });
 
-  recordStat(q.id, isCorrect);
   showExplanation(q);
   const nextBtn = document.getElementById('nextBtn');
   if(nextBtn) nextBtn.disabled = false;
@@ -684,7 +671,6 @@ function submitMultiAnswer() {
     }
   }
 
-  recordStat(q.id, isCorrect);
   showExplanation(q);
   const multiSubmit = document.getElementById('multiSubmitContainer');
   if(multiSubmit) multiSubmit.classList.add('hidden');
@@ -717,37 +703,6 @@ function restartQuiz() {
   renderQuizQuestion();
 }
 
-function recordStat(qid, success) {
-  if (!stats[qid]) {
-    stats[qid] = { correct: 0, wrong: 0 };
-  }
-  if (success) stats[qid].correct++;
-  else stats[qid].wrong++;
-  localStorage.setItem('gssk_stats', JSON.stringify(stats));
-}
-
-function resetAllStats() {
-  if (confirm("Möchtest du deinen gesamten Lernfortschritt, Filter und alle Statistiken wirklich zurücksetzen?")) {
-    localStorage.removeItem('gssk_stats');
-    localStorage.removeItem('gssk_bookmarks');
-    stats = {};
-    bookmarks = [];
-    filterMode = 'all'; 
-    updateFilterButtons();
-    
-    const searchInput = document.getElementById('quizSearchInput');
-    if(searchInput) searchInput.value = '';
-    
-    currentPool = [...rawGsskPool];
-    currentIndex = 0;
-    initQuizPool();
-    renderQuizQuestion();
-    renderStatDashboard();
-    
-    alert("Alles wurde erfolgreich zurückgesetzt.");
-  }
-}
-
 function filterQuizQuestions() {
   const searchInput = document.getElementById('quizSearchInput');
   const query = searchInput ? searchInput.value.toLowerCase() : "";
@@ -757,8 +712,6 @@ function filterQuizQuestions() {
     if (!matchesSearch) return false;
     
     if (filterMode === 'bookmark') return bookmarks.includes(q.id);
-    if (filterMode === 'weak') return stats[q.id] && stats[q.id].wrong > stats[q.id].correct;
-    if (filterMode === 'mastered') return stats[q.id] && stats[q.id].correct > 0 && stats[q.id].wrong === 0;
     return true;
   });
   
@@ -773,25 +726,9 @@ function toggleBookmarkFilter() {
   filterQuizQuestions();
 }
 
-function toggleWeakFilter() {
-  filterMode = (filterMode === 'weak') ? 'all' : 'weak';
-  updateFilterButtons();
-  filterQuizQuestions();
-}
-
-function toggleMasteredFilter() {
-  filterMode = (filterMode === 'mastered') ? 'all' : 'mastered';
-  updateFilterButtons();
-  filterQuizQuestions();
-}
-
 function updateFilterButtons() {
   const b1 = document.getElementById('filterBookmarkBtn');
-  const b2 = document.getElementById('filterWeakBtn');
-  const b3 = document.getElementById('filterMasteredBtn');
   if(b1) b1.classList.toggle('active', filterMode === 'bookmark');
-  if(b2) b2.classList.toggle('active', filterMode === 'weak');
-  if(b3) b3.classList.toggle('active', filterMode === 'mastered');
 }
 
 function toggleCurrentBookmark() {
@@ -819,27 +756,6 @@ function updateBookmarkIcon() {
     btn.textContent = "☆";
     btn.style.color = "inherit";
   }
-}
-
-function renderStatDashboard() {
-  let totalAnswered = Object.keys(stats).length;
-  let correctCount = Object.values(stats).filter(s => s.correct > s.wrong).length;
-  let container = document.getElementById('statDashboard');
-  if(!container) return;
-  
-  container.innerHTML = `
-    <div class="section-card">
-      <div class="section-title">📊 Lernfortschritt</div>
-      <p>Beantwortete Fragen im Pool: <strong>${totalAnswered} / ${rawGsskPool.length}</strong></p>
-      <p>Sicher beherrschte Fragen: <strong>${correctCount}</strong></p>
-      <div class="stat-bar-wrapper">
-        <div class="stat-bar-fill" style="width: ${(totalAnswered / rawGsskPool.length) * 100}%;"></div>
-      </div>
-      <button onclick="resetAllStats()" class="btn-option" style="background-color: #ef4444; color: white; margin-top: 15px; width: 100%;">
-        🗑️ Lernfortschritt & Statistik zurücksetzen
-      </button>
-    </div>
-  `;
 }
 
 function toggleTimerMode() {
@@ -1194,7 +1110,6 @@ function renderTheoryTopics() {
 document.addEventListener("DOMContentLoaded", () => {
   initQuizPool();
   renderQuizQuestion();
-  renderStatDashboard();
   renderLawCases();
   renderTheoryTopics();
 });
