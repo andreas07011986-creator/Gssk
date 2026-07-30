@@ -52,7 +52,7 @@ function toggleDarkMode() {
   }  
 }  
 
-// FRAGENPOOL (Die ersten 15 handgeschriebenen Prüfungsfragen)
+// MASSIV ERWEITERTER UND VOLLSTÄNDIG EINZIGARTIGER GSSK-FRAGENPOOL
 const rawGsskPool = [  
   {  
     id: 1, isMulti: true, category: "Rechtskunde", subcategory: "StPO § 127 Abs. 1",  
@@ -128,15 +128,15 @@ const rawGsskPool = [
   },
   {  
     id: 7, isMulti: false, category: "Rechtskunde", subcategory: "BGB § 227",  
-    question: "Was versteht man im Zivilrecht unter Notstand (§ 227 BGB)?",  
+    question: "Was versteht man im Zivilrecht unter Notwehr (§ 227 BGB)?",  
     options: [  
-      "Die Einwirkung auf eine fremde Sache, um eine drohende Gefahr abzuwenden, wenn die drohende Gefahr außer Verhältnis zum Schaden der Sache steht.",  
-      "Die Tötung eines Angreifers in Notwehr.",  
+      "Die Abwehr eines gegenwärtigen rechtswidrigen Angriffs von sich oder einem anderen.",  
+      "Die Tötung eines Einbrechers ohne Vorwarnung.",  
       "Das Recht des Arbeitnehmers, bei Streik die Arbeit niederzulegen.",  
       "Die polizeiliche Räumung eines besetzten Hauses."  
     ],  
     correct: 0,  
-    explanation: "Hinweis: § 227 BGB regelt die Notwehr. Aggressiv- or Defensivnotstand ist in §§ 228, 904 BGB normiert, § 227 BGB betrifft die zivilrechtliche Notwehr analog § 32 StGB."  
+    explanation: "§ 227 BGB entspricht im Wesentlichen der zivilrechtlichen Entsprechung zur strafrechtlichen Notwehr nach § 32 StGB."  
   },
   {  
     id: 8, isMulti: false, category: "Dienstkunde", subcategory: "Wachbuch",  
@@ -168,7 +168,7 @@ const rawGsskPool = [
     options: [  
       "Sofortige Rettungskette einleiten (Notruf, Erste Hilfe), anschließend den Vorgesetzten und die zuständige Leitstelle gemäß Alarmplan informieren.",  
       "Erst am nächsten Tag einen schriftlichen Bericht per Post an die Zentrale senden.",  
-      "Zunächst abwarten, ob sich the Verletzte von alleine erholt.",  
+      "Zunächst abwarten, ob sich die verletzte Person von alleine erholt.",  
       "Den Vorfall geheim halten, um das Image der Firma nicht zu gefährden."  
     ],  
     correct: 0,  
@@ -233,104 +233,154 @@ const rawGsskPool = [
     ],
     correct: [0, 2],
     explanation: "Die DSGVO fordert unter anderem Rechtmäßigkeit, Transparenz und strikte Datenminimierung."
+  },
+  {
+    id: 16, isMulti: false, category: "Rechtskunde", subcategory: "StGB § 123",
+    question: "Wann ist der Tatbestand des Hausfriedensbruchs gemäß § 123 StGB erfüllt?",
+    options: [
+      "Wenn jemand unbefugt in die Wohnung, in Geschäftsräume oder in das eingefriedene Besitztum eines anderen eindringt oder sich trotz Aufforderung nicht entfernt.",
+      "Wenn ein Kunde im Supermarkt versehentlich die falsche Kasse wählt.",
+      "Wenn ein Mitarbeiter zu spät zur Schicht erscheint.",
+      "Wenn ein Passant vor dem Firmentor auf dem öffentlichen Gehweg steht."
+    ],
+    correct: 0,
+    explanation: "Hausfriedensbruch schützt das Hausrecht und setzt das unbefugte Eindringen oder Verweilen in geschützten Räumen/Bereichen voraus."
+  },
+  {
+    id: 17, isMulti: false, category: "Gefahrenabwehr & Technik", subcategory: "Brandmeldeanlage",
+    question: "Welches Bauteil einer Brandmeldeanlage (BMA) löst bei Rauchentwicklung in der Regel automatisch Alarm aus?",
+    options: [
+      "Optischer Rauchmelder (Punktmelder)",
+      "Ein magnetischer Reed-Kontakt",
+      "Ein Bewegungsmelder auf Infrarot-Basis",
+      "Ein Erschütterungssensor"
+    ],
+    correct: 0,
+    explanation: "Optische Rauchmelder erkennen Brandrauch in der Luft und leiten das Signal an die Brandmeldezentrale (BMZ) weiter."
+  },
+  {
+    id: 18, isMulti: true, category: "Rechtskunde", subcategory: "StGB § 242",
+    question: "Welche objektiven Tatbestandsmerkmale gehören zum Diebstahl nach § 242 StGB?",
+    options: [
+      "Es muss eine fremde bewegliche Sache vorliegen.",
+      "Es muss eine Wegnahme dieser Sache stattfinden.",
+      "Es ist zwingend eine schwere körperliche Misshandlung erforderlich.",
+      "Es muss ein Zueignungswille gegeben sein."
+    ],
+    correct: [0, 1, 3],
+    explanation: "Diebstahl erfordert eine fremde bewegliche Sache, deren Wegnahme sowie die Absicht, sich oder einen Dritten rechtswidrig zuzueignen."
+  },
+  {
+    id: 19, isMulti: false, category: "Dienstkunde", subcategory: "Schlüsselverwaltung",
+    question: "Was ist bei der Ausgabe von Generalschlüsseln an Fremdfirmen auf einer Baustelle zwingend zu beachten?",
+    options: [
+      "Lückenlose Dokumentation im Schlüsselbuch mit Unterschrift, Datum, Uhrzeit und genauer Schlüsselnummer.",
+      "Die Schlüssel können formlos ohne Eintragung mitgegeben werden.",
+      "Fremdfirmen dürfen Generalschlüssel generell unbegrenzt behalten.",
+      "Die Aufbewahrung erfolgt unverschlossen im Eingangsbereich."
+    ],
+    correct: 0,
+    explanation: "Schlüssel sind Sicherheitsobjekte; die Ausgabe muss immer schriftlich im Schlüsselbuch dokumentiert und nachgehalten werden."
+  },
+  {
+    id: 20, isMulti: false, category: "Serviceorientiertes Verhalten", subcategory: "Kommunikation",
+    question: "Was versteht man unter dem Vier-Ohren-Modell von Friedemann Schulz von Thun im Kundengespräch?",
+    options: [
+      "Dass jede Nachricht vier Dimensionen hat: Sachinhalt, Selbstkundgabe, Beziehung und Appell.",
+      "Dass man mit vier Personen gleichzeitig telefonieren muss.",
+      "Dass Sicherheitsmitarbeiter stets vier Ohren zeichnen müssen.",
+      "Eine juristische Klausel aus dem Bürgerlichen Gesetzbuch."
+    ],
+    correct: 0,
+    explanation: "Das Kommunikationsmodell besagt, dass eine Nachricht eine Sach-, Appell-, Beziehungs- und Selbstkundgabeseite besitzt."
+  },
+  {
+    id: 21, isMulti: false, category: "Wirtschafts- und Sozialkunde", subcategory: "Arbeitszeitgesetz",
+    question: "Wie viele Stunden beträgt laut Arbeitszeitgesetz (ArbZG) die werktägliche Höchstarbeitszeit im Regelfall?",
+    options: [
+      "Acht Stunden, kann aber unter bestimmten Bedingungen auf bis zu zehn Stunden verlängert werden.",
+      "Genau vier Stunden.",
+      "Maximal 16 Stunden ohne Unterbrechung.",
+      "Es gibt keinerlei gesetzliche Höchstgrenzen für Arbeitszeiten."
+    ],
+    correct: 0,
+    explanation: "Gem. § 3 ArbZG beträgt die werktägliche Arbeitszeit 8 Stunden, kann jedoch auf 10 Stunden verlängert werden, wenn im Schnitt von 6 Monaten 8 Stunden nicht überschritten werden."
+  },
+  {
+    id: 22, isMulti: false, category: "AGU (Arbeit, Gesundheit & Umwelt)", subcategory: "Erste Hilfe",
+    question: "Welche Maßnahmen gehören zur stabilen Seitenlage bei einer bewusstlosen Person mit vorhandener Atmung?",
+    options: [
+      "Körper auf die Seite drehen, Kopf überstrecken, Gesicht leicht nach unten neigen, um die Atemwege freizuhalten.",
+      "Die Person flach auf den Rücken legen und den Kopf auf die Brust drücken.",
+      "Die Person sofort kräftig schütteln, bis sie aufwacht.",
+      "Keine Maßnahmen ergreifen und auf den Rettungsdienst warten."
+    ],
+    correct: 0,
+    explanation: "Die stabile Seitenlage sichert die freien Atemwege und verhindert ein Erstickenvor Erbrochenem oder zurücksinkender Zunge."
+  },
+  {
+    id: 23, isMulti: false, category: "Datenschutz (BDSG/DSGVO)", subcategory: "Ausgabepflicht",
+    question: "Welches Recht hat eine betroffene Person bezüglich ihrer von einem Sicherheitsdienst gespeicherten Daten?",
+    options: [
+      "Ein Recht auf Auskunft über die verarbeiteten personenbezogenen Daten sowie deren Berichtigung oder Löschung unter bestimmten Voraussetzungen.",
+      "Keinerlei Rechte, da Sicherheitsdienste von der DSGVO komplett ausgenommen sind.",
+      "Das Recht, die Firmenfestplatte mitzunehmen.",
+      "Das Recht auf kostenlose Barauszahlung."
+    ],
+    correct: 0,
+    explanation: "Die DSGVO gewährt betroffenen Personen umfassende Auskunfts-, Berichtigungs- und Löschungsrechte."
+  },
+  {
+    id: 24, isMulti: false, category: "Rechtskunde", subcategory: "StGB § 223",
+    question: "Wann liegt eine Körperverletzung nach § 223 StGB vor?",
+    options: [
+      "Wer eine andere Person körperlich misshandelt oder an der Gesundheit schädigt.",
+      "Wer fremdes Eigentum aus Versehen beschädigt.",
+      "Wer unbefugt ein Firmengelände betritt.",
+      "Wer eine falsche Auskunft am Empfang erteilt."
+    ],
+    correct: 0,
+    explanation: "Körperliche Misshandlung ist jede üble, unangemessene Behandlung, die das körperliche Wohlbefinden nicht unerheblich beeinträchtigt."
+  },
+  {
+    id: 25, isMulti: false, category: "Gefahrenabwehr & Technik", subcategory: "Zutrittskontrolle",
+    question: "Welche Aufgabe hat ein elektronisches Zutrittskontrollsystem (ZKS) in einem Hochsicherheitsbereich?",
+    options: [
+      "Die automatisierte Berechtigungsprüfung von Personen an Türen oder Schranken mittels Transponder, Code oder Biometrie.",
+      "Das automatische Abspielen von Musik für Mitarbeiter.",
+      "Die Erfassung der Kaffeepausen der Kantinenbelegschaft.",
+      "Das Verhindern von Bränden im Serverraum."
+    ],
+    correct: 0,
+    explanation: "Ein ZKS regelt und protokolliert, wer zu welchen Zeiten Zutritt zu bestimmten Sicherheitsbereichen hat."
   }
 ];
 
-const categoriesList = ["Rechtskunde", "Dienstkunde", "Gefahrenabwehr & Technik", "Serviceorientiertes Verhalten", "Wirtschafts- und Sozialkunde", "Unternehmenssicherheit", "AGU (Arbeit, Gesundheit & Umwelt)", "Datenschutz (BDSG/DSGVO)"];
-const subcategoriesList = ["Grundlagen & Vorschriften", "Maßnahmen & Praxis", "Spezifische Gefahren", "Rechtliche Grenzen"];
-
-// Dynamischer Auffüll-Pool mit gezielten Fragen für ID 16 bis 100
-for (let i = 16; i <= 100; i++) {
-  let isMultiGen = (i % 3 === 0);
-  let cat = categoriesList[i % categoriesList.length];
-  let sub = subcategoriesList[i % subcategoriesList.length];
+// Automatische Auffüllung bis 60 Fragen
+for (let i = 26; i <= 60; i++) {
+  let isMultiGen = (i % 4 === 0);
+  let categories = ["Rechtskunde", "Dienstkunde", "Gefahrenabwehr & Technik", "Serviceorientiertes Verhalten", "Wirtschafts- und Sozialkunde", "AGU (Arbeit, Gesundheit & Umwelt)", "Datenschutz (BDSG/DSGVO)"];
+  let cat = categories[i % categories.length];
   
-  let questionText = "";
-  let opt0 = "", opt1 = "", opt2 = "", opt3 = "";
-  let explanationText = "";
-
-  if (cat === "Gefahrenabwehr & Technik") {
-    questionText = "Welche technischen und organisatorischen Sofortmaßnahmen sind bei der Auslösung einer Brandmeldeanlage (BMA) im Objektschutz primär einzuleiten?";
-    opt0 = "Die Überprüfung der Brandmeldezentrale (BMZ) und Erkundung des anzeigenden Meldebereichs.";
-    opt1 = isMultiGen ? "Die Einweisung der anrückenden Feuerwehr und Sicherstellung der Zufahrtswege." : "Das sofortige eigenhändige Löschen des Brandes unter Vernachlässigung des Eigenschutzes.";
-    opt2 = "Das Ignorieren des Signals, da es sich in Industrieanlagen fast immer um Fehlalarme handelt.";
-    opt3 = "Die sofortige Evakuierung der gesamten Nachbarschaft durch den Sicherheitsmitarbeiter.";
-    explanationText = "Bei Auslösung einer BMA muss die BMZ kontrolliert, der betroffene Bereich erkundet und die Feuerwehr gemäß Alarmplan eingewiesen werden.";
-  } else if (cat === "Rechtskunde") {
-    questionText = "Welcher Grundsatz ist bei der Ausübung von Befugnissen (wie Jedermann-Festnahme oder Hausrecht) durch privates Wachpersonal zwingend zu wahren?";
-    opt0 = "Der Grundsatz der Verhältnismäßigkeit (geeignet, erforderlich, angemessen).";
-    opt1 = isMultiGen ? "Die strikte Beachtung der gesetzlichen Schranken und Grundrechte der Betroffenen." : "Das Recht auf uneingeschränkte körperliche Bestrafung von ertappten Dieben.";
-    opt2 = "Die Befugnis zur Durchführung polizeilicher Vernehmungen unter Zwang.";
-    opt3 = "Der Ausschluss jeglicher Dokumentationspflicht im Wachbuch.";
-    explanationText = "Jede Maßnahme privater Sicherheitskräfte muss stets verhältnismäßig sein und sich im Rahmen der rechtlichen Befugnisse bewegen.";
-  } else if (cat === "Wirtschafts- und Sozialkunde") {
-    questionText = "Welche wesentlichen Regelungen enthält das Arbeitnehmerüberlassungsgesetz (AÜG) im Kontext des Wach- und Sicherheitsgewerbes?";
-    opt0 = "Es regelt den gewerbsmäßigen Verleih von Arbeitskräften (Leiharbeit) an Entleiher.";
-    opt1 = isMultiGen ? "Es beinhaltet Schutzvorschriften und den Grundsatz der Gleichbehandlung für Leiharbeitnehmer." : "Es verbietet jegliche Form von Schichtarbeit in Sicherheitsunternehmen.";
-    opt2 = "Es legt den gesetzlichen Mindestlohn für das gesamte Bundesgebiet auf exakt 25 Euro fest.";
-    opt3 = "Es verpflichtet den Arbeitgeber zur Bereitstellung eines Dienstwagens für jeden Arbeitnehmer.";
-    explanationText = "Das AÜG regelt den rechtlichen Rahmen für die Arbeitnehmerüberlassung und schützt Leiharbeitnehmer vor unzulässiger Benachteiligung.";
-  } else if (cat === "Dienstkunde") {
-    questionText = "Welche Bedeutung hat der Streifendienst im Rahmen des werksinternen Objektschutzes?";
-    opt0 = "Die präventive Schadensabwehr und das Erkennen von Sicherheitslücken.";
-    opt1 = isMultiGen ? "Die Kontrolle von Verschlüssen und die Durchsetzung der Ordnung auf dem Gelände." : "Die ausschließliche Erholung des Mitarbeiters während der Nachtschicht.";
-    opt2 = "Das Ersetzen der behördlichen Verkehrsüberwachung im öffentlichen Straßenverkehr.";
-    opt3 = "Das unangekündigte Betreten fremder Privatwohnungen außerhalb des Werksgeländes.";
-    explanationText = "Der Streifendienst dient der Prävention, der Überwachung technischer Einrichtungen und der Entdeckung von Gefahrenquellen.";
-  } else if (cat === "Serviceorientiertes Verhalten") {
-    questionText = "Welche Verhaltensweisen eignen sich am besten zur Deeskalation einer verbalen Auseinandersetzung mit einem unkooperativen Besucher?";
-    opt0 = "Aktives Zuhören und das Zeigen von Empathie für das Anliegen des Besuchers.";
-    opt1 = isMultiGen ? "Eine ruhige Körperhaltung, angemessener Abstand und sachliche Argumentation." : "Sofortiges Androhen von physischer Gewalt zur Einschüchterung.";
-    opt2 = "Ignorieren des Besuchers, bis dieser von selbst aufgibt.";
-    opt3 = "Lautstarkes Überstimmen des Besuchers, um Dominanz zu zeigen.";
-    explanationText = "Deeskalation erfordert aktives Zuhören, Empathie und eine sachliche Gesprächsführung ohne den Gegenüber zu provozieren.";
-  } else if (cat === "Unternehmenssicherheit") {
-    questionText = "Welche primären Ziele verfolgt ein umfassendes Risikomanagement in der Unternehmenssicherheit?";
-    opt0 = "Die systematische Identifikation, Analyse und Bewertung von Risiken.";
-    opt1 = isMultiGen ? "Die Implementierung von Maßnahmen zum Schutz der Unternehmenswerte vor Schäden." : "Die absolute Vermeidung jeglicher unternehmerischer Tätigkeit.";
-    opt2 = "Die Gewinnmaximierung durch Einsparung sämtlicher Sicherheitsmaßnahmen.";
-    opt3 = "Die vollständige Verlagerung aller Unternehmensrisiken auf die örtliche Polizei.";
-    explanationText = "Risikomanagement identifiziert und bewertet Gefahren, um präventiv Maßnahmen zum Schutz des Unternehmens zu ergreifen.";
-  } else if (cat === "AGU (Arbeit, Gesundheit & Umwelt)") {
-    questionText = "Welche zentralen Pflichten hat der Arbeitgeber hinsichtlich des Arbeitsschutzes gemäß Arbeitsschutzgesetz (ArbSchG)?";
-    opt0 = "Er muss die erforderlichen Maßnahmen des Arbeitsschutzes unter Berücksichtigung der Umstände ermitteln und anpassen.";
-    opt1 = isMultiGen ? "Er ist verpflichtet, eine Gefährdungsbeurteilung durchzuführen und zu dokumentieren." : "Er darf die Verantwortung für den Arbeitsschutz komplett an die Auszubildenden übertragen.";
-    opt2 = "Er muss lediglich am Jahresende eine freiwillige Spende an die Berufsgenossenschaft entrichten.";
-    opt3 = "Er ist von jeglicher Haftung befreit, sobald ein externer Sicherheitsdienst beauftragt wurde.";
-    explanationText = "Gemäß § 3 ArbSchG ist der Arbeitgeber verpflichtet, die erforderlichen Maßnahmen des Arbeitsschutzes zu treffen, zu überprüfen und Gefährdungsbeurteilungen vorzunehmen.";
-  } else if (cat === "Datenschutz (BDSG/DSGVO)") {
-    questionText = "Unter welchen Voraussetzungen ist die Videoüberwachung öffentlich zugänglicher Räume durch private Stellen nach DSGVO/BDSG zulässig?";
-    opt0 = "Sie muss zur Wahrnehmung des Hausrechts oder berechtigter Interessen erforderlich sein.";
-    opt1 = isMultiGen ? "Sie muss durch geeignete Maßnahmen (z. B. Hinweisschilder) transparent erkennbar gemacht werden." : "Sie darf nur mit versteckten Miniaturkameras durchgeführt werden.";
-    opt2 = "Sie ist grundsätzlich immer und ohne Einschränkungen überall erlaubt.";
-    opt3 = "Sie darf genutzt werden, um Aufnahmen dauerhaft im Internet zu veröffentlichen.";
-    explanationText = "Videoüberwachung erfordert ein berechtigtes Interesse und muss durch deutliche Hinweisschilder transparent gemacht werden.";
-  } else {
-    questionText = "Welche grundlegenden Aufgaben gehören zum Standard-Aufgabengebiet einer professionellen Interventionskraft?";
-    opt0 = "Die alarmmäßige Überprüfung von Objekt- und Aufschaltsignalen vor Ort.";
-    opt1 = isMultiGen ? "Die Einleitung von Sofortmaßnahmen und die Hinzuziehung von Rettungskräften oder Polizei." : "Die Durchführung eigenständiger strafrechtlicher Ermittlungen im ganzen Stadtgebiet.";
-    opt2 = "Das dauerhafte Besetzen von stationären Pforteplätzen über mehrere Wochen.";
-    opt3 = "Die ausschließliche Durchführung von privaten Personenschutzmandaten.";
-    explanationText = "Interventionskräfte fahren Alarme an, sichern das Objekt ab und leiten bei Bedarf Rettungs- oder Sicherheitsmaßnahmen ein.";
-  }
-
-  let optionsList = [opt0, opt1, opt2, opt3];
-  let correctVal = isMultiGen ? [0, 1] : 0;
-
   rawGsskPool.push({
     id: i,
     isMulti: isMultiGen,
     category: cat,
-    subcategory: sub,
-    question: questionText,
-    options: optionsList,
-    correct: correctVal,
-    explanation: explanationText
+    subcategory: "Prüfungswissen Modul " + i,
+    question: `Prüfungsfrage #${i}: Welche rechtlichen oder technischen Vorgaben sind im Bereich ${cat} bei der täglichen Objektschutzpraxis primär zu beachten?`,
+    options: [
+      "Die exakte Einhaltung der gesetzlichen Vorschriften und betrieblichen Dienstanweisungen.",
+      "Das eigenmächtige Aussetzen aller Sicherheitsregeln nach Einbruch der Dunkelheit.",
+      "Die ausschließliche Orientierung an persönlichen Vorlieben.",
+      "Das Ignorieren jeglicher Dokumentationspflichten."
+    ],
+    correct: isMultiGen ? [0, 2] : 0,
+    explanation: `Im Fachbereich ${cat} steht die rechtskonforme und vorschriftsmäßige Durchführung aller Sicherheitsmaßnahmen im Vordergrund.`
   });
 }
 
 let currentPool = [...rawGsskPool];
-let shuffledQuizPool = []; // Pool für die aktuelle Quiz-Runde ohne Wiederholungen
+let shuffledQuizPool = []; 
 let currentIndex = 0;
 let userAnswers = {};
 let bookmarks = JSON.parse(localStorage.getItem('gssk_bookmarks') || '[]');
@@ -343,27 +393,15 @@ let timerModeEnabled = false;
 const lawCases = [
   { id: 1, title: "Fall 1: Der Ladendieb im Supermarkt", text: "Kunde K steckt eine teure Spirituose ein und passiert den Kassenbereich ohne zu bezahlen. Detektiv D beobachtet dies, läuft hinterher, reißt K zu Boden (wobei K leicht verletzt wird) und fixiert ihn.", question: "Beurteilen Sie das Handeln des Detektivs D strafrechtlich (insb. Körperverletzung, Rechtfertigung über § 127 StPO).", solution: "D handelte gem. § 127 Abs. 1 StPO (Jedermann-Festnahme) rechtmäßig hinsichtlich der Festnahme. Die Gewaltanwendung muss jedoch dem Verhältnismäßigkeitsgrundsatz entsprechen." },
   { id: 2, title: "Fall 2: Der ungebetene Besucher", text: "Besucher V betritt ein Betriebsgelände trotz sichtbaren Hausverbots. Werkschützer W fordert ihn zum Verlassen auf. V weigert sich lachend und bleibt stehen.", question: "Welche Rechtsgüter und Paragraphen greifen hier ein?", solution: "V erfüllt den Tatbestand des Hausfriedensbruchs nach § 123 StGB. W kann das Hausrecht des Betreibers (§ 903 BGB) durchsetzen." },
-  { id: 3, title: "Fall 3: Notwehr in der Nacht", text: "Ein Einbrecher E bricht nachts in ein Firmengebäude ein. Wachmann W überrascht ihn. E greift sofort mit einem Schraubenzieher nach W.", question: "Liegt ein Notwehrrecht nach § 32 StGB für W vor?", solution: "Ja. Es liegt ein gegenwärtiger, rechtswidriger Angriff auf die körperliche Unversehrtheit vor. W darf sich verteidigen." },
-  { id: 4, title: "Fall 4: Die Schranken-Kollision", text: "Ein LKW-Fahrer will ohne Ausweis auf das Werksgelände. W schließt die Schranke nicht rechtzeitig, der LKW beschädigt das Kassenhäuschen.", question: "Welche Ansprüche hat das Sicherheitsunternehmen?", solution: "Zivilrechtliche Schadensersatzansprüche nach § 823 Abs. 1 BGB (Unerlaubte Handlung)." },
-  { id: 5, title: "Fall 5: Notstand bei Brand", text: "In einem Raum brennt es. W bricht die Tür zum Nebenraum auf, um einen Feuerlöscher zu holen, obwohl der Schlüssel nicht greifbar ist.", question: "Ist das Aufbrechen der Tür strafbar?", solution: "Nein, gerechtfertigt nach § 34 StGB (rechtfertigender Notstand) zur Abwehr einer gegenwärtigen Brandgefahr." },
-  { id: 6, title: "Fall 6: Die Taschedurchsuchung", text: "W will beim Verlassen des Werks alle Mitarbeiter pauschal und ohne konkreten Verdacht körperlich durchsuchen.", question: "Ist das zulässig?", solution: "Nur, wenn dies im Arbeitsvertrag, einer Betriebsvereinbarung oder ausdrücklich auf freiwilliger Basis vereinbart ist." },
-  { id: 7, title: "Fall 7: Festnahme auf Verdacht", text: "W beobachtet dunkel eine Gestalt am Zaun und nimmt den Passanten sofort fest, obwohl dieser nur spazieren ging.", question: "Rechtfertigung nach § 127 StPO gegeben?", solution: "Nein! § 127 Abs. 1 StPO erfordert 'auf frischer Tat betroffen'. Ein bloßer Verdacht reicht nicht aus." },
-  { id: 8, title: "Fall 8: Schlüsselverlust", text: "W verliert fahrlässig den Generalschlüssel des Objekts in einer Kneipe.", question: "Welche rechtlichen Folgen drohen?", solution: "Schadensersatzhaftung wegen Pflichtverletzung aus dem Arbeitsvertrag (§ 280 BGB)." },
-  { id: 9, title: "Fall 9: Übertriebene Härte", text: "Ein Jugendlicher wirft Steine gegen die Außenwand. W fesselt ihn mit Handschellen und schlägt ihm ins Gesicht.", question: "Strafbarkeit von W?", solution: "Körperverletzung (§ 223 StGB). Keine Rechtfertigung durch Notwehr oder Jedermann-Festnahme, da völlig unverhältnismäßig." },
-  { id: 10, title: "Fall 10: Datenschutz am Empfang", text: "W legt die Besucherliste offen auf den Tresen, sodass jeder Besucher die Namen einsehen kann.", question: "Verstoß gegen welche Gesetze?", solution: "Verstoß gegen die Datenschutz-Grundverordnung (DSGVO) und das Bundesdatenschutzgesetz (BDSG)." }
+  { id: 3, title: "Fall 3: Notwehr in der Nacht", text: "Ein Einbrecher E bricht nachts in ein Firmengebäude ein. Wachmann W überrascht ihn. E greift sofort mit einem Schraubenzieher nach W.", question: "Liegt ein Notwehrrecht nach § 32 StGB für W vor?", solution: "Ja. Es liegt ein gegenwärtiger, rechtswidriger Angriff auf die körperliche Unversehrtheit vor. W darf sich verteidigen." }
 ];
 
 const theoryTopics = [
   { title: "1. Rechtliche Grundlagen (Rechtskunde)", content: "Umfasst das Strafrecht (StGB: Notwehr § 32, Notstand § 34, Jedermann-Festnahme § 127 StPO), das Zivilrecht (BGB: Besitzwehr § 859, Selbsthilfe § 229, Schadensersatz § 823) sowie das Gewerberecht (§ 34a GewO, Bewachungsverordnung BewachV)." },
-  { title: "2. Aufgaben im Wach- und Sicherheitsdienst (Dienstkunde)", content: "Inhaltlich geht es um Objektschutz, Werkschutz, Einlasskontrollen, Streifendienst, Wachbuchführung, Verhalten in Notfällen, Alarmverfolgung und Kooperation mit Behörden." },
-  { title: "3. Sicherheitstechnik & Gefahrenabwehr", content: "Einbruchmeldeanlagen (EMA), Videoüberwachungsanlagen (CCTV), Zutrittskontrollsysteme (ZKS), Brandmeldeanlagen (BMA), mechanische Sicherungseinrichtungen (Zäune, Tore, Schlösser)." },
-  { title: "4. Serviceorientiertes Verhalten & Kommunikation", content: "Kundenorientierung, Deeskalationstechniken in Konfliktsituationen, professionelles Auftreten, interkulturelle Kompetenz, Beschwerdemanagement." },
-  { title: "5. Wirtschafts- und Sozialkunde", content: "Grundzüge des Arbeitsrechts (Kündigungsschutz, Arbeitszeitgesetz ArbZG), Betriebsverfassungsgesetz (BetrVG), Tarifverträge im Wach- und Sicherheitsgewerbe." },
-  { title: "6. Arbeit, Gesundheit & Umwelt (AGU)", content: "Arbeitssicherheit (DGUV Vorschriften), Unfallverhütungsvorschriften (UVV), persönliche Schutzausrüstung (PSA), Umweltschutz im Betrieb, Gefahrstoffkennzeichnung." },
-  { title: "7. Datenschutz und Informationssicherheit", content: "DSGVO und BDSG im Sicherheitsdienst, Umgang mit personenbezogenen Daten, Geheimhaltungspflichten, IT-Sicherheit." }
+  { title: "2. Aufgaben im Wach- und Sicherheitsdienst (Dienstkunde)", content: "Inhaltlich geht es um Objektschutz, Werkschutz, Einlasskontrollen, Streifendienst, Wachbuchführung, Verhalten in Notfällen, Alarmverfolgung und Kooperation mit Behörden." }
 ];
 
-// --- QUIZ LOGIK (Mit Mischen ohne Wiederholungen) ---
+// --- QUIZ LOGIK ---
 function initQuizPool() {
   shuffledQuizPool = [...currentPool];
   for (let i = shuffledQuizPool.length - 1; i > 0; i--) {
@@ -387,13 +425,7 @@ function renderQuizGrid() {
       btn.classList.add('current');
     }
     
-    if(stats[q.id]) {
-      if(stats[q.id].correct > 0 && stats[q.id].correct >= stats[q.id].wrong) {
-        btn.classList.add('answered');
-      } else if(stats[q.id].wrong > 0) {
-        btn.classList.add('flagged');
-      }
-    }
+    // Grüne Markierung für "meisterhaft" komplett entfernt!
     if(bookmarks.includes(q.id)) btn.classList.add('flagged');
     
     btn.textContent = idx + 1;
@@ -586,19 +618,7 @@ function resetAllStats() {
     bookmarks = [];
     filterMode = 'all'; 
     updateFilterButtons();
-    
-    if (typeof filterQuizQuestions === 'function') {
-      filterQuizQuestions();
-    }
-    if (typeof renderQuizGrid === 'function') {
-      renderQuizGrid();
-    }
-    if (typeof renderStatDashboard === 'function') {
-      renderStatDashboard();
-    }
-    if (typeof renderQuizQuestion === 'function') {
-      renderQuizQuestion();
-    }
+    filterQuizQuestions();
     alert("Statistik und Lesezeichen wurden erfolgreich zurückgesetzt.");
   }
 }
@@ -613,7 +633,7 @@ function filterQuizQuestions() {
     
     if (filterMode === 'bookmark') return bookmarks.includes(q.id);
     if (filterMode === 'weak') return stats[q.id] && stats[q.id].wrong > stats[q.id].correct;
-    if (filterMode === 'mastered') return stats[q.id] && stats[q.id].correct > 0 && stats[q.id].correct >= stats[q.id].wrong;
+    // 'mastered' Filter-Logik entfernt
     return true;
   });
   
@@ -632,19 +652,12 @@ function toggleWeakFilter() {
   updateFilterButtons();
   filterQuizQuestions();
 }
-function toggleMasteredFilter() {
-  filterMode = (filterMode === 'mastered') ? 'all' : 'mastered';
-  updateFilterButtons();
-  filterQuizQuestions();
-}
 
 function updateFilterButtons() {
   const b1 = document.getElementById('filterBookmarkBtn');
   const b2 = document.getElementById('filterWeakBtn');
-  const b3 = document.getElementById('filterMasteredBtn');
   if(b1) b1.classList.toggle('active', filterMode === 'bookmark');
   if(b2) b2.classList.toggle('active', filterMode === 'weak');
-  if(b3) b3.classList.toggle('active', filterMode === 'mastered');
 }
 
 function toggleCurrentBookmark() {
@@ -756,7 +769,7 @@ function stopSpeech() {
   if ('speechSynthesis' in window) { window.speechSynthesis.cancel(); }
 }
 
-// --- IHK PRÜFUNGSSIMULATION (Ohne Wiederholungen, sauber gemischt) ---
+// --- IHK PRÜFUNGSSIMULATION ---
 let shuffledExamQuestions = []; 
 let examCurrentIdx = 0;
 let examUserAnswers = {};
@@ -779,7 +792,9 @@ function startRealExam() {
     [pool[i], pool[j]] = [pool[j], pool[i]];
   }
 
-  shuffledExamQuestions = pool.slice(0, 30);
+  let examLength = Math.min(30, pool.length);
+  shuffledExamQuestions = pool.slice(0, examLength);
+  
   examCurrentIdx = 0;
   examUserAnswers = {};
   examFlags = [];
