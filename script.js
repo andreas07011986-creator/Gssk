@@ -479,7 +479,6 @@ const rawGsskPool = [
 let currentPool = [...rawGsskPool];
 let shuffledQuizPool = []; 
 let currentIndex = 0;
-let userAnswers = {};
 let bookmarks = JSON.parse(localStorage.getItem('gssk_bookmarks') || '[]');
 let filterMode = 'all'; 
 let timerInterval = null;
@@ -622,12 +621,12 @@ function handleOptionClickDynamic(selectedOriginalIdx, q) {
     let origIdx = parseInt(b.dataset.originalIndex);
     if (origIdx === q.correct) {
       b.classList.add('correct');
-      b.style.backgroundColor = '#10b981';
+      b.style.backgroundColor = '#10b981'; // Grün für richtig
       b.style.color = 'white';
     }
     if (origIdx === selectedOriginalIdx && !isCorrect) {
       b.classList.add('wrong');
-      b.style.backgroundColor = '#ef4444';
+      b.style.backgroundColor = '#ef4444'; // Rot für falsch
       b.style.color = 'white';
     }
   });
@@ -662,11 +661,11 @@ function submitMultiAnswer() {
     let origIdx = parseInt(buttons[i].dataset.originalIndex);
     if (correctArr.includes(origIdx)) {
       buttons[i].classList.add('correct');
-      buttons[i].style.backgroundColor = '#10b981';
+      buttons[i].style.backgroundColor = '#10b981'; // Grün für richtig
       buttons[i].style.color = 'white';
     } else if (buttons[i].classList.contains('selected')) {
       buttons[i].classList.add('wrong');
-      buttons[i].style.backgroundColor = '#ef4444';
+      buttons[i].style.backgroundColor = '#ef4444'; // Rot für falsch ausgewählte
       buttons[i].style.color = 'white';
     }
   }
