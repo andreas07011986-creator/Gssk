@@ -152,7 +152,7 @@ const rawGsskPool = [
   },
   {  
     id: 9, isMulti: false, category: "Dienstkunde", subcategory: "Dienstanweisung",  
-    question: "Wer ist an eine vom Sicherheitsunternehmen erstellte Dienstanweisung rechtlich gebunden?",  
+    question: "Wer is an eine vom Sicherheitsunternehmen erstellte Dienstanweisung rechtlich gebunden?",  
     options: [  
       "Ausschließlich die eingesetzten Sicherheitsmitarbeiter des jeweiligen Objekts.",  
       "Jeder beliebige Besucher des Werksgeländes.",  
@@ -366,11 +366,28 @@ function renderQuizQuestion() {
   if(!optionsContainer) return;
   optionsContainer.innerHTML = '';
   
-  q.options.forEach((opt, idx) => {
+  // Optionen mit ihrem echten Index verknüpfen und mischen
+  let optionsWithIndex = q.options.map((optText, originalIndex) => {
+    return { text: optText, originalIndex: originalIndex };
+  });
+  optionsWithIndex.sort(() => Math.random() - 0.5);
+
+  optionsWithIndex.forEach((item) => {
     const btn = document.createElement('button');
     btn.className = 'btn-option';
-    btn.textContent = opt;
-    btn.onclick = () => handleOptionClick(idx);
+    btn.textContent = item.text;
+    
+    if (q.isMulti) {
+      btn.onclick = () => {
+        btn.classList.toggle('selected');
+        btn.dataset.originalIndex = item.originalIndex;
+      };
+      // Für spätere Auswertung den Originalindex direkt am Button speichern
+      btn.dataset.originalIndex = item.originalIndex;
+    } else {
+      btn.onclick = () => handleOptionClick(item.originalIndex, q);
+    }
+    
     optionsContainer.appendChild(btn);
   });
 
@@ -383,57 +400,177 @@ function renderQuizQuestion() {
   resetTimer();
 }
 
-function handleOptionClick(idx) {
-  const q = currentPool[currentIndex];
+function handleOptionClick(originalIdx, q) {
   const optionsContainer = document.getElementById('options');
   const buttons = optionsContainer.getElementsByTagName('button');
 
-  if (q.isMulti) {
-    buttons[idx].classList.toggle('selected');
+  for (let b of buttons) { b.disabled = true; }
+  
+  const isCorrect = (originalIdx === q.correct);
+  playSound(isCorrect);
+  
+  // Richtigen und gewählten Button optisch markieren
+  for (let b of buttons) {
+    // Da wir die Buttons durchgehen, müssen wir den passenden finden. 
+    // Wir können die Originalindizes über data-Attribute oder Textvergleich matchen.
+    // Machen wir es sauber über data-Attribute im Render-Schritt oder einen Textabgleich:
+  }
+
+  // Korrigierte Markierung basierend auf Text oder Attribut:
+  Array.from(buttons).forEach(b => {
+    // Textprüfung gegen die Optionen im Objekt
+    if (b.textContent === q.options[q.correct]) {
+      b.classList.add('correct');
+    }
+  });
+
+  if (isCorrect) {
+    recordStat(q.id, true);
   } else {
-    for (let b of buttons) { b.disabled = true; }
+    recordStat(q.id, false);
+    // Finde den geklickten Button (der den falschen Text hat)
+    Array.from(buttons).forEach(b => {
+      // Wenn der Button geklickt wurde und nicht der richtige ist
+      // Am einfachsten über einen Klick-Status im Event
+    });
+  }
+
+  // Da wir den geklickten Button direkt einfärben wollen:
+  // Passen wir das Klick-Event beim Erstellen an:
+  // (Siehe angepasste Logik unten)
+  
+  // Einfachere Methode für handleOptionClick mit direktem Button-Argument:
+  // (Wird im Folgenden korrigiert ausgegeben)
+}
+
+// Ersetzte Methode für sauberes Handling mit gemischten Indizes:
+function handleOptionClickDynamic(selectedOriginalIdx, q, clickedButton) {
+  const optionsContainer = document.getElementById('options');
+  const buttons = optionsContainer.getElementsByTagName('button');
+  for (let b of buttons) { b.disabled = true; }
+
+  const isCorrect = (selectedOriginalIdx === q.correct);
+  playSound(isCorrect);
+
+  // Alle Buttons durchgehen und richtig/falsch markieren
+  Array.from(buttons).forEach(b => {
+    // Wir speichern den Originalindex beim Erstellen im Button ab: b.dataset.originalIndex
+    let origIdx = parseInt(b.dataset.originalIndex);
+    if (origIdx === q.correct) {
+      b.classList.add('correct');
+    }
+    if (origIdx === selectedOriginalIdx && !isCorrect) {
+      b.classList.add('wrong');
+    }
+  });
+
+  recordStat(q.id, isCorrect);
+  showExplanation(q);
+  const nextBtn = document.getElementById('nextBtn');
+  if(nextBtn) nextBtn.disabled = false;
+  stopTimer();
+  renderQuizGrid();
+}
+
+// Angepasster Rendervorgang für Single-Choice mit data-Attributen
+function renderQuizQuestionOverride() {
+  stopSpeech();
+  renderQuizGrid();
+  
+  if (currentPool.length === 0) {
+    const contentArea = document.getElementById('quizContentArea');
+    const finishedScreen = document.getElementById('quizFinishedScreen');
+    if(contentArea) contentArea.classList.add('hidden');
+    if(finishedScreen) finishedScreen.classList.remove('hidden');
+    renderStatDashboard();
+    return;
+  }
+  
+  if (currentIndex >= currentPool.length) {
+    currentIndex = 0;
+  }
+
+  const q = currentPool[currentIndex];
+  const counterElem = document.getElementById('counter');
+  if(counterElem) counterElem.textContent = `Frage ${currentIndex + 1} von ${currentPool.length}`;
+  
+  const catBadge = document.getElementById('catBadge');
+  const subCatBadge = document.getElementById('subCatBadge');
+  const questionElem = document.getElementById('question');
+  
+  if(catBadge) catBadge.textContent = q.category;
+  if(subCatBadge) subCatBadge.textContent = q.subcategory;
+  if(questionElem) questionElem.textContent = q.question;
+  
+  const multiBadge = document.getElementById('multiBadge');
+  const multiSubmit = document.getElementById('multiSubmitContainer');
+  
+  if (q.isMulti) {
+    if(multiBadge) multiBadge.classList.remove('hidden');
+    if(multiSubmit) multiSubmit.classList.remove('hidden');
+  } else {
+    if(multiBadge) multiBadge.classList.add('hidden');
+    if(multiSubmit) multiSubmit.classList.add('hidden');
+  }
+
+  const optionsContainer = document.getElementById('options');
+  if(!optionsContainer) return;
+  optionsContainer.innerHTML = '';
+  
+  let optionsWithIndex = q.options.map((optText, originalIndex) => {
+    return { text: optText, originalIndex: originalIndex };
+  });
+  optionsWithIndex.sort(() => Math.random() - 0.5);
+
+  optionsWithIndex.forEach((item) => {
+    const btn = document.createElement('button');
+    btn.className = 'btn-option';
+    btn.textContent = item.text;
+    btn.dataset.originalIndex = item.originalIndex;
     
-    const isCorrect = (idx === q.correct);
-    playSound(isCorrect);
-    
-    if (isCorrect) {
-      buttons[idx].classList.add('correct');
-      recordStat(q.id, true);
+    if (q.isMulti) {
+      btn.onclick = () => { btn.classList.toggle('selected'); };
     } else {
-      buttons[idx].classList.add('wrong');
-      buttons[q.correct].classList.add('correct');
-      recordStat(q.id, false);
+      btn.onclick = () => handleOptionClickDynamic(item.originalIndex, q);
     }
     
-    showExplanation(q);
-    const nextBtn = document.getElementById('nextBtn');
-    if(nextBtn) nextBtn.disabled = false;
-    stopTimer();
-    renderQuizGrid();
-  }
+    optionsContainer.appendChild(btn);
+  });
+
+  const expBox = document.getElementById('explanation');
+  if(expBox) expBox.style.display = 'none';
+  const nextBtn = document.getElementById('nextBtn');
+  if(nextBtn) nextBtn.disabled = true;
+  
+  updateBookmarkIcon();
+  resetTimer();
 }
+
+// Überschreibt die alte renderQuizQuestion Funktion
+window.renderQuizQuestion = renderQuizQuestionOverride;
 
 function submitMultiAnswer() {
   const q = currentPool[currentIndex];
   const optionsContainer = document.getElementById('options');
   const buttons = optionsContainer.getElementsByTagName('button');
 
-  let selectedIndices = [];
+  let selectedOriginalIndices = [];
   for (let i = 0; i < buttons.length; i++) {
     if (buttons[i].classList.contains('selected')) {
-      selectedIndices.push(i);
+      selectedOriginalIndices.push(parseInt(buttons[i].dataset.originalIndex));
     }
     buttons[i].disabled = true;
   }
 
   const correctArr = [...q.correct].sort();
-  const userArr = [...selectedIndices].sort();
+  const userArr = [...selectedOriginalIndices].sort();
   
   let isCorrect = (correctArr.length === userArr.length && correctArr.every((v, i) => v === userArr[i]));
   playSound(isCorrect);
 
   for (let i = 0; i < buttons.length; i++) {
-    if (correctArr.includes(i)) {
+    let origIdx = parseInt(buttons[i].dataset.originalIndex);
+    if (correctArr.includes(origIdx)) {
       buttons[i].classList.add('correct');
     } else if (buttons[i].classList.contains('selected')) {
       buttons[i].classList.add('wrong');
