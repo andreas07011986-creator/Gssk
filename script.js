@@ -425,7 +425,6 @@ function renderQuizGrid() {
       btn.classList.add('current');
     }
     
-    // Grüne Markierung für "meisterhaft" komplett entfernt!
     if(bookmarks.includes(q.id)) btn.classList.add('flagged');
     
     btn.textContent = idx + 1;
@@ -618,7 +617,16 @@ function resetAllStats() {
     bookmarks = [];
     filterMode = 'all'; 
     updateFilterButtons();
-    filterQuizQuestions();
+    
+    const searchInput = document.getElementById('quizSearchInput');
+    if(searchInput) searchInput.value = '';
+    
+    currentPool = [...rawGsskPool];
+    currentIndex = 0;
+    initQuizPool();
+    renderQuizQuestion();
+    renderStatDashboard();
+    
     alert("Statistik und Lesezeichen wurden erfolgreich zurückgesetzt.");
   }
 }
@@ -633,7 +641,6 @@ function filterQuizQuestions() {
     
     if (filterMode === 'bookmark') return bookmarks.includes(q.id);
     if (filterMode === 'weak') return stats[q.id] && stats[q.id].wrong > stats[q.id].correct;
-    // 'mastered' Filter-Logik entfernt
     return true;
   });
   
@@ -787,13 +794,14 @@ function startRealExam() {
     pool = pool.filter(q => q.category === cat);
   }
   
-  for (let i = pool.length - 1; i > 0; i--) {
+  let shuffledPool = [...pool];
+  for (let i = shuffledPool.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [pool[i], pool[j]] = [pool[j], pool[i]];
+    [shuffledPool[i], shuffledPool[j]] = [shuffledPool[j], shuffledPool[i]];
   }
 
-  let examLength = Math.min(30, pool.length);
-  shuffledExamQuestions = pool.slice(0, examLength);
+  let examLength = Math.min(30, shuffledPool.length);
+  shuffledExamQuestions = shuffledPool.slice(0, examLength);
   
   examCurrentIdx = 0;
   examUserAnswers = {};
