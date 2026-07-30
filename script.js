@@ -168,7 +168,7 @@ const rawGsskPool = [
     options: [  
       "Sofortige Rettungskette einleiten (Notruf, Erste Hilfe), anschließend den Vorgesetzten und die zuständige Leitstelle gemäß Alarmplan informieren.",  
       "Erst am nächsten Tag einen schriftlichen Bericht per Post an die Zentrale senden.",  
-      "Zunächst abwarten, ob sich der Verletzte von alleine erholt.",  
+      "Zunächst abwarten, ob sich the Verletzte von alleine erholt.",  
       "Den Vorfall geheim halten, um das Image der Firma nicht zu gefährden."  
     ],  
     correct: 0,  
@@ -239,25 +239,49 @@ const rawGsskPool = [
 const categoriesList = ["Rechtskunde", "Dienstkunde", "Gefahrenabwehr & Technik", "Serviceorientiertes Verhalten", "Wirtschafts- und Sozialkunde", "Unternehmenssicherheit", "AGU (Arbeit, Gesundheit & Umwelt)", "Datenschutz (BDSG/DSGVO)"];
 const subcategoriesList = ["Grundlagen & Vorschriften", "Maßnahmen & Praxis", "Spezifische Gefahren", "Rechtliche Grenzen"];
 
+// Dynamischer Auffüll-Pool mit gezielten Fragen für ID 16 bis 100
 for (let i = 16; i <= 100; i++) {
   let isMultiGen = (i % 3 === 0);
   let cat = categoriesList[i % categoriesList.length];
   let sub = subcategoriesList[i % subcategoriesList.length];
   
+  let questionText = `Prüfungsfrage #${i} (${cat}): Welche rechtlichen Vorgaben und Handlungsmaximen sind in diesem spezifischen Einsatzszenario maßgeblich zu beachten?`;
   let optionsList = [
     `Option A: Die strengen Vorgaben der DIN 77200 sowie die objektspezifischen Dienstanweisungen sind zwingend einzuhalten.`,
     `Option B: Sicherheitsmitarbeiter sind berechtigt, eigenmächtig Durchsuchungen von Privatwohnungen durchzuführen.`,
     `Option C: Es besteht keinerlei Dokumentationspflicht für Vorkommnisse während des Streifendienstes.`,
     `Option D: Bei Gefahr im Verzug dürfen private Sicherheitskräfte unmittelbaren Zwang ohne gesetzliche Grundlage ausüben.`
   ];
-  
-  if (i % 2 === 0) {
+  let explanationText = `Musterlösung zu Frage ${i}: In der GSSK-Prüfung ist stets auf die Einhaltung der gesetzlichen Rahmenbedingungen und des Verhältnismäßigkeitsgrundsatzes zu achten.`;
+
+  // Spezifische Fragen für Gefahrenabwehr & Technik (wie ID 58)
+  if (cat === "Gefahrenabwehr & Technik") {
+    questionText = `Prüfungsfrage #${i} (Gefahrenabwehr & Technik): Welche technischen und organisatorischen Sofortmaßnahmen sind bei der Auslösung einer Brandmeldeanlage (BMA) im Objektschutz primär einzuleiten?`;
     optionsList = [
-      `Option A: Der Grundsatz der Verhältnismäßigkeit (geeignet, erforderlich, geboten) muss bei jeder Maßnahme gewahrt werden.`,
-      `Option B: Private Sicherheitskräfte stehen rechtlich über dem Gesetz und unterliegen keinerlei Kontrolle.`,
-      `Option C: Eine Zusammenarbeit mit Behörden wie der Polizei ist vertraglich grundsätzlich untersagt.`,
-      `Option D: Das Hausrecht kann ausschließlich durch den Werksleiter persönlich ausgeübt werden.`
+      `Der Kontrollgang zum anzeigenden Meldebereich unter Beachtung der Eigensicherung, Überprüfung der Brandmelderzentrale (BMZ) und Einweisung der anrückenden Feuerwehr.`,
+      `Das sofortige eigenhändige Löschen des Brandes mit allen verfügbaren Mitteln unter Vernachlässigung des Eigenschutzes.`,
+      `Das Ignorieren des Signals, da es sich in Industrieanlagen fast immer um technische Fehlalarme handelt.`,
+      `Die sofortige Evakuierung des gesamten Stadtteils durch den Sicherheitsmitarbeiter.`
     ];
+    explanationText = `Musterlösung zu Frage ${i}: Bei Auslösung einer BMA muss die BMZ kontrolliert, der betroffene Bereich erkundet und die Feuerwehr gemäß Alarmplan eingewiesen werden.`;
+  } else if (cat === "Rechtskunde") {
+    questionText = `Prüfungsfrage #${i} (Rechtskunde): Welcher Grundsatz ist bei der Ausübung von Befugnissen (wie Jedermann-Festnahme oder Hausrecht) durch privates Wachpersonal zwingend zu wahren?`;
+    optionsList = [
+      `Der Grundsatz der Verhältnismäßigkeit (geeignet, erforderlich, geboten).`,
+      `Das Recht auf uneingeschränkte körperliche Bestrafung von ertappten Dieben.`,
+      `Die Befugnis zur Durchführung polizeilicher Vernehmungen unter Zwang.`,
+      `Der Ausschluss jeglicher Dokumentationspflicht im Wachbuch.`
+    ];
+    explanationText = `Musterlösung zu Frage ${i}: Jede Maßnahme privater Sicherheitskräfte muss stets verhältnismäßig sein und sich im Rahmen der Jedermann-Rechte bewegen.`;
+  } else if (cat === "Dienstkunde") {
+    questionText = `Prüfungsfrage #${i} (Dienstkunde): Welche Bedeutung hat der Streifendienst im Rahmen des werksinternen Objektschutzes?`;
+    optionsList = [
+      `Die präventive Schadensabwehr, Erkennung von Sicherheitslücken, Kontrolle von Verschlüssen und Durchsetzung der Ordnung auf dem Gelände.`,
+      `Die ausschließliche Erholung des Mitarbeiters während der Nachtschicht.`,
+      `Das Ersetzen der behördlichen Verkehrsüberwachung im öffentlichen Straßenverkehr.`,
+      `Das unangekündigte Betreten fremder Privatwohnungen außerhalb des Werksgeländes.`
+    ];
+    explanationText = `Musterlösung zzu Frage ${i}: Der Streifendienst dient der Prävention, der Überwachung technischer Einrichtungen und der Entdeckung von Gefahrenquellen.`;
   }
 
   let correctVal = isMultiGen ? [0, 1] : 0;
@@ -267,10 +291,10 @@ for (let i = 16; i <= 100; i++) {
     isMulti: isMultiGen,
     category: cat,
     subcategory: sub,
-    question: `Prüfungsfrage #${i} (${cat}): Welche rechtlichen Vorgaben und Handlungsmaximen sind in diesem spezifischen Einsatzszenario maßgeblich zu beachten?`,
+    question: questionText,
     options: optionsList,
     correct: correctVal,
-    explanation: `Musterlösung zu Frage ${i}: In der GSSK-Prüfung ist stets auf die Einhaltung der gesetzlichen Rahmenbedingungen (z.B. BGB, StGB, GewO) und des Verhältnismäßigkeitsgrundsatzes zu achten.`
+    explanation: explanationText
   });
 }
 
