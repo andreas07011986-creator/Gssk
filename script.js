@@ -353,31 +353,128 @@ const rawGsskPool = [
     ],
     correct: 0,
     explanation: "Ein ZKS regelt und protokolliert, wer zu welchen Zeiten Zutritt zu bestimmten Sicherheitsbereichen hat."
+  },
+  {
+    id: 26, isMulti: false, category: "Rechtskunde", subcategory: "StGB § 127",
+    question: "Darf eine Sicherheitskraft im Rahmen der Jedermann-Festnahme Handschellen anlegen?",
+    options: [
+      "Ja, aber nur im Rahmen des Verhältnismäßigkeitsgrundsatzes, wenn Flucht- oder Eigen-/Fremdgefährdung anders nicht abzuwenden ist.",
+      "Nein, Handschellen dürfen ausschließlich von Polizeibeamten verwendet werden.",
+      "Ja, diese dürfen jederzeit bei jeder Person ohne Begründung angelegt werden.",
+      "Nein, jeglicher physische Zwang ist für Sicherheitskräfte generell verboten."
+    ],
+    correct: 0,
+    explanation: "Fesselungen können über das Festhalterecht bei strenger Verhältnismäßigkeit und konkreter Gefahr gedeckt sein, bergen aber rechtliche Risiken."
+  },
+  {
+    id: 27, isMulti: false, category: "Dienstkunde", subcategory: "Streifendienst",
+    question: "Worauf ist bei der Durchführung eines Kontrollgangs (Streifendienst) in einem Betrieb besonders zu achten?",
+    options: [
+      "Auf Unregelmäßigkeiten wie beschädigte Türen, offene Fenster, ausgetretene Flüssigkeiten oder verdächtige Personen.",
+      "Dass man möglichst schnell durchgeht, um die Schicht früher zu beenden.",
+      "Dass man private Telefonate während des Gehens führt.",
+      "Dass alle Lichter im Gebäude brennen bleiben."
+    ],
+    correct: 0,
+    explanation: "Der Kontrollgang dient der Feststellung von Sicherheitsrisiken, Schäden oder unbefugten Personen."
+  },
+  {
+    id: 28, isMulti: false, category: "Gefahrenabwehr & Technik", subcategory: "Feuerlöscher",
+    question: "Welches Löschmittel eignet sich besonders gut zum Löschen von Bränden an elektrischen Anlagen (Brandklasse E bzw. C/A mit Einschränkungen)?",
+    options: [
+      "Kohlendioxid (CO2), da es keine elektrischen Rückstände hinterlässt.",
+      "Ein starker Wasserstrahl mit hohem Druck.",
+      "Leitungswasser in Eimern.",
+      "Kühlschrankwasser."
+    ],
+    correct: 0,
+    explanation: "CO2 leitet keinen Strom und zerstört elektrische Geräte nicht durch Rückstände wie Löschpulver."
+  },
+  {
+    id: 29, isMulti: true, category: "Rechtskunde", subcategory: "StGB § 239",
+    question: "Welche Bedingungen müssen für eine Freiheitsberaubung nach § 239 StGB erfüllt sein?",
+    options: [
+      "Einsperren eines anderen Menschen oder die Beraubung der Bewegungsfreiheit auf andere Weise.",
+      "Die Rechtswidrigkeit der Tat (ohne Rechtfertigungsgrund wie § 127 StPO).",
+      "Eine ordnungsgemäße Festnahme im Rahmen der gesetzlichen Befugnisse.",
+      "Die schriftliche Genehmigung des Arbeitgebers."
+    ],
+    correct: [0, 1],
+    explanation: "Eine Freiheitsberaubung liegt vor, wenn jemand rechtswidrig eingesperrt oder anderweitig seiner Freiheit beraubt wird."
+  },
+  {
+    id: 30, isMulti: false, category: "Wirtschafts- und Sozialkunde", subcategory: "Tarifvertrag",
+    question: "Welche Bedeutung hat ein allgemeinverbindlicher Tarifvertrag für die Sicherheitsbranche?",
+    options: [
+      "Er gilt verbindlich für alle Arbeitgeber und Arbeitnehmer der Branche in dem betreffenden Tarifgebiet, auch für nicht gewerkschaftsgebundene Betriebe.",
+      "Er gilt ausschließlich für die Bundesregierung.",
+      "Er ist für alle Beteiligten völlig freiwillig und unverbindlich.",
+      "Er regelt ausschließlich die Urlaubsplanung von Bundesbeamten."
+    ],
+    correct: 0,
+    explanation: "Allgemeinverbindliche Tarifverträge entfalten gesetzähnliche Wirkung für die gesamte Branche im Geltungsbereich."
+  },
+  {
+    id: 31, isMulti: false, category: "Serviceorientiertes Verhalten", subcategory: "Konfliktmanagement",
+    question: "Wie reagiert man professionell auf verbale Provokationen eines unzufriedenen Kunden?",
+    options: [
+      "Sachlich bleiben, sich nicht auf das emotionale Niveau herablassen und deeskalierend kommunizieren.",
+      "Lauter werden und dem Kunden Paroli bieten.",
+      "Sofort den Raum verlassen und den Kunden ignorieren.",
+      "Den Kunden beschimpfen."
+    ],
+    correct: 0,
+    explanation: "Professionalität im Sicherheitsdienst erfordert emotionale Distanz und deeskalierendes Auftreten."
+  },
+  {
+    id: 32, isMulti: false, category: "AGU (Arbeit, Gesundheit & Umwelt)", subcategory: "Persönliche Schutzausrüstung",
+    question: "Was versteht man unter PSA im Arbeits- und Gesundheitsschutz?",
+    options: [
+      "Persönliche Schutzausrüstung, die Beschäftigte vor Gefahren schützen soll (z.B. Sicherheitsschuhe, Warnwesten).",
+      "Private Sicherheits-Agentur.",
+      "Polizeiliche Spezialeinheit für Auslandseinsätze.",
+      "Prüfungsordnung für Sachkundeprüfungen."
+    ],
+    correct: 0,
+    explanation: "PSA steht für Persönliche Schutzausrüstung, die vom Arbeitgeber bereitzustellen und zu tragen ist."
+  },
+  {
+    id: 33, isMulti: false, category: "Datenschutz (BDSG/DSGVO)", subcategory: "Videoüberwachung",
+    question: "Was ist beim Einsatz von Videoüberwachung auf öffentlich zugänglichen oder privaten Betriebsgeländen zu beachten?",
+    options: [
+      "Es muss zwingend durch deutliche Hinweisschilder auf die Videoüberwachung aufmerksam gemacht werden.",
+      "Kameras dürfen heimlich in Umkleidekabinen und Sanitärräumen installiert werden.",
+      "Es ist keinerlei Kennzeichnung erforderlich.",
+      "Aufgezeichnete Videodaten dürfen unbegrenzt und ohne Löschfrist im Internet geteilt werden."
+    ],
+    correct: 0,
+    explanation: "Transparenzgebot und Hinweisschilder sind zwingende Voraussetzungen für zulässige Videoüberwachung."
+  },
+  {
+    id: 34, isMulti: false, category: "Rechtskunde", subcategory: "StGB § 303",
+    question: "Wann liegt eine Sachbeschädigung nach § 303 StGB vor?",
+    options: [
+      "Wer rechtswidrig eine fremde Sache beschädigt oder zerstört oder das Erscheinungsbild unbefugt nicht nur unerheblich und nicht nur vorübergehend verändert.",
+      "Wenn man sein eigenes Auto in der Garage wäscht.",
+      "Wenn ein Gegenstand durch normalen Verschleiß kaputt geht.",
+      "Wenn eine Sache ordnungsgemäß entsorgt wird."
+    ],
+    correct: 0,
+    explanation: "Sachbeschädigung erfordert die Einwirkung auf eine fremde Sache, die deren Substanz oder Brauchbarkeit mindert."
+  },
+  {
+    id: 35, isMulti: false, category: "Dienstkunde", subcategory: "Funkverkehr",
+    question: "Welche Grundregeln gelten für den professionellen Sprechfunkverkehr im Wachdienst?",
+    options: [
+      "Kurz, präzise, diszipliniert und unter Verwendung genormter Rufzeichen sprechen.",
+      "Private Geschichten und Musik über den Funkkanal übertragen.",
+      "Immer möglichst leise und undeutlich sprechen.",
+      "Den Funk jederzeit blockieren, damit andere nicht stören können."
+    ],
+    correct: 0,
+    explanation: "Funkdisziplin und klare, unmissverständliche Sprache sind im Einsatz lebenswichtig."
   }
 ];
-
-// Automatische Auffüllung bis 60 Fragen
-for (let i = 26; i <= 60; i++) {
-  let isMultiGen = (i % 4 === 0);
-  let categories = ["Rechtskunde", "Dienstkunde", "Gefahrenabwehr & Technik", "Serviceorientiertes Verhalten", "Wirtschafts- und Sozialkunde", "AGU (Arbeit, Gesundheit & Umwelt)", "Datenschutz (BDSG/DSGVO)"];
-  let cat = categories[i % categories.length];
-  
-  rawGsskPool.push({
-    id: i,
-    isMulti: isMultiGen,
-    category: cat,
-    subcategory: "Prüfungswissen Modul " + i,
-    question: `Prüfungsfrage #${i}: Welche rechtlichen oder technischen Vorgaben sind im Bereich ${cat} bei der täglichen Objektschutzpraxis primär zu beachten?`,
-    options: [
-      "Die exakte Einhaltung der gesetzlichen Vorschriften und betrieblichen Dienstanweisungen.",
-      "Das eigenmächtige Aussetzen aller Sicherheitsregeln nach Einbruch der Dunkelheit.",
-      "Die ausschließliche Orientierung an persönlichen Vorlieben.",
-      "Das Ignorieren jeglicher Dokumentationspflichten."
-    ],
-    correct: isMultiGen ? [0, 2] : 0,
-    explanation: `Im Fachbereich ${cat} steht die rechtskonforme und vorschriftsmäßige Durchführung aller Sicherheitsmaßnahmen im Vordergrund.`
-  });
-}
 
 let currentPool = [...rawGsskPool];
 let shuffledQuizPool = []; 
@@ -426,6 +523,17 @@ function renderQuizGrid() {
     }
     
     if(bookmarks.includes(q.id)) btn.classList.add('flagged');
+    
+    // Status-Färbung im Grid: Grün bei Richtig, Rot bei Falsch
+    if (stats[q.id]) {
+      if (stats[q.id].correct > 0 && stats[q.id].wrong === 0) {
+        btn.style.backgroundColor = '#10b981'; // Grün für komplett richtig
+        btn.style.color = 'white';
+      } else if (stats[q.id].wrong > 0) {
+        btn.style.backgroundColor = '#ef4444'; // Rot für Fehler
+        btn.style.color = 'white';
+      }
+    }
     
     btn.textContent = idx + 1;
     btn.onclick = () => { 
@@ -489,10 +597,14 @@ function renderQuizQuestion() {
   });
   optionsWithIndex.sort(() => Math.random() - 0.5);
 
-  optionsWithIndex.forEach((item) => {
+  const indexLetters = ['A', 'B', 'C', 'D', 'E', 'F'];
+
+  optionsWithIndex.forEach((item, index) => {
     const btn = document.createElement('button');
     btn.className = 'btn-option';
-    btn.textContent = item.text;
+    // Index-Kennzeichnung (A, B, C, D) voranstellen
+    const prefix = indexLetters[index] ? `[${indexLetters[index]}] ` : '';
+    btn.textContent = prefix + item.text;
     btn.dataset.originalIndex = item.originalIndex;
     
     if (q.isMulti) {
@@ -525,9 +637,13 @@ function handleOptionClickDynamic(selectedOriginalIdx, q) {
     let origIdx = parseInt(b.dataset.originalIndex);
     if (origIdx === q.correct) {
       b.classList.add('correct');
+      b.style.backgroundColor = '#10b981'; // Grün für richtig
+      b.style.color = 'white';
     }
     if (origIdx === selectedOriginalIdx && !isCorrect) {
       b.classList.add('wrong');
+      b.style.backgroundColor = '#ef4444'; // Rot für falsch
+      b.style.color = 'white';
     }
   });
 
@@ -562,8 +678,12 @@ function submitMultiAnswer() {
     let origIdx = parseInt(buttons[i].dataset.originalIndex);
     if (correctArr.includes(origIdx)) {
       buttons[i].classList.add('correct');
+      buttons[i].style.backgroundColor = '#10b981'; // Grün für richtig
+      buttons[i].style.color = 'white';
     } else if (buttons[i].classList.contains('selected')) {
       buttons[i].classList.add('wrong');
+      buttons[i].style.backgroundColor = '#ef4444'; // Rot für falsch
+      buttons[i].style.color = 'white';
     }
   }
 
@@ -776,7 +896,7 @@ function stopSpeech() {
   if ('speechSynthesis' in window) { window.speechSynthesis.cancel(); }
 }
 
-// --- IHK PRÜFUNGSSIMULATION ---
+// --- IHK PRÜFUNGSSIMULATION (Exakt 35 Fragen) ---
 let shuffledExamQuestions = []; 
 let examCurrentIdx = 0;
 let examUserAnswers = {};
@@ -794,13 +914,15 @@ function startRealExam() {
     pool = pool.filter(q => q.category === cat);
   }
   
+  // Fisher-Yates Shuffle für vollständige Zufälligkeit bei jedem Prüfungsstart
   let shuffledPool = [...pool];
   for (let i = shuffledPool.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [shuffledPool[i], shuffledPool[j]] = [shuffledPool[j], shuffledPool[i]];
   }
 
-  let examLength = Math.min(30, shuffledPool.length);
+  // Exakt 35 Fragen für die Prüfung auswählen
+  let examLength = Math.min(35, shuffledPool.length);
   shuffledExamQuestions = shuffledPool.slice(0, examLength);
   
   examCurrentIdx = 0;
@@ -883,10 +1005,13 @@ function loadExamQuestion() {
   });
   optionsWithIndex.sort(() => Math.random() - 0.5);
 
-  optionsWithIndex.forEach((item) => {
+  const indexLetters = ['A', 'B', 'C', 'D', 'E', 'F'];
+
+  optionsWithIndex.forEach((item, index) => {
     const btn = document.createElement('button');
     btn.className = 'btn-option';
-    btn.textContent = item.text;
+    const prefix = indexLetters[index] ? `[${indexLetters[index]}] ` : '';
+    btn.textContent = prefix + item.text;
     btn.dataset.originalIndex = item.originalIndex;
     
     if(q.isMulti) {
