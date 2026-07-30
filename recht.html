@@ -1,0 +1,39 @@
+<!DOCTYPE html>  
+<html lang="de">  
+<head>  
+<meta charset="UTF-8">  
+<meta name="viewport" content="width=device-width, initial-scale=1.0">  
+<title>GSSK - Recht & 10 Praxisfälle</title>  
+<link rel="stylesheet" href="style.css">  
+<script src="auth.js"></script>  
+</head>  
+<body data-theme="dark">  
+<div class="app-card">  
+  <div class="exam-selector">  
+    <span>🎓 <strong>GSSK Prüfungstrainer - Recht & Praxisfälle</strong></span>  
+    <div class="top-actions">  
+      <button class="icon-top-btn" onclick="toggleDarkMode()" id="darkModeBtn">☀️ Light Mode</button>  
+      <button class="icon-top-btn" onclick="toggleSound()" id="soundBtn">🔊 Sound: An</button>  
+    </div>  
+  </div>  
+
+  <div class="tab-nav">  
+    <button class="tab-btn" onclick="location.href='index.html'">🏠 Startseite</button>  
+    <button class="tab-btn" onclick="location.href='questions.html'">❓ Quiz (100)</button>  
+    <button class="tab-btn exam-tab-btn" onclick="location.href='pruefung.html'">⏱️ IHK-Prüfung</button>  
+    <button class="tab-btn active" onclick="location.href='recht.html'">⚖️ Recht & 10 Fälle</button>  
+    <button class="tab-btn" onclick="location.href='theorie.html'">📚 Theorie & Praxis</button>  
+  </div>  
+
+  <h3 style="margin-top:0;">Rechtliche Fallbeurteilung & 10 Praxisfälle</h3>  
+  <p style="font-size: 0.95rem; color: var(--text-muted);">Beurteile die 10 Praxisfälle anhand dogmatischer Tatbestandsmerkmale für die IHK-Mündliche Prüfung.</p>  
+  <div id="caseContainer" style="margin-top: 18px;"></div>  
+</div>  
+<script src="script.js"></script>  
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    renderLawCases();
+  });
+</script>
+</body>  
+</html>
