@@ -1,6 +1,6 @@
 let audioCtx = null;  
 let soundEnabled = true;  
-function playSound(isCorrect) {  
+function playSocketSound(isCorrect) {  
   if (!soundEnabled) return;  
   try {  
     if (!audioCtx) {  
@@ -152,7 +152,7 @@ const rawGsskPool = [
   },
   {  
     id: 9, isMulti: false, category: "Dienstkunde", subcategory: "Dienstanweisung",  
-    question: "Wer is an eine vom Sicherheitsunternehmen erstellte Dienstanweisung rechtlich gebunden?",  
+    question: "Wer ist an eine vom Sicherheitsunternehmen erstellte Dienstanweisung rechtlich gebunden?",  
     options: [  
       "Ausschließlich die eingesetzten Sicherheitsmitarbeiter des jeweiligen Objekts.",  
       "Jeder beliebige Besucher des Werksgeländes.",  
@@ -366,157 +366,6 @@ function renderQuizQuestion() {
   if(!optionsContainer) return;
   optionsContainer.innerHTML = '';
   
-  // Optionen mit ihrem echten Index verknüpfen und mischen
-  let optionsWithIndex = q.options.map((optText, originalIndex) => {
-    return { text: optText, originalIndex: originalIndex };
-  });
-  optionsWithIndex.sort(() => Math.random() - 0.5);
-
-  optionsWithIndex.forEach((item) => {
-    const btn = document.createElement('button');
-    btn.className = 'btn-option';
-    btn.textContent = item.text;
-    
-    if (q.isMulti) {
-      btn.onclick = () => {
-        btn.classList.toggle('selected');
-        btn.dataset.originalIndex = item.originalIndex;
-      };
-      // Für spätere Auswertung den Originalindex direkt am Button speichern
-      btn.dataset.originalIndex = item.originalIndex;
-    } else {
-      btn.onclick = () => handleOptionClick(item.originalIndex, q);
-    }
-    
-    optionsContainer.appendChild(btn);
-  });
-
-  const expBox = document.getElementById('explanation');
-  if(expBox) expBox.style.display = 'none';
-  const nextBtn = document.getElementById('nextBtn');
-  if(nextBtn) nextBtn.disabled = true;
-  
-  updateBookmarkIcon();
-  resetTimer();
-}
-
-function handleOptionClick(originalIdx, q) {
-  const optionsContainer = document.getElementById('options');
-  const buttons = optionsContainer.getElementsByTagName('button');
-
-  for (let b of buttons) { b.disabled = true; }
-  
-  const isCorrect = (originalIdx === q.correct);
-  playSound(isCorrect);
-  
-  // Richtigen und gewählten Button optisch markieren
-  for (let b of buttons) {
-    // Da wir die Buttons durchgehen, müssen wir den passenden finden. 
-    // Wir können die Originalindizes über data-Attribute oder Textvergleich matchen.
-    // Machen wir es sauber über data-Attribute im Render-Schritt oder einen Textabgleich:
-  }
-
-  // Korrigierte Markierung basierend auf Text oder Attribut:
-  Array.from(buttons).forEach(b => {
-    // Textprüfung gegen die Optionen im Objekt
-    if (b.textContent === q.options[q.correct]) {
-      b.classList.add('correct');
-    }
-  });
-
-  if (isCorrect) {
-    recordStat(q.id, true);
-  } else {
-    recordStat(q.id, false);
-    // Finde den geklickten Button (der den falschen Text hat)
-    Array.from(buttons).forEach(b => {
-      // Wenn der Button geklickt wurde und nicht der richtige ist
-      // Am einfachsten über einen Klick-Status im Event
-    });
-  }
-
-  // Da wir den geklickten Button direkt einfärben wollen:
-  // Passen wir das Klick-Event beim Erstellen an:
-  // (Siehe angepasste Logik unten)
-  
-  // Einfachere Methode für handleOptionClick mit direktem Button-Argument:
-  // (Wird im Folgenden korrigiert ausgegeben)
-}
-
-// Ersetzte Methode für sauberes Handling mit gemischten Indizes:
-function handleOptionClickDynamic(selectedOriginalIdx, q, clickedButton) {
-  const optionsContainer = document.getElementById('options');
-  const buttons = optionsContainer.getElementsByTagName('button');
-  for (let b of buttons) { b.disabled = true; }
-
-  const isCorrect = (selectedOriginalIdx === q.correct);
-  playSound(isCorrect);
-
-  // Alle Buttons durchgehen und richtig/falsch markieren
-  Array.from(buttons).forEach(b => {
-    // Wir speichern den Originalindex beim Erstellen im Button ab: b.dataset.originalIndex
-    let origIdx = parseInt(b.dataset.originalIndex);
-    if (origIdx === q.correct) {
-      b.classList.add('correct');
-    }
-    if (origIdx === selectedOriginalIdx && !isCorrect) {
-      b.classList.add('wrong');
-    }
-  });
-
-  recordStat(q.id, isCorrect);
-  showExplanation(q);
-  const nextBtn = document.getElementById('nextBtn');
-  if(nextBtn) nextBtn.disabled = false;
-  stopTimer();
-  renderQuizGrid();
-}
-
-// Angepasster Rendervorgang für Single-Choice mit data-Attributen
-function renderQuizQuestionOverride() {
-  stopSpeech();
-  renderQuizGrid();
-  
-  if (currentPool.length === 0) {
-    const contentArea = document.getElementById('quizContentArea');
-    const finishedScreen = document.getElementById('quizFinishedScreen');
-    if(contentArea) contentArea.classList.add('hidden');
-    if(finishedScreen) finishedScreen.classList.remove('hidden');
-    renderStatDashboard();
-    return;
-  }
-  
-  if (currentIndex >= currentPool.length) {
-    currentIndex = 0;
-  }
-
-  const q = currentPool[currentIndex];
-  const counterElem = document.getElementById('counter');
-  if(counterElem) counterElem.textContent = `Frage ${currentIndex + 1} von ${currentPool.length}`;
-  
-  const catBadge = document.getElementById('catBadge');
-  const subCatBadge = document.getElementById('subCatBadge');
-  const questionElem = document.getElementById('question');
-  
-  if(catBadge) catBadge.textContent = q.category;
-  if(subCatBadge) subCatBadge.textContent = q.subcategory;
-  if(questionElem) questionElem.textContent = q.question;
-  
-  const multiBadge = document.getElementById('multiBadge');
-  const multiSubmit = document.getElementById('multiSubmitContainer');
-  
-  if (q.isMulti) {
-    if(multiBadge) multiBadge.classList.remove('hidden');
-    if(multiSubmit) multiSubmit.classList.remove('hidden');
-  } else {
-    if(multiBadge) multiBadge.classList.add('hidden');
-    if(multiSubmit) multiSubmit.classList.add('hidden');
-  }
-
-  const optionsContainer = document.getElementById('options');
-  if(!optionsContainer) return;
-  optionsContainer.innerHTML = '';
-  
   let optionsWithIndex = q.options.map((optText, originalIndex) => {
     return { text: optText, originalIndex: originalIndex };
   });
@@ -546,8 +395,31 @@ function renderQuizQuestionOverride() {
   resetTimer();
 }
 
-// Überschreibt die alte renderQuizQuestion Funktion
-window.renderQuizQuestion = renderQuizQuestionOverride;
+function handleOptionClickDynamic(selectedOriginalIdx, q) {
+  const optionsContainer = document.getElementById('options');
+  const buttons = optionsContainer.getElementsByTagName('button');
+  for (let b of buttons) { b.disabled = true; }
+
+  const isCorrect = (selectedOriginalIdx === q.correct);
+  playSocketSound(isCorrect);
+
+  Array.from(buttons).forEach(b => {
+    let origIdx = parseInt(b.dataset.originalIndex);
+    if (origIdx === q.correct) {
+      b.classList.add('correct');
+    }
+    if (origIdx === selectedOriginalIdx && !isCorrect) {
+      b.classList.add('wrong');
+    }
+  });
+
+  recordStat(q.id, isCorrect);
+  showExplanation(q);
+  const nextBtn = document.getElementById('nextBtn');
+  if(nextBtn) nextBtn.disabled = false;
+  stopTimer();
+  renderQuizGrid();
+}
 
 function submitMultiAnswer() {
   const q = currentPool[currentIndex];
@@ -566,7 +438,7 @@ function submitMultiAnswer() {
   const userArr = [...selectedOriginalIndices].sort();
   
   let isCorrect = (correctArr.length === userArr.length && correctArr.every((v, i) => v === userArr[i]));
-  playSound(isCorrect);
+  playSocketSound(isCorrect);
 
   for (let i = 0; i < buttons.length; i++) {
     let origIdx = parseInt(buttons[i].dataset.originalIndex);
@@ -773,10 +645,6 @@ function speakCurrentQuestion() {
   window.speechSynthesis.speak(currentUtterance);
 }
 
-function pauseSpeech() {
-  if ('speechSynthesis' in window) { window.speechSynthesis.pause(); }
-}
-
 function stopSpeech() {
   if ('speechSynthesis' in window) { window.speechSynthesis.cancel(); }
 }
@@ -794,18 +662,29 @@ function startRealExam() {
   if(!catSelect) return;
   const cat = catSelect.value;
   let pool = [...rawGsskPool];
+  
   if(cat !== 'all') {
     pool = pool.filter(q => q.category === cat);
   }
-  pool.sort(() => Math.random() - 0.5);
+  
+  // Fisher-Yates Mischen der Fragen
+  for (let i = pool.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+
   examQuestions = pool.slice(0, 30);
   examCurrentIdx = 0;
   examUserAnswers = {};
   examFlags = [];
   
-  document.getElementById('examStartScreen').classList.add('hidden');
-  document.getElementById('examResultScreen').classList.add('hidden');
-  document.getElementById('examScreen').classList.remove('hidden');
+  const startScreen = document.getElementById('examStartScreen');
+  const resultScreen = document.getElementById('examResultScreen');
+  const examScreen = document.getElementById('examScreen');
+
+  if(startScreen) startScreen.classList.add('hidden');
+  if(resultScreen) resultScreen.classList.add('hidden');
+  if(examScreen) examScreen.classList.remove('hidden');
   
   renderExamGrid();
   loadExamQuestion();
@@ -839,7 +718,10 @@ function renderExamGrid() {
     if(examUserAnswers[idx] !== undefined) btn.classList.add('answered');
     if(examFlags.includes(idx)) btn.classList.add('flagged');
     btn.textContent = idx + 1;
-    btn.onclick = () => { examCurrentIdx = idx; loadExamQuestion(); renderExamGrid(); };
+    btn.onclick = () => { 
+      examCurrentIdx = idx; 
+      loadExamQuestion(); 
+    };
     container.appendChild(btn);
   });
 }
@@ -847,6 +729,7 @@ function renderExamGrid() {
 function loadExamQuestion() {
   const q = examQuestions[examCurrentIdx];
   if(!q) return;
+  
   const counterElem = document.getElementById('examCounter');
   const questionElem = document.getElementById('examQuestion');
   if(counterElem) counterElem.textContent = `Frage ${examCurrentIdx + 1} von ${examQuestions.length}`;
@@ -866,22 +749,28 @@ function loadExamQuestion() {
   if(!optionsContainer) return;
   optionsContainer.innerHTML = '';
   
-  q.options.forEach((opt, idx) => {
+  let optionsWithIndex = q.options.map((optText, originalIndex) => {
+    return { text: optText, originalIndex: originalIndex };
+  });
+  optionsWithIndex.sort(() => Math.random() - 0.5);
+
+  optionsWithIndex.forEach((item) => {
     const btn = document.createElement('button');
     btn.className = 'btn-option';
-    btn.textContent = opt;
+    btn.textContent = item.text;
+    btn.dataset.originalIndex = item.originalIndex;
     
     if(q.isMulti) {
-      if(examUserAnswers[examCurrentIdx] && examUserAnswers[examCurrentIdx].includes(idx)) {
+      if(examUserAnswers[examCurrentIdx] && Array.isArray(examUserAnswers[examCurrentIdx]) && examUserAnswers[examCurrentIdx].includes(item.originalIndex)) {
         btn.classList.add('selected');
       }
       btn.onclick = () => { btn.classList.toggle('selected'); };
     } else {
-      if(examUserAnswers[examCurrentIdx] === idx) {
+      if(examUserAnswers[examCurrentIdx] === item.originalIndex) {
         btn.classList.add('selected');
       }
       btn.onclick = () => {
-        examUserAnswers[examCurrentIdx] = idx;
+        examUserAnswers[examCurrentIdx] = item.originalIndex;
         renderExamGrid();
         loadExamQuestion();
       };
@@ -893,6 +782,7 @@ function loadExamQuestion() {
   const nextBtn = document.getElementById('examNextBtn');
   if(prevBtn) prevBtn.disabled = (examCurrentIdx === 0);
   if(nextBtn) nextBtn.disabled = (examCurrentIdx === examQuestions.length - 1);
+  
   renderExamGrid();
 }
 
@@ -902,11 +792,14 @@ function submitExamMultiAnswer() {
   const buttons = optionsContainer.getElementsByTagName('button');
   let selected = [];
   for(let i=0; i<buttons.length; i++) {
-    if(buttons[i].classList.contains('selected')) selected.push(i);
+    if(buttons[i].classList.contains('selected')) {
+      let origIdx = parseInt(buttons[i].dataset.originalIndex);
+      selected.push(origIdx);
+    }
   }
   examUserAnswers[examCurrentIdx] = selected;
   renderExamGrid();
-  alert("Auswahl für diese Frage gespeichert.");
+  alert("Mehrfachauswahl gespeichert.");
 }
 
 function nextExamQuestion() {
