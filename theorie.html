@@ -1,0 +1,77 @@
+<!DOCTYPE html>  
+<html lang="de">  
+<head>  
+<meta charset="UTF-8">  
+<meta name="viewport" content="width=device-width, initial-scale=1.0">  
+<title>GSSK - Themen, Theorie & Lernmodus</title>  
+<link rel="stylesheet" href="style.css">  
+<script src="auth.js"></script>  
+</head>  
+<body data-theme="dark">  
+<div class="app-card">  
+  <div class="exam-selector">  
+    <span>🎓 <strong>GSSK Prüfungstrainer - Theorie & Praxis</strong></span>  
+    <div class="top-actions">  
+      <button class="icon-top-btn" onclick="toggleDarkMode()" id="darkModeBtn">☀️ Light Mode</button>  
+      <button class="icon-top-btn" onclick="toggleSound()" id="soundBtn">🔊 Sound: An</button>  
+    </div>  
+  </div>  
+
+  <div class="tab-nav">  
+    <button class="tab-btn" onclick="location.href='index.html'">🏠 Startseite</button>  
+    <button class="tab-btn" onclick="location.href='questions.html'">❓ Quiz (100)</button>  
+    <button class="tab-btn exam-tab-btn" onclick="location.href='pruefung.html'">⏱️ IHK-Prüfung</button>  
+    <button class="tab-btn" onclick="location.href='recht.html'">⚖️ Recht & 10 Fälle</button>  
+    <button class="tab-btn active" onclick="location.href='theorie.html'">📚 Theorie & Praxis</button>  
+  </div>  
+
+  <div class="theory-container">
+    <h2 style="color: #60a5fa; margin-top:0;">Rechtskunde: Grundlagen, Voraussetzungen & Fallbeispiele</h2>
+    <p style="color: var(--text-muted); margin-bottom: 20px;">Ausführliche Erklärungen und praxisnahe Beispiele zu den zentralen Rechtsgrundlagen für den Schutz- und Sicherheitsdienst.</p>
+
+    <div class="theory-card">
+        <h3>1. Die Jedermann-Festnahme (§ 127 Abs. 1 StPO)</h3>
+        <p><strong>Theorie & Voraussetzungen:</strong> Das Gesetz gibt jedem Bürger (auch privatem Wachpersonal) das Recht, unter bestimmten Bedingungen einen Täter vorläufig festzunehmen. Die Voraussetzungen müssen <strong>kumulativ</strong> (alle gleichzeitig) erfüllt sein:</p>
+        <ul>
+            <li><strong>Frische Tat:</strong> Der Täter wird bei Begehung der Tat oder unmittelbar danach angetroffen oder verfolgt.</li>
+            <li><strong>Fluchtverdacht oder unklare Identität:</strong> Der Täter versucht zu fliehen oder kann sich vor Ort nicht ausweisen.</li>
+            <li><strong>Verhältnismäßigkeit:</strong> Nur soviel Kraft einsetzen, wie absolut notwendig ist.</li>
+        </ul>
+        <div class="example-box">
+            <strong>🏢 Praxis-Beispiel:</strong> Ladendetektiv Müller beobachtet per Kamera, wie ein Kunde eine Ware einsteckt und den Kassenbereich ohne zu bezahlen passiert. Draußen will der Kunde fliehen. Müller darf ihn nach § 127 Abs. 1 StPO vorläufig festhalten.
+        </div>
+    </div>
+
+    <div class="theory-card">
+        <h3>2. Notwehr (§ 32 StGB)</h3>
+        <p><strong>Theorie & Voraussetzungen:</strong> Notwehr ist die Verteidigung, die erforderlich ist, um einen gegenwärtigen, rechtswidrigen Angriff von sich oder einem anderen abzuwenden.</p>
+        <ul>
+            <li><strong>Gegenwärtig:</strong> Der Angriff findet gerade statt oder steht unmittelbar bevor.</li>
+            <li><strong>Rechtswidrig:</strong> Der Angreifer handelt ohne Rechtfertigung.</li>
+            <li><strong>Erforderlich & Geboten:</strong> Das mildeste Mittel wählen.</li>
+        </ul>
+        <div class="example-box">
+            <strong>🏢 Praxis-Beispiel:</strong> Ein Angreifer zieht ein Messer und droht, den Mitarbeiter zu verletzen. Der Mitarbeiter wehrt sich durch einen gezielten Tritt gegen das Handgelenk. Das ist rechtmäßige Notwehr.
+        </div>
+    </div>
+
+    <div class="theory-card">
+        <h3>3. Rechtfertigender Notstand (§ 34 StGB)</h3>
+        <p><strong>Theorie & Voraussetzungen:</strong> Wer in einer gegenwärtigen, nicht anders abwendbaren Gefahr für ein Rechtsgut handelt, handelt nicht rechtswidrig, wenn das geschützte Interesse das beeinträchtigte <em>wesentlich</em> überwiegt.</p>
+        <div class="example-box">
+            <strong>🏢 Praxis-Beispiel:</strong> Wachmitarbeiter Weber bemerkt Rauchentwicklung in einem verschlossenen Raum. Da niemand öffnet, bricht er eine Fensterscheibe auf, um einen Brand zu verhindern. Die Sachbeschädigung ist durch den Schutz von Leib und Leben gerechtfertigt.
+        </div>
+    </div>
+
+    <h3 style="color: #60a5fa; margin-top:30px;">📚 Rahmenstoffplan-Übersicht</h3>
+    <div id="theoryContainer" style="margin-top: 15px;"></div>
+  </div>
+</div>  
+<script src="script.js"></script>  
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    renderTheoryTopics();
+  });
+</script>
+</body>  
+</html>
