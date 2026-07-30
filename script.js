@@ -254,7 +254,6 @@ for (let i = 16; i <= 100; i++) {
   ];
   let explanationText = `Musterlösung zu Frage ${i}: In der GSSK-Prüfung ist stets auf die Einhaltung der gesetzlichen Rahmenbedingungen und des Verhältnismäßigkeitsgrundsatzes zu achten.`;
 
-  // Fachbereichsspezifische Fragen für ID 16 bis 100 (inkl. Gefahrenabwehr, Rechtskunde, Wirtschaft und Soziales, Dienstkunde)
   if (cat === "Gefahrenabwehr & Technik") {
     questionText = `Prüfungsfrage #${i} (Gefahrenabwehr & Technik): Welche technischen und organisatorischen Sofortmaßnahmen sind bei der Auslösung einer Brandmeldeanlage (BMA) im Objektschutz primär einzuleiten?`;
     optionsList = [
@@ -531,6 +530,27 @@ function recordStat(qid, success) {
   localStorage.setItem('gssk_stats', JSON.stringify(stats));
 }
 
+// Funktion zum Zurücksetzen der Statistik
+function resetAllStats() {
+  if (confirm("Möchtest du deinen gesamten Lernfortschritt und alle Statistiken wirklich zurücksetzen?")) {
+    localStorage.removeItem('gssk_stats');
+    localStorage.removeItem('gssk_bookmarks');
+    stats = {};
+    bookmarks = [];
+    
+    if (typeof renderQuizGrid === 'function') {
+      renderQuizGrid();
+    }
+    if (typeof renderStatDashboard === 'function') {
+      renderStatDashboard();
+    }
+    if (typeof renderQuizQuestion === 'function') {
+      renderQuizQuestion();
+    }
+    alert("Statistik und Lesezeichen wurden erfolgreich zurückgesetzt.");
+  }
+}
+
 function filterQuizQuestions() {
   const searchInput = document.getElementById('quizSearchInput');
   if(!searchInput) return;
@@ -615,6 +635,9 @@ function renderStatDashboard() {
       <div class="stat-bar-wrapper">
         <div class="stat-bar-fill" style="width: ${(totalAnswered / rawGsskPool.length) * 100}%;"></div>
       </div>
+      <button onclick="resetAllStats()" class="btn-option" style="background-color: #ef4444; color: white; margin-top: 15px; width: 100%;">
+        🗑️ Lernfortschritt & Statistik zurücksetzen
+      </button>
     </div>
   `;
 }
