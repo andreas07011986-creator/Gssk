@@ -251,7 +251,7 @@ for (let i = 16; i <= 100; i++) {
 
   if (cat === "Gefahrenabwehr & Technik") {
     questionText = "Welche technischen und organisatorischen Sofortmaßnahmen sind bei der Auslösung einer Brandmeldeanlage (BMA) im Objektschutz primär einzuleiten?";
-    opt0 = "Die Überprüfung der Brandmelderzentrale (BMZ) und Erkundung des anzeigenden Meldebereichs.";
+    opt0 = "Die Überprüfung der Brandmeldezentrale (BMZ) und Erkundung des anzeigenden Meldebereichs.";
     opt1 = isMultiGen ? "Die Einweisung der anrückenden Feuerwehr und Sicherstellung der Zufahrtswege." : "Das sofortige eigenhändige Löschen des Brandes unter Vernachlässigung des Eigenschutzes.";
     opt2 = "Das Ignorieren des Signals, da es sich in Industrieanlagen fast immer um Fehlalarme handelt.";
     opt3 = "Die sofortige Evakuierung der gesamten Nachbarschaft durch den Sicherheitsmitarbeiter.";
@@ -292,12 +292,12 @@ for (let i = 16; i <= 100; i++) {
     opt3 = "Die vollständige Verlagerung aller Unternehmensrisiken auf die örtliche Polizei.";
     explanationText = "Risikomanagement identifiziert und bewertet Gefahren, um präventiv Maßnahmen zum Schutz des Unternehmens zu ergreifen.";
   } else if (cat === "AGU (Arbeit, Gesundheit & Umwelt)") {
-    questionText = "Welche Pflichten hat der Sicherheitsmitarbeiter gemäß den Unfallverhütungsvorschriften (UVV) bezüglich der Persönlichen Schutzausrüstung (PSA)?";
-    opt0 = "Die vom Arbeitgeber zur Verfügung gestellte PSA ist zwingend und bestimmungsgemäß zu benutzen.";
-    opt1 = isMultiGen ? "Die PSA muss vor der Nutzung auf offensichtliche Mängel geprüft werden." : "Die PSA darf nur bei extremen Wetterbedingungen getragen werden.";
-    opt2 = "Die PSA kann nach eigenem Ermessen durch private Kleidung ersetzt werden.";
-    opt3 = "Mängel an der PSA müssen erst am Jahresende gemeldet werden.";
-    explanationText = "Beschäftigte sind nach DGUV Vorschrift 1 verpflichtet, die gestellte Schutzausrüstung (PSA) bestimmungsgemäß zu verwenden und zu prüfen.";
+    questionText = "Welche zentralen Pflichten hat der Arbeitgeber hinsichtlich des Arbeitsschutzes gemäß Arbeitsschutzgesetz (ArbSchG)?";
+    opt0 = "Er muss die erforderlichen Maßnahmen des Arbeitsschutzes unter Berücksichtigung der Umstände ermitteln und anpassen.";
+    opt1 = isMultiGen ? "Er ist verpflichtet, eine Gefährdungsbeurteilung durchzuführen und zu dokumentieren." : "Er darf die Verantwortung für den Arbeitsschutz komplett an die Auszubildenden übertragen.";
+    opt2 = "Er muss lediglich am Jahresende eine freiwillige Spende an die Berufsgenossenschaft entrichten.";
+    opt3 = "Er ist von jeglicher Haftung befreit, sobald ein externer Sicherheitsdienst beauftragt wurde.";
+    explanationText = "Gemäß § 3 ArbSchG ist der Arbeitgeber verpflichtet, die erforderlichen Maßnahmen des Arbeitsschutzes zu treffen, zu überprüfen und Gefährdungsbeurteilungen vorzunehmen.";
   } else if (cat === "Datenschutz (BDSG/DSGVO)") {
     questionText = "Unter welchen Voraussetzungen ist die Videoüberwachung öffentlich zugänglicher Räume durch private Stellen nach DSGVO/BDSG zulässig?";
     opt0 = "Sie muss zur Wahrnehmung des Hausrechts oder berechtigter Interessen erforderlich sein.";
@@ -306,13 +306,12 @@ for (let i = 16; i <= 100; i++) {
     opt3 = "Sie darf genutzt werden, um Aufnahmen dauerhaft im Internet zu veröffentlichen.";
     explanationText = "Videoüberwachung erfordert ein berechtigtes Interesse und muss durch deutliche Hinweisschilder transparent gemacht werden.";
   } else {
-    // Sicherer Fallback (wird durch obige Abdeckungen im Normalfall nicht mehr ausgelöst)
-    questionText = "Welche rechtlichen Vorgaben und Handlungsmaximen sind in diesem spezifischen Einsatzszenario maßgeblich zu beachten?";
-    opt0 = "Die strengen Vorgaben der objektspezifischen Dienstanweisungen sind zwingend einzuhalten.";
-    opt1 = isMultiGen ? "Der Grundsatz der Verhältnismäßigkeit ist bei allen Maßnahmen zu wahren." : "Eigenmächtiges Handeln ohne rechtliche Grundlage ist gestattet.";
-    opt2 = "Es besteht keinerlei Dokumentationspflicht für Vorkommnisse.";
-    opt3 = "Bei Gefahr im Verzug dürfen grundlos Gewalttaten verübt werden.";
-    explanationText = "Die Vorgehensweise richtet sich stets nach den IHK-Vorgaben und den rechtlichen Rahmenbedingungen.";
+    questionText = "Welche grundlegenden Aufgaben gehören zum Standard-Aufgabengebiet einer professionellen Interventionskraft?";
+    opt0 = "Die alarmmäßige Überprüfung von Objekt- und Aufschaltsignalen vor Ort.";
+    opt1 = isMultiGen ? "Die Einleitung von Sofortmaßnahmen und die Hinzuziehung von Rettungskräften oder Polizei." : "Die Durchführung eigenständiger strafrechtlicher Ermittlungen im ganzen Stadtgebiet.";
+    opt2 = "Das dauerhafte Besetzen von stationären Pforteplätzen über mehrere Wochen.";
+    opt3 = "Die ausschließliche Durchführung von privaten Personenschutzmandaten.";
+    explanationText = "Interventionskräfte fahren Alarme an, sichern das Objekt ab und leiten bei Bedarf Rettungs- oder Sicherheitsmaßnahmen ein.";
   }
 
   let optionsList = [opt0, opt1, opt2, opt3];
@@ -374,9 +373,14 @@ function renderQuizGrid() {
     const btn = document.createElement('button');
     btn.className = 'index-grid-btn';
     if(idx === currentIndex) btn.classList.add('current');
+    
+    // Strikte Prüfung, damit Fragen nicht nur beim Laden fälschlicherweise grün markiert werden
     if(stats[q.id]) {
-      if(stats[q.id].correct > stats[q.id].wrong) btn.classList.add('answered');
-      else btn.classList.add('flagged');
+      if(stats[q.id].correct > 0 && stats[q.id].correct >= stats[q.id].wrong) {
+        btn.classList.add('answered');
+      } else if(stats[q.id].wrong > 0) {
+        btn.classList.add('flagged');
+      }
     }
     if(bookmarks.includes(q.id)) btn.classList.add('flagged');
     
@@ -554,7 +558,6 @@ function recordStat(qid, success) {
   localStorage.setItem('gssk_stats', JSON.stringify(stats));
 }
 
-// Funktion zum Zurücksetzen der Statistik
 function resetAllStats() {
   if (confirm("Möchtest du deinen gesamten Lernfortschritt und alle Statistiken wirklich zurücksetzen?")) {
     localStorage.removeItem('gssk_stats');
