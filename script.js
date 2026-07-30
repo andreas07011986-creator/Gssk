@@ -239,29 +239,38 @@ const rawGsskPool = [
 const categoriesList = ["Rechtskunde", "Dienstkunde", "Gefahrenabwehr & Technik", "Serviceorientiertes Verhalten", "Wirtschafts- und Sozialkunde", "Unternehmenssicherheit", "AGU (Arbeit, Gesundheit & Umwelt)", "Datenschutz (BDSG/DSGVO)"];
 const subcategoriesList = ["Grundlagen & Vorschriften", "Maßnahmen & Praxis", "Spezifische Gefahren", "Rechtliche Grenzen"];
 
-for (let i = rawGsskPool.length + 1; i <= 100; i++) {
-  let isMultiGen = (i % 5 === 0);
+for (let i = 16; i <= 100; i++) {
+  let isMultiGen = (i % 3 === 0);
   let cat = categoriesList[i % categoriesList.length];
   let sub = subcategoriesList[i % subcategoriesList.length];
   
   let optionsList = [
-    `Option A: Die ordnungsgemäße Einhaltung aller Vorgaben nach DIN 77200 und Dienstanweisung ist für diesen Bereich von höchster Bedeutung.`,
-    `Option B: Eigenmächtige polizeiliche Maßnahmen ohne Vorliegen einer gesetzlichen Ermächtigung sind jederzeit gestattet.`,
-    `Option C: Private Sicherheitsmitarbeiter besitzen im Rahmen ihrer Streifengänge exakt die gleichen hoheitlichen Eingriffsrechte wie Polizeivollzugsbeamte.`,
-    `Option D: Es sind keinerlei gesetzliche Bestimmungen oder unternehmerischen Anweisungen zu beachten.`
+    `Option A: Die strengen Vorgaben der DIN 77200 sowie die objektspezifischen Dienstanweisungen sind zwingend einzuhalten.`,
+    `Option B: Sicherheitsmitarbeiter sind berechtigt, eigenmächtig Durchsuchungen von Privatwohnungen durchzuführen.`,
+    `Option C: Es besteht keinerlei Dokumentationspflicht für Vorkommnisse während des Streifendienstes.`,
+    `Option D: Bei Gefahr im Verzug dürfen private Sicherheitskräfte unmittelbaren Zwang ohne gesetzliche Grundlage ausüben.`
   ];
   
-  let correctVal = isMultiGen ? [0, 2] : (i % 4);
+  if (i % 2 === 0) {
+    optionsList = [
+      `Option A: Der Grundsatz der Verhältnismäßigkeit (geeignet, erforderlich, geboten) muss bei jeder Maßnahme gewahrt werden.`,
+      `Option B: Private Sicherheitskräfte stehen rechtlich über dem Gesetz und unterliegen keinerlei Kontrolle.`,
+      `Option C: Eine Zusammenarbeit mit Behörden wie der Polizei ist vertraglich grundsätzlich untersagt.`,
+      `Option D: Das Hausrecht kann ausschließlich durch den Werksleiter persönlich ausgeübt werden.`
+    ];
+  }
+
+  let correctVal = isMultiGen ? [0, 1] : 0;
 
   rawGsskPool.push({
     id: i,
     isMulti: isMultiGen,
     category: cat,
     subcategory: sub,
-    question: `Prüfungsfrage #${i} (${cat}): Welche rechtlichen oder organisatorischen Bestimmungen sind in diesem Aufgabengebiet primär zu berücksichtigen?`,
+    question: `Prüfungsfrage #${i} (${cat}): Welche rechtlichen Vorgaben und Handlungsmaximen sind in diesem spezifischen Einsatzszenario maßgeblich zu beachten?`,
     options: optionsList,
     correct: correctVal,
-    explanation: `Musterlösung zu Frage ${i}: Im Rahmen der GSSK-Prüfung muss stets auf die Einhaltung rechtlicher Grenzen (wie z.B. BGB, StGB, StPO, DIN 77200) geachtet werden.`
+    explanation: `Musterlösung zu Frage ${i}: In der GSSK-Prüfung ist stets auf die Einhaltung der gesetzlichen Rahmenbedingungen (z.B. BGB, StGB, GewO) und des Verhältnismäßigkeitsgrundsatzes zu achten.`
   });
 }
 
@@ -275,7 +284,6 @@ let timerInterval = null;
 let timeLeft = 45;
 let timerModeEnabled = false;
 
-// Law Cases & Theory Data
 const lawCases = [
   { id: 1, title: "Fall 1: Der Ladendieb im Supermarkt", text: "Kunde K steckt eine teure Spirituose ein und passiert den Kassenbereich ohne zu bezahlen. Detektiv D beobachtet dies, läuft hinterher, reißt K zu Boden (wobei K leicht verletzt wird) und fixiert ihn.", question: "Beurteilen Sie das Handeln des Detektivs D strafrechtlich (insb. Körperverletzung, Rechtfertigung über § 127 StPO).", solution: "D handelte gem. § 127 Abs. 1 StPO (Jedermann-Festnahme) rechtmäßig hinsichtlich der Festnahme. Die Gewaltanwendung muss jedoch dem Verhältnismäßigkeitsgrundsatz entsprechen." },
   { id: 2, title: "Fall 2: Der ungebetene Besucher", text: "Besucher V betritt ein Betriebsgelände trotz sichtbaren Hausverbots. Werkschützer W fordert ihn zum Verlassen auf. V weigert sich lachend und bleibt stehen.", question: "Welche Rechtsgüter und Paragraphen greifen hier ein?", solution: "V erfüllt den Tatbestand des Hausfriedensbruchs nach § 123 StGB. W kann das Hausrecht des Betreibers (§ 903 BGB) durchsetzen." },
@@ -490,16 +498,6 @@ function recordStat(qid, success) {
   localStorage.setItem('gssk_stats', JSON.stringify(stats));
 }
 
-function resetAllStatsPrompt() {
-  if(confirm("Möchtest du wirklich alle Lernstatistiken und Lesezeichen zurücksetzen?")) {
-    localStorage.removeItem('gssk_stats');
-    localStorage.removeItem('gssk_bookmarks');
-    stats = {};
-    bookmarks = [];
-    restartQuiz();
-  }
-}
-
 function filterQuizQuestions() {
   const searchInput = document.getElementById('quizSearchInput');
   if(!searchInput) return;
@@ -667,7 +665,6 @@ function startRealExam() {
     pool = pool.filter(q => q.category === cat);
   }
   
-  // Fisher-Yates Mischen der Fragen
   for (let i = pool.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [pool[i], pool[j]] = [pool[j], pool[i]];
