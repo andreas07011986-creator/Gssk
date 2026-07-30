@@ -52,7 +52,7 @@ function toggleDarkMode() {
   }  
 }  
 
-// FRAGENPOOL (100 PRÜFUNGSFRAGEN)
+// FRAGENPOOL (Die ersten 15 handgeschriebenen Prüfungsfragen)
 const rawGsskPool = [  
   {  
     id: 1, isMulti: true, category: "Rechtskunde", subcategory: "StPO § 127 Abs. 1",  
@@ -239,59 +239,83 @@ const rawGsskPool = [
 const categoriesList = ["Rechtskunde", "Dienstkunde", "Gefahrenabwehr & Technik", "Serviceorientiertes Verhalten", "Wirtschafts- und Sozialkunde", "Unternehmenssicherheit", "AGU (Arbeit, Gesundheit & Umwelt)", "Datenschutz (BDSG/DSGVO)"];
 const subcategoriesList = ["Grundlagen & Vorschriften", "Maßnahmen & Praxis", "Spezifische Gefahren", "Rechtliche Grenzen"];
 
-// Dynamischer Auffüll-Pool mit gezielten Fragen für ID 16 bis 100
+// Dynamischer Auffüll-Pool mit gezielten Fragen für ID 16 bis 100 OHNE Vorworte!
 for (let i = 16; i <= 100; i++) {
   let isMultiGen = (i % 3 === 0);
   let cat = categoriesList[i % categoriesList.length];
   let sub = subcategoriesList[i % subcategoriesList.length];
   
-  let questionText = `Prüfungsfrage #${i} (${cat}): Welche rechtlichen Vorgaben und Handlungsmaximen sind in diesem spezifischen Einsatzszenario maßgeblich zu beachten?`;
-  let optionsList = [
-    `Option A: Die strengen Vorgaben der DIN 77200 sowie die objektspezifischen Dienstanweisungen sind zwingend einzuhalten.`,
-    `Option B: Sicherheitsmitarbeiter sind berechtigt, eigenmächtig Durchsuchungen von Privatwohnungen durchzuführen.`,
-    `Option C: Es besteht keinerlei Dokumentationspflicht für Vorkommnisse während des Streifendienstes.`,
-    `Option D: Bei Gefahr im Verzug dürfen private Sicherheitskräfte unmittelbaren Zwang ohne gesetzliche Grundlage ausüben.`
-  ];
-  let explanationText = `Musterlösung zu Frage ${i}: In der GSSK-Prüfung ist stets auf die Einhaltung der gesetzlichen Rahmenbedingungen und des Verhältnismäßigkeitsgrundsatzes zu achten.`;
+  let questionText = "";
+  let opt0 = "", opt1 = "", opt2 = "", opt3 = "";
+  let explanationText = "";
 
   if (cat === "Gefahrenabwehr & Technik") {
-    questionText = `Prüfungsfrage #${i} (Gefahrenabwehr & Technik): Welche technischen und organisatorischen Sofortmaßnahmen sind bei der Auslösung einer Brandmeldeanlage (BMA) im Objektschutz primär einzuleiten?`;
-    optionsList = [
-      `Der Kontrollgang zum anzeigenden Meldebereich unter Beachtung der Eigensicherung, Überprüfung der Brandmelderzentrale (BMZ) und Einweisung der anrückenden Feuerwehr.`,
-      `Das sofortige eigenhändige Löschen des Brandes mit allen verfügbaren Mitteln unter Vernachlässigung des Eigenschutzes.`,
-      `Das Ignorieren des Signals, da es sich in Industrieanlagen fast immer um technische Fehlalarme handelt.`,
-      `Die sofortige Evakuierung des gesamten Stadtteils durch den Sicherheitsmitarbeiter.`
-    ];
-    explanationText = `Musterlösung zu Frage ${i}: Bei Auslösung einer BMA muss die BMZ kontrolliert, der betroffene Bereich erkundet und die Feuerwehr gemäß Alarmplan eingewiesen werden.`;
+    questionText = "Welche technischen und organisatorischen Sofortmaßnahmen sind bei der Auslösung einer Brandmeldeanlage (BMA) im Objektschutz primär einzuleiten?";
+    opt0 = "Die Überprüfung der Brandmelderzentrale (BMZ) und Erkundung des anzeigenden Meldebereichs.";
+    opt1 = isMultiGen ? "Die Einweisung der anrückenden Feuerwehr und Sicherstellung der Zufahrtswege." : "Das sofortige eigenhändige Löschen des Brandes unter Vernachlässigung des Eigenschutzes.";
+    opt2 = "Das Ignorieren des Signals, da es sich in Industrieanlagen fast immer um Fehlalarme handelt.";
+    opt3 = "Die sofortige Evakuierung der gesamten Nachbarschaft durch den Sicherheitsmitarbeiter.";
+    explanationText = "Bei Auslösung einer BMA muss die BMZ kontrolliert, der betroffene Bereich erkundet und die Feuerwehr gemäß Alarmplan eingewiesen werden.";
   } else if (cat === "Rechtskunde") {
-    questionText = `Prüfungsfrage #${i} (Rechtskunde): Welcher Grundsatz ist bei der Ausübung von Befugnissen (wie Jedermann-Festnahme oder Hausrecht) durch privates Wachpersonal zwingend zu wahren?`;
-    optionsList = [
-      `Der Grundsatz der Verhältnismäßigkeit (geeignet, erforderlich, geboten).`,
-      `Das Recht auf uneingeschränkte körperliche Bestrafung von ertappten Dieben.`,
-      `Die Befugnis zur Durchführung polizeilicher Vernehmungen unter Zwang.`,
-      `Der Ausschluss jeglicher Dokumentationspflicht im Wachbuch.`
-    ];
-    explanationText = `Musterlösung zu Frage ${i}: Jede Maßnahme privater Sicherheitskräfte muss stets verhältnismäßig sein und sich im Rahmen der Jedermann-Rechte bewegen.`;
+    questionText = "Welcher Grundsatz ist bei der Ausübung von Befugnissen (wie Jedermann-Festnahme oder Hausrecht) durch privates Wachpersonal zwingend zu wahren?";
+    opt0 = "Der Grundsatz der Verhältnismäßigkeit (geeignet, erforderlich, angemessen).";
+    opt1 = isMultiGen ? "Die strikte Beachtung der gesetzlichen Schranken und Grundrechte der Betroffenen." : "Das Recht auf uneingeschränkte körperliche Bestrafung von ertappten Dieben.";
+    opt2 = "Die Befugnis zur Durchführung polizeilicher Vernehmungen unter Zwang.";
+    opt3 = "Der Ausschluss jeglicher Dokumentationspflicht im Wachbuch.";
+    explanationText = "Jede Maßnahme privater Sicherheitskräfte muss stets verhältnismäßig sein und sich im Rahmen der rechtlichen Befugnisse bewegen.";
   } else if (cat === "Wirtschafts- und Sozialkunde") {
-    questionText = `Prüfungsfrage #${i} (Wirtschafts- und Sozialkunde): Welche wesentlichen Regelungen enthält das Arbeitnehmerüberlassungsgesetz (AÜG) im Kontext des Wach- und Sicherheitsgewerbes?`;
-    optionsList = [
-      `Es regelt den gewerbsmäßigen Verleih von Arbeitskräften (Leiharbeit) an Entleiher unter strengen gesetzlichen Auflagen und Höchstüberlassungsdauern.`,
-      `Es verbietet jegliche Form von Schichtarbeit in Sicherheitsunternehmen.`,
-      `Es legt den gesetzlichen Mindestlohn für das gesamte Bundesgebiet auf exakt 25 Euro fest.`,
-      `Es verpflichtet den Arbeitgeber zur Bereitstellung eines Dienstwagens für jeden Arbeitnehmer.`
-    ];
-    explanationText = `Musterlösung zu Frage ${i}: Das AÜG regelt den rechtlichen Rahmen für die Arbeitnehmerüberlassung und schützt Leiharbeitnehmer vor unzulässiger Benachteiligung.`;
+    questionText = "Welche wesentlichen Regelungen enthält das Arbeitnehmerüberlassungsgesetz (AÜG) im Kontext des Wach- und Sicherheitsgewerbes?";
+    opt0 = "Es regelt den gewerbsmäßigen Verleih von Arbeitskräften (Leiharbeit) an Entleiher.";
+    opt1 = isMultiGen ? "Es beinhaltet Schutzvorschriften und den Grundsatz der Gleichbehandlung für Leiharbeitnehmer." : "Es verbietet jegliche Form von Schichtarbeit in Sicherheitsunternehmen.";
+    opt2 = "Es legt den gesetzlichen Mindestlohn für das gesamte Bundesgebiet auf exakt 25 Euro fest.";
+    opt3 = "Es verpflichtet den Arbeitgeber zur Bereitstellung eines Dienstwagens für jeden Arbeitnehmer.";
+    explanationText = "Das AÜG regelt den rechtlichen Rahmen für die Arbeitnehmerüberlassung und schützt Leiharbeitnehmer vor unzulässiger Benachteiligung.";
   } else if (cat === "Dienstkunde") {
-    questionText = `Prüfungsfrage #${i} (Dienstkunde): Welche Bedeutung hat der Streifendienst im Rahmen des werksinternen Objektschutzes?`;
-    optionsList = [
-      `Die präventive Schadensabwehr, Erkennung von Sicherheitslücken, Kontrolle von Verschlüssen und Durchsetzung der Ordnung auf dem Gelände.`,
-      `Die ausschließliche Erholung des Mitarbeiters während der Nachtschicht.`,
-      `Das Ersetzen der behördlichen Verkehrsüberwachung im öffentlichen Straßenverkehr.`,
-      `Das unangekündigte Betreten fremder Privatwohnungen außerhalb des Werksgeländes.`
-    ];
-    explanationText = `Musterlösung zu Frage ${i}: Der Streifendienst dient der Prävention, der Überwachung technischer Einrichtungen und der Entdeckung von Gefahrenquellen.`;
+    questionText = "Welche Bedeutung hat der Streifendienst im Rahmen des werksinternen Objektschutzes?";
+    opt0 = "Die präventive Schadensabwehr und das Erkennen von Sicherheitslücken.";
+    opt1 = isMultiGen ? "Die Kontrolle von Verschlüssen und die Durchsetzung der Ordnung auf dem Gelände." : "Die ausschließliche Erholung des Mitarbeiters während der Nachtschicht.";
+    opt2 = "Das Ersetzen der behördlichen Verkehrsüberwachung im öffentlichen Straßenverkehr.";
+    opt3 = "Das unangekündigte Betreten fremder Privatwohnungen außerhalb des Werksgeländes.";
+    explanationText = "Der Streifendienst dient der Prävention, der Überwachung technischer Einrichtungen und der Entdeckung von Gefahrenquellen.";
+  } else if (cat === "Serviceorientiertes Verhalten") {
+    questionText = "Welche Verhaltensweisen eignen sich am besten zur Deeskalation einer verbalen Auseinandersetzung mit einem unkooperativen Besucher?";
+    opt0 = "Aktives Zuhören und das Zeigen von Empathie für das Anliegen des Besuchers.";
+    opt1 = isMultiGen ? "Eine ruhige Körperhaltung, angemessener Abstand und sachliche Argumentation." : "Sofortiges Androhen von physischer Gewalt zur Einschüchterung.";
+    opt2 = "Ignorieren des Besuchers, bis dieser von selbst aufgibt.";
+    opt3 = "Lautstarkes Überstimmen des Besuchers, um Dominanz zu zeigen.";
+    explanationText = "Deeskalation erfordert aktives Zuhören, Empathie und eine sachliche Gesprächsführung ohne den Gegenüber zu provozieren.";
+  } else if (cat === "Unternehmenssicherheit") {
+    questionText = "Welche primären Ziele verfolgt ein umfassendes Risikomanagement in der Unternehmenssicherheit?";
+    opt0 = "Die systematische Identifikation, Analyse und Bewertung von Risiken.";
+    opt1 = isMultiGen ? "Die Implementierung von Maßnahmen zum Schutz der Unternehmenswerte vor Schäden." : "Die absolute Vermeidung jeglicher unternehmerischer Tätigkeit.";
+    opt2 = "Die Gewinnmaximierung durch Einsparung sämtlicher Sicherheitsmaßnahmen.";
+    opt3 = "Die vollständige Verlagerung aller Unternehmensrisiken auf die örtliche Polizei.";
+    explanationText = "Risikomanagement identifiziert und bewertet Gefahren, um präventiv Maßnahmen zum Schutz des Unternehmens zu ergreifen.";
+  } else if (cat === "AGU (Arbeit, Gesundheit & Umwelt)") {
+    questionText = "Welche Pflichten hat der Sicherheitsmitarbeiter gemäß den Unfallverhütungsvorschriften (UVV) bezüglich der Persönlichen Schutzausrüstung (PSA)?";
+    opt0 = "Die vom Arbeitgeber zur Verfügung gestellte PSA ist zwingend und bestimmungsgemäß zu benutzen.";
+    opt1 = isMultiGen ? "Die PSA muss vor der Nutzung auf offensichtliche Mängel geprüft werden." : "Die PSA darf nur bei extremen Wetterbedingungen getragen werden.";
+    opt2 = "Die PSA kann nach eigenem Ermessen durch private Kleidung ersetzt werden.";
+    opt3 = "Mängel an der PSA müssen erst am Jahresende gemeldet werden.";
+    explanationText = "Beschäftigte sind nach DGUV Vorschrift 1 verpflichtet, die gestellte Schutzausrüstung (PSA) bestimmungsgemäß zu verwenden und zu prüfen.";
+  } else if (cat === "Datenschutz (BDSG/DSGVO)") {
+    questionText = "Unter welchen Voraussetzungen ist die Videoüberwachung öffentlich zugänglicher Räume durch private Stellen nach DSGVO/BDSG zulässig?";
+    opt0 = "Sie muss zur Wahrnehmung des Hausrechts oder berechtigter Interessen erforderlich sein.";
+    opt1 = isMultiGen ? "Sie muss durch geeignete Maßnahmen (z. B. Hinweisschilder) transparent erkennbar gemacht werden." : "Sie darf nur mit versteckten Miniaturkameras durchgeführt werden.";
+    opt2 = "Sie ist grundsätzlich immer und ohne Einschränkungen überall erlaubt.";
+    opt3 = "Sie darf genutzt werden, um Aufnahmen dauerhaft im Internet zu veröffentlichen.";
+    explanationText = "Videoüberwachung erfordert ein berechtigtes Interesse und muss durch deutliche Hinweisschilder transparent gemacht werden.";
+  } else {
+    // Sicherer Fallback (wird durch obige Abdeckungen im Normalfall nicht mehr ausgelöst)
+    questionText = "Welche rechtlichen Vorgaben und Handlungsmaximen sind in diesem spezifischen Einsatzszenario maßgeblich zu beachten?";
+    opt0 = "Die strengen Vorgaben der objektspezifischen Dienstanweisungen sind zwingend einzuhalten.";
+    opt1 = isMultiGen ? "Der Grundsatz der Verhältnismäßigkeit ist bei allen Maßnahmen zu wahren." : "Eigenmächtiges Handeln ohne rechtliche Grundlage ist gestattet.";
+    opt2 = "Es besteht keinerlei Dokumentationspflicht für Vorkommnisse.";
+    opt3 = "Bei Gefahr im Verzug dürfen grundlos Gewalttaten verübt werden.";
+    explanationText = "Die Vorgehensweise richtet sich stets nach den IHK-Vorgaben und den rechtlichen Rahmenbedingungen.";
   }
 
+  let optionsList = [opt0, opt1, opt2, opt3];
   let correctVal = isMultiGen ? [0, 1] : 0;
 
   rawGsskPool.push({
