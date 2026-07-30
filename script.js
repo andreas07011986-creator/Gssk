@@ -136,7 +136,7 @@ const rawGsskPool = [
       "Die polizeiliche Räumung eines besetzten Hauses."  
     ],  
     correct: 0,  
-    explanation: "Hinweis: § 227 BGB regelt die Notwehr. Aggressiv- oder Defensivnotstand ist in §§ 228, 904 BGB normiert, § 227 BGB betrifft die zivilrechtliche Notwehr analog § 32 StGB."  
+    explanation: "Hinweis: § 227 BGB regelt die Notwehr. Aggressiv- or Defensivnotstand ist in §§ 228, 904 BGB normiert, § 227 BGB betrifft die zivilrechtliche Notwehr analog § 32 StGB."  
   },
   {  
     id: 8, isMulti: false, category: "Dienstkunde", subcategory: "Wachbuch",  
@@ -239,7 +239,7 @@ const rawGsskPool = [
 const categoriesList = ["Rechtskunde", "Dienstkunde", "Gefahrenabwehr & Technik", "Serviceorientiertes Verhalten", "Wirtschafts- und Sozialkunde", "Unternehmenssicherheit", "AGU (Arbeit, Gesundheit & Umwelt)", "Datenschutz (BDSG/DSGVO)"];
 const subcategoriesList = ["Grundlagen & Vorschriften", "Maßnahmen & Praxis", "Spezifische Gefahren", "Rechtliche Grenzen"];
 
-// Dynamischer Auffüll-Pool mit gezielten Fragen für ID 16 bis 100 OHNE Vorworte!
+// Dynamischer Auffüll-Pool mit gezielten Fragen für ID 16 bis 100
 for (let i = 16; i <= 100; i++) {
   let isMultiGen = (i % 3 === 0);
   let cat = categoriesList[i % categoriesList.length];
@@ -330,6 +330,7 @@ for (let i = 16; i <= 100; i++) {
 }
 
 let currentPool = [...rawGsskPool];
+let shuffledQuizPool = []; // Pool für die aktuelle Quiz-Runde ohne Wiederholungen
 let currentIndex = 0;
 let userAnswers = {};
 let bookmarks = JSON.parse(localStorage.getItem('gssk_bookmarks') || '[]');
@@ -362,7 +363,15 @@ const theoryTopics = [
   { title: "7. Datenschutz und Informationssicherheit", content: "DSGVO und BDSG im Sicherheitsdienst, Umgang mit personenbezogenen Daten, Geheimhaltungspflichten, IT-Sicherheit." }
 ];
 
-// --- QUIZ LOGIK ---
+// --- QUIZ LOGIK (Mit Mischen ohne Wiederholungen) ---
+function initQuizPool() {
+  shuffledQuizPool = [...currentPool];
+  for (let i = shuffledQuizPool.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffledQuizPool[i], shuffledQuizPool[j]] = [shuffledQuizPool[j], shuffledQuizPool[i]];
+  }
+}
+
 function renderQuizGrid() {
   const container = document.getElementById('quizGridContainer');
   if (!container) return;
@@ -372,9 +381,12 @@ function renderQuizGrid() {
   currentPool.forEach((q, idx) => {
     const btn = document.createElement('button');
     btn.className = 'index-grid-btn';
-    if(idx === currentIndex) btn.classList.add('current');
     
-    // Strikte Prüfung, damit Fragen nicht nur beim Laden fälschlicherweise grün markiert werden
+    const currentActiveQ = shuffledQuizPool[currentIndex];
+    if (currentActiveQ && q.id === currentActiveQ.id) {
+      btn.classList.add('current');
+    }
+    
     if(stats[q.id]) {
       if(stats[q.id].correct > 0 && stats[q.id].correct >= stats[q.id].wrong) {
         btn.classList.add('answered');
@@ -385,16 +397,27 @@ function renderQuizGrid() {
     if(bookmarks.includes(q.id)) btn.classList.add('flagged');
     
     btn.textContent = idx + 1;
-    btn.onclick = () => { currentIndex = idx; renderQuizQuestion(); };
+    btn.onclick = () => { 
+      const foundIdx = shuffledQuizPool.findIndex(item => item.id === q.id);
+      if (foundIdx > -1) {
+        currentIndex = foundIdx; 
+        renderQuizQuestion(); 
+      }
+    };
     container.appendChild(btn);
   });
 }
 
 function renderQuizQuestion() {
   stopSpeech();
+  
+  if (!shuffledQuizPool || shuffledQuizPool.length !== currentPool.length) {
+    initQuizPool();
+  }
+  
   renderQuizGrid();
   
-  if (currentPool.length === 0) {
+  if (shuffledQuizPool.length === 0 || currentIndex >= shuffledQuizPool.length) {
     const contentArea = document.getElementById('quizContentArea');
     const finishedScreen = document.getElementById('quizFinishedScreen');
     if(contentArea) contentArea.classList.add('hidden');
@@ -402,14 +425,10 @@ function renderQuizQuestion() {
     renderStatDashboard();
     return;
   }
-  
-  if (currentIndex >= currentPool.length) {
-    currentIndex = 0;
-  }
 
-  const q = currentPool[currentIndex];
+  const q = shuffledQuizPool[currentIndex];
   const counterElem = document.getElementById('counter');
-  if(counterElem) counterElem.textContent = `Frage ${currentIndex + 1} von ${currentPool.length}`;
+  if(counterElem) counterElem.textContent = `Frage ${currentIndex + 1} von ${shuffledQuizPool.length}`;
   
   const catBadge = document.getElementById('catBadge');
   const subCatBadge = document.getElementById('subCatBadge');
@@ -490,7 +509,7 @@ function handleOptionClickDynamic(selectedOriginalIdx, q) {
 }
 
 function submitMultiAnswer() {
-  const q = currentPool[currentIndex];
+  const q = shuffledQuizPool[currentIndex];
   const optionsContainer = document.getElementById('options');
   const buttons = optionsContainer.getElementsByTagName('button');
 
@@ -542,6 +561,7 @@ function nextQuestion() {
 function restartQuiz() {
   currentIndex = 0;
   currentPool = [...rawGsskPool];
+  initQuizPool();
   const contentArea = document.getElementById('quizContentArea');
   const finishedScreen = document.getElementById('quizFinishedScreen');
   if(contentArea) contentArea.classList.remove('hidden');
@@ -564,7 +584,12 @@ function resetAllStats() {
     localStorage.removeItem('gssk_bookmarks');
     stats = {};
     bookmarks = [];
+    filterMode = 'all'; 
+    updateFilterButtons();
     
+    if (typeof filterQuizQuestions === 'function') {
+      filterQuizQuestions();
+    }
     if (typeof renderQuizGrid === 'function') {
       renderQuizGrid();
     }
@@ -580,8 +605,7 @@ function resetAllStats() {
 
 function filterQuizQuestions() {
   const searchInput = document.getElementById('quizSearchInput');
-  if(!searchInput) return;
-  const query = searchInput.value.toLowerCase();
+  const query = searchInput ? searchInput.value.toLowerCase() : "";
   
   currentPool = rawGsskPool.filter(q => {
     const matchesSearch = q.question.toLowerCase().includes(query) || q.category.toLowerCase().includes(query) || q.subcategory.toLowerCase().includes(query);
@@ -592,7 +616,9 @@ function filterQuizQuestions() {
     if (filterMode === 'mastered') return stats[q.id] && stats[q.id].correct > 0 && stats[q.id].correct >= stats[q.id].wrong;
     return true;
   });
+  
   currentIndex = 0;
+  initQuizPool();
   renderQuizQuestion();
 }
 
@@ -622,7 +648,7 @@ function updateFilterButtons() {
 }
 
 function toggleCurrentBookmark() {
-  const q = currentPool[currentIndex];
+  const q = shuffledQuizPool[currentIndex];
   if (!q) return;
   const idx = bookmarks.indexOf(q.id);
   if (idx > -1) {
@@ -636,7 +662,7 @@ function toggleCurrentBookmark() {
 }
 
 function updateBookmarkIcon() {
-  const q = currentPool[currentIndex];
+  const q = shuffledQuizPool[currentIndex];
   const btn = document.getElementById('quizBookmarkBtn');
   if(!btn) return;
   if (q && bookmarks.includes(q.id)) {
@@ -713,7 +739,7 @@ function speakCurrentQuestion() {
     return;
   }
   window.speechSynthesis.cancel();
-  const q = currentPool[currentIndex];
+  const q = shuffledQuizPool[currentIndex];
   if (!q) return;
   
   let textToSpeak = q.question + ". Antwortmöglichkeiten: ";
@@ -730,8 +756,8 @@ function stopSpeech() {
   if ('speechSynthesis' in window) { window.speechSynthesis.cancel(); }
 }
 
-// --- IHK PRÜFUNGSSIMULATION ---
-let examQuestions = [];
+// --- IHK PRÜFUNGSSIMULATION (Ohne Wiederholungen, sauber gemischt) ---
+let shuffledExamQuestions = []; 
 let examCurrentIdx = 0;
 let examUserAnswers = {};
 let examFlags = [];
@@ -753,7 +779,7 @@ function startRealExam() {
     [pool[i], pool[j]] = [pool[j], pool[i]];
   }
 
-  examQuestions = pool.slice(0, 30);
+  shuffledExamQuestions = pool.slice(0, 30);
   examCurrentIdx = 0;
   examUserAnswers = {};
   examFlags = [];
@@ -791,7 +817,7 @@ function renderExamGrid() {
   const container = document.getElementById('examGridContainer');
   if(!container) return;
   container.innerHTML = '';
-  examQuestions.forEach((q, idx) => {
+  shuffledExamQuestions.forEach((q, idx) => {
     const btn = document.createElement('button');
     btn.className = 'index-grid-btn';
     if(idx === examCurrentIdx) btn.classList.add('current');
@@ -807,12 +833,12 @@ function renderExamGrid() {
 }
 
 function loadExamQuestion() {
-  const q = examQuestions[examCurrentIdx];
+  const q = shuffledExamQuestions[examCurrentIdx];
   if(!q) return;
   
   const counterElem = document.getElementById('examCounter');
   const questionElem = document.getElementById('examQuestion');
-  if(counterElem) counterElem.textContent = `Frage ${examCurrentIdx + 1} von ${examQuestions.length}`;
+  if(counterElem) counterElem.textContent = `Frage ${examCurrentIdx + 1} von ${shuffledExamQuestions.length}`;
   if(questionElem) questionElem.textContent = q.question;
   
   const flagBtn = document.getElementById('examFlagBtn');
@@ -861,7 +887,7 @@ function loadExamQuestion() {
   const prevBtn = document.getElementById('examPrevBtn');
   const nextBtn = document.getElementById('examNextBtn');
   if(prevBtn) prevBtn.disabled = (examCurrentIdx === 0);
-  if(nextBtn) nextBtn.disabled = (examCurrentIdx === examQuestions.length - 1);
+  if(nextBtn) nextBtn.disabled = (examCurrentIdx === shuffledExamQuestions.length - 1);
   
   renderExamGrid();
 }
@@ -883,7 +909,7 @@ function submitExamMultiAnswer() {
 }
 
 function nextExamQuestion() {
-  if(examCurrentIdx < examQuestions.length - 1) {
+  if(examCurrentIdx < shuffledExamQuestions.length - 1) {
     examCurrentIdx++;
     loadExamQuestion();
   }
@@ -918,7 +944,7 @@ function finishExam() {
   if(resultScreen) resultScreen.classList.remove('hidden');
   
   let correctCount = 0;
-  examQuestions.forEach((q, idx) => {
+  shuffledExamQuestions.forEach((q, idx) => {
     let ans = examUserAnswers[idx];
     if(q.isMulti) {
       if(ans && Array.isArray(ans)) {
@@ -933,20 +959,20 @@ function finishExam() {
     }
   });
   
-  let percent = Math.round((correctCount / examQuestions.length) * 100);
+  let percent = Math.round((correctCount / shuffledExamQuestions.length) * 100);
   let passed = percent >= 50;
   
   const resTitle = document.getElementById('resultTitle');
   const resScore = document.getElementById('resultScore');
   const resStatus = document.getElementById('resultStatus');
   if(resTitle) resTitle.textContent = passed ? "🎉 Bestanden!" : "❌ Leider nicht bestanden.";
-  if(resScore) resScore.textContent = `Ergebnis: ${correctCount} von ${examQuestions.length} Fragen richtig (${percent}%)`;
+  if(resScore) resScore.textContent = `Ergebnis: ${correctCount} von ${shuffledExamQuestions.length} Fragen richtig (${percent}%)`;
   if(resStatus) resStatus.textContent = passed ? "Du hast die erforderliche Punktzahl erreicht." : "Du hast weniger als 50% erreicht. Übe weiter im Quiz-Modus!";
   
   const reviewList = document.getElementById('examReviewList');
   if(!reviewList) return;
   reviewList.innerHTML = '';
-  examQuestions.forEach((q, idx) => {
+  shuffledExamQuestions.forEach((q, idx) => {
     let ans = examUserAnswers[idx];
     let isCorrect = false;
     if(q.isMulti) {
