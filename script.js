@@ -227,7 +227,7 @@ const rawGsskPool = [
     question: "Welche Grundsätze gelten nach DSGVO beim Umgang mit personenbezogenen Daten im Sicherheitsdienst?",
     options: [
       "Rechtmäßigkeit, Verarbeitung nach Treu und Glauben, Transparenz.",
-      "Jeder Mitarbeiter darf alle Daten for private Zwecke nutzen.",
+      "Jeder Mitarbeiter darf alle Daten für private Zwecke nutzen.",
       "Datenminimierung und Speicherbegrenzung.",
       "Sicherheitskräfte dürfen Kundendaten beliebig im Internet veröffentlichen."
     ],
@@ -602,7 +602,6 @@ function renderQuizQuestion() {
   optionsWithIndex.forEach((item, index) => {
     const btn = document.createElement('button');
     btn.className = 'btn-option';
-    // Index-Kennzeichnung (A, B, C, D) voranstellen
     const prefix = indexLetters[index] ? `[${indexLetters[index]}] ` : '';
     btn.textContent = prefix + item.text;
     btn.dataset.originalIndex = item.originalIndex;
@@ -730,7 +729,7 @@ function recordStat(qid, success) {
 }
 
 function resetAllStats() {
-  if (confirm("Möchtest du deinen gesamten Lernfortschritt und alle Statistiken wirklich zurücksetzen?")) {
+  if (confirm("Möchtest du deinen gesamten Lernfortschritt, Filter und alle Statistiken wirklich zurücksetzen?")) {
     localStorage.removeItem('gssk_stats');
     localStorage.removeItem('gssk_bookmarks');
     stats = {};
@@ -747,7 +746,7 @@ function resetAllStats() {
     renderQuizQuestion();
     renderStatDashboard();
     
-    alert("Statistik und Lesezeichen wurden erfolgreich zurückgesetzt.");
+    alert("Alles wurde erfolgreich zurückgesetzt.");
   }
 }
 
@@ -761,6 +760,7 @@ function filterQuizQuestions() {
     
     if (filterMode === 'bookmark') return bookmarks.includes(q.id);
     if (filterMode === 'weak') return stats[q.id] && stats[q.id].wrong > stats[q.id].correct;
+    if (filterMode === 'mastered') return stats[q.id] && stats[q.id].correct > 0 && stats[q.id].wrong === 0;
     return true;
   });
   
@@ -774,8 +774,15 @@ function toggleBookmarkFilter() {
   updateFilterButtons();
   filterQuizQuestions();
 }
+
 function toggleWeakFilter() {
   filterMode = (filterMode === 'weak') ? 'all' : 'weak';
+  updateFilterButtons();
+  filterQuizQuestions();
+}
+
+function toggleMasteredFilter() {
+  filterMode = (filterMode === 'mastered') ? 'all' : 'mastered';
   updateFilterButtons();
   filterQuizQuestions();
 }
@@ -783,8 +790,10 @@ function toggleWeakFilter() {
 function updateFilterButtons() {
   const b1 = document.getElementById('filterBookmarkBtn');
   const b2 = document.getElementById('filterWeakBtn');
+  const b3 = document.getElementById('filterMasteredBtn');
   if(b1) b1.classList.toggle('active', filterMode === 'bookmark');
   if(b2) b2.classList.toggle('active', filterMode === 'weak');
+  if(b3) b3.classList.toggle('active', filterMode === 'mastered');
 }
 
 function toggleCurrentBookmark() {
@@ -896,7 +905,7 @@ function stopSpeech() {
   if ('speechSynthesis' in window) { window.speechSynthesis.cancel(); }
 }
 
-// --- IHK PRÜFUNGSSIMULATION (Exakt 35 Fragen) ---
+// --- IHK PRÜFUNGSSIMULATION ---
 let shuffledExamQuestions = []; 
 let examCurrentIdx = 0;
 let examUserAnswers = {};
