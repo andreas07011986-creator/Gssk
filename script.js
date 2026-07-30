@@ -200,15 +200,15 @@ const rawGsskPool = [
   },
   {
     id: 13, isMulti: false, category: "Wirtschafts- und Sozialkunde", subcategory: "Arbeitsrecht",
-    question: "Was regelt das Arbeitszeitgesetz (ArbZG) in Deutschland im Wesentlichen?",
+    question: "Was regelt das Arbeitnehmerüberlassungsgesetz (AÜG) im Wesentlichen?",
     options: [
-      "Die Höchstarbeitszeiten, Ruhepausen und Mindestruhezeiten zum Schutz der Arbeitnehmer.",
-      "Die genaue Lohnhöhe im Bewachungsgewerbe.",
-      "Die Urlaubsabgeltung bei Kündigung.",
-      "Die steuerliche Behandlung von Nachtzuschlägen."
+      "Es regelt den gewerbsmäßigen Verleih von Arbeitskräften an Entleiher unter strengen gesetzlichen Auflagen.",
+      "Es verbietet jegliche Form von Schichtarbeit in Sicherheitsunternehmen.",
+      "Es legt den Mindestlohn für das gesamte Bundesgebiet auf exakt 25 Euro fest.",
+      "Es verpflichtet den Arbeitgeber zur Bereitstellung eines Dienstwagens für jeden Arbeitnehmer."
     ],
     correct: 0,
-    explanation: "Das ArbZG dient dem Gesundheitsschutz durch Begrenzung der Arbeitszeit und Festlegung von Pausen."
+    explanation: "Das AÜG regelt den rechtlichen Rahmen für die Arbeitnehmerüberlassung (Leiharbeit)."
   },
   {
     id: 14, isMulti: false, category: "AGU (Arbeit, Gesundheit & Umwelt)", subcategory: "Unfallverhütung",
@@ -254,7 +254,7 @@ for (let i = 16; i <= 100; i++) {
   ];
   let explanationText = `Musterlösung zu Frage ${i}: In der GSSK-Prüfung ist stets auf die Einhaltung der gesetzlichen Rahmenbedingungen und des Verhältnismäßigkeitsgrundsatzes zu achten.`;
 
-  // Spezifische Fragen für Gefahrenabwehr & Technik (wie ID 58)
+  // Fachbereichsspezifische Fragen für ID 16 bis 100 (inkl. Gefahrenabwehr, Rechtskunde, Wirtschaft und Soziales, Dienstkunde)
   if (cat === "Gefahrenabwehr & Technik") {
     questionText = `Prüfungsfrage #${i} (Gefahrenabwehr & Technik): Welche technischen und organisatorischen Sofortmaßnahmen sind bei der Auslösung einer Brandmeldeanlage (BMA) im Objektschutz primär einzuleiten?`;
     optionsList = [
@@ -273,6 +273,15 @@ for (let i = 16; i <= 100; i++) {
       `Der Ausschluss jeglicher Dokumentationspflicht im Wachbuch.`
     ];
     explanationText = `Musterlösung zu Frage ${i}: Jede Maßnahme privater Sicherheitskräfte muss stets verhältnismäßig sein und sich im Rahmen der Jedermann-Rechte bewegen.`;
+  } else if (cat === "Wirtschafts- und Sozialkunde") {
+    questionText = `Prüfungsfrage #${i} (Wirtschafts- und Sozialkunde): Welche wesentlichen Regelungen enthält das Arbeitnehmerüberlassungsgesetz (AÜG) im Kontext des Wach- und Sicherheitsgewerbes?`;
+    optionsList = [
+      `Es regelt den gewerbsmäßigen Verleih von Arbeitskräften (Leiharbeit) an Entleiher unter strengen gesetzlichen Auflagen und Höchstüberlassungsdauern.`,
+      `Es verbietet jegliche Form von Schichtarbeit in Sicherheitsunternehmen.`,
+      `Es legt den gesetzlichen Mindestlohn für das gesamte Bundesgebiet auf exakt 25 Euro fest.`,
+      `Es verpflichtet den Arbeitgeber zur Bereitstellung eines Dienstwagens für jeden Arbeitnehmer.`
+    ];
+    explanationText = `Musterlösung zu Frage ${i}: Das AÜG regelt den rechtlichen Rahmen für die Arbeitnehmerüberlassung und schützt Leiharbeitnehmer vor unzulässiger Benachteiligung.`;
   } else if (cat === "Dienstkunde") {
     questionText = `Prüfungsfrage #${i} (Dienstkunde): Welche Bedeutung hat der Streifendienst im Rahmen des werksinternen Objektschutzes?`;
     optionsList = [
@@ -281,7 +290,7 @@ for (let i = 16; i <= 100; i++) {
       `Das Ersetzen der behördlichen Verkehrsüberwachung im öffentlichen Straßenverkehr.`,
       `Das unangekündigte Betreten fremder Privatwohnungen außerhalb des Werksgeländes.`
     ];
-    explanationText = `Musterlösung zzu Frage ${i}: Der Streifendienst dient der Prävention, der Überwachung technischer Einrichtungen und der Entdeckung von Gefahrenquellen.`;
+    explanationText = `Musterlösung zu Frage ${i}: Der Streifendienst dient der Prävention, der Überwachung technischer Einrichtungen und der Entdeckung von Gefahrenquellen.`;
   }
 
   let correctVal = isMultiGen ? [0, 1] : 0;
