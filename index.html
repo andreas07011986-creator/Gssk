@@ -162,20 +162,6 @@
     .index-grid-btn.flagged {
       border-color: #fbbf24;
     }
-    .stat-bar-wrapper {
-      background: var(--option-bg);
-      border-radius: 10px;
-      height: 12px;
-      width: 100%;
-      overflow: hidden;
-      margin-top: 10px;
-    }
-    .stat-bar-fill {
-      background: #10b981;
-      height: 100%;
-      width: 0%;
-      transition: width 0.3s;
-    }
   </style>
 </head>
 <body>
@@ -196,15 +182,12 @@
     <!-- QUIZ VIEW -->
     <div id="view-quiz" class="view-container active">
       <div class="section-card">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-          <input type="text" id="quizSearchInput" placeholder="Frage oder Stichwort suchen..." oninput="filterQuizQuestions()" style="padding:8px; width:60%; border-radius:6px; border:1px solid var(--border-color); background:var(--option-bg); color:var(--text-color);">
-          <button onclick="resetAllStats()" class="btn-danger" style="font-size:0.8rem; padding:8px 12px;">Statistik zurücksetzen</button>
+        <div style="margin-bottom:10px;">
+          <input type="text" id="quizSearchInput" placeholder="Frage oder Stichwort suchen..." oninput="filterQuizQuestions()" style="padding:8px; width:100%; box-sizing:border-box; border-radius:6px; border:1px solid var(--border-color); background:var(--option-bg); color:var(--text-color);">
         </div>
         
         <div style="display:flex; gap:8px; margin-bottom:10px; flex-wrap:wrap;">
           <button id="filterBookmarkBtn" class="nav-btn" style="font-size:0.8rem;" onclick="toggleBookmarkFilter()">★ Lesezeichen</button>
-          <button id="filterWeakBtn" class="nav-btn" style="font-size:0.8rem;" onclick="toggleWeakFilter()">⚠️ Schwachstellen</button>
-          <button id="filterMasteredBtn" class="nav-btn" style="font-size:0.8rem;" onclick="toggleMasteredFilter()">✅ Meisterhaft</button>
           <label style="font-size:0.9rem; display:flex; align-items:center; gap:5px; cursor:pointer;"><input type="checkbox" id="timerCheckbox" onchange="toggleTimerMode()"> Timer (45s)</label>
         </div>
 
@@ -246,7 +229,6 @@
           </div>
         </div>
       </div>
-      <div id="statDashboard"></div>
     </div>
 
     <!-- IHK PRÜFUNG VIEW -->
@@ -323,7 +305,6 @@
       if(target) target.classList.add('active');
       
       event.target.classList.add('active');
-      if(viewName === 'quiz') { renderStatDashboard(); }
     }
   </script>
   
