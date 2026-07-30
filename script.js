@@ -227,7 +227,7 @@ const rawGsskPool = [
     question: "Welche Grundsätze gelten nach DSGVO beim Umgang mit personenbezogenen Daten im Sicherheitsdienst?",
     options: [
       "Rechtmäßigkeit, Verarbeitung nach Treu und Glauben, Transparenz.",
-      "Jeder Mitarbeiter darf alle Daten für private Zwecke nutzen.",
+      "Jeder Mitarbeiter darf alle Daten for private Zwecke nutzen.",
       "Datenminimierung und Speicherbegrenzung.",
       "Sicherheitskräfte dürfen Kundendaten beliebig im Internet veröffentlichen."
     ],
@@ -316,7 +316,7 @@ const rawGsskPool = [
       "Keine Maßnahmen ergreifen und auf den Rettungsdienst warten."
     ],
     correct: 0,
-    explanation: "Die stabile Seitenlage sichert die freien Atemwege und verhindert ein Erstickenvor Erbrochenem oder zurücksinkender Zunge."
+    explanation: "Die stabile Seitenlage sichert die freien Atemwege und verhindert ein Ersticken vor Erbrochenem oder zurücksinkender Zunge."
   },
   {
     id: 23, isMulti: false, category: "Datenschutz (BDSG/DSGVO)", subcategory: "Ausgabepflicht",
@@ -914,14 +914,12 @@ function startRealExam() {
     pool = pool.filter(q => q.category === cat);
   }
   
-  // Fisher-Yates Shuffle für vollständige Zufälligkeit bei jedem Prüfungsstart
   let shuffledPool = [...pool];
   for (let i = shuffledPool.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [shuffledPool[i], shuffledPool[j]] = [shuffledPool[j], shuffledPool[i]];
   }
 
-  // Exakt 35 Fragen für die Prüfung auswählen
   let examLength = Math.min(35, shuffledPool.length);
   shuffledExamQuestions = shuffledPool.slice(0, examLength);
   
